@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  </head>
+  <body>
+   <div id="form"></div>
+    <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>    
+    <script type='text/javascript' src='./src/forman.js'></script>
+
+    <script>
+    options ={
+        attributes:{first_name: "Bob"},
+        fields:[
+            {name: 'first_name'},
+            {name: 'checked', label: 'Checked?',type: 'checkbox'},
+            {name: 'last_name', label: 'Last Name'},
+            {name: 'job', type:'radio', options:[{label:'first', value: 0},{label:'second', value: 1}]}
+        ]
+    };
+
+//     options = {      
+// 	"attributes": {"first_name": "John", "name_last": "Doe"},
+// 	"fields":[
+// 		{"label": "First Name"}, 
+// 		{"label": "Last Name", "name": "name_last"},
+// 		{"label": "Age", "type": "number"},
+// 		{"label": "Favorite Color", "type": "color"}
+// 	]
+// };
+
+
+    var myForman = new forman('#form', options)
+    </script>
+   </body>
+</html>
