@@ -2,25 +2,31 @@ var forman = function(target, data){
     document.querySelector(target).innerHTML = forman.stencils.container(_.assignIn({legend: ''}, data));
     this.form = document.querySelector(target + ' form')
     this.fields = _.map(data.fields, function(field, i) {
-
-        return _.assignIn({
+        field = _.assignIn({
             name: (field.label||'').toLowerCase().split(' ').join('_'), 
             id: forman.getUID(), 
             type: 'text', 
             extends: 'basic', 
             label: field.name, 
             value: data.attributes[field.name] || field.default
-        }, field, forman.processOptions(field))
+        }, field)
+        if(field.type == 'select' || field.type == 'radio'){
+            field = _.assignIn(field, forman.processOptions.call(this, field));
+        }
+        return field;
     })
 
     _.each(this.fields, function(field){
-        form.innerHTML +=  (forman.stencils[field.type]||forman.stencils.text)(field);
+        field.el = document.createElement("div");
+        field.el.setAttribute("id", field.id);
+        field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
+        this.form.appendChild(field.el); 
     }.bind(this))
     
     var toJSON = function() {
         var obj = {};
         _.each(this.fields, function(field) {
-            obj[field.name] = form.querySelector('[name="'+field.name+'"]').value;
+            obj[field.name] = this.form.querySelector('[name="' + field.name + '"]').value;
         }.bind(this))
         return obj;
     }
@@ -29,17 +35,49 @@ var forman = function(target, data){
     toJSON: toJSON.bind(this)
   }
 }
+
+forman.ajax = function(options){
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        if(request.readyState === 4) {
+            if(request.status === 200) { 
+                options.success(JSON.parse(request.responseText));
+            } else {
+                console.log(request.responseText);
+                // options.error(request.responseText);
+            } 
+        }
+    }
+    request.open(options.verb || 'GET', options.path);
+    request.send();
+}
+
+forman.default= {label_key: 'label', value_key: 'value'}
 forman.processOptions = function(field) {
-    field = _.assignIn({label_key: 'label', value_key: 'value', options: []}, field);
+	if(typeof field.options == 'string'){
+        field.path = field.options;
+        field.options = false;
+        forman.ajax({path: field.path, success:function(data){
+            this.field.options = data;  
+            this.field = forman.processOptions(this.field);
+            this.field.el.innerHTML = (forman.stencils[this.field.type] || forman.stencils.text)(this.field);
+
+            var oldDiv = document.getElementById(this.field.id);
+            oldDiv.parentNode.replaceChild(this.field.el, oldDiv);
+        }.bind({field:field})})
+		return field;
+	}
+    field = _.assignIn({options: []}, forman.default, field);
 
 	// If max is set on the field, assume a number set is desired. 
 	// min defaults to 0 and the step defaults to 1.
 	if(typeof field.max !== 'undefined') {
 		field.min = (field.min || 0);
+		field.step = (field.step || 1)
         var i = field.min;
         while(i <= field.max) {
             field.options.push(i.toString());
-            i=i+(field.step || 1)
+            i+=field.step;
         }
 	}
 
@@ -59,76 +97,7 @@ forman.processOptions = function(field) {
     return field;
 }
 
-
-
-var processOpts = function(item, object) {
-
-
-
-
-	if(typeof item.options !== 'undefined' && item.options.length > 0) {
-		var set = false;
-		for ( var o in item.options ) {
-			var cOpt = item.options[o];
-
-			if(typeof cOpt === 'string' || typeof cOpt === 'number') {
-				cOpt = {label: cOpt};
-				if(item.value_key !== 'index'){
-					cOpt.value = cOpt.label;
-				}
-			}
-
-			if(typeof item.value_key !== 'undefined' && item.value_key !== ''){
-				if(item.value_key === 'index'){
-					cOpt.value = o;
-				}else{
-					cOpt.value = cOpt[item.value_key];
-				}
-			}
-			if(typeof cOpt.value === 'undefined'){
-				cOpt.value = cOpt.id;
-			}
-
-			if(typeof item.label_key !== 'undefined' && item.label_key !== ''){
-				cOpt.label = cOpt[item.label_key];
-			}
-			
-			if(typeof cOpt.label === 'undefined'){
-				cOpt.label = cOpt.label || cOpt.name || cOpt.title;
-			}
-
-
-			item.options[o] = cOpt;//$.extend({label: cOpt.name, value: o}, {label: cOpt[(item.label_key || 'title')], value: cOpt[(item.value_key || 'id')]}, cOpt);
-
-			//if(!set) {
-				if(typeof item.value !== 'undefined' && item.value !== '') {
-					if(!$.isArray(item.value)) {
-						item.options[o].selected = (cOpt.value == item.value);
-					} else {
-						item.options[o].selected = ($.inArray(cOpt.value, item.value) > -1);
-					}
-				}
-				// else {
-				// 	item.options[o].selected = true;
-				// 	item.value = item.options[o].value;
-				// }
-				// set = item.options[o].selected;
-			// } else {
-			// 	item.options[o].selected = false;
-			// }
-		}
-	}
-	return item;
-}
-
-
-forman.counter = 0;
+forman.i = 0;
 forman.getUID = function() {
-    return 'f' + (forman.counter++);
-};
-forman.stencils = {
-    container: _.template('<div><legend for="<%= name %>"><%= legend %></legend> <form></form></div>'),
-    text: _.template('<div><label for="<%= name %>"><%= label %></label> <input name="<%= name %>" type="<%=type%>" value="<%=value%>" id="<%=id%>" /></div>'),
-    select: _.template('<div><label for="<%=name%>"><%= label %></label> <select name="<%= name %>" value="<%=value%>" id="<%=id%>" /><% _.forEach(options, function(option) { %><option value="<%- option.value %>"><%- option.label %></option><% }); %></select></div>'),
-    radio: _.template('<div><label><%= label %></label> <% _.forEach(options, function(option) { %><label><input name="<%=name%>" value="<%=option.value%>" type="radio"><%=option.label%></label><% }); %> </div>')
+    return 'f' + (forman.i++);
 };
