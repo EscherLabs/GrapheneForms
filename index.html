@@ -1,81 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <style>
-      /* ----- SimpleForm Styles ----- */
-      .forman form > div{
-          padding-bottom:5px
-      }
-      .forman div.input {
-        margin-bottom: 10px;
-        clear: both; /* Required for Webkit, but not for Gecko */
-      }
-
-      .forman label {
-        float: left;
-        width: 100px;
-        text-align: right;
-        margin: 2px 10px;
-      }
-
-      div.boolean, .forman input[type='submit'] {
-        margin-left: 120px;
-      }
-
-      div.boolean label, label.collection_radio_buttons {
-        float: none;
-        margin: 0;
-      }
-
-      label.collection_radio_buttons {
-        margin-right: 10px;
-        vertical-align: -2px;
-        margin-left: 2px;
-      }
-
-      .field_with_errors {
-        background-color: #ff3333;
-      }
-
-      .forman .error {
-        clear: left;
-        color: black;
-        display: block;
-        margin-left: 120px;
-      }
-
-      .forman .hint {
-        clear: left;
-        margin-left: 120px;
-        color: #555;
-        display: block;
-        font-style: italic;
-      }
-
-      input.radio {
-        margin-right: 5px;
-        vertical-align: -3px;
-      }
-
-      input.check_boxes {
-        margin-left: 3px;
-        vertical-align: -3px;
-      }
-
-      label.collection_check_boxes {
-        float: none;
-        margin: 0;
-        vertical-align: -2px;
-        margin-left: 2px;
-      }
-</style>
+    <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
 
   </head>
   <body>
    <div id="form"></div>
     <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>    
     <script type='text/javascript' src='./src/forman.js'></script>
-    <script type='text/javascript' src='./src/templates.js'></script>
+    <script type='text/javascript' src='./src/skeleton.js'></script>
 
     <script>
     options ={
@@ -101,7 +35,7 @@
 // };
 
 
-    var myForman = new forman('#form', options)
+    var myForman = new forman(options, '#form')
     </script>
    </body>
 </html>
