@@ -1,6 +1,6 @@
 var forman = function(data, target){
     //initalize form
-    data = _.assignIn({legend: '', attributes:{}}, data);
+    data = _.assignIn({legend: '', attributes:{}}, forman.options, data);
     document.querySelector(target).innerHTML = forman.stencils.container(data);
     this.form = document.querySelector(target + ' form')
 
@@ -15,18 +15,24 @@ var forman = function(data, target){
         }, field)
         field.value =  data.attributes[field.name] || field.value || field.default;
         field.owner = this;
+        field.satisfied = function(value){
+    		return (typeof value !== 'undefined' && value !== null && value !== '');
+        }.bind(field)
         field.set = function(value){
             this.el.querySelector('[name="' + this.name + '"]').value = value;
             _.each(this.options, function(option, index){
                 if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
             }.bind(this))
         }.bind(field)
+        field.get = function(){
+            return this.el.querySelector('[name="' + this.name + '"]').checked || this.el.querySelector('[name="' + this.name + '"]').value;
+        }.bind(field)
 
         if(field.type == 'select' || field.type == 'radio') {
             field = _.assignIn(field, forman.processOptions.call(this, field));
         }
         return field;
-    })
+    }.bind(this))
 
     //create all elements
     _.each(this.fields, function(field) {
@@ -40,24 +46,32 @@ var forman = function(data, target){
     //parse form values into JSON object
     var toJSON = function(name) {
         if(typeof name == 'string') {
-            return this.form.querySelector('[name="' + name + '"]').value;
+            return this.fields[name].get();
+            // return this.form.querySelector('[name="' + name + '"]').value;
         }
         var obj = {};
-        _.each(this.fields, function(field) {
-            
-            obj[field.name] = this.form.querySelector('[name="' + field.name + '"]').checked || this.form.querySelector('[name="' + field.name + '"]').value;
+        _.each(this.fields, function(field) {            
+            obj[field.name] = this.fields[field.name].get();
+            //this.form.querySelector('[name="' + field.name + '"]').checked || this.form.querySelector('[name="' + field.name + '"]').value;
         }.bind(this))
         return obj;
     }
 
     //externally accessable functions
-    return {
-        toJSON: toJSON.bind(this),
-        fields: _.keyBy(this.fields, 'name'),
-        set: function(name,value) {
+    // return {
+    //     toJSON: toJSON.bind(this),
+    //     fields: _.keyBy(this.fields, 'name'),
+    //     set: function(name,value) {
+    //         _.find(this.fields, {name: name}).set(value);
+    //     }.bind(this)
+    // }
+        this.toJSON = toJSON.bind(this);
+        this.fields = _.keyBy(this.fields, 'name');
+        this.set = function(name,value) {
             _.find(this.fields, {name: name}).set(value);
-        }.bind(this)
-    }
+        }.bind(this),
+        this.options = data;
+    // }
 }
 
 forman.ajax = function(options){
@@ -78,7 +92,7 @@ forman.ajax = function(options){
 
 
 forman.default= {label_key: 'label', value_key: 'value'}
-
+forman.options = {errorTextSelector: false,errorSelector: false}
 /* Process the options of a field for normalization */
 forman.processOptions = function(field) {
     if(typeof field.options == 'function') {
