@@ -1,8 +1,9 @@
-forman.prototype.events = (function (events, _) {
+forman.prototype.events = (function (_) {
   'use strict';
 
   // keys are event names
   var handlers = {};
+  var events = {};
 
   events.on = function (event, handler) {
     if (typeof handlers[event] !== 'object') {
@@ -31,5 +32,9 @@ forman.prototype.events = (function (events, _) {
     });
   };
 
+  events.debounce = function (event, handler) {
+    events.on(event, _.debounce(handler, 250));
+  };
+
   return events;
-}({}, _));
+}(_));

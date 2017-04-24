@@ -10,7 +10,6 @@ forman.processConditions = function(conditions, func) {
 		return conditions;
 	}
 	if (typeof conditions === 'object') {
-        debugger;
 		var keys = [];
 		for(var c in conditions){
 			keys.push(forman.conditions[c].call(this, this.owner, conditions[c], (func || conditions[c].callBack)));
@@ -36,8 +35,7 @@ forman.conditions = {
 	},
 	matches: function(forman, args, func) {
 		return forman.events.on('change:' + args.name, function(args, local, topic, token) {
-            debugger;
-				func.call(this.self, (args.value  === local.value), token);
+				func.call(this.self, (args.value  === local.get()), token);
             }.bind(this, args)
 		);
 	},

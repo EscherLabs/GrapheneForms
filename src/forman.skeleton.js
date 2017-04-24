@@ -1,0 +1,7 @@
+forman.stencils = {
+    container: _.template('<div class="forman"><legend for="<%= name %>"><%= legend %></legend> <form></form></div>'),
+    text: _.template('<div class="row"><label class="three columns" for="<%= name %>"><%= label %><% if(validate.required){%><span style="color:red">*</span><%}%></label> <input class="six columns" name="<%= name %>" type="<%=type%>" value="<%=value%>" id="<%=id%>" /><% if(!valid){%><small style="color:red"> <%=errors %> </small><%}%></div>'),
+    select: _.template('<div class="row"><label class="three columns" for="<%=name%>"><%= label %></label><% if(options){%> <select class="six columns" name="<%= name %>" value="<%=value%>" id="<%=id%>" /><% _.forEach(options, function(option) { %><option <%if(option.selected){%> selected=selected <%}%>value="<%- option.value %>"><%- option.label %></option><% }); %></select><%}%></div>'),
+    radio: _.template('<div class="row"><label class="three columns"><%= label %></label> <% if(options){ _.forEach(options, function(option) { %><label><input class="six columns" name="<%=name%>" value="<%=option.value%>" type="radio"><%=option.label%></label><% })}else{%>hello<%}; %> </div>')
+};
+forman.handleError = forman.update;

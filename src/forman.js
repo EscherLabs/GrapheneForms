@@ -11,7 +11,9 @@ var forman = function(data, target){
             id: forman.getUID(), 
             type: 'text', 
             extends: 'basic', 
-            label: field.name
+            label: field.name,
+            validate: false,
+            valid: true
         }, field)
         field.value =  data.attributes[field.name] || field.value || field.default;
         field.owner = this;
@@ -28,52 +30,78 @@ var forman = function(data, target){
             return this.el.querySelector('[name="' + this.name + '"]').checked || this.el.querySelector('[name="' + this.name + '"]').value;
         }.bind(field)
 
+
+        forman.processConditions.call(field, field.display,function(result){
+            this.el.style.display = result ? "block" : "none";
+        }.bind(field))      
+        forman.processConditions.call(field, field.visible,function(result){
+            this.el.style.visibility = result ? "visible" : "hidden";
+        }.bind(field))
+        forman.processConditions.call(field, field.enable,function(result){
+            this.enabled = result;
+        }.bind(field))
+        forman.processConditions.call(field, field.parsable,function(result){
+            this.el.style.parsable = result
+        }.bind(field))
+
+
         if(field.type == 'select' || field.type == 'radio') {
             field = _.assignIn(field, forman.processOptions.call(this, field));
         }
-        return field;
-    }.bind(this))
 
-    //create all elements
-    _.each(this.fields, function(field) {
         field.el = document.createElement("div");
         field.el.setAttribute("id", field.id);
         field.el.setAttribute("class", 'row');
         field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
         this.form.appendChild(field.el); 
+
+        if(field.onchange !== undefined){ field.el.addEventListener('change', this.onchange);}
+		field.el.addEventListener('change', function(){
+            this.value = this.get();
+			this.owner.events.trigger('change:'+this.name, this);
+			this.owner.events.trigger('change', this);
+        }.bind(field));		
+        field.el.addEventListener('input', function(){
+            this.value = this.get();
+			this.owner.events.trigger('change:'+this.name, this);
+			this.owner.events.trigger('change', this);
+        }.bind(field));
+
+
+        return field;
     }.bind(this))
+
+    //create all elements
+    _.each(this.fields, function(field) {
+			field.owner.events.trigger('change:'+field.name, field);
+    })
     
     //parse form values into JSON object
     var toJSON = function(name) {
         if(typeof name == 'string') {
             return this.fields[name].get();
-            // return this.form.querySelector('[name="' + name + '"]').value;
         }
         var obj = {};
         _.each(this.fields, function(field) {            
             obj[field.name] = this.fields[field.name].get();
-            //this.form.querySelector('[name="' + field.name + '"]').checked || this.form.querySelector('[name="' + field.name + '"]').value;
         }.bind(this))
         return obj;
     }
-
-    //externally accessable functions
-    // return {
-    //     toJSON: toJSON.bind(this),
-    //     fields: _.keyBy(this.fields, 'name'),
-    //     set: function(name,value) {
-    //         _.find(this.fields, {name: name}).set(value);
-    //     }.bind(this)
-    // }
-        this.toJSON = toJSON.bind(this);
-        this.fields = _.keyBy(this.fields, 'name');
-        this.set = function(name,value) {
-            _.find(this.fields, {name: name}).set(value);
-        }.bind(this),
-        this.options = data;
-    // }
+    this.toJSON = toJSON.bind(this);
+    this.fields = _.keyBy(this.fields, 'name');
+    this.set = function(name,value) {
+        _.find(this.fields, {name: name}).set(value);
+    }.bind(this),
+    this.options = data;
+    this.on = this.events.on;
+    this.trigger = this.events.trigger;
+    this.debounce = this.events.debounce;
 }
-
+forman.update = function(field){
+    field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
+    var oldDiv = document.getElementById(field.id);
+    oldDiv.parentNode.replaceChild(field.el, oldDiv);
+}
 forman.ajax = function(options){
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -92,7 +120,7 @@ forman.ajax = function(options){
 
 
 forman.default= {label_key: 'label', value_key: 'value'}
-forman.options = {errorTextSelector: false,errorSelector: false}
+// forman.options = {errorTextSelector: false,errorSelector: false}
 /* Process the options of a field for normalization */
 forman.processOptions = function(field) {
     if(typeof field.options == 'function') {
@@ -105,10 +133,12 @@ forman.processOptions = function(field) {
         forman.ajax({path: field.path, success:function(data) {
             this.field.options = data;  
             this.field = forman.processOptions(this.field);
-            this.field.el.innerHTML = (forman.stencils[this.field.type] || forman.stencils.text)(this.field);
+            // debugger;
+            forman.update(this.field)
+            // this.field.el.innerHTML = (forman.stencils[this.field.type] || forman.stencils.text)(this.field);
 
-            var oldDiv = document.getElementById(this.field.id);
-            oldDiv.parentNode.replaceChild(this.field.el, oldDiv);
+            // var oldDiv = document.getElementById(this.field.id);
+            // oldDiv.parentNode.replaceChild(this.field.el, oldDiv);
         }.bind({field:field})})
 		return field;
 	}
