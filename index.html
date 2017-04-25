@@ -23,9 +23,16 @@
             {name: 'checked', label: 'Checked?',type: 'checkbox', display: {matches:{name:'job', value:'first'}}},
             {name: 'last_name', label: 'Last Name', validate:{required:true}},
             {name: 'job', type:'select', max: 5, default:{label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
-            {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'}
+            {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
+            {name: 'candies', type:'fieldset', fields: [{name: 'candy', label: 'Candy'},{name: 'flavors', type:'fieldset', fields: [{name: 'flavor', label: 'Flavor'}]}]}
         ]
     };
+    // options = {
+    //   attributes: {first_name: 'John', last_name: 'Doe'},//optional
+    //   fields: [
+    //     {label: 'First Name'}, 
+    //     {label: 'Last Name'}
+    //   ], actions: false};
     var myForman = new forman(options, '#form')
     myForman.debounce('change', function(field){
         field.owner.validate();

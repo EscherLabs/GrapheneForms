@@ -5,18 +5,55 @@ var forman = function(data, target){
     this.form = document.querySelector(target + ' form')
 
     //initialize individual fields
-    this.fields = _.map(data.fields, function(field, i) {
+
+    this.fields = _.map(data.fields, forman.initialize.bind(this, this.form, data.attributes||{}))
+
+    //create all elements
+    _.each(this.fields, function(field) {
+			field.owner.events.trigger('change:'+field.name, field);
+    })
+    
+    //parse form values into JSON object
+    var toJSON = function(name) {
+        if(typeof name == 'string') {
+            return this.fields[name].get();
+        }
+        var obj = {};
+        _.each(this.fields, function(field) {       
+            if(field.fields){
+                obj[field.name] = toJSON.call(field);
+            }else{
+                obj[field.name] = this.fields[field.name].get();
+            }
+        }.bind(this))
+        return obj;
+    }
+    this.toJSON = toJSON.bind(this);
+    this.fields = _.keyBy(this.fields, 'name');
+    this.set = function(name,value) {
+        _.find(this.fields, {name: name}).set(value);
+    }.bind(this),
+    this.options = data;
+    this.on = this.events.on;
+    this.trigger = this.events.trigger;
+    this.debounce = this.events.debounce;
+}
+forman.initialize = function(parent, atts, field, i) {
         field = _.assignIn({
             name: (field.label||'').toLowerCase().split(' ').join('_'), 
             id: forman.getUID(), 
             type: 'text', 
             extends: 'basic', 
-            label: field.name,
+            label: field.legend || field.name,
             validate: false,
-            valid: true
+            valid: true,
+            parent: parent,
+            suffix: ':'
         }, field)
-        field.value =  data.attributes[field.name] || field.value || field.default;
+        field.value =  atts[field.name] || field.value || field.default;
         field.owner = this;
+
+
         field.satisfied = function(value){
     		return (typeof value !== 'undefined' && value !== null && value !== '');
         }.bind(field)
@@ -29,8 +66,6 @@ var forman = function(data, target){
         field.get = function(){
             return this.el.querySelector('[name="' + this.name + '"]').checked || this.el.querySelector('[name="' + this.name + '"]').value;
         }.bind(field)
-
-
         forman.processConditions.call(field, field.display,function(result){
             this.el.style.display = result ? "block" : "none";
         }.bind(field))      
@@ -53,7 +88,7 @@ var forman = function(data, target){
         field.el.setAttribute("id", field.id);
         field.el.setAttribute("class", 'row');
         field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
-        this.form.appendChild(field.el); 
+        field.parent.appendChild(field.el); 
 
         if(field.onchange !== undefined){ field.el.addEventListener('change', this.onchange);}
 		field.el.addEventListener('change', function(){
@@ -67,36 +102,12 @@ var forman = function(data, target){
 			this.owner.events.trigger('change', this);
         }.bind(field));
 
+        if(field.fields){
+            field.fields = _.keyBy(_.map(field.fields, forman.initialize.bind(this, field.el, atts[field.name]||{})), 'name');
 
-        return field;
-    }.bind(this))
-
-    //create all elements
-    _.each(this.fields, function(field) {
-			field.owner.events.trigger('change:'+field.name, field);
-    })
-    
-    //parse form values into JSON object
-    var toJSON = function(name) {
-        if(typeof name == 'string') {
-            return this.fields[name].get();
         }
-        var obj = {};
-        _.each(this.fields, function(field) {            
-            obj[field.name] = this.fields[field.name].get();
-        }.bind(this))
-        return obj;
+        return field;
     }
-    this.toJSON = toJSON.bind(this);
-    this.fields = _.keyBy(this.fields, 'name');
-    this.set = function(name,value) {
-        _.find(this.fields, {name: name}).set(value);
-    }.bind(this),
-    this.options = data;
-    this.on = this.events.on;
-    this.trigger = this.events.trigger;
-    this.debounce = this.events.debounce;
-}
 forman.update = function(field){
     field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
     var oldDiv = document.getElementById(field.id);

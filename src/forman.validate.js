@@ -5,7 +5,7 @@ forman.prototype.validate = function(){
     _.each(this.fields, forman.validateItem)
 	return this.valid;
 };
-
+forman.handleError = forman.update;
 forman.validateItem = function(item){
 	forman.performValidate(item);
 	item.owner.errors[item.name] = item.errors;
@@ -31,10 +31,6 @@ forman.performValidate = function(target, pValue){
 				}
 			}
 			forman.handleError(target);
-			// target.el.toggleClass(target.owner.options.errorSelector, !target.valid);
-      // if(target.owner.options.errorTextSelector){
-    	// 		target.el.querySelector(target.owner.options.errorTextSelector).innerHtml = target.errors;
-      // }
 		}
 	}
 };
