@@ -7,6 +7,7 @@
   </head>
   <body>
    <div style="width:500px;margin:50px auto" id="form"></div>
+   <pre style="width:500px;margin:50px auto" id="result"></pre>
     <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>    
     <script type='text/javascript' src='./src/forman.js'></script>
     <script type='text/javascript' src='./src/forman.validate.js'></script>
@@ -35,7 +36,8 @@
     //   ], actions: false};
     var myForman = new forman(options, '#form')
     myForman.debounce('change', function(field){
-        field.owner.validate();
+        // field.owner.validate();
+        document.querySelector('#result').innerHTML = JSON.stringify(myForman.toJSON(), null, 2)
     })
     </script>
    </body>
