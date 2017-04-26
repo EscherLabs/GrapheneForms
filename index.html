@@ -8,7 +8,7 @@
   <body>
    <div style="width:500px;margin:50px auto" id="form"></div>
    <pre style="width:500px;margin:50px auto" id="result"></pre>
-    <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>    
+    <script src="./assets/js/lodash.min.js"></script>    
     <script type='text/javascript' src='./src/forman.js'></script>
     <script type='text/javascript' src='./src/forman.validate.js'></script>
     <script type='text/javascript' src='./src/forman.events.js'></script>
@@ -20,12 +20,13 @@
         attributes:{first_name: "Bob", 'favorite_state':'MT'},
         legend:'My Form',
         fields:[
-            {name: 'first_name'},
-            {name: 'checked', label: 'Checked?',type: 'checkbox', display: {matches:{name:'job', value:'first'}}},
-            {name: 'last_name', label: 'Last Name', validate:{required:true}},
-            {name: 'job', type:'select', max: 5, default:{label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
-            {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
-            {name: 'candies', type:'fieldset', fields: [{name: 'candy', label: 'Candy'},{name: 'flavors', type:'fieldset', fields: [{name: 'flavor', label: 'Flavor'}]}]}
+            {name: 'first_name', array:true},
+            // {name: 'checked', label: 'Checked?',type: 'checkbox', display: {matches:{name:'job', value:'first'}}},
+            // {name: 'last_name', label: 'Last Name', validate: {required:true}},
+            // {name: 'job', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
+            // {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
+            {label: 'Candies', type:'fieldset', array:true, fields: [{label: 'Candy'},{label: 'Brand'},{name: 'flavors', type:'fieldset', array:true, fields: [{name: 'flavor', label: 'Flavor'}]}]}
+
         ]
     };
     // options = {

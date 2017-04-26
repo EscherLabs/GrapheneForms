@@ -25,13 +25,13 @@ describe('Text Input', function () {
   it('sets value with set', function () {
 		expect(myforman.toJSON('test')).toEqual('hello');
     // _.find(myforman.fields, {name: 'test'}).set('test');
-    myforman.fields.test.set('test');
+    myforman.field('test').set('test');
 		expect(myforman.toJSON().test).toEqual('test');
   });
 
 	it('sets value with set - get value from name', function () {
 		expect(myforman.toJSON('test')).toEqual('hello');
-    myforman.set('test','test');
+    myforman.field('test').set('test');
 		expect(myforman.toJSON('test')).toEqual('test');
 	});
   
