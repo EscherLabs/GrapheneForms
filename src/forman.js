@@ -62,6 +62,7 @@ forman.initialize = function(parent, atts, target, fieldIn) {
         parent: parent,
         array:false
     }, fieldIn)
+    
     field.item = fieldIn;
     field.value =  atts[field.name] || field.value || field.default;
     field.owner = this;
@@ -122,9 +123,24 @@ forman.initialize = function(parent, atts, target, fieldIn) {
     var add = field.el.querySelector('.forman-add');
     if(add !== null){
         add.addEventListener('click', function(field){
-            debugger;
-            var index = _.findIndex(field.parent.fields,{id:field.id});
-            field.parent.fields.splice(index, 0, forman.initialize.call(this, field.parent, {}, field.el, field.item))
+            if(_.countBy(field.parent.fields, {name: field.name}).true < (field.array.max || 5)){
+                var index = _.findIndex(field.parent.fields,{id:field.id});
+                var atts = {};
+                // atts[field.name] = field.value;
+                field.parent.fields.splice(index, 0, forman.initialize.call(this, field.parent, atts, field.el, field.item))
+            }
+        }.bind(this, field));
+    }
+    var minus = field.el.querySelector('.forman-minus');
+    if(minus !== null){
+        minus.addEventListener('click', function(field){
+            if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)){
+                var index = _.findIndex(field.parent.fields,{id:field.id});
+                field.parent.fields.splice(index, 1);
+                field.parent.el.removeChild(field.el);
+            }else{
+                field.set(null);
+            }
         }.bind(this, field));
     }
     if(field.fields){

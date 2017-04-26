@@ -1,113 +1,154 @@
 var forman = function(data, target){
     //initalize form
-    data = _.assignIn({legend: '', attributes:{}}, forman.options, data);
-    document.querySelector(target).innerHTML = forman.stencils.container(data);
-    this.form = document.querySelector(target + ' form')
+    this.options = _.assignIn({legend: '', attributes:{}}, this.opts, data);
+    document.querySelector(target).innerHTML = forman.stencils.container(this.options);
+    this.el = document.querySelector(target + ' form')
 
     //initialize individual fields
-
-    this.fields = _.map(data.fields, forman.initialize.bind(this, this.form, data.attributes||{}))
+    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.attributes||{}, null))
 
     //create all elements
     _.each(this.fields, function(field) {
-			field.owner.events.trigger('change:'+field.name, field);
+		field.owner.events.trigger('change:'+field.name, field);
     })
     
     //parse form values into JSON object
     var toJSON = function(name) {
         if(typeof name == 'string') {
-            return this.fields[name].get();
+            return _.find(this.fields, {name: name}).get();
         }
         var obj = {};
         _.each(this.fields, function(field) {       
             if(field.fields){
-                obj[field.name] = toJSON.call(field);
+                if(field.array){
+                    obj[field.name] = obj[field.name] || [];
+                    obj[field.name].unshift(toJSON.call(field));
+                }else{
+                    obj[field.name] = toJSON.call(field);
+                }
             }else{
-                obj[field.name] = this.fields[field.name].get();
+                if(field.array){
+                    obj[field.name] = obj[field.name] || [];
+                    obj[field.name].unshift(field.get());
+                }else{
+                    obj[field.name] = field.get();
+                }
             }
         }.bind(this))
         return obj;
     }
     this.toJSON = toJSON.bind(this);
-    this.fields = _.keyBy(this.fields, 'name');
+    // this.fields = _.keyBy(this.fields, 'name');
     this.set = function(name,value) {
         _.find(this.fields, {name: name}).set(value);
     }.bind(this),
-    this.options = data;
+    this.field = function(name){
+        return _.find(this.fields,{name:name})
+    }.bind(this)
     this.on = this.events.on;
     this.trigger = this.events.trigger;
     this.debounce = this.events.debounce;
 }
-forman.initialize = function(parent, atts, field, i) {
-        field = _.assignIn({
-            name: (field.label||'').toLowerCase().split(' ').join('_'), 
-            id: forman.getUID(), 
-            type: 'text', 
-            extends: 'basic', 
-            label: field.legend || field.name,
-            validate: false,
-            valid: true,
-            parent: parent,
-            suffix: ':'
-        }, field)
-        field.value =  atts[field.name] || field.value || field.default;
-        field.owner = this;
+
+forman.initialize = function(parent, atts, target, fieldIn) {
+    var field = _.assignIn({
+        name: (fieldIn.label||'').toLowerCase().split(' ').join('_'), 
+        id: forman.getUID(), 
+        type: 'text', 
+        extends: 'basic', 
+        label: fieldIn.legend || fieldIn.name,
+        validate: false,
+        valid: true,
+        parent: parent,
+        array:false
+    }, fieldIn)
+    
+    field.item = fieldIn;
+    field.value =  atts[field.name] || field.value || field.default;
+    field.owner = this;
+
+    field.satisfied = function(value){
+        return (typeof value !== 'undefined' && value !== null && value !== '');
+    }.bind(field)
+    field.set = function(value){
+        this.el.querySelector('[name="' + this.name + '"]').value = value;
+        _.each(this.options, function(option, index){
+            if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+        }.bind(this))
+    }.bind(field)
+    field.get = function(){
+        return this.el.querySelector('[name="' + this.name + '"]').checked || this.el.querySelector('[name="' + this.name + '"]').value;
+    }.bind(field)
+    forman.processConditions.call(field, field.display,function(result){
+        this.el.style.display = result ? "block" : "none";
+    }.bind(field))      
+    forman.processConditions.call(field, field.visible,function(result){
+        this.el.style.visibility = result ? "visible" : "hidden";
+    }.bind(field))
+    forman.processConditions.call(field, field.enable,function(result){
+        this.enabled = result;
+    }.bind(field))
+    forman.processConditions.call(field, field.parsable,function(result){
+        this.el.style.parsable = result
+    }.bind(field))
 
 
-        field.satisfied = function(value){
-    		return (typeof value !== 'undefined' && value !== null && value !== '');
-        }.bind(field)
-        field.set = function(value){
-            this.el.querySelector('[name="' + this.name + '"]').value = value;
-            _.each(this.options, function(option, index){
-                if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
-            }.bind(this))
-        }.bind(field)
-        field.get = function(){
-            return this.el.querySelector('[name="' + this.name + '"]').checked || this.el.querySelector('[name="' + this.name + '"]').value;
-        }.bind(field)
-        forman.processConditions.call(field, field.display,function(result){
-            this.el.style.display = result ? "block" : "none";
-        }.bind(field))      
-        forman.processConditions.call(field, field.visible,function(result){
-            this.el.style.visibility = result ? "visible" : "hidden";
-        }.bind(field))
-        forman.processConditions.call(field, field.enable,function(result){
-            this.enabled = result;
-        }.bind(field))
-        forman.processConditions.call(field, field.parsable,function(result){
-            this.el.style.parsable = result
-        }.bind(field))
-
-
-        if(field.type == 'select' || field.type == 'radio') {
-            field = _.assignIn(field, forman.processOptions.call(this, field));
-        }
-
-        field.el = document.createElement("div");
-        field.el.setAttribute("id", field.id);
-        field.el.setAttribute("class", 'row');
-        field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
-        field.parent.appendChild(field.el); 
-
-        if(field.onchange !== undefined){ field.el.addEventListener('change', this.onchange);}
-		field.el.addEventListener('change', function(){
-            this.value = this.get();
-			this.owner.events.trigger('change:'+this.name, this);
-			this.owner.events.trigger('change', this);
-        }.bind(field));		
-        field.el.addEventListener('input', function(){
-            this.value = this.get();
-			this.owner.events.trigger('change:'+this.name, this);
-			this.owner.events.trigger('change', this);
-        }.bind(field));
-
-        if(field.fields){
-            field.fields = _.keyBy(_.map(field.fields, forman.initialize.bind(this, field.el, atts[field.name]||{})), 'name');
-
-        }
-        return field;
+    if(field.type == 'select' || field.type == 'radio') {
+        field = _.assignIn(field, forman.processOptions.call(this, field));
     }
+
+    field.el = document.createElement("div");
+    field.el.setAttribute("id", field.id);
+    field.el.setAttribute("class", 'row');
+    field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
+
+    if (target == null || field.parent.el.lastChild == target) {
+        field.parent.el.appendChild(field.el);
+    } else {
+        field.parent.el.insertBefore(field.el, target.nextSibling);
+    }
+
+    
+    if(field.onchange !== undefined){ field.el.addEventListener('change', this.onchange);}
+    field.el.addEventListener('change', function(){
+        this.value = this.get();
+        this.owner.events.trigger('change:'+this.name, this);
+        this.owner.events.trigger('change', this);
+    }.bind(field));		
+    field.el.addEventListener('input', function(){
+        this.value = this.get();
+        this.owner.events.trigger('change:'+this.name, this);
+        this.owner.events.trigger('change', this);
+    }.bind(field));
+    var add = field.el.querySelector('.forman-add');
+    if(add !== null){
+        add.addEventListener('click', function(field){
+            if(_.countBy(field.parent.fields, {name: field.name}).true < (field.array.max || 5)){
+                var index = _.findIndex(field.parent.fields,{id:field.id});
+                var atts = {};
+                // atts[field.name] = field.value;
+                field.parent.fields.splice(index, 0, forman.initialize.call(this, field.parent, atts, field.el, field.item))
+            }
+        }.bind(this, field));
+    }
+    var minus = field.el.querySelector('.forman-minus');
+    if(minus !== null){
+        minus.addEventListener('click', function(field){
+            if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)){
+                var index = _.findIndex(field.parent.fields,{id:field.id});
+                field.parent.fields.splice(index, 1);
+                field.parent.el.removeChild(field.el);
+            }else{
+                field.set(null);
+            }
+        }.bind(this, field));
+    }
+    if(field.fields){
+        field.fields = _.map(field.fields, forman.initialize.bind(this, field, atts[field.name]||{}, null) );
+    }
+
+    return field;
+}
 forman.update = function(field){
     field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
     var oldDiv = document.getElementById(field.id);
@@ -131,7 +172,9 @@ forman.ajax = function(options){
 
 
 forman.default= {label_key: 'label', value_key: 'value'}
-// forman.options = {errorTextSelector: false,errorSelector: false}
+forman.prototype.opts = {
+            suffix: ':',
+            required: '<span style="color:red">*</span>'}
 /* Process the options of a field for normalization */
 forman.processOptions = function(field) {
     if(typeof field.options == 'function') {
@@ -141,16 +184,11 @@ forman.processOptions = function(field) {
 	if(typeof field.options == 'string') {
         field.path = field.options;
         field.options = false;
-        forman.ajax({path: field.path, success:function(data) {
-            this.field.options = data;  
-            this.field = forman.processOptions(this.field);
-            // debugger;
-            forman.update(this.field)
-            // this.field.el.innerHTML = (forman.stencils[this.field.type] || forman.stencils.text)(this.field);
-
-            // var oldDiv = document.getElementById(this.field.id);
-            // oldDiv.parentNode.replaceChild(this.field.el, oldDiv);
-        }.bind({field:field})})
+        forman.ajax({path: field.path, success:function(field, data) {
+            field.options = data;  
+            field = forman.processOptions(field);
+            forman.update(field)
+        }.bind(null, field )})
 		return field;
 	}
     field = _.assignIn({options: []}, forman.default, field);
