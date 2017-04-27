@@ -1,9 +1,9 @@
 var forman = function(data, target){
     //initalize form
     this.options = _.assignIn({legend: '', attributes:{}}, this.opts, data);
-    document.querySelector(target).innerHTML = forman.stencils.container(this.options);
-    this.el = document.querySelector(target + ' form')
-
+    this.el = document.querySelector(target);
+    this.el.innerHTML = forman.stencils.container(this.options);
+    this.container = this.el.querySelector(target + ' form')
     //initialize individual fields
     this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.attributes||{}, null, null))
     _.each(this.fields, forman.fill.bind(this, this.options.attributes||{}))
@@ -39,7 +39,6 @@ var forman = function(data, target){
         return obj;
     }
     this.toJSON = toJSON.bind(this);
-    // this.fields = _.keyBy(this.fields, 'name');
     this.set = function(name,value) {
         _.find(this.fields, {name: name}).set(value);
     }.bind(this),
@@ -50,19 +49,15 @@ var forman = function(data, target){
     this.trigger = this.events.trigger;
     this.debounce = this.events.debounce;
 }
+
+
 forman.fill = function(atts, fieldIn, ind, list) {
     // if(field.array && typeof atts[field.name] == 'object'){
     //     field.value =  atts[field.name][index||0];
     // }
-    // var atts = this;
-    // debugger;
-            // _.countBy(field.parent.fields, {name: field.name}).true
 
-    // var field = 
-    // debugger;
 
     var field = _.findLast(list,{name:_.uniqBy(list,'name')[ind].name});
-    // 
     if(!field.array && field.fields){
         _.each(field.fields, forman.fill.bind(this, atts[field.name]||{}) );
     }
@@ -71,21 +66,18 @@ forman.fill = function(atts, fieldIn, ind, list) {
         if(atts[field.name].length >1){
 
             for(var i = 1; i<atts[field.name].length; i++) {
-                // var index = _.findIndex(field.parent.fields, {id: field.id});
-
                 var newfield = forman.initialize.call(this, field.parent, atts, field.el,i, field.item);
                 field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id}), 0, newfield)
                 field = newfield;
-                // if(field.fields){
+                // if(field.array){
                 //     _.each(field.fields, forman.fill.bind(this, atts[_.findIndex(field.parent.fields, {id: field.id})]||{}) );
-                    
                 // }
-                // index+=1;
-                    // field.parent.fields.splice(index, 0, forman.initialize.call(this, field.parent, atts, field.el, field.item))
             }
         }
     }
 }
+
+
 forman.initialize = function(parent, atts, target,index, fieldIn ) {
     var field = _.assignIn({
         name: (fieldIn.label||'').toLowerCase().split(' ').join('_'), 
@@ -142,10 +134,12 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
     field.el.setAttribute("class", 'row');
     field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
 
+    field.container =  field.el.querySelector('fieldset') || field.el;
+
     if (target == null){
-        field.parent.el.appendChild(field.el);
+        field.parent.container.appendChild(field.el);
     } else {
-        field.parent.el.insertBefore(field.el, target.nextSibling);
+        field.parent.container.insertBefore(field.el, target.nextSibling);
     }
 
     
@@ -167,7 +161,11 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 var atts = {};
                 // atts[field.name] = field.value;
-                field.parent.fields.splice(index, 0, forman.initialize.call(this, field.parent, atts, field.el,null, field.item))
+                var newField = forman.initialize.call(this, field.parent, atts, field.el ,null, field.item);
+                field.parent.fields.splice(index, 0, newField)
+                newField.el.querySelector('[name="'+field.name+'"]').focus();
+
+                _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], _.partialRight(this.trigger, field) )
             }
         }.bind(this, field));
     }
@@ -177,7 +175,9 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
             if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)){
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 field.parent.fields.splice(index, 1);
-                field.parent.el.removeChild(field.el);
+                field.parent.container.removeChild(field.el);
+                _.each(['change', 'change:'+field.name, 'removed:'+field.name], _.partialRight(this.trigger, field) )
+
             }else{
                 field.set(null);
             }
@@ -191,17 +191,23 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
                 newatts = atts[field.name]||{};
             }
 
-        field.fields = _.map(field.fields, forman.initialize.bind(this, field, newatts, null, null) );
+            field.fields = _.map(field.fields, forman.initialize.bind(this, field, newatts, null, null) );
+                 if(field.array){
+                    _.each(field.fields, forman.fill.bind(this, newatts) );
+                }
         
     }
+   
 
     return field;
 }
+
 forman.update = function(field){
     field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
     var oldDiv = document.getElementById(field.id);
     oldDiv.parentNode.replaceChild(field.el, oldDiv);
 }
+
 forman.ajax = function(options){
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
@@ -221,8 +227,10 @@ forman.ajax = function(options){
 
 forman.default= {label_key: 'label', value_key: 'value'}
 forman.prototype.opts = {
-            suffix: ':',
-            required: '<span style="color:red">*</span>'}
+    suffix: ':',
+    required: '<span style="color:red">*</span>'
+}
+
 /* Process the options of a field for normalization */
 forman.processOptions = function(field) {
     if(typeof field.options == 'function') {
