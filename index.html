@@ -17,15 +17,29 @@
 
     <script>
     options ={
-        attributes:{first_name: ["Bob", "Joe"], 'favorite_state':'MT'},
+        attributes:{'favorite_state':'MT',first_name: ["Bob", "Joe", 'more'],
+  "candies": {
+    "candy": "asfa",
+    "brand": "",
+    "flavors": [
+      {
+        "flavor": "F1",
+        "color": ["red", "green"]
+      },
+      {
+        "flavor": "f2",
+        "color": ["blue","purple"]
+      }
+    ]
+  } },
         legend:'My Form',
         fields:[
-            {name: 'first_name', array:true},
-            {name: 'checked', label: 'Checked?',type: 'checkbox', display: {matches:{name:'job', value:'first'}}},
-            {name: 'last_name', label: 'Last Name', validate: {required:true}},
-            {name: 'job', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
-            {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
-            {label: 'Candies', type:'fieldset', fields: [{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '', type:'fieldset', array:true, fields: [{label: 'Flavor'},{label: 'Color'}]}]}
+            // {name: 'checked', label: 'Checked?',type: 'checkbox', display: {matches:{name:'job', value:'first'}}},
+            // {name: 'last_name', label: 'Last Name', validate: {required:true}},
+            // {name: 'job', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
+            // {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
+            {label: 'Candies', type:'fieldset', fields: [{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '', type:'fieldset', array:true, fields: [{label: 'Flavor'},{ label: 'Color'}]}]},
+            // {name: 'first_name', array:true},
 
         ]
     };

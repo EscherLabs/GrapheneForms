@@ -5,7 +5,8 @@ var forman = function(data, target){
     this.el = document.querySelector(target + ' form')
 
     //initialize individual fields
-    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.attributes||{}, null))
+    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.attributes||{}, null, null))
+    _.each(this.fields, forman.fill.bind(this, this.options.attributes||{}))
 
     //create all elements
     _.each(this.fields, function(field) {
@@ -49,8 +50,43 @@ var forman = function(data, target){
     this.trigger = this.events.trigger;
     this.debounce = this.events.debounce;
 }
+forman.fill = function(atts, fieldIn, ind, list) {
+    // if(field.array && typeof atts[field.name] == 'object'){
+    //     field.value =  atts[field.name][index||0];
+    // }
+    // var atts = this;
+    // debugger;
+            // _.countBy(field.parent.fields, {name: field.name}).true
 
-forman.initialize = function(parent, atts, target, fieldIn) {
+    // var field = 
+    // debugger;
+
+    var field = _.findLast(list,{name:_.uniqBy(list,'name')[ind].name});
+    // 
+    if(!field.array && field.fields){
+        _.each(field.fields, forman.fill.bind(this, atts[field.name]||{}) );
+    }
+    if(field.array && typeof atts[field.name] == 'object') {
+
+        if(atts[field.name].length >1){
+
+            for(var i = 1; i<atts[field.name].length; i++) {
+                // var index = _.findIndex(field.parent.fields, {id: field.id});
+
+                var newfield = forman.initialize.call(this, field.parent, atts, field.el,i, field.item);
+                field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id}), 0, newfield)
+                field = newfield;
+                // if(field.fields){
+                //     _.each(field.fields, forman.fill.bind(this, atts[_.findIndex(field.parent.fields, {id: field.id})]||{}) );
+                    
+                // }
+                // index+=1;
+                    // field.parent.fields.splice(index, 0, forman.initialize.call(this, field.parent, atts, field.el, field.item))
+            }
+        }
+    }
+}
+forman.initialize = function(parent, atts, target,index, fieldIn ) {
     var field = _.assignIn({
         name: (fieldIn.label||'').toLowerCase().split(' ').join('_'), 
         id: forman.getUID(), 
@@ -64,7 +100,11 @@ forman.initialize = function(parent, atts, target, fieldIn) {
     }, fieldIn)
     
     field.item = fieldIn;
-    field.value =  atts[field.name] || field.value || field.default;
+    if(field.array && typeof atts[field.name] == 'object'){
+        field.value =  atts[field.name][index||0];
+    }else{
+        field.value =  atts[field.name] || field.value || field.default;
+    }
     field.owner = this;
 
     field.satisfied = function(value){
@@ -102,7 +142,7 @@ forman.initialize = function(parent, atts, target, fieldIn) {
     field.el.setAttribute("class", 'row');
     field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
 
-    if (target == null || field.parent.el.lastChild == target) {
+    if (target == null){
         field.parent.el.appendChild(field.el);
     } else {
         field.parent.el.insertBefore(field.el, target.nextSibling);
@@ -127,7 +167,7 @@ forman.initialize = function(parent, atts, target, fieldIn) {
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 var atts = {};
                 // atts[field.name] = field.value;
-                field.parent.fields.splice(index, 0, forman.initialize.call(this, field.parent, atts, field.el, field.item))
+                field.parent.fields.splice(index, 0, forman.initialize.call(this, field.parent, atts, field.el,null, field.item))
             }
         }.bind(this, field));
     }
@@ -144,7 +184,15 @@ forman.initialize = function(parent, atts, target, fieldIn) {
         }.bind(this, field));
     }
     if(field.fields){
-        field.fields = _.map(field.fields, forman.initialize.bind(this, field, atts[field.name]||{}, null) );
+        var newatts = {};
+            if(field.array && typeof atts[field.name] == 'object'){
+                newatts =  atts[field.name][index||0];
+            }else{
+                newatts = atts[field.name]||{};
+            }
+
+        field.fields = _.map(field.fields, forman.initialize.bind(this, field, newatts, null, null) );
+        
     }
 
     return field;
@@ -217,7 +265,7 @@ forman.processOptions = function(field) {
     }.bind(field))
     
     if(typeof field.default !== 'undefined' && field.options[0] !== field.default) {
-		field.options.unshift(field.default);
+		field.options.push(field.default);
 	}
 
     return field;
