@@ -6,8 +6,8 @@
 
   </head>
   <body>
-   <div style="width:500px;margin:50px auto" id="form"></div>
-   <pre style="width:500px;margin:50px auto" id="result"></pre>
+   <div style="width:800px;margin:50px auto" id="form"></div>
+   <pre style="width:800px;margin:50px auto" id="result"></pre>
     <script src="./assets/js/lodash.min.js"></script>    
     <script type='text/javascript' src='./src/forman.js'></script>
     <script type='text/javascript' src='./src/forman.validate.js'></script>
@@ -17,7 +17,7 @@
 
     <script>
     options ={
-        attributes:{
+        data:{
           'favorite_state':'MT',
           'f_n': ["Bob", "Joe", 'more'],
           "candies": {
@@ -42,12 +42,12 @@
             // {name: 'job', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
             // {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
             {label: 'Candies', type:'fieldset', fields: [{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '', type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', array: true}]}]},
-            {label:'First Name', name: 'f_n', array:true},
+            {label:'First Name', name: 'f_n', array:true, columns: 6},
 
         ]
     };
     // options = {
-    //   attributes: {first_name: 'John', last_name: 'Doe'},//optional
+    //   data: {first_name: 'John', last_name: 'Doe'},//optional
     //   fields: [
     //     {label: 'First Name'}, 
     //     {label: 'Last Name'}

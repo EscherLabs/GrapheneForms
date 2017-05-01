@@ -1,12 +1,12 @@
 var forman = function(data, target){
     //initalize form
-    this.options = _.assignIn({legend: '', attributes:{}}, this.opts, data);
-    this.el = document.querySelector(target);
+    this.options = _.assignIn({legend: '', data:{}}, this.opts, data);
+    this.el = document.querySelector(target || data.el);
     this.el.innerHTML = forman.stencils.container(this.options);
-    this.container = this.el.querySelector(target + ' form')
+    this.container = this.el.querySelector((target || data.el) + ' form')
     //initialize individual fields
-    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.attributes||{}, null, null))
-    _.each(this.fields, forman.fill.bind(this, this.options.attributes||{}))
+    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.data||{}, null, null))
+    _.each(this.fields, forman.fill.bind(this, this.options.data||{}))
 
     //create all elements
     _.each(this.fields, function(field) {
@@ -88,7 +88,8 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
         validate: false,
         valid: true,
         parent: parent,
-        array:false
+        array:false,
+        columns:12
     }, fieldIn)
     
     field.item = fieldIn;
@@ -129,9 +130,9 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
         field = _.assignIn(field, forman.processOptions.call(this, field));
     }
 
-    field.el = document.createElement("div");
+    field.el = document.createElement("span");
     field.el.setAttribute("id", field.id);
-    field.el.setAttribute("class", 'row');
+    field.el.setAttribute("class", ' '+forman.columnMap[field.columns]);
     field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
 
     field.container =  field.el.querySelector('fieldset') || field.el;
@@ -142,7 +143,31 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
         field.parent.container.insertBefore(field.el, target.nextSibling);
     }
 
+
     
+			// if(field.type !== 'fieldset' ||  field.isChild() || !this.sectionsEnabled) {
+			// 	var cRow;
+			// 	if(typeof $(field.fieldset).children('.row').last().attr('id') !== 'undefined') {
+			// 		cRow = rows[$(field.fieldset).children('.row').last().attr('id')];		
+			// 	}
+			// 	if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns){
+			// 		var temp = Berry.getUID();
+			// 		cRow = {};
+			// 		cRow.used = 0;
+			// 		cRow.ref = $(Berry.render('berry_row', {id: temp}));
+			// 		rows[temp] = cRow;
+			// 		$(field.fieldset).append(cRow.ref);
+			// 	}
+			// 	cRow.used += parseInt(field.columns, 10);
+			// 	cRow.used += parseInt(field.offset, 10);
+			// 	cRow.ref.append( $('<div/>').addClass('col-md-' + field.columns).addClass('col-md-offset-' + field.offset).append(field.render()) );
+			// }else{
+			// 	$(field.fieldset).append(field.render() );
+			// }
+    
+
+
+
     if(field.onchange !== undefined){ field.el.addEventListener('change', this.onchange);}
     field.el.addEventListener('change', function(){
         this.value = this.get();

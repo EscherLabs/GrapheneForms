@@ -5,3 +5,18 @@ forman.stencils = {
     radio: _.template('<div class="row"><label class="three columns"><%= label %><% if(validate.required){%><%= owner.opts.required%><%}%><%= owner.opts.suffix%></label> <% if(options){ _.forEach(options, function(option) { %><label><input class="six columns" name="<%=name%>" value="<%=option.value%>" type="radio"><%=option.label%></label><% })}else{%>hello<%}; %> <% if(!valid){%><small style="color:red"> <%=errors %> </small><%}%><%if(array){%> <input style="padding: 0 15px;" class="forman-add" type="button" value="+"><input style="padding: 0 15px;" class="forman-minus" type="button" value="-"><%}; %></div>'),
     fieldset: _.template('<div class="forman"><fieldset name="<%= name %>"><legend for="<%= name %>"><h5><%= label %></h5></legend><hr><%if(array){%> <input style="padding: 0 15px;" class="forman-add" type="button" value="+"><input style="padding: 0 15px;" class="forman-minus" type="button" value="-"><%}; %></fieldset></div>')
 };
+forman.columns = 12;
+forman.columnMap = {
+    1:'one columns',
+    2:'two columns',
+    3:'three columns',
+    4:'four columns',
+    5:'five columns',
+    6:'six columns',
+    7:'seven columns',
+    8:'eight columns',
+    9:'nine columns',
+    10:'ten columns',
+    11:'eleven columns',
+    12:'twelve columns'
+}

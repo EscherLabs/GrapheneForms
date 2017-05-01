@@ -1,11 +1,11 @@
 var forman = function(data, target){
     //initalize form
-    this.options = _.assignIn({legend: '', attributes:{}}, this.opts, data);
+    this.options = _.assignIn({legend: '', data:{}}, this.opts, data);
     document.querySelector(target).innerHTML = forman.stencils.container(this.options);
     this.el = document.querySelector(target + ' form')
 
     //initialize individual fields
-    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.attributes||{}, null))
+    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.data||{}, null))
 
     //create all elements
     _.each(this.fields, function(field) {
