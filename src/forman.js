@@ -8,11 +8,7 @@ var forman = function(data, target){
     this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.data||{}, null, null))
     _.each(this.fields, forman.fill.bind(this, this.options.data||{}))
 
-    //create all elements
-    _.each(this.fields, function(field) {
-		field.owner.events.trigger('change:'+field.name, field);
-    })
-    
+
     //parse form values into JSON object
     var toJSON = function(name) {
         if(typeof name == 'string') {
@@ -48,30 +44,28 @@ var forman = function(data, target){
     this.on = this.events.on;
     this.trigger = this.events.trigger;
     this.debounce = this.events.debounce;
+        
+    //initialize individual fields
+    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.attributes||{}, null, null))
+    _.each(this.fields, forman.fill.bind(this, this.options.attributes||{}))
+
+    _.each(this.fields, function(field) {
+		field.owner.events.trigger('change:'+field.name, field);
+    })
 }
 
 
 forman.fill = function(atts, fieldIn, ind, list) {
-    // if(field.array && typeof atts[field.name] == 'object'){
-    //     field.value =  atts[field.name][index||0];
-    // }
-
-
     var field = _.findLast(list,{name:_.uniqBy(list,'name')[ind].name});
     if(!field.array && field.fields){
         _.each(field.fields, forman.fill.bind(this, atts[field.name]||{}) );
     }
     if(field.array && typeof atts[field.name] == 'object') {
-
         if(atts[field.name].length >1){
-
             for(var i = 1; i<atts[field.name].length; i++) {
                 var newfield = forman.initialize.call(this, field.parent, atts, field.el,i, field.item);
                 field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id}), 0, newfield)
                 field = newfield;
-                // if(field.array){
-                //     _.each(field.fields, forman.fill.bind(this, atts[_.findIndex(field.parent.fields, {id: field.id})]||{}) );
-                // }
             }
         }
     }
@@ -112,19 +106,6 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
     field.get = function(){
         return this.el.querySelector('[name="' + this.name + '"]').checked || this.el.querySelector('[name="' + this.name + '"]').value;
     }.bind(field)
-    forman.processConditions.call(field, field.display,function(result){
-        this.el.style.display = result ? "block" : "none";
-    }.bind(field))      
-    forman.processConditions.call(field, field.visible,function(result){
-        this.el.style.visibility = result ? "visible" : "hidden";
-    }.bind(field))
-    forman.processConditions.call(field, field.enable,function(result){
-        this.enabled = result;
-    }.bind(field))
-    forman.processConditions.call(field, field.parsable,function(result){
-        this.el.style.parsable = result
-    }.bind(field))
-
 
     if(field.type == 'select' || field.type == 'radio') {
         field = _.assignIn(field, forman.processOptions.call(this, field));
@@ -164,9 +145,6 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
 			// }else{
 			// 	$(field.fieldset).append(field.render() );
 			// }
-    
-
-
 
     if(field.onchange !== undefined){ field.el.addEventListener('change', this.onchange);}
     field.el.addEventListener('change', function(){
@@ -222,7 +200,18 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
                 }
         
     }
-   
+    forman.processConditions.call(field, field.display, function(result){
+        this.el.style.display = result ? "block" : "none";
+    })      
+    forman.processConditions.call(field, field.visible,function(result){
+        this.el.style.visibility = result ? "visible" : "hidden";
+    })
+    forman.processConditions.call(field, field.enable,function(result){
+        this.enabled = result;
+    })
+    forman.processConditions.call(field, field.parsable,function(result){
+        this.el.style.parsable = result
+    })
 
     return field;
 }
@@ -298,7 +287,7 @@ forman.processOptions = function(field) {
     }.bind(field))
     
     if(typeof field.default !== 'undefined' && field.options[0] !== field.default) {
-		field.options.push(field.default);
+		field.options.unshift(field.default);
 	}
 
     return field;

@@ -40,14 +40,14 @@ forman.conditions = {
 		);
 	},
 	test: function(forman, args, func) {
-		return forman.on('change:' + this.name, function(args, local, topic, token) {
+		return forman.events.on('change:' + this.name, function(args, local, topic, token) {
 				func.call(this, args(), token);
 			}.bind( this, args)
 		);
 	},
 	multiMatch: function(forman, args, func) {
-		forman.on('change:' + _.pluck(args, 'name').join(' change:'), function(args, local, topic) {
-			func.call(this, function(args,form){
+		forman.events.on('change:' + _.map(args, 'name').join(' change:'), function(args, local, topic) {
+			func.call(this, function(args, form) {
 				var status = false;
 				for(var i in args) {
 					var val = args[i].value; 
@@ -62,7 +62,9 @@ forman.conditions = {
 				}
 				return status;
 			}(args, forman), 'mm');
-		}.bind( this, args))
+		}.bind(this, args))
+		
 		return 'mm';
 	}
 };
+ 

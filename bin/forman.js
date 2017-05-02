@@ -4,16 +4,15 @@ var forman = function(data, target){
     document.querySelector(target).innerHTML = forman.stencils.container(this.options);
     this.el = document.querySelector(target + ' form')
 
+<<<<<<< Updated upstream
     //initialize individual fields
     this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.data||{}, null))
+=======
+ 
+>>>>>>> Stashed changes
 
-    //create all elements
-    _.each(this.fields, function(field) {
-		field.owner.events.trigger('change:'+field.name, field);
-    })
-    
     //parse form values into JSON object
-    var toJSON = function(name) {
+    this.toJSON = function(name) {
         if(typeof name == 'string') {
             return _.find(this.fields, {name: name}).get();
         }
@@ -36,8 +35,7 @@ var forman = function(data, target){
             }
         }.bind(this))
         return obj;
-    }
-    this.toJSON = toJSON.bind(this);
+    }.bind(this);
     // this.fields = _.keyBy(this.fields, 'name');
     this.set = function(name,value) {
         _.find(this.fields, {name: name}).set(value);
@@ -48,6 +46,14 @@ var forman = function(data, target){
     this.on = this.events.on;
     this.trigger = this.events.trigger;
     this.debounce = this.events.debounce;
+	   //initialize individual fields
+    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.attributes||{}, null))
+
+	    //create all elements
+    _.each(this.fields, function(field) {
+		field.owner.events.trigger('change:'+field.name, field);
+    })
+    
 }
 
 forman.initialize = function(parent, atts, target, fieldIn) {
@@ -79,19 +85,7 @@ forman.initialize = function(parent, atts, target, fieldIn) {
     field.get = function(){
         return this.el.querySelector('[name="' + this.name + '"]').checked || this.el.querySelector('[name="' + this.name + '"]').value;
     }.bind(field)
-    forman.processConditions.call(field, field.display,function(result){
-        this.el.style.display = result ? "block" : "none";
-    }.bind(field))      
-    forman.processConditions.call(field, field.visible,function(result){
-        this.el.style.visibility = result ? "visible" : "hidden";
-    }.bind(field))
-    forman.processConditions.call(field, field.enable,function(result){
-        this.enabled = result;
-    }.bind(field))
-    forman.processConditions.call(field, field.parsable,function(result){
-        this.el.style.parsable = result
-    }.bind(field))
-
+ 
 
     if(field.type == 'select' || field.type == 'radio') {
         field = _.assignIn(field, forman.processOptions.call(this, field));
@@ -146,6 +140,19 @@ forman.initialize = function(parent, atts, target, fieldIn) {
     if(field.fields){
         field.fields = _.map(field.fields, forman.initialize.bind(this, field, atts[field.name]||{}, null) );
     }
+	debugger;
+   forman.processConditions.call(this, field.display,function(result){
+        this.el.style.display = result ? "block" : "none";
+    }.bind(field))      
+    forman.processConditions.call(field, field.visible,function(result){
+        this.el.style.visibility = result ? "visible" : "hidden";
+    }.bind(field, this))
+    forman.processConditions.call(field, field.enable,function(result){
+        this.enabled = result;
+    }.bind(field, this))
+    forman.processConditions.call(field, field.parsable,function(result){
+        this.el.style.parsable = result
+    }.bind(field, this))
 
     return field;
 }
