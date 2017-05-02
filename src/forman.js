@@ -1,9 +1,9 @@
-var forman = function(data, target){
+var forman = function(data, el){
     //initalize form
     this.options = _.assignIn({legend: '', data:{}}, this.opts, data);
-    this.el = document.querySelector(target || data.el);
+    this.el = document.querySelector(el || data.el);
     this.el.innerHTML = forman.stencils.container(this.options);
-    this.container = this.el.querySelector((target || data.el) + ' form')
+    this.container = this.el.querySelector((el || data.el) + ' form')
     //initialize individual fields
     this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.data||{}, null, null))
     _.each(this.fields, forman.fill.bind(this, this.options.data||{}))
@@ -63,7 +63,7 @@ forman.fill = function(atts, fieldIn, ind, list) {
     if(field.array && typeof atts[field.name] == 'object') {
         if(atts[field.name].length >1){
             for(var i = 1; i<atts[field.name].length; i++) {
-                var newfield = forman.initialize.call(this, field.parent, atts, field.el,i, field.item);
+                var newfield = forman.initialize.call(this, field.parent, atts, field.el, i , field.item);
                 field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id}), 0, newfield)
                 field = newfield;
             }
@@ -72,7 +72,7 @@ forman.fill = function(atts, fieldIn, ind, list) {
 }
 
 
-forman.initialize = function(parent, atts, target,index, fieldIn ) {
+forman.initialize = function(parent, atts, el, index, fieldIn ) {
     var field = _.assignIn({
         name: (fieldIn.label||'').toLowerCase().split(' ').join('_'), 
         id: forman.getUID(), 
@@ -118,10 +118,10 @@ forman.initialize = function(parent, atts, target,index, fieldIn ) {
 
     field.container =  field.el.querySelector('fieldset') || field.el;
 
-    if (target == null){
+    if (el == null){
         field.parent.container.appendChild(field.el);
     } else {
-        field.parent.container.insertBefore(field.el, target.nextSibling);
+        field.parent.container.insertBefore(field.el, el.nextSibling);
     }
 
 
