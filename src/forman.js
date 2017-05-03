@@ -3,11 +3,7 @@ var forman = function(data, el){
     this.options = _.assignIn({legend: '', data:{}}, this.opts, data);
     this.el = document.querySelector(el || data.el);
     this.el.innerHTML = forman.stencils.container(this.options);
-    this.container = this.el.querySelector((el || data.el) + ' form')
-    //initialize individual fields
-    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.data||{}, null, null))
-    _.each(this.fields, forman.fill.bind(this, this.options.data||{}))
-
+    this.container = this.el.querySelector((el || data.el) + ' form');
 
     //parse form values into JSON object
     var toJSON = function(name) {
@@ -57,6 +53,7 @@ var forman = function(data, el){
 
 forman.fill = function(atts, fieldIn, ind, list) {
     var field = _.findLast(list,{name:_.uniqBy(list,'name')[ind].name});
+    // var field = _.findLast(list,{name:list[ind].name});
     if(!field.array && field.fields){
         _.each(field.fields, forman.fill.bind(this, atts[field.name]||{}) );
     }
@@ -210,7 +207,7 @@ forman.initialize = function(parent, atts, el, index, fieldIn ) {
         this.enabled = result;
     })
     forman.processConditions.call(field, field.parsable,function(result){
-        this.el.style.parsable = result
+        this.parsable = result
     })
 
     return field;

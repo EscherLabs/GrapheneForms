@@ -1,6 +1,6 @@
 forman.processConditions = function(conditions, func) {
 	if (typeof conditions === 'string') {
-		if(conditions === 'show' || conditions === 'enabled'  || conditions === 'parsable') {
+		if(conditions === 'display' || conditions === 'enabled'  || conditions === 'parsable') {
 			conditions = this.item[conditions];
 		}else if(conditions === 'enable') {
 			conditions = this.item.enable;
@@ -10,11 +10,9 @@ forman.processConditions = function(conditions, func) {
 		return conditions;
 	}
 	if (typeof conditions === 'object') {
-		var keys = [];
-		for(var c in conditions){
-			keys.push(forman.conditions[c].call(this, this.owner, conditions[c], (func || conditions[c].callBack)));
-		}
-		return keys;
+		return _.map(conditions, function(item, c){
+			return forman.conditions[c].call(this, this.owner, item, (func || item.callBack))
+		}.bind(this))
 	}
 	return true;
 };
@@ -46,12 +44,13 @@ forman.conditions = {
 		);
 	},
 	multiMatch: function(forman, args, func) {
-		forman.events.on('change:' + _.map(args, 'name').join(' change:'), function(args, local, topic) {
-			func.call(this, function(args, form) {
+		forman.events.on('change:' + _.map(args, 'name').join(' change:'), function(args, local) {
+
+			func.call(this, function(args, forman) {
 				var status = false;
 				for(var i in args) {
 					var val = args[i].value; 
-					var localval = form.toJSON()[args[i].name];
+					var localval = forman.toJSON()[args[i].name];
 					
 					if(typeof val == 'object' && localval !== null){
 						status = (val.indexOf(localval) !== -1);
@@ -62,6 +61,7 @@ forman.conditions = {
 				}
 				return status;
 			}(args, forman), 'mm');
+
 		}.bind(this, args))
 		
 		return 'mm';
