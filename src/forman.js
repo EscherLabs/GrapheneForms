@@ -1,3 +1,4 @@
+"use strict";
 var forman = function(data, el){
     //initalize form
     this.options = _.assignIn({legend: '', data:{}}, this.opts, data);
@@ -11,20 +12,22 @@ var forman = function(data, el){
             return _.find(this.fields, {name: name}).get();
         }
         var obj = {};
-        _.each(this.fields, function(field) {       
-            if(field.fields){
-                if(field.array){
-                    obj[field.name] = obj[field.name] || [];
-                    obj[field.name].unshift(toJSON.call(field));
+        _.each(this.fields, function(field) {
+            if(field.parsable){
+                if(field.fields){
+                    if(field.array){
+                        obj[field.name] = obj[field.name] || [];
+                        obj[field.name].unshift(toJSON.call(field));
+                    }else{
+                        obj[field.name] = toJSON.call(field);
+                    }
                 }else{
-                    obj[field.name] = toJSON.call(field);
-                }
-            }else{
-                if(field.array){
-                    obj[field.name] = obj[field.name] || [];
-                    obj[field.name].unshift(field.get());
-                }else{
-                    obj[field.name] = field.get();
+                    if(field.array){
+                        obj[field.name] = obj[field.name] || [];
+                        obj[field.name].unshift(field.get());
+                    }else{
+                        obj[field.name] = field.get();
+                    }
                 }
             }
         }.bind(this))
@@ -42,8 +45,8 @@ var forman = function(data, el){
     this.debounce = this.events.debounce;
         
     //initialize individual fields
-    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.attributes||{}, null, null))
-    _.each(this.fields, forman.fill.bind(this, this.options.attributes||{}))
+    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.data||{}, null, null))
+    _.each(this.fields, forman.fill.bind(this, this.options.data||{}))
 
     _.each(this.fields, function(field) {
 		field.owner.events.trigger('change:'+field.name, field);
@@ -52,8 +55,15 @@ var forman = function(data, el){
 
 
 forman.fill = function(atts, fieldIn, ind, list) {
-    var field = _.findLast(list,{name:_.uniqBy(list,'name')[ind].name});
-    // var field = _.findLast(list,{name:list[ind].name});
+    // var field = _.findLast(list,{name:_.uniqBy(list,'name')[ind].name});
+    var field;
+    
+    if(fieldIn.array){
+        debugger;
+        field = _.findLast(list,{name:_.uniqBy(list,'name')[ind].name});
+    }else{
+        field = _.findLast(list,{name:list[ind].name});
+    }
     if(!field.array && field.fields){
         _.each(field.fields, forman.fill.bind(this, atts[field.name]||{}) );
     }
@@ -78,6 +88,7 @@ forman.initialize = function(parent, atts, el, index, fieldIn ) {
         label: fieldIn.legend || fieldIn.name,
         validate: false,
         valid: true,
+        parsable:true,
         parent: parent,
         array:false,
         columns:12
@@ -278,6 +289,7 @@ forman.processOptions = function(field) {
 				item.value = item.label;
             }
         }
+        debugger;
         var temp = _.assignIn({label: item[field.label_key], value: item[field.value_key] || i }, item);
         if(temp.value == field.value) { temp.selected = true;}
         return temp;

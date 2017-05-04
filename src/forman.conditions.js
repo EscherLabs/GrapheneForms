@@ -33,7 +33,7 @@ forman.conditions = {
 	},
 	matches: function(forman, args, func) {
 		return forman.events.on('change:' + args.name, function(args, local, topic, token) {
-				func.call(this.self, (args.value  === local.get()), token);
+				func.call(this, (args.value  === local.get()), token);
             }.bind(this, args)
 		);
 	},
@@ -44,8 +44,7 @@ forman.conditions = {
 		);
 	},
 	multiMatch: function(forman, args, func) {
-		forman.events.on('change:' + _.map(args, 'name').join(' change:'), function(args, local) {
-
+		var callback = function(args, local) {
 			func.call(this, function(args, forman) {
 				var status = false;
 				for(var i in args) {
@@ -62,7 +61,11 @@ forman.conditions = {
 				return status;
 			}(args, forman), 'mm');
 
-		}.bind(this, args))
+		}.bind(this, args);
+		for(var i in args){
+			forman.events.on('change:' + args[i].name, callback)
+
+		}
 		
 		return 'mm';
 	}

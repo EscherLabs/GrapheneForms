@@ -391,10 +391,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     			"type": "select",
     			"help": "**NOTE: If you are a double-major, please select the major you will be walking behind.",
     			"options": [
-    				{
-    					"label": "Africana Studies",
-    					"value": "Africana Studies"
-    				},
+    				 "Africana Studies",
     				{
     					"label": "Anthropology",
     					"value": "Anthropology"
@@ -565,9 +562,8 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     			"help": ceremony_help_text,
     			"name": "ceremony",
     			"type": "select",
-    			"enabled":false,
     			"value": "Harpur 2 Ceremony",
-                "options": [{"label": "Harpur 2 Ceremony  (Sunday, May 21 @ 12:00PM)","value": "Harpur 2 Ceremony"}],
+          "options": [{"label": "Harpur 2 Ceremony  (Sunday, May 21 @ 12:00PM)","value": "Harpur 2 Ceremony"}],
     			"display": {
                     "multiMatch": [
                         {"name": "department", "value": 
@@ -830,6 +826,63 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     //     {label: 'Last Name'}
     //   ], actions: false};
 
+
+
+   optionss={
+        data:{
+        "f_n": [
+          "Bob",
+          "steve"
+        ],
+
+        "number": "hello",
+        "favorite_state": "NC",
+        "candies": {
+          "candy": "skittles",
+          "brand": "mars",
+          "flavors": [
+            {
+              "flavor": "Lemon",
+              "color": [
+                "#0000ff",
+                "#ff0000"
+              ]
+            }
+          ]
+        }
+      },
+        legend:'My Form',
+        fields:[
+            {label:'First Name', name: 'f_n', array:false},
+            {name: 'checked', label: 'Checked?',type: 'checkbox'},// , display: {multiMatch:[{name:'number', value:['first','1']}]}},
+            {name: 'last_name', label: '0Last Name', validate: {required:false}, "display": {
+                    "multiMatch": [
+                        {"name": "f_n","value":["adam"]},
+                        {"name": "checked","value": [""]},
+
+                    ],
+                }
+              },            
+              {name: 'last_name', label: '1Last Name', validate: {required:false}, "display": {
+                    "multiMatch": [
+                        {"name": "f_n","value":["adam"]},
+                        {"name": "checked","value": true},
+
+                    ],
+                }
+              },
+            {name: 'last_name', label: '2Last Name', validate: {required:false}, "display": {
+                    "multiMatch": [
+                        {"name": "f_n","value":["", "tim"]},
+                    ],
+                }
+              },
+            // {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
+            // {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
+            // {label: 'Candies', type:'fieldset', fields: [{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '', type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color', array: true}]}]},
+
+        ]
+   }
     var myForman = new forman(options, '#form')
     // myForman.debounce('change', function(field){
     //     field.owner.validate();
