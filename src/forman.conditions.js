@@ -31,12 +31,6 @@ forman.conditions = {
 			}.bind(this, args)
 		);
 	},
-	// matches: function(forman, args, func) {
-	// 	return forman.events.on('change:' + args.name, function(args, local, topic, token) {
-	// 			func.call(this, (args.value  === local.get()), token);
-    //         }.bind(this, args)
-	// 	);
-	// },
 	test: function(forman, args, func) {
 		return forman.events.on('change:' + this.name, function(args, local, topic, token) {
 				func.call(this, args(), token);
