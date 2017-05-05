@@ -55,11 +55,9 @@ var forman = function(data, el){
 
 
 forman.fill = function(atts, fieldIn, ind, list) {
-    // var field = _.findLast(list,{name:_.uniqBy(list,'name')[ind].name});
-    var field;
-    
+    var field;    
     if(fieldIn.array){
-        debugger;
+        // debugger;
         field = _.findLast(list,{name:_.uniqBy(list,'name')[ind].name});
     }else{
         field = _.findLast(list,{name:list[ind].name});
@@ -77,8 +75,6 @@ forman.fill = function(atts, fieldIn, ind, list) {
         }
     }
 }
-
-
 forman.initialize = function(parent, atts, el, index, fieldIn ) {
     var field = _.assignIn({
         name: (fieldIn.label||'').toLowerCase().split(' ').join('_'), 
@@ -289,7 +285,7 @@ forman.processOptions = function(field) {
 				item.value = item.label;
             }
         }
-        debugger;
+        // debugger;
         var temp = _.assignIn({label: item[field.label_key], value: item[field.value_key] || i }, item);
         if(temp.value == field.value) { temp.selected = true;}
         return temp;

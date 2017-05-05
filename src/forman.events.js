@@ -17,8 +17,7 @@ forman.prototype.events = (function (_) {
     var index = _.indexOf(handlers[event], handler);
 
     if (index === -1) {
-      console.warn('Handler not found for event ' + event +
-        ':', handler);
+      console.warn('Handler not found for event ' + event + ':', handler);
     } else {
       handlers[event].splice(index, 1);
     }

@@ -31,43 +31,34 @@ forman.conditions = {
 			}.bind(this, args)
 		);
 	},
-	matches: function(forman, args, func) {
-		return forman.events.on('change:' + args.name, function(args, local, topic, token) {
-				func.call(this, (args.value  === local.get()), token);
-            }.bind(this, args)
-		);
-	},
+	// matches: function(forman, args, func) {
+	// 	return forman.events.on('change:' + args.name, function(args, local, topic, token) {
+	// 			func.call(this, (args.value  === local.get()), token);
+    //         }.bind(this, args)
+	// 	);
+	// },
 	test: function(forman, args, func) {
 		return forman.events.on('change:' + this.name, function(args, local, topic, token) {
 				func.call(this, args(), token);
 			}.bind( this, args)
 		);
 	},
-	multiMatch: function(forman, args, func) {
+	matches: function(forman, args, func) {
 		var callback = function(args, local) {
 			func.call(this, function(args, forman) {
-				var status = false;
-				for(var i in args) {
-					var val = args[i].value; 
-					var localval = forman.toJSON()[args[i].name];
-					
-					if(typeof val == 'object' && localval !== null){
-						status = (val.indexOf(localval) !== -1);
-					}else{
-						status = (val == localval);
-					}
-					if(!status)break;
+				var status = true;
+				var i = 0;
+				while(status && i < args.length) {
+					status = (args[i].value.indexOf(forman.toJSON()[args[i++].name]) !== -1);
 				}
 				return status;
-			}(args, forman), 'mm');
-
+			}(args, forman));
 		}.bind(this, args);
+
 		for(var i in args){
 			forman.events.on('change:' + args[i].name, callback)
-
 		}
 		
-		return 'mm';
 	}
 };
  

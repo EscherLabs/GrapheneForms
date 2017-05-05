@@ -50,7 +50,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
         legend:'My Form',
         // fields:[
         //     {label:'First Name', name: 'f_n', array:true},
-        //     {name: 'checked', label: 'Checked?',type: 'checkbox', display: {multiMatch:[{name:'number', value:['first','1']}]}},
+        //     {name: 'checked', label: 'Checked?',type: 'checkbox', display: {matches:[{name:'number', value:['first','1']}]}},
         //     {name: 'last_name', label: 'Last Name', validate: {required:true}},
         //     {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
         //     {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
@@ -178,10 +178,10 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				}
     			],
     			"display": {
-                    "matches": {
+                    "matches": [{
                         "name": "degree_type",
-                        "value": "doctoral"
-                    }
+                        "value": ["doctoral"]
+                    }]
                 },
                 "parsable":"display"
     		},
@@ -190,10 +190,10 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     			"name": "doc_advisor",
     			"type": "text",
     			"display": {
-                    "matches": {
+                    "matches": [{
                         "name": "degree_type",
-                        "value": "doctoral"
-                    }
+                        "value": ["doctoral"]
+                    }]
                 }
     		},
     		{
@@ -213,10 +213,10 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				}
     			],
     			"display": {
-                    "matches": {
+                    "matches": [{
                         "name": "degree_type",
-                        "value": "doctoral"
-                    }
+                        "value": ["doctoral"]
+                    }]
                 }
     		},
     		{
@@ -227,10 +227,10 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     			"value": "",
     			"help": "(If Doctor, If Attending Doctoral Reception)",
     			"display": {
-                    "matches": {
+                    "matches": [{
                         "name": "degree_type",
-                        "value": "doctoral"
-                    }
+                        "value": ["doctoral"]
+                    }]
                 }
     		},
             {
@@ -241,7 +241,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     			"value": "Graduate Ceremony",
                 "options": [{"label": "Graduate Ceremony (Friday, May 19 @ 3:30PM)","value": "Graduate Ceremony"}],
     			"display": {
-                    "matches": {"name": "degree_type","value": "doctoral"},
+                    "matches": [{"name": "degree_type","value": ["doctoral"]}],
                 },
                 "parsable":"display"
     		},
@@ -260,7 +260,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				},
     			],
     			"display": {
-                    "multiMatch": [
+                    "matches": [
                         {"name": "degree_type", "value": "bachelors"}, 
                         {"name": "school","value": 
                             ["","SoM","Watson","Decker"]
@@ -293,9 +293,9 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				},
     			],
     			"display": {
-                    "multiMatch": [
-                        {"name": "degree_type", "value": "bachelors"}, 
-                        {"name": "school", "value": "Harpur"}
+                    "matches": [
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                        {"name": "school", "value": ["Harpur"]}
                     ],
                 },
                 "parsable":"display"
@@ -314,9 +314,9 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				},
     			],
     			"display": {
-                    "multiMatch": [
-                        {"name": "degree_type", "value": "bachelors"}, 
-                        {"name": "school","value": "Watson"}
+                    "matches": [
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                        {"name": "school","value": ["Watson"]}
                     ],
                 },
                 "parsable":"display"
@@ -335,7 +335,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				},
     			],
     			"display": {
-                    "multiMatch": [
+                    "matches": [
                         {"name": "degree_type", "value": "bachelors"}, 
                         {"name": "school","value": "CCPA"}
                     ],
@@ -356,9 +356,9 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				},
     			],
     			"display": {
-                    "multiMatch": [
-                        {"name": "degree_type", "value": "bachelors"}, 
-                        {"name": "school","value": "SoM"}
+                    "matches": [
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                        {"name": "school","value": ["SoM"]}
                     ],
                 },
                 "parsable":"display"
@@ -377,9 +377,9 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				},
     			],
     			"display": {
-                    "multiMatch": [
-                        {"name": "degree_type", "value": "bachelors"}, 
-                        {"name": "school","value": "Decker"}
+                    "matches": [
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                        {"name": "school","value": ["Decker"]}
                     ],
                 },
                 "parsable":"display"
@@ -392,18 +392,9 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     			"help": "**NOTE: If you are a double-major, please select the major you will be walking behind.",
     			"options": [
     				 "Africana Studies",
-    				{
-    					"label": "Anthropology",
-    					"value": "Anthropology"
-    				},
-    				{
-    					"label": "Art and Design",
-    					"value": "Art and Design"
-    				},
-    				{
-    					"label": "Art History",
-    					"value": "Art History"
-    				},
+    				"Anthropology",
+    				"Art and Design",
+					"Art History",
     				{
     					"label": "Asian and Asian American Studies",
     					"value": "Asian and Asian American Studies"
@@ -530,9 +521,9 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				}
     			],
     			"display": {
-                    "multiMatch": [
-                        {"name": "degree_type", "value": "bachelors"}, 
-                        {"name": "school","value": "Harpur"}
+                    "matches": [
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                        {"name": "school","value": ["Harpur"]}
                     ],
                 },"parsable":"display",
     		},
@@ -546,13 +537,13 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     			"value": "Harpur 1 Ceremony",
                 "options": [{"label": "Harpur 1 Ceremony (Sunday, May 21 @ 8:30AM)","value": "Harpur 1 Ceremony"}],
     			"display": {
-                    "multiMatch": [
+                    "matches": [
                         {"name": "department", "value": 
                             ["Africana Studies","Anthropology","Art and Design",
                             "Art History","Asian and Asian American Studies","Biochemistry",
                             "Biological Sciences","Chemistry","Cinema","Classical and Near Eastern Studies",
                             "Comparative Literature","Economics"]}, 
-                        {"name": "degree_type", "value": "bachelors"}, 
+                        {"name": "degree_type", "value": ["bachelors"]}, 
                     ],
                 },
                 "parsable":"display"
@@ -565,13 +556,13 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     			"value": "Harpur 2 Ceremony",
           "options": [{"label": "Harpur 2 Ceremony  (Sunday, May 21 @ 12:00PM)","value": "Harpur 2 Ceremony"}],
     			"display": {
-                    "multiMatch": [
+                    "matches": [
                         {"name": "department", "value": 
                             ["English","Environmental Studies","Geography","Geological Sciences",
                             "German and Russian Studies","Global and International Affairs","History",
                             "Individualized Major Program","Integrative Neuroscience","Judaic Studies",
                             "Latin American and Caribbean Area Studies","Linguistics"]}, 
-                        {"name": "degree_type", "value": "bachelors"}, 
+                        {"name": "degree_type", "value": ["bachelors"]}, 
                     ],
                 },
                 "parsable":"display"
@@ -585,12 +576,12 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     			"value": "Harpur 3 Ceremony",
     			"options": [{"label": "Harpur 3 Ceremony  (Sunday, May 21 @ 3:30PM)","value": "Harpur 3 Ceremony"}],
     			"display": {
-                    "multiMatch": [
+                    "matches": [
                         {"name": "department", "value": 
                             ["Mathematical Sciences","Medieval and Early Modern Studies","Music",
                             "Philosophy","Philosophy, Politics and Law","Physics","Political Science",
                             "Psychology","Romance Languages","Sociology","Theatre"]}, 
-                        {"name": "degree_type", "value": "bachelors"}, 
+                        {"name": "degree_type", "value": ["bachelors"]}, 
 
                     ],
                 },
@@ -642,7 +633,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				}
     			],
     			"display": {
-                    "matches": {"name": "degree_type","value": "masters"}
+                    "matches": [{"name": "degree_type","value": ["masters"]}]
                 },
                 "parsable":"display"
     		},
@@ -650,9 +641,9 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     			"label": "What degree will you be receiving? (Other)",
     			"name": "degree_other",
     			"display": {
-                    "multiMatch": [
-                        {"name": "degree_type","value": "masters"},
-                        {"name": "degree","value": "Other"}
+                    "matches": [
+                        {"name": "degree_type","value": ["masters"]},
+                        {"name": "degree","value": ["Other"]}
     			    ]
                 }
             },
@@ -664,8 +655,8 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
                 "value": "Graduate Ceremony",
 			    "options": [{"label": "Graduate Ceremony  (Friday, May 19 @ 3:30PM)","value": "Graduate Ceremony"}],
                 "display": {
-                    "multiMatch": [
-                        {"name": "degree_type", "value": "masters"}, 
+                    "matches": [
+                        {"name": "degree_type", "value": ["masters"]}, 
                         {"name": "school","value": 
                             ["Harpur","Watson","SoM"]
                         }
@@ -686,8 +677,8 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				},
     			],
     			"display": {
-                    "multiMatch": [
-                        {"name": "degree_type", "value": "masters"}, 
+                    "matches": [
+                        {"name": "degree_type", "value": ["masters"]}, 
                         {"name": "school","value": ["CCPA","GSoE"]}
                     ],
                 },
@@ -706,9 +697,9 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				},
     			],
     			"display": {
-                    "multiMatch": [
-                        {"name": "degree_type", "value": "masters"}, 
-                        {"name": "school","value": "Decker"}
+                    "matches": [
+                        {"name": "degree_type", "value": ["masters"]}, 
+                        {"name": "school","value": ["Decker"]}
                     ],
                 },
                 "parsable":"display"
@@ -741,10 +732,10 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				},
     			],
     			"display": {
-                    "multiMatch": [
+                    "matches": [
                         {"name": "ceremony","value":["Watson Ceremony","Graduate Ceremony"]},
                         {"name": "degree_type", "value": ["masters","bachelors"]}, 
-                        {"name": "school","value": "Watson"}
+                        {"name": "school","value": ["Watson"]}
                     ],
                 },
                 "parsable":"display",
@@ -772,10 +763,10 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
     				},
     			],
     			"display": { 
-    			    "multiMatch": [
-                        {"name": "ceremony","value":"CCPA Ceremony"},
+    			    "matches": [
+                        {"name": "ceremony","value":["CCPA Ceremony"]},
                         {"name": "degree_type", "value": ["masters","bachelors"]}, 
-                        {"name": "school","value": "CCPA"}
+                        {"name": "school","value": ["CCPA"]}
                     ],
                 },
                 "parsable":"display",
@@ -854,9 +845,9 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
         legend:'My Form',
         fields:[
             {label:'First Name', name: 'f_n', array:false},
-            {name: 'checked', label: 'Checked?',type: 'checkbox'},// , display: {multiMatch:[{name:'number', value:['first','1']}]}},
+            {name: 'checked', label: 'Checked?',type: 'checkbox'},// , display: {matches:[{name:'number', value:['first','1']}]}},
             {name: 'last_name', label: '0Last Name', validate: {required:false}, "display": {
-                    "multiMatch": [
+                    "matches": [
                         {"name": "f_n","value":["adam"]},
                         {"name": "checked","value": [""]},
 
@@ -864,7 +855,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
                 }
               },            
               {name: 'last_name', label: '1Last Name', validate: {required:false}, "display": {
-                    "multiMatch": [
+                    "matches": [
                         {"name": "f_n","value":["adam"]},
                         {"name": "checked","value": true},
 
@@ -872,7 +863,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
                 }
               },
             {name: 'last_name', label: '2Last Name', validate: {required:false}, "display": {
-                    "multiMatch": [
+                    "matches": [
                         {"name": "f_n","value":["", "tim"]},
                     ],
                 }
