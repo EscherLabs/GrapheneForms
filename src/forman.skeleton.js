@@ -12,6 +12,9 @@ forman.stencils = {
             <input style="padding: 0 ;width:38px;" class="forman-add" type="button" value="+">
             <input style="padding: 0 ;width:38px;" class="forman-minus" type="button" value="-">
         <%}; %>
+    </div>`),    
+    hidden: _.template(`<div class="row">
+        <input name="<%= name %>" type="hidden" value="<%=value%>" id="<%=id%>" />
     </div>`),
     textarea: _.template(`<div class="row">
         <label class="three columns" for="<%= name %>"><%= label %><% if(validate.required){%><%= owner.opts.required%><%}%><%= owner.opts.suffix%></label> 
@@ -32,8 +35,9 @@ forman.stencils = {
         <%}; %>
     </div>`),
     radio: _.template(`<div class="row">
-        <label class="three columns"><%= label %><% if(validate.required){%><%= owner.opts.required%><%}%><%= owner.opts.suffix%></label>
-        <% if(options){ _.forEach(options, function(option) { %><label><input class="six columns" name="<%=name%>" value="<%=option.value%>" type="radio"><%=option.label%></label><% })}else{%>hello<%}; %>
+        <label class="three columns"><%= label %><% if(validate.required){%><%= owner.opts.required%><%}%><%= owner.opts.suffix%></label><span class="six columns">
+        <% if(options){ _.forEach(options, function(option) { %><label><input style="margin-right: 5px;" name="<%=name%>" value="<%=option.value%>" type="radio"><%=option.label%></label><% })}else{%>hello<%}; %>
+        </span>
         <small style="color:red;display:block; "><% if(!valid){%> <%=errors %> <%}%></small>
         <%if(array){%> 
             <input style="padding: 0 ;width:38px;" class="forman-add" type="button" value="+">
