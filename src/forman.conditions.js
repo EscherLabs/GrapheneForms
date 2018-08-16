@@ -37,13 +37,24 @@ forman.conditions = {
 			}.bind( this, args)
 		);
 	},
+	contains: function(Berry , args, func) {
+		return Berry.on('change:' + args.name, $.proxy(function(args, local, topic, token) {
+				func.call(this, (typeof local.value !== 'undefined'  && local.value.indexOf(args.value) !== -1 ), token);
+			}, this, args)
+		).lastToken;
+	},
 	matches: function(forman, args, func) {
 		var callback = function(args, local) {
 			func.call(this, function(args, forman) {
 				var status = true;
+				
 				var i = 0;
 				while(status && i < args.length) {
-					status = (args[i].value.indexOf(forman.toJSON()[args[i++].name]) !== -1);
+					if(typeof typeof args[i].value	== "object"){
+						status = (args[i].value.indexOf(forman.toJSON()[args[i++].name]) !== -1);
+					}else{
+						status = (args[i].value == forman.toJSON()[args[i++].name]);
+					}
 				}
 				return status;
 			}(args, forman));
@@ -54,5 +65,4 @@ forman.conditions = {
 		}
 		
 	}
-};
- 
+}; 

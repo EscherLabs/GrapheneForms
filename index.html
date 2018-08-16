@@ -819,7 +819,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
 
 
 
-   optionss={
+   options={
         data:{
         "f_n": [
           "Bob",
@@ -842,7 +842,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
           ]
         }
       },
-        legend:'My Form',
+      legend:'My Form',
         fields:[
             {label:'First Name', name: 'f_n', array:false},
             {name: 'checked', label: 'Checked?',type: 'checkbox'},// , display: {matches:[{name:'number', value:['first','1']}]}},
@@ -868,11 +868,54 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
                     ],
                 }
               },
-            // {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
-            // {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
-            // {label: 'Candies', type:'fieldset', fields: [{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '', type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color', array: true}]}]},
+            {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
+            {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
+            {label: 'Candies', type:'fieldset', fields: [
+				{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '',
+				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color', array: {max:2}}]}]},
 
         ]
+   }
+
+   opstions = {
+	   fields:[
+
+	   {type: 'fieldset', name:'basics', legend: 'General', hideLabel: true, inline: true, fields:[
+			{type: 'text', required: true, label: 'Field Label', name: 'label'},
+			{type: 'text', label: 'Name', name: 'name'},
+			{type: 'select', label: 'Display', name: 'type', value: 'dropdown', choices: [
+				{name: 'Dropdown', value: 'select'},
+				{name: 'Radio', value: 'radio'},
+				{name: 'Range', value: 'range'}
+			]},
+			{type: 'text', label: 'Default Value', name: 'value'},
+			{type: 'checkbox', label: 'Required', name: 'required'},
+			
+			{type: 'textarea', label: 'Instructions', name: 'help'},
+			
+			{type: 'text', label: 'External List', name: 'choices'},
+
+			{type: 'text', label: 'Label key', name: 'label_key',display:{'not_matches':{"name":"choices","value":""}}},
+			{type: 'text', label: 'Value key', name: 'value_key',display:{'not_matches':{"name":"choices","value":""}}},
+
+			{type: 'number', label: 'Max', name: 'max',display:{'matches':{"name":"choices","value":""}}},
+			{type: 'number', label: 'Min', name: 'min',placeholder:'1',display:{'not_matches':{"name":"max","value":0}}},
+			{type: 'number', label: 'Step', name: 'step',placeholder:'1',display:{'not_matches':{"name":"max","value":0}}},
+			// {type: 'fieldset', name:'default', legend: 'default Option',flatten:false, fields:[
+			// 	{type: 'fieldset', label: false, multiple: {duplicate: false},flatten:false, name: 'default', fields: [
+			// 		{label: 'Label'},
+			// 		{label: 'Value'}
+			// 	]}
+			// ]}
+		]},
+		// {type: 'fieldset', name:'choices_c', legend: '<i class="fa fa-th-list"></i> Options', hideLabel: true,  inline: true, fields:[
+			{type: 'fieldset', label: 'Options',  array: {max:2}, name: 'options', fields: [
+				{label: 'Label'},
+				{label: 'Value'}
+			]}
+		// ]}
+
+	   ]
    }
     var myForman = new forman(options, '#form')
     // myForman.debounce('change', function(field){
@@ -882,7 +925,9 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
 
 
 
-
+	myForman.debounce('change',function(d){
+		console.log(d.owner.toJSON());
+	})
 
 
     </script>

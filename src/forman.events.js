@@ -9,7 +9,6 @@ forman.prototype.events = (function (_) {
     if (typeof handlers[event] !== 'object') {
       handlers[event] = [];
     }
-
     handlers[event].push(handler);
   };
 
