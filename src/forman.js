@@ -2,9 +2,9 @@ var forman = function(data, el){
     "use strict";
     
     //initalize form
-    this.options = _.assignIn({legend: '', data:{}}, this.opts, data);
+    this.options = _.assignIn({legend: '', data:{}, columns:forman.columns},this.opts, data);
     this.el = document.querySelector(el || data.el);
-    this.el.innerHTML = forman.stencils.container(this.options);
+    this.el.innerHTML = forman.render('container', this.options);
     this.container = this.el.querySelector((el || data.el) + ' form');
 
     //parse form values into JSON object
@@ -44,14 +44,16 @@ var forman = function(data, el){
     this.on = this.events.on;
     this.trigger = this.events.trigger;
     this.debounce = this.events.debounce;
-    this.fields = _.map(this.options.fields, forman.initialize.bind(this, this, this.options.data||{}, null, null))
+    this.fields = _.map(this.options.fields, forman.createField.bind(this, this, this.options.data||{}, null, null))
     _.each(this.fields, forman.inflate.bind(this, this.options.data||{}))
     _.each(this.fields, function(field) {
 		field.owner.events.trigger('change:' + field.name, field);
     })
-
+    this.isActive = true;
+    this.active = function(){return this.isActive}
 }
 
+//creates multiple instances of duplicatable fields if input attributes exist for them
 forman.inflate = function(atts, fieldIn, ind, list) {
     var field;    
     if(fieldIn.array){
@@ -65,57 +67,89 @@ forman.inflate = function(atts, fieldIn, ind, list) {
     if(field.array && typeof atts[field.name] == 'object') {
         if(atts[field.name].length > 1){
             for(var i = 1; i<atts[field.name].length; i++) {
-                var newfield = forman.initialize.call(this, field.parent, atts, field.el, i, field.item);
+                var newfield = forman.createField.call(this, field.parent, atts, field.el, i, field.item);
                 field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id}), 0, newfield)
                 field = newfield;
             }
         }
     }
 }
-forman.initialize = function(parent, atts, el, index, fieldIn ) {
+
+forman.createField = function(parent, atts, el, index, fieldIn ) {
+    fieldIn.type = fieldIn.type || 'text';
+    //work forman.default in here
     var field = _.assignIn({
         name: (fieldIn.label||'').toLowerCase().split(' ').join('_'), 
         id: forman.getUID(), 
-        type: 'text', 
-        extends: 'basic', 
+        // type: 'text', 
         label: fieldIn.legend || fieldIn.name,
         validate: false,
         valid: true,
         parsable:true,
+        visible:true,
+        enabled:true,
         parent: parent,
         array:false,
-        columns:12
-    }, fieldIn)
-
+        columns: this.options.columns,
+        offset: 0
+    },forman.types[fieldIn.type].defaults, fieldIn)
+    // field = _.assignIn(forman.types[field.type].defaults,field)
     field.item = fieldIn;
+    field.owner = this;
+	if(field.columns > this.options.columns) { field.columns = this.options.columns; }
+    
     if(field.array && typeof atts[field.name] == 'object'){
         field.value =  atts[field.name][index||0];
     }else{
         field.value =  atts[field.name] || field.value || field.default;
     }
-    field.owner = this;
 
-    field.satisfied = function(value){
-        return (typeof value !== 'undefined' && value !== null && value !== '');
+	if(field.item.value !== 0){
+        if(field.array && typeof atts[field.name] == 'object'){
+            field.value =  atts[field.name][index||0];
+        }else{
+            if(typeof field.item.value === 'function') {
+                //uncomment this when ready to test function as value for input
+                field.valueFunc = item.value;
+                field.derivedValue = function() {
+                    return field.valueFunc.call(field.owner.toJSON());
+                };
+                field.item.value = field.item.value = field.derivedValue();
+                field.owner.on('change', function(){
+                    this.set(this.derivedValue());
+                }.bind(field));
+            } else {
+                //may need to search deeper in atts?
+                field.value =  atts[field.name] || field.value || field.default || '';
+            }  
+        }
+	} else {
+		field.value = 0;
+	}
+
+    field.satisfied = forman.types[field.type].satisfied.bind(field);
+
+    field.active = function() {
+		return this.parent.active() && this.enabled && this.parsable && this.visible;
+	}
+    field.set = function(value, silent){
+        //not sure we should be excluding objects - test how to allow objects
+        if(this.value != value && typeof value !== 'object') {
+            this.value = value;
+            forman.types[this.type].set(value);
+			if(!silent){this.trigger('change')};
+		}
     }.bind(field)
-    field.set = function(value){
-        this.el.querySelector('[name="' + this.name + '"]').value = value;
-        _.each(this.options, function(option, index){
-            if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
-        }.bind(this))
-    }.bind(field)
-    field.get = function(){
-        return this.el.querySelector('[name="' + this.name + '"]').checked || this.el.querySelector('[name="' + this.name + '"]').value;
-    }.bind(field)
+
+    field.get = forman.types[field.type].get.bind(field);
 
     if(field.type == 'select' || field.type == 'radio') {
         field = _.assignIn(field, forman.processOptions.call(this, field));
     }
-
-    field.el = document.createElement("span");
-    field.el.setAttribute("id", field.id);
-    field.el.setAttribute("class", ' '+forman.columnMap[field.columns]);
-    field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
+    
+    field.render = forman.types[field.type].render.bind(field);
+    
+    field.el = forman.types[field.type].create.call(field);
 
     field.container =  field.el.querySelector('fieldset') || field.el;
 
@@ -125,39 +159,28 @@ forman.initialize = function(parent, atts, el, index, fieldIn ) {
         field.parent.container.insertBefore(field.el, el.nextSibling);
     }
 
-
+    // if(field.type !== 'fieldset' ||  field.isChild() || !this.sectionsEnabled) {
+    // 	var cRow;
+    // 	if(typeof $(field.fieldset).children('.row').last().attr('id') !== 'undefined') {
+    // 		cRow = rows[$(field.fieldset).children('.row').last().attr('id')];		
+    // 	}
+    // 	if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns){
+    // 		var temp = Berry.getUID();
+    // 		cRow = {};
+    // 		cRow.used = 0;
+    // 		cRow.ref = $(Berry.render('berry_row', {id: temp}));
+    // 		rows[temp] = cRow;
+    // 		$(field.fieldset).append(cRow.ref);
+    // 	}
+    // 	cRow.used += parseInt(field.columns, 10);
+    // 	cRow.used += parseInt(field.offset, 10);
+    // 	cRow.ref.append( $('<div/>').addClass('col-md-' + field.columns).addClass('col-md-offset-' + field.offset).append(field.render()) );
+    // }else{
+    // 	$(field.fieldset).append(field.render() );
+    // }
     
-			// if(field.type !== 'fieldset' ||  field.isChild() || !this.sectionsEnabled) {
-			// 	var cRow;
-			// 	if(typeof $(field.fieldset).children('.row').last().attr('id') !== 'undefined') {
-			// 		cRow = rows[$(field.fieldset).children('.row').last().attr('id')];		
-			// 	}
-			// 	if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns){
-			// 		var temp = Berry.getUID();
-			// 		cRow = {};
-			// 		cRow.used = 0;
-			// 		cRow.ref = $(Berry.render('berry_row', {id: temp}));
-			// 		rows[temp] = cRow;
-			// 		$(field.fieldset).append(cRow.ref);
-			// 	}
-			// 	cRow.used += parseInt(field.columns, 10);
-			// 	cRow.used += parseInt(field.offset, 10);
-			// 	cRow.ref.append( $('<div/>').addClass('col-md-' + field.columns).addClass('col-md-offset-' + field.offset).append(field.render()) );
-			// }else{
-			// 	$(field.fieldset).append(field.render() );
-			// }
+    forman.types[field.type].initialize.call(field);
 
-    if(field.onchange !== undefined){ field.el.addEventListener('change', this.onchange);}
-    field.el.addEventListener('change', function(){
-        this.value = this.get();
-        this.owner.events.trigger('change:'+this.name, this);
-        this.owner.events.trigger('change', this);
-    }.bind(field));		
-    field.el.addEventListener('input', function(){
-        this.value = this.get();
-        this.owner.events.trigger('change:'+this.name, this);
-        this.owner.events.trigger('change', this);
-    }.bind(field));
     var add = field.el.querySelector('.forman-add');
     if(add !== null){
         add.addEventListener('click', function(field){
@@ -165,7 +188,7 @@ forman.initialize = function(parent, atts, el, index, fieldIn ) {
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 var atts = {};
                 // atts[field.name] = field.value;
-                var newField = forman.initialize.call(this, field.parent, atts, field.el ,null, field.item);
+                var newField = forman.createField.call(this, field.parent, atts, field.el ,null, field.item);
                 field.parent.fields.splice(index, 0, newField)
                 newField.el.querySelector('[name="'+field.name+'"]').focus();
 
@@ -194,22 +217,27 @@ forman.initialize = function(parent, atts, el, index, fieldIn ) {
                 newatts = atts[field.name]||{};
             }
 
-            field.fields = _.map(field.fields, forman.initialize.bind(this, field, newatts, null, null) );
+            field.fields = _.map(field.fields, forman.createField.bind(this, field, newatts, null, null) );
                  if(field.array){
                     _.each(field.fields, forman.inflate.bind(this, newatts) );
                 }
         
     }
+
     forman.processConditions.call(field, field.display, function(result){
         this.el.style.display = result ? "block" : "none";
+        this.visible = result;        
     })      
-    forman.processConditions.call(field, field.visible,function(result){
-        this.el.style.visibility = result ? "visible" : "hidden";
+    // forman.processConditions.call(field, field.visible, function(result){
+    //     this.el.style.visibility = result ? "visible" : "hidden";
+    //     this.visible = result;
+    // })
+    
+    forman.processConditions.call(field, field.enable, function(result){
+        this.enabled = result;        
+        forman.types[this.type].enable.call(this,this.enabled);
     })
-    forman.processConditions.call(field, field.enable,function(result){
-        this.enabled = result;
-    })
-    forman.processConditions.call(field, field.parsable,function(result){
+    forman.processConditions.call(field, field.parse, function(result){
         this.parsable = result
     })
 
@@ -217,7 +245,7 @@ forman.initialize = function(parent, atts, el, index, fieldIn ) {
 }
 
 forman.update = function(field){
-    field.el.innerHTML = (forman.stencils[field.type] || forman.stencils.text)(field);
+    field.el.innerHTML = field.render();
     var oldDiv = document.getElementById(field.id);
     oldDiv.parentNode.replaceChild(field.el, oldDiv);
 }
@@ -292,19 +320,56 @@ forman.processOptions = function(field) {
     return field;
 }
 
-forman.render = function(){
-    return '<div>hello Test</div>'
-}
-forman.types = {};
-
-forman.register = function(elem) {
-    if(elem.extends && typeof forman.types[elem.extends] !== 'undefined'){
-        forman.types[elem.type] = forman.types[elem.extends].extend(elem);
-    }else{
-        forman.types[elem.type] = forman.field.extend(elem);
-    }
-}
+forman.types = {
+    'basic':{
+        defaults:{},
+        create: function(){
+            var tempEl = document.createElement("span");
+            tempEl.setAttribute("id", this.id);
+            tempEl.setAttribute("class", ' '+forman.columnClasses[this.columns]);
+            tempEl.innerHTML = this.render();
+            return tempEl;
+        },
+        render: function(){
+            return forman.render(this.type, this);
+        },
+        initialize: function(){
+            if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
+            this.el.addEventListener('change', function(){
+                this.value = this.get();
+                this.owner.events.trigger('change:'+this.name, this);
+                this.owner.events.trigger('change', this);
+            }.bind(this));		
+            this.el.addEventListener('input', function(){
+                this.value = this.get();
+                this.owner.events.trigger('change:'+this.name, this);
+                this.owner.events.trigger('change', this);
+            }.bind(this));
+        },
+        get: function(){
+            return this.el.querySelector('[name="' + this.name + '"]').checked || this.el.querySelector('[name="' + this.name + '"]').value;
+        },
+        set: function(value){
+            this.el.querySelector('[name="' + this.name + '"]').value = value;
+            _.each(this.options, function(option, index){
+                if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+            }.bind(this))
+        },
+        satisfied: function(value){
+            return (typeof value !== 'undefined' && value !== null && value !== '');            
+        },
+        enable: function(state){
+            this.el.querySelector('input').disabled = !state;            
+        }
+        //display
+    },
+};
 forman.i = 0;
 forman.getUID = function() {
     return 'f' + (forman.i++);
 };
+
+
+forman.types['text'] = forman.types['checkbox'] = forman.types['select'] = forman.types['fieldset'] = forman.types['color'] = forman.types['basic'];
+// forman.types['email'] = _.extend(forman.types['basic'],{});
+forman.types['email'] = _.extend(forman.types['basic'],{defaults:{validate: { 'valid_email': true }}});

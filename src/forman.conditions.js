@@ -1,6 +1,6 @@
 forman.processConditions = function(conditions, func) {
 	if (typeof conditions === 'string') {
-		if(conditions === 'display' || conditions === 'enabled'  || conditions === 'parsable') {
+		if(conditions === 'display' || conditions === 'enable'  || conditions === 'parse') {
 			conditions = this.item[conditions];
 		}else if(conditions === 'enable') {
 			conditions = this.item.enable;

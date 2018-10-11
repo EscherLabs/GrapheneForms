@@ -55,7 +55,7 @@ forman.stencils = {
     </div>`)
 };
 forman.columns = 12;
-forman.columnMap = {
+forman.columnClasses = {
     1:'one columns',
     2:'two columns',
     3:'three columns',
@@ -70,6 +70,12 @@ forman.columnMap = {
     12:'twelve columns'
 }
 forman.handleError = function(field){
-    // debugger;
     field.el.querySelector('small').innerHTML = field.errors;
+}
+
+forman.render = function(template, options){
+    return (forman.stencils[template||'text'] || forman.stencils['text'])(options);
+}
+forman.processString = function(string,options){
+    return _.template(string)(options)
 }

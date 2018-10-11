@@ -18,7 +18,7 @@ forman.performValidate = function(target, pValue){
 	target.valid = true;
 	target.errors = '';
 
-	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object'){
+	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.parsable){
 		for(var r in item.validate){
 			if(!forman.validations[r].method.call(target, value, item.validate[r])){
 				if((typeof item.show === 'undefined') || target.isVisible){
