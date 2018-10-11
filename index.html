@@ -14,6 +14,8 @@
     <script type='text/javascript' src='./src/forman.events.js'></script>
     <script type='text/javascript' src='./src/forman.conditions.js'></script>
     <script type='text/javascript' src='./src/forman.skeleton.js'></script>
+    <script type='text/javascript' src='./src/forman.field.js'></script>
+    <script type='text/javascript' src='./src/forman.text.js'></script>
 
     <script>
 
@@ -845,7 +847,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
       legend:'My Form',
         fields:[
             {label:'First Name', name: 'f_n', array:false},
-            {name: 'checked', label: 'Checked?',type: 'checkbox'},// , display: {matches:[{name:'number', value:['first','1']}]}},
+            {name: 'checked', label: 'Checked?',type: 'checkbox',required:true},// , display: {matches:[{name:'number', value:['first','1']}]}},
             {name: 'last_name', label: '0Last Name', validate: {required:false}, "display": {
                     "matches": [
                         {"name": "f_n","value":["adam"]},

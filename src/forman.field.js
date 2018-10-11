@@ -1,66 +1,70 @@
 forman.field = function(item, owner) {
 	this.children = {};
 	this.owner = owner;
-	this.hidden = false;
-	this.item = $.extend(true, {}, this.defaults, item);
+	this.item = _.extend(true, {}, this.defaults, item);
 
-	this.owner.trigger('initializeField', {field: this});
+	//trigger event for start of field creation
+	_.extend(this, this.owner.options, this.item);
 
-	$.extend(this, this.owner.options, this.item);
+	this.owner.trigger('field:initialize', {field: this});
+
 	if(this.item.value !== 0){
 		if(typeof item.value === 'function') {
 			this.valueFunc = item.value;
-			this.liveValue = function() {
+			this.derivedValue = function() {
 				return this.valueFunc.call(this.owner.toJSON());
 			};
-			item.value = this.item.value = this.liveValue();
-			this.owner.on('change', $.proxy(function(){
-				this.set(this.liveValue());
-			},this));
-		} else if(typeof this.item.value === 'string' && this.item.value.indexOf('=') === 0 && typeof math !== 'undefined') {
-			this.formula = this.item.value.substr(1);
-			this.enabled = false;
-			this.liveValue = function() {
-				try {
-					var temp = math.eval(this.formula, this.owner.toJSON());
-					if($.isNumeric(temp)){
-						return temp.toFixed((this.item.precision || 0));
-					}
-					return temp;
-				}catch(e){
-					 return this.formula;
-				}
-			};
-			item.value = this.item.value = this.liveValue();
-			this.owner.on('change', $.proxy(function() {
-				this.set(this.liveValue());
-			}, this));
+			item.value = this.item.value = this.derivedValue();
+			this.owner.on('change', function(){
+				this.set(this.derivedValue());
+			}.bind(this));
+		// } else if(typeof this.item.value === 'string' && this.item.value.indexOf('=') === 0 && typeof math !== 'undefined') {
+		// 	this.formula = this.item.value.substr(1);
+		// 	this.enabled = false;
+		// 	this.derivedValue = function() {
+		// 		try {
+		// 			var temp = math.eval(this.formula, this.owner.toJSON());
+		// 			if($.isNumeric(temp)){
+		// 				return temp.toFixed((this.item.precision || 0));
+		// 			}
+		// 			return temp;
+		// 		}catch(e){
+		// 			 return this.formula;
+		// 		}
+		// 	};
+		// 	item.value = this.item.value = this.derivedValue();
+		// 	this.owner.on('change', $.proxy(function() {
+		// 		this.set(this.derivedValue());
+		// 	}, this));
 		} else {
 			this.value = (item.value || this.value || item.default || '');
 		}
 	} else {
 		this.value = 0;
 	}
-	this.lastSaved = this.liveValue();
-	this.id = (item.id || Berry.getUID());
+	this.lastSaved = this.derivedValue();
+	this.id = (item.id || forman.getUID());
 	this.self = undefined;
-	this.fieldset = undefined;
 
-	if(typeof this.item.fieldset !== 'object'){
-		if(this.item.fieldset !== undefined && $('.' + this.item.fieldset).length > 0) {
-			this.fieldset = $('.' + this.item.fieldset)[0];
-			this.owner.fieldsets.push(this.fieldset);
-		}else{
-			if(this.item.fieldset !== undefined && $('[name=' + this.item.fieldset + ']').length > 0) {
-				this.fieldset = $('[name=' + this.item.fieldset + ']')[0];
-				this.owner.fieldsets.push(this.fieldset);
-			}
-		}
-	}else{
-		if(this.item.fieldset.length){
-			this.fieldset = this.item.fieldset;
-		}
-	}
+
+	//This allows fields to be placed at separate parts of page --- may not be needed
+	// this.fieldset = undefined;
+
+	// if(typeof this.item.fieldset !== 'object'){
+	// 	if(this.item.fieldset !== undefined && $('.' + this.item.fieldset).length > 0) {
+	// 		this.fieldset = $('.' + this.item.fieldset)[0];
+	// 		this.owner.fieldsets.push(this.fieldset);
+	// 	}else{
+	// 		if(this.item.fieldset !== undefined && $('[name=' + this.item.fieldset + ']').length > 0) {
+	// 			this.fieldset = $('[name=' + this.item.fieldset + ']')[0];
+	// 			this.owner.fieldsets.push(this.fieldset);
+	// 		}
+	// 	}
+	// }else{
+	// 	if(this.item.fieldset.length){
+	// 		this.fieldset = this.item.fieldset;
+	// 	}
+	// }
 
 	this.val = function(value) {
 		if(typeof value !== 'undefined') {
@@ -72,7 +76,7 @@ forman.field = function(item, owner) {
 	if(this.columns > this.owner.options.columns) { this.columns = this.owner.options.columns; }
 };
 
-$.extend(Berry.field.prototype, {
+_.extend(forman.field.prototype, {
 	type: 'text',
 	offset: 0,
 	version: '1.0',
@@ -81,7 +85,7 @@ $.extend(Berry.field.prototype, {
 	isVisible: true,
 	isEnabled: true,
 	instance_id: null,
-	path: '',
+	// path: '',
 	defaults: {},
 	parent: null,
 	getPath: function(force) {
@@ -95,17 +99,44 @@ $.extend(Berry.field.prototype, {
 		return path + this.name;
 	},
 	isActive: function() {
-		return this.parent === null || this.parent.isEnabled !== false;
+		return (this.parent === null || this.parent.isActive() !== false) && this.isEnabled;
 	},
 	isChild: function(){
 		return  this.parent !== null;
 	},
 	set: function(value){
 		if(this.value != value) {
-			//this.value = value;
 			this.setValue(value);
 			this.trigger('change');
 		}
+	},
+	setValue: function(value) {
+		if(typeof value !== 'object'){
+			if(typeof this.lastSaved === 'undefined'){
+				this.lastSaved = value;
+			}
+			this.value = value;
+			return this.$el.val(value);
+		}
+		return this.value;
+	},
+	update: function(item, silent) {
+		if(typeof item === 'object') {
+			_.extend(this.item, item);
+		}
+		_.extend(this, this.item);
+		this.setValue(this.value);
+		this.render();
+		this.setup();
+		if(!silent) {
+			this.trigger('change');
+		}
+	},
+	derivedValue: function() {
+		return this.value;
+	},
+	getValue: function() { 
+		return this.$el.val();
 	},
 	revert: function(){
 		this.item.value = this.lastSaved;
@@ -113,7 +144,7 @@ $.extend(Berry.field.prototype, {
 		return this;
 	},
 	hasChildren: function() {return !$.isEmptyObject(this.children);},
-	create: function() {return Berry.render('berry_' + (this.elType || this.type), this);},
+	create: function() {return forman.render('berry_' + (this.elType || this.type), this);},
 	render: function() {
 		if(typeof this.self === 'undefined') {
 			this.self = $(this.create()).attr('data-Berry', this.owner.options.name);
@@ -123,15 +154,11 @@ $.extend(Berry.field.prototype, {
 		this.display = this.getDisplay();
 		return this.self;
 	},
-	getValue: function() { return this.$el.val(); },
 	toJSON: function() {
 		this.value = this.getValue();
 		this.lastSaved = this.value;
 		this.display = this.getDisplay();
 		return this.lastSaved;
-	},
-	liveValue: function() {
-		return this.value;
 	},
 	setup: function() {
 		this.$el = this.self.find('input');
@@ -141,9 +168,9 @@ $.extend(Berry.field.prototype, {
 			this.trigger('change');
 		}, this));
 
-		if(this.item.mask && $.fn.mask) {
-			this.$el.mask(this.item.mask);
-		}
+		// if(this.item.mask && $.fn.mask) {
+		// 	this.$el.mask(this.item.mask);
+		// }
 	},
 	initialize: function() {
 		this.setup();
@@ -152,7 +179,7 @@ $.extend(Berry.field.prototype, {
 		    this.self.toggle(this.isVisible);
 		  //  this.update({}, true);
 
-			this.showConditions = Berry.processConditions.call(this, this.show,
+			this.showConditions = forman.processConditions.call(this, this.show,
 				function(bool, token) {
 					if(typeof bool == 'boolean') {
 					   // var temp = this.isVisible;
@@ -178,7 +205,7 @@ $.extend(Berry.field.prototype, {
 			}
 		}
 		if(typeof this.enabled !== 'undefined') {
-			this.enabledConditions = Berry.processConditions.call(this, this.enabled,
+			this.enabledConditions = forman.processConditions.call(this, this.enabled,
 				function(bool, token) {
 					if(typeof bool == 'boolean') {
 						this.enabledConditions[token] = bool;
@@ -200,7 +227,7 @@ $.extend(Berry.field.prototype, {
 			}
 		}
 		if(typeof this.parsable !== 'undefined') {
-			this.parsableConditions = Berry.processConditions.call(this, this.parsable,
+			this.parsableConditions = forman.processConditions.call(this, this.parsable,
 				function(bool, token) {
 					if(typeof bool == 'boolean') {
 					    var temp = this.isParsable;
@@ -223,6 +250,8 @@ $.extend(Berry.field.prototype, {
 		
 		this.owner.trigger('initializedField', {field: this});
 	},
+
+
 	on: function(topic, func) {
 		this.owner.on(topic + ':' + this.name, func);
 	},
@@ -240,39 +269,16 @@ $.extend(Berry.field.prototype, {
 		});
 		//this.owner.trigger(topic);
 	},
-	setValue: function(value) {
-		if(typeof value !== 'object'){
-			if(typeof this.lastSaved === 'undefined'){
-				this.lastSaved = value;
-			}
-			this.value = value;
-			return this.$el.val(value);
-		}
-		return this.value;
-	},
-	update: function(item, silent) {
-		if(typeof item === 'object') {
-			$.extend(this.item, item);
-		}
-		$.extend(this, this.item);
-		this.setValue(this.value);
-		this.render();
-		this.setup();
-		if(!silent) {
-			this.trigger('change');
-		}
-	},
 	blur: function() {
 		this.$el.blur();
 	},
 	focus: function() {
 		this.$el.focus().val('').val(this.value);
 	},
-	disable: function() {
-		this.$el.prop('disabled', true);
-	},
-	enable: function() {
-		this.$el.prop('disabled', false);
+
+
+	enable: function(state) {
+		this.$el.prop('disabled', state);
 	},
 	satisfied: function(){
 		return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '');
@@ -284,13 +290,13 @@ $.extend(Berry.field.prototype, {
 		if(this.displayAs !== undefined) {
 			if(this.item.template !== undefined) {
 				this.display = this.displayAs();
-				return Berry.render(this.item.template, this);
+				return forman.render(this.item.template, this);
 			} else {
 				return this.displayAs() || this.item.default || this.item.value  || 'Empty';
 			}
 		}else{
 			if(this.item.template !== undefined) {
-				return Berry.render(this.item.template, this);
+				return forman.render(this.item.template, this);
 			} else {
 				return this.lastSaved || this.item.default || this.item.value  ||  'Empty';
 			}
@@ -304,12 +310,12 @@ $.extend(Berry.field.prototype, {
 
 });
 
-Berry.field.extend = function(protoProps) {
+forman.field.extend = function(protoProps) {
 	var parent = this;
 	var child = function() { return parent.apply(this, arguments); };
 	var Surrogate = function() { this.constructor = child; };
 	Surrogate.prototype = parent.prototype;
 	child.prototype = new Surrogate;
-	if (protoProps) $.extend(child.prototype, protoProps);
+	if (protoProps) _.extend(child.prototype, protoProps);
 	return child;
 };

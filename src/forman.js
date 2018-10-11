@@ -49,6 +49,7 @@ var forman = function(data, el){
     _.each(this.fields, function(field) {
 		field.owner.events.trigger('change:' + field.name, field);
     })
+
 }
 
 forman.inflate = function(atts, fieldIn, ind, list) {
@@ -291,6 +292,18 @@ forman.processOptions = function(field) {
     return field;
 }
 
+forman.render = function(){
+    return '<div>hello Test</div>'
+}
+forman.types = {};
+
+forman.register = function(elem) {
+    if(elem.extends && typeof forman.types[elem.extends] !== 'undefined'){
+        forman.types[elem.type] = forman.types[elem.extends].extend(elem);
+    }else{
+        forman.types[elem.type] = forman.field.extend(elem);
+    }
+}
 forman.i = 0;
 forman.getUID = function() {
     return 'f' + (forman.i++);
