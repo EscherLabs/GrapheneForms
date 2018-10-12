@@ -92,8 +92,8 @@ forman.createField = function(parent, atts, el, index, fieldIn ) {
         array:false,
         columns: this.options.columns,
         offset: 0
-    },forman.types[fieldIn.type].defaults, fieldIn)
-    // field = _.assignIn(forman.types[field.type].defaults,field)
+    }, forman.types[fieldIn.type].defaults, fieldIn)
+    
     field.item = fieldIn;
     field.owner = this;
 	if(field.columns > this.options.columns) { field.columns = this.options.columns; }
@@ -142,43 +142,59 @@ forman.createField = function(parent, atts, el, index, fieldIn ) {
     }.bind(field)
 
     field.get = forman.types[field.type].get.bind(field);
-
-    if(field.type == 'select' || field.type == 'radio') {
-        field = _.assignIn(field, forman.processOptions.call(this, field));
-    }
     
     field.render = forman.types[field.type].render.bind(field);
     
     field.el = forman.types[field.type].create.call(field);
 
-    field.container =  field.el.querySelector('fieldset') || field.el;
+    field.container =  field.el.querySelector('fieldset') || null;
 
+    debugger;
+
+    // if(target[0] !== undefined){target = target[0];}
+    // var field = addField.call(this, item, parent, target, insert);
+    // // this.initializing[field.id] = true;
+    // if(typeof field.fieldset === 'undefined') { field.fieldset = target; }
+
+    // if(insert == 'before') {
+    //     $(target).before(field.render());
+    // } else if(insert == 'after') {
+    //     $(target).after(field.render());
+    // } else {
+        // if(field.type !== 'fieldset'){// ||  field.isChild() || !this.sectionsEnabled) {
+            // var cRow;
+            // debugger;
+            // if(typeof $(field.fieldset).children('.row').last().attr('id') !== 'undefined') {
+            //     cRow = rows[$(field.fieldset).children('.row').last().attr('id')];		
+            // }
+            // if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns){
+            //     var temp = Berry.getUID();
+            //     cRow = {};
+            //     cRow.used = 0;
+            //     cRow.ref = $(Berry.render('berry_row', {id: temp}));
+            //     rows[temp] = cRow;
+            //     $(field.fieldset).append(cRow.ref);
+            // }
+            // cRow.used += parseInt(field.columns, 10);
+            // cRow.used += parseInt(field.offset, 10);
+            // cRow.ref.append( $('<div/>').addClass('col-md-' + field.columns).addClass('col-md-offset-' + field.offset).append(field.render()) );
+        // }
+    //      else{
+    //         $(field.fieldset).append(field.render() );
+    //     }
+    // }
+
+
+
+
+    
+    //el is reference element passed in - insert before it if it exists
     if (el == null){
         field.parent.container.appendChild(field.el);
     } else {
         field.parent.container.insertBefore(field.el, el.nextSibling);
     }
 
-    // if(field.type !== 'fieldset' ||  field.isChild() || !this.sectionsEnabled) {
-    // 	var cRow;
-    // 	if(typeof $(field.fieldset).children('.row').last().attr('id') !== 'undefined') {
-    // 		cRow = rows[$(field.fieldset).children('.row').last().attr('id')];		
-    // 	}
-    // 	if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns){
-    // 		var temp = Berry.getUID();
-    // 		cRow = {};
-    // 		cRow.used = 0;
-    // 		cRow.ref = $(Berry.render('berry_row', {id: temp}));
-    // 		rows[temp] = cRow;
-    // 		$(field.fieldset).append(cRow.ref);
-    // 	}
-    // 	cRow.used += parseInt(field.columns, 10);
-    // 	cRow.used += parseInt(field.offset, 10);
-    // 	cRow.ref.append( $('<div/>').addClass('col-md-' + field.columns).addClass('col-md-offset-' + field.offset).append(field.render()) );
-    // }else{
-    // 	$(field.fieldset).append(field.render() );
-    // }
-    
     forman.types[field.type].initialize.call(field);
 
     var add = field.el.querySelector('.forman-add');
@@ -245,7 +261,7 @@ forman.createField = function(parent, atts, el, index, fieldIn ) {
 }
 
 forman.update = function(field){
-    field.el.innerHTML = field.render();
+    field.el.innerHTML = forman.types[field.type].render.call(field);
     var oldDiv = document.getElementById(field.id);
     oldDiv.parentNode.replaceChild(field.el, oldDiv);
 }
@@ -326,6 +342,7 @@ forman.types = {
         create: function(){
             var tempEl = document.createElement("span");
             tempEl.setAttribute("id", this.id);
+            tempEl.setAttribute("data-columns", this.columns);
             tempEl.setAttribute("class", ' '+forman.columnClasses[this.columns]);
             tempEl.innerHTML = this.render();
             return tempEl;
@@ -351,9 +368,6 @@ forman.types = {
         },
         set: function(value){
             this.el.querySelector('[name="' + this.name + '"]').value = value;
-            _.each(this.options, function(option, index){
-                if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
-            }.bind(this))
         },
         satisfied: function(value){
             return (typeof value !== 'undefined' && value !== null && value !== '');            
@@ -363,13 +377,35 @@ forman.types = {
         }
         //display
     },
+    'list':{
+        render: function(){
+            _.assignIn(this, forman.processOptions.call(this.owner, this));
+            return forman.render(this.type, this);
+        },
+        initialize: function(){
+            if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
+            this.el.addEventListener('change', function(){
+                this.value = this.get();
+                this.owner.events.trigger('change:'+this.name, this);
+                this.owner.events.trigger('change', this);
+            }.bind(this));		
+        },
+        get: function(){
+            return this.el.querySelector('[name="' + this.name + '"]').value;
+        },
+        set: function(value){
+            this.el.querySelector('[name="' + this.name + '"]').value = value;
+            _.each(this.options, function(option, index){
+                if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+            }.bind(this))
+        }
+    }
 };
 forman.i = 0;
 forman.getUID = function() {
     return 'f' + (forman.i++);
 };
 
-
-forman.types['text'] = forman.types['checkbox'] = forman.types['select'] = forman.types['fieldset'] = forman.types['color'] = forman.types['basic'];
-// forman.types['email'] = _.extend(forman.types['basic'],{});
-forman.types['email'] = _.extend(forman.types['basic'],{defaults:{validate: { 'valid_email': true }}});
+forman.types['text'] = forman.types['checkbox'] = forman.types['fieldset'] = forman.types['color'] = forman.types['basic'];
+forman.types['radio']= forman.types['select'] =  _.extend({},forman.types['basic'],forman.types['list']);
+forman.types['email'] = _.extend({},forman.types['basic'],{defaults:{validate: { 'valid_email': true }}});

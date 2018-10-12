@@ -844,32 +844,32 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
       },
       legend:'My Form',
         fields:[
-            {label:'First Name', name: 'f_n', array:false,type:'email'},
-            {name: 'checked', label: 'Checked?',type: 'checkbox',required:true},// , display: {matches:[{name:'number', value:['first','1']}]}},
-            {name: 'last_name', label: '0Last Name', validate: {required:false}, "enable": {
+            {label:'First Name', name: 'f_n', array:false,type:'email',columns:6},
+            {name: 'checked', label: 'Checked?',type: 'checkbox',required:true,columns:6},// , display: {matches:[{name:'number', value:['first','1']}]}},
+            {name: 'last_name', label: '0Last Name', validate: {required:false},columns:6, "display": {
                     "matches": [
                         {"name": "f_n","value":["adam"]},
                         {"name": "checked","value": [""]},
 
                     ],
                 },
-                "parse":"enable"
+                "parse":"display"
               },            
-              {name: 'last_name', label: '1Last Name', validate: {required:false}, "enable": {
+              {name: 'last_name', label: '1Last Name', validate: {required:false},columns:6, "display": {
                     "matches": [
                         {"name": "f_n","value":["adam"]},
                         {"name": "checked","value": true},
 
                     ],
                 },
-                "parse":"enable"
+                "parse":"display"
               },
-            {name: 'last_name', label: '2Last Name', validate: {required:false}, "enable": {
+            {name: 'last_name', label: '2Last Name', validate: {required:false},columns:6, "display": {
                     "matches": [
                         {"name": "f_n","value":["", "tim"]},
                     ],
                 },
-                "parse":"enable"
+                "parse":"display"
               },
             {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
             {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},

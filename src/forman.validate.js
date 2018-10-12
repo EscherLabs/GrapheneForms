@@ -1,4 +1,3 @@
-
 forman.prototype.errors = {};
 forman.prototype.validate = function(){
 	forman.clearErrors.call(this);
@@ -37,9 +36,8 @@ forman.performValidate = function(target, pValue){
 forman.clearErrors = function() {
 	this.valid = true;
 	this.errors = {};
-	// this.form.querySelector("." + this.options.errorSelector).removeClass(this.options.errorSelector).find("." + this.options.errorTextSelector).html("");
+	//add code fore removing errors here
 };
-//var ruleRegex = /^(.+)\[(.+)\]$/,
 forman.regex = {
 	numeric: /^[0-9]+$/,
 	integer: /^\-?[0-9]+$/,
