@@ -1,4 +1,4 @@
-forman.prototype.events = (function (_) {
+carbon.prototype.events = (function (_) {
   'use strict';
 
   // keys are event names

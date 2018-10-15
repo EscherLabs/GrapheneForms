@@ -1,16 +1,16 @@
-forman.prototype.errors = {};
-forman.prototype.validate = function(){
-	forman.clearErrors.call(this);
-    _.each(this.fields, forman.validateItem)
+carbon.prototype.errors = {};
+carbon.prototype.validate = function(){
+	carbon.clearErrors.call(this);
+    _.each(this.fields, carbon.validateItem)
 	return this.valid;
 };
-forman.handleError = forman.update;
-forman.validateItem = function(item){
-	forman.performValidate(item);
+carbon.handleError = carbon.update;
+carbon.validateItem = function(item){
+	carbon.performValidate(item);
 	item.owner.errors[item.name] = item.errors;
 	item.owner.valid = item.valid && item.owner.valid;
 };
-forman.performValidate = function(target, pValue){
+carbon.performValidate = function(target, pValue){
 	var item = target;
 	var value = target.get();
 	if(typeof pValue !== 'undefined'){value = pValue;}
@@ -19,26 +19,26 @@ forman.performValidate = function(target, pValue){
 
 	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.parsable){
 		for(var r in item.validate){
-			if(!forman.validations[r].method.call(target, value, item.validate[r])){
+			if(!carbon.validations[r].method.call(target, value, item.validate[r])){
 				if((typeof item.show === 'undefined') || target.isVisible){
 					target.valid = false;
-					var estring = forman.validations[r].message;
+					var estring = carbon.validations[r].message;
 					if(typeof item.validate[r] == 'string') {
 						estring = item.validate[r];
 					}
 					target.errors = estring.replace('{{label}}', item.label);
 				}
 			}
-			forman.handleError(target);
+			carbon.handleError(target);
 		}
 	}
 };
-forman.clearErrors = function() {
+carbon.clearErrors = function() {
 	this.valid = true;
 	this.errors = {};
 	//add code fore removing errors here
 };
-forman.regex = {
+carbon.regex = {
 	numeric: /^[0-9]+$/,
 	integer: /^\-?[0-9]+$/,
 	decimal: /^\-?[0-9]*\.?[0-9]+$/,
@@ -53,7 +53,7 @@ forman.regex = {
 	url: /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
 	date: /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
 };
-forman.validations = {
+carbon.validations = {
 	required:{
 		method: function(value, args) {
 			return this.satisfied(value);
@@ -62,7 +62,7 @@ forman.validations = {
 	},
 	matches:{
 		method: function(value, matchName) {
-			if (el == this.forman[matchName]) {
+			if (el == this.carbon[matchName]) {
 				return value === el.value;
 			}
 			return false;
@@ -71,19 +71,19 @@ forman.validations = {
 	},	
 	date:{
 		method: function(value, args) {
-	        return (forman.regex.date.test(value) || value === '');
+	        return (carbon.regex.date.test(value) || value === '');
 		},
 		message: 'The {{label}} field should be in the format MM/DD/YYYY.'
 	},
 	valid_url:{
 		method: function(value) {
-			return (forman.regex.url.test(value) || value === '');
+			return (carbon.regex.url.test(value) || value === '');
 		},
 		message: 'The {{label}} field must contain a valid Url.'
 	},
 	valid_email:{
 		method: function(value) {
-			return (forman.regex.email.test(value) || value === '');
+			return (carbon.regex.email.test(value) || value === '');
 		},
 		message: 'The {{label}} field must contain a valid email address.'
 	},
@@ -91,7 +91,7 @@ forman.validations = {
 		method: function(value) {
 			var result = value.split(",");
 			for (var i = 0; i < result.length; i++) {
-				if (!forman.regex.email.test(result[i])) {
+				if (!carbon.regex.email.test(result[i])) {
 					return false;
 				}
 			}
@@ -101,7 +101,7 @@ forman.validations = {
 	},
 	min_length:{
 		method: function(value, length) {
-			if (!forman.regex.numeric.test(length)) {
+			if (!carbon.regex.numeric.test(length)) {
 				return false;
 			}
 			return (value.length >= parseInt(length, 10));
@@ -110,7 +110,7 @@ forman.validations = {
 	},
 	max_length:{
 		method: function(value, length) {
-			if (!forman.regex.numeric.test(length)) {
+			if (!carbon.regex.numeric.test(length)) {
 				return false;
 			}
 			return (value.length <= parseInt(length, 10));
@@ -119,7 +119,7 @@ forman.validations = {
 	},
 	exact_length:{
 		method: function(value, length) {
-			if (!forman.regex.numeric.test(length)) {
+			if (!carbon.regex.numeric.test(length)) {
 				return false;
 			}
 			return (value.length === parseInt(length, 10));
@@ -128,7 +128,7 @@ forman.validations = {
 	},
 	greater_than:{
 		method: function(value, param) {
-			if (!forman.regex.decimal.test(value)) {
+			if (!carbon.regex.decimal.test(value)) {
 				return false;
 			}
 			return (parseFloat(value) > parseFloat(param));
@@ -137,7 +137,7 @@ forman.validations = {
 	},
 	less_than:{
 		method: function(value, param) {
-			if (!forman.regex.decimal.test(value)) {
+			if (!carbon.regex.decimal.test(value)) {
 				return false;
 			}
 			return (parseFloat(value) < parseFloat(param));
@@ -146,61 +146,61 @@ forman.validations = {
 	},
 	numeric:{
 		method: function(value) {
-			return (forman.regex.decimal.test(value) || value === '');
+			return (carbon.regex.decimal.test(value) || value === '');
 		},
 		message: 'The {{label}} field must contain only numbers.'
 	},
 	// alpha:{
 	// 	method: function(value) {
-	// 		return (forman.regex.alpha.test(value) || value === '');
+	// 		return (carbon.regex.alpha.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must only contain alphabetical characters.'
 	// },
 	// alpha_numeric:{
 	// 	method: function(value) {
-	// 		return (forman.regex.alphaNumeric.test(value) || value === '');
+	// 		return (carbon.regex.alphaNumeric.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must only contain alpha-numeric characters.'
 	// },
 	// alpha_dash:{
 	// 	method: function(value) {
-	// 		return (forman.regex.alphaDash.test(value) || value === '');
+	// 		return (carbon.regex.alphaDash.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must only contain alpha-numeric characters, underscores, and dashes.'
 	// },
 	// integer:{
 	// 	method: function(value) {
-	// 		return (forman.regex.integer.test(value) || value === '');
+	// 		return (carbon.regex.integer.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain an integer.'
 	// },
 	// decimal:{
 	// 	method: function(value) {
-	// 		return (forman.regex.decimal.test(value) || value === '');
+	// 		return (carbon.regex.decimal.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain a decimal number.'
 	// },
 	// is_natural:{
 	// 	method: function(value) {
-	// 		return (forman.regex.natural.test(value) || value === '');
+	// 		return (carbon.regex.natural.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain only positive numbers.'
 	// },
 	// is_natural_no_zero:{
 	// 	method: function(value) {
-	// 		return (forman.regex.naturalNoZero.test(value) || value === '');
+	// 		return (carbon.regex.naturalNoZero.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain a number greater than zero.'
 	// },
 	// valid_ip:{
 	// 	method: function(value) {
-	// 		return (forman.regex.ip.test(value) || value === '');
+	// 		return (carbon.regex.ip.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain a valid IP.'
 	// },
 	// valid_base64:{
 	// 	method: function(value) {
-	// 		return (forman.regex.base64.test(value) || value === '');
+	// 		return (carbon.regex.base64.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain a base64 string.'
 	// }

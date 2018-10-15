@@ -1,5 +1,5 @@
-forman.stencils = {
-    container: _.template(`<div class="forman">
+carbon.stencils = {
+    container: _.template(`<div class="carbon">
         <form>
             <legend for="<%= name %>"><h4><%= legend %></h4></legend>
         </form>
@@ -9,8 +9,8 @@ forman.stencils = {
         <input class="six columns" name="<%= name %>" type="<%=type%>" value="<%=value%>" id="<%=id%>" />
         <small style="color:red;display:block; "><% if(!valid){%> <%=errors %> <%}%></small>
         <%if(array){%> 
-            <input style="padding: 0 ;width:38px;" class="forman-add" type="button" value="+">
-            <input style="padding: 0 ;width:38px;" class="forman-minus" type="button" value="-">
+            <input style="padding: 0 ;width:38px;" class="carbon-add" type="button" value="+">
+            <input style="padding: 0 ;width:38px;" class="carbon-minus" type="button" value="-">
         <%}; %>
     </div>`),    
     hidden: _.template(`<div class="row">
@@ -21,8 +21,8 @@ forman.stencils = {
         <textarea class="six columns" name="<%= name %>" type="<%=type%>" id="<%=id%>" /><%=value%></textarea>
         <small style="color:red;display:block; "><% if(!valid){%> <%=errors %> <%}%></small>
         <%if(array){%> 
-            <input style="padding: 0 ;width:38px;" class="forman-add" type="button" value="+">
-            <input style="padding: 0 ;width:38px;" class="forman-minus" type="button" value="-">
+            <input style="padding: 0 ;width:38px;" class="carbon-add" type="button" value="+">
+            <input style="padding: 0 ;width:38px;" class="carbon-minus" type="button" value="-">
         <%}; %>
     </div>`),
     select: _.template(`<div class="row">
@@ -30,8 +30,8 @@ forman.stencils = {
         <% if(options || true){%> <select class="six columns" name="<%= name %>" value="<%=value%>" id="<%=id%>" /><% _.forEach(options, function(option) { %><option <%if(option.selected){%> selected=selected <%}%>value="<%- option.value %>"><%- option.label %></option><% }); %></select><%}%>
         <small style="color:red;display:block; "><% if(!valid){%> <%=errors %> <%}%></small>
         <%if(array){%> 
-            <input class="forman-add" style="padding: 0 ;width:38px;" type="button" value="+">
-            <input class="forman-minus" style="padding: 0 ;width:38px;" type="button" value="-">
+            <input class="carbon-add" style="padding: 0 ;width:38px;" type="button" value="+">
+            <input class="carbon-minus" style="padding: 0 ;width:38px;" type="button" value="-">
         <%}; %>
     </div>`),
     radio: _.template(`<div class="row">
@@ -40,22 +40,22 @@ forman.stencils = {
         </span>
         <small style="color:red;display:block; "><% if(!valid){%> <%=errors %> <%}%></small>
         <%if(array){%> 
-            <input style="padding: 0 ;width:38px;" class="forman-add" type="button" value="+">
-            <input style="padding: 0 ;width:38px;" class="forman-minus" type="button" value="-">
+            <input style="padding: 0 ;width:38px;" class="carbon-add" type="button" value="+">
+            <input style="padding: 0 ;width:38px;" class="carbon-minus" type="button" value="-">
         <%}; %>
     </div>`),
-    fieldset: _.template(`<div class="forman">
+    fieldset: _.template(`<div class="carbon">
         <fieldset name="<%= name %>">
             <legend for="<%= name %>"><h5><%= label %></h5></legend><hr>
             <%if(array){%>
-                <input style="padding: 0 ;width:38px;" class="forman-add" type="button" value="+">
-                <input style="padding: 0 ;width:38px;" class="forman-minus" type="button" value="-">
+                <input style="padding: 0 ;width:38px;" class="carbon-add" type="button" value="+">
+                <input style="padding: 0 ;width:38px;" class="carbon-minus" type="button" value="-">
             <%}; %>
         </fieldset>
     </div>`)
 };
-forman.columns = 12;
-forman.columnClasses = {
+carbon.columns = 12;
+carbon.columnClasses = {
     1:'one columns',
     2:'two columns',
     3:'three columns',
@@ -69,13 +69,13 @@ forman.columnClasses = {
     11:'eleven columns',
     12:'twelve columns'
 }
-forman.handleError = function(field){
+carbon.handleError = function(field){
     field.el.querySelector('small').innerHTML = field.errors;
 }
 
-forman.render = function(template, options){
-    return (forman.stencils[template||'text'] || forman.stencils['text'])(options);
+carbon.render = function(template, options){
+    return (carbon.stencils[template||'text'] || carbon.stencils['text'])(options);
 }
-forman.processString = function(string,options){
+carbon.processString = function(string,options){
     return _.template(string)(options)
 }

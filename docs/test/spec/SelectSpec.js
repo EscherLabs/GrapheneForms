@@ -1,15 +1,15 @@
 describe('Select Input', function () {
-	// var myforman;
+	// var mycarbon;
 
 	beforeEach(function() {
     triggerOnChange = jasmine.createSpy('onChange');
 
-    myforman = new forman({fields:[{label:'test', type: 'select', value: 'hello', options: ['hello', 'stuff'] }]}, '#forman')//.on('change:test', triggerOnChange);
-//		myforman = new forman({fields:{test:{value: 'hello'}}}, $('#forman'))
+    mycarbon = new carbon({fields:[{label:'test', type: 'select', value: 'hello', options: ['hello', 'stuff'] }]}, '#carbon')//.on('change:test', triggerOnChange);
+//		mycarbon = new carbon({fields:{test:{value: 'hello'}}}, $('#carbon'))
 	});
 
   // afterEach(function() {
-  //   myforman.destroy();
+  //   mycarbon.destroy();
   // });
 
 	it('should create a select input correctly', function () {
@@ -17,52 +17,52 @@ describe('Select Input', function () {
 	});
 
 	it('should return expected json', function () {
-		expect(myforman.toJSON()).toEqual({test: 'hello'});
+		expect(mycarbon.toJSON()).toEqual({test: 'hello'});
 	});
 
 	// it('should return expected value', function () {
-	// 	expect(myforman.toJSON('test')).toEqual('hello');
+	// 	expect(mycarbon.toJSON('test')).toEqual('hello');
 	// });
 
   it('sets value with set', function () {
-		expect(myforman.toJSON('test')).toEqual('hello');
-    myforman.set('test','stuff');
-    expect(myforman.toJSON().test).toEqual('stuff');
+		expect(mycarbon.toJSON('test')).toEqual('hello');
+    mycarbon.set('test','stuff');
+    expect(mycarbon.toJSON().test).toEqual('stuff');
   });
 
 	it('sets value with set - get value from name', function () {
-		expect(myforman.toJSON('test')).toEqual('hello');
-    myforman.set('test','stuff');
-		expect(myforman.toJSON('test')).toEqual('stuff');
+		expect(mycarbon.toJSON('test')).toEqual('hello');
+    mycarbon.set('test','stuff');
+		expect(mycarbon.toJSON('test')).toEqual('stuff');
 	});
   
   it('sets value with set - get value from form toJSON', function () {
-		expect(myforman.toJSON('test')).toEqual('hello');
-    myforman.set('test','stuff');
-    expect(myforman.toJSON()).toEqual({test: 'stuff'});
+		expect(mycarbon.toJSON('test')).toEqual('hello');
+    mycarbon.set('test','stuff');
+    expect(mycarbon.toJSON()).toEqual({test: 'stuff'});
   });
 
   // it('should trigger events', function () {
-  //   myforman.fields.test.set('hello');
+  //   mycarbon.fields.test.set('hello');
   //   expect(triggerOnChange).not.toHaveBeenCalled();
-  //   myforman.fields.test.set('stuff');
+  //   mycarbon.fields.test.set('stuff');
   //   expect(triggerOnChange).toHaveBeenCalled();
   // });
 
   // it('should suppress change event during setValue', function () {
-  //   myforman.fields.test.setValue('stuff');
+  //   mycarbon.fields.test.setValue('stuff');
   //   expect(triggerOnChange).not.toHaveBeenCalled();
   // });
 
 
   it('should load choices from function', function () {
 
-    // myforman.destroy();
-    myforman = new forman({fields:{
+    // mycarbon.destroy();
+    mycarbon = new carbon({fields:{
       Title: {name: 'test', label: 'Label Field', type: 'select', reference: 'name',key: 'label', options: function(){
         return [{"label":"Title","name":"second"},{"label":"Top Right","name":"topright"},{"label":"Bottom Right","name":"bottomright"},{"label":"Bottom Left","name":"bottomleft"},{"label":"Top Left","name":"topleft"}];
       }}}
-    }, '#forman');
+    }, '#carbon');
         
     expect(document.querySelector('select[name=test] option')).not.toBe(null);
 

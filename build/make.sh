@@ -1,2 +1,2 @@
 #! /bin/bash
-minify src/forman.js src/forman.events.js src/forman.conditions.js src/forman.validate.js src/forman.skeleton.js > bin/forman.min.js 
+minify src/carbon.js src/carbon.events.js src/carbon.conditions.js src/carbon.validate.js src/carbon.skeleton.js > bin/carbon.min.js 

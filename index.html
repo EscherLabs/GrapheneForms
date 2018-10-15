@@ -9,11 +9,11 @@
    <div style="width:800px;margin:50px auto" id="form"></div>
    <pre style="width:800px;margin:50px auto" id="result"></pre>
     <script src="./assets/js/lodash.min.js"></script>    
-    <script type='text/javascript' src='./src/forman.js'></script>
-    <script type='text/javascript' src='./src/forman.validate.js'></script>
-    <script type='text/javascript' src='./src/forman.events.js'></script>
-    <script type='text/javascript' src='./src/forman.conditions.js'></script>
-    <script type='text/javascript' src='./src/forman.skeleton.js'></script>
+    <script type='text/javascript' src='./src/carbon.js'></script>
+    <script type='text/javascript' src='./src/carbon.validate.js'></script>
+    <script type='text/javascript' src='./src/carbon.events.js'></script>
+    <script type='text/javascript' src='./src/carbon.conditions.js'></script>
+    <script type='text/javascript' src='./src/carbon.skeleton.js'></script>
 
     <script>
 
@@ -875,7 +875,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
             {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
             {label: 'Candies', type:'fieldset', fields: [
 				{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '',
-				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color', array: {max:2}}]}]},
+				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color',columns:6, array: {max:2}}]}]},
 
         ]
    }
@@ -920,15 +920,15 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
 
 	   ]
    }
-    var myForman = new forman(options, '#form')
-    // myForman.debounce('change', function(field){
+    var myCarbon = new carbon(options, '#form')
+    // myCarbon.debounce('change', function(field){
     //     field.owner.validate();
-    //     document.querySelector('#result').innerHTML = JSON.stringify(myForman.toJSON(), null, 2)
+    //     document.querySelector('#result').innerHTML = JSON.stringify(myCarbon.toJSON(), null, 2)
     // })
 
 
 
-	myForman.debounce('change',function(d){
+	myCarbon.debounce('change',function(d){
 		if(typeof d.owner !== 'undefined'){
 			console.log(d.owner.toJSON());
 		}
