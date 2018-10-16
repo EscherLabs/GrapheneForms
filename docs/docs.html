@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="Adam Smallcomb">
+		<link rel="icon" href="./assets/favicon.png">
+
+		<title>Carbon Fieldguide</title>
+
+		<!-- Bootstrap core CSS -->
+		<link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>
+		<link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
+
+		<!-- Custom styles for this template -->
+		<link rel='stylesheet' type='text/css' href='assets/css/demo.css'>
+
+		<!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+		<!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+		<div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="./" style="line-height: 40px;font-size:10px;">
+						<span style="color: #FFB62F;float:left ">
+							<div style="line-height: 10px;height: 0px;margin-top: 5px;"><i class="fa-white fa fa-circle-o"></i> <i class="fa-white fa fa-circle-o" style="color: #BA7D10;"></i></div>
+							<div style="line-height: 10px; height: 0px; margin-top: 10px;margin-left: -6px;"><i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle-o"></i></div>
+							<div style="margin-top: -5px;height: 0px;"><i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle-o"></i></div>
+						</span> <span style="line-height: 40px;margin-left:10px;font-size: 20px;font-weight: 200;color: #cccccf;">Carbon.js</span>
+					</a>
+				</div>
+				<div class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="./docs.html"><i class="fa fa-life-ring"></i> Docs</a></li>
+						<li><a href="./demo.html"><i class="fa fa-flask"></i> Demo</a></li>
+						<!-- <li><a href="./editor.html"><i class="fa fa-check-square-o"></i> Editor</a></li> -->
+						<!-- <li><a href="./api.html"><i class="fa fa-code"></i> Docs</a></li> -->
+					</ul>
+				</div><!-- /.nav-collapse -->
+			</div><!-- /.container -->
+		</div><!-- /.navbar -->
+
+		<div class="container">
+
+			<div class="row">
+
+				<div class="col-sm-3" ></div>
+				<div class="hidden-xs" style="position:fixed;overflow:auto;top:100px;bottom:0;width:200px" id="sidebar" role="navigation">
+					<h4>What is carbon?</h4>
+					<ul class>
+						<li class="list-unstyled" ><a href="#intro"><i class="fa fa-chevron-right"></i> Introduction</a></li>
+						<li class="list-unstyled" ><a href="#getting_started"><i class="fa fa-chevron-right"></i> Getting Started</a></li>
+						<li class="list-unstyled" ><a href="#api"><i class="fa fa-chevron-right"></i> Api</a></li>
+					</ul>
+					<a href="#options"><h4>Options</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#legend"><i class="fa fa-chevron-right"></i> legend</a></li>
+						<li class="list-unstyled" ><a href="#defaults"><i class="fa fa-chevron-right"></i> defaults</a></li>
+						<li class="list-unstyled" ><a href="#renderer"><i class="fa fa-chevron-right"></i> renderer</a></li>
+						<li class="list-unstyled" ><a href="#name"><i class="fa fa-chevron-right"></i> name</a></li>
+						<li class="list-unstyled" ><a href="#attributes"><i class="fa fa-chevron-right"></i> attributes</a></li>
+						<li class="list-unstyled" ><a href="#actions"><i class="fa fa-chevron-right"></i> actions</a></li>
+						<li class="list-unstyled" ><a href="#fields"><i class="fa fa-chevron-right"></i> fields</a></li>
+					</ul>
+					<a href="#field_options"><h4>Field Options</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#field_type"><i class="fa fa-chevron-right"></i> type</a></li>
+						<li class="list-unstyled" ><a href="#field_name"><i class="fa fa-chevron-right"></i> name</a></li>
+						<li class="list-unstyled" ><a href="#field_label"><i class="fa fa-chevron-right"></i> label</a></li>
+						<li class="list-unstyled" ><a href="#field_target"><i class="fa fa-chevron-right"></i> target</a></li>
+						<li class="list-unstyled" ><a href="#field_value"><i class="fa fa-chevron-right"></i> value</a></li>
+						<li class="list-unstyled" ><a href="#field_help"><i class="fa fa-chevron-right"></i> help</a></li>
+						<li class="list-unstyled" ><a href="#field_columns"><i class="fa fa-chevron-right"></i> columns</a></li>
+						<li class="list-unstyled" ><a href="#field_show"><i class="fa fa-chevron-right"></i> show</a></li>
+						<!-- <li class="list-unstyled" ><a href="#enable"><i class="fa fa-chevron-right"></i> enable</a></li> -->
+						<!-- <li class="list-unstyled" ><a href="#parse"><i class="fa fa-chevron-right"></i> parse</a></li> -->
+						<li class="list-unstyled" ><a href="#field_validate"><i class="fa fa-chevron-right"></i> validate</a></li>
+						<li class="list-unstyled" ><a href="#field_required"><i class="fa fa-chevron-right"></i> required</a></li>
+						<li class="list-unstyled" ><a href="#field_placeholder"><i class="fa fa-chevron-right"></i> placeholder</a></li>
+						<li class="list-unstyled" ><a href="#field_pre"><i class="fa fa-chevron-right"></i> pre</a></li>
+						<li class="list-unstyled" ><a href="#field_post"><i class="fa fa-chevron-right"></i> post</a></li>
+						<li class="list-unstyled" ><a href="#field_choices"><i class="fa fa-chevron-right"></i> options/choices</a></li>
+						<li class="list-unstyled" ><a href="#field_max"><i class="fa fa-chevron-right"></i> max</a></li>
+						<li class="list-unstyled" ><a href="#field_min"><i class="fa fa-chevron-right"></i> min</a></li>
+						<li class="list-unstyled" ><a href="#field_step"><i class="fa fa-chevron-right"></i> step</a></li>
+						<li class="list-unstyled" ><a href="#field_true_state"><i class="fa fa-chevron-right"></i> trueState</a></li>
+						<li class="list-unstyled" ><a href="#field_false_state"><i class="fa fa-chevron-right"></i> falseState</a></li>
+					</ul>
+					<a href="#field_types"><h4>Field Types</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#field_text"><i class="fa fa-chevron-right"></i> text</a></li>
+						<li class="list-unstyled" ><a href="#field_textarea"><i class="fa fa-chevron-right"></i> textarea</a></li>
+						<li class="list-unstyled" ><a href="#field_select"><i class="fa fa-chevron-right"></i> select</a></li>
+						<li class="list-unstyled" ><a href="#field_radio"><i class="fa fa-chevron-right"></i> radio</a></li>
+						<li class="list-unstyled" ><a href="#field_checkbox"><i class="fa fa-chevron-right"></i> checkbox</a></li>
+						<li class="list-unstyled" ><a href="#field_hidden"><i class="fa fa-chevron-right"></i> hidden</a></li>
+						<li class="list-unstyled" ><a href="#field_password"><i class="fa fa-chevron-right"></i> password</a></li>
+
+						<li class="list-unstyled" ><a href="#field_number"><i class="fa fa-chevron-right"></i> number</a></li>
+						<li class="list-unstyled" ><a href="#field_fieldset"><i class="fa fa-chevron-right"></i> fieldset</a></li>
+					</ul>
+					<a href="#fieldsets"><h4>Fieldsets</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#fieldset_legend"><i class="fa fa-chevron-right"></i> legend</a></li>
+						<li class="list-unstyled" ><a href="#fieldset_multiple"><i class="fa fa-chevron-right"></i> multiple</a></li>
+						<li class="list-unstyled" ><a href="#fieldset_duplicate"><i class="fa fa-chevron-right"></i> duplicate</a></li>
+						<li class="list-unstyled" ><a href="#fieldset_max"><i class="fa fa-chevron-right"></i> multiple.max</a></li>
+					</ul>
+					<a href="#events"><h4>Events</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#on"><i class="fa fa-chevron-right"></i> on</a></li>
+						<li class="list-unstyled" ><a href="#delay"><i class="fa fa-chevron-right"></i> delay</a></li>
+						<li class="list-unstyled" ><a href="#trigger"><i class="fa fa-chevron-right"></i> trigger</a></li>
+						<li class="list-unstyled" ><a href="#initialize"><i class="fa fa-chevron-right"></i> initialize</a></li>
+						<li class="list-unstyled" ><a href="#change"><i class="fa fa-chevron-right"></i> change</a></li>
+						<li class="list-unstyled" ><a href="#save"><i class="fa fa-chevron-right"></i> save</a></li>
+						<li class="list-unstyled" ><a href="#destroy"><i class="fa fa-chevron-right"></i> destroy</a></li>
+						<li class="list-unstyled" ><a href="#destroyed"><i class="fa fa-chevron-right"></i> destroyed</a></li>
+					</ul>
+					<a href="#renderers"><h4>Renderers</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#renderer_basic"><i class="fa fa-chevron-right"></i> basic</a></li>
+						<li class="list-unstyled" ><a href="#renderer_tabs"><i class="fa fa-chevron-right"></i> tabs</a></li>
+						<li class="list-unstyled" ><a href="#renderer_wizard"><i class="fa fa-chevron-right"></i> wizard</a></li>
+						<li class="list-unstyled" ><a href="#renderer_poppins"><i class="fa fa-chevron-right"></i> poppins</a></li>
+						<li class="list-unstyled" ><a href="#renderer_inline"><i class="fa fa-chevron-right"></i> inline</a></li>
+					</ul>
+					<a href="#conditions"><h4>Conditions</h4></a>
+					<ul class>
+						<!-- <li class="list-unstyled" ><a href="#show"><i class="fa fa-chevron-right"></i> show</a></li> -->
+						<!-- <li class="list-unstyled" ><a href="#enabled"><i class="fa fa-chevron-right"></i> enabled</a></li> -->
+						<!-- <li class="list-unstyled" ><a href="#display"><i class="fa fa-chevron-right"></i> display</a></li> -->
+						<li class="list-unstyled" ><a href="#requires"><i class="fa fa-chevron-right"></i> requires</a></li>
+						<li class="list-unstyled" ><a href="#matches"><i class="fa fa-chevron-right"></i> matches</a></li>
+						<li class="list-unstyled" ><a href="#requires"><i class="fa fa-chevron-right"></i> not_matches</a></li>
+					</ul>
+					<a href="#validation"><h4>Validation</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#required"><i class="fa fa-chevron-right"></i> required</a></li>
+						<li class="list-unstyled" ><a href="#matches"><i class="fa fa-chevron-right"></i> matches</a></li>
+						<li class="list-unstyled" ><a href="#valid_email"><i class="fa fa-chevron-right"></i> valid_email</a></li>
+						<li class="list-unstyled" ><a href="#valid_emails"><i class="fa fa-chevron-right"></i> valid_emails</a></li>
+						<li class="list-unstyled" ><a href="#min_length"><i class="fa fa-chevron-right"></i> min_length</a></li>
+						<li class="list-unstyled" ><a href="#max_length"><i class="fa fa-chevron-right"></i> max_length</a></li>
+						<li class="list-unstyled" ><a href="#exact_length"><i class="fa fa-chevron-right"></i> exact_length</a></li>
+						<li class="list-unstyled" ><a href="#greater_than"><i class="fa fa-chevron-right"></i> greater_than</a></li>
+						<li class="list-unstyled" ><a href="#less_than"><i class="fa fa-chevron-right"></i> less_than</a></li>
+						<li class="list-unstyled" ><a href="#alpha"><i class="fa fa-chevron-right"></i> alpha</a></li>
+						<li class="list-unstyled" ><a href="#alpha_numeric"><i class="fa fa-chevron-right"></i> alpha_numeric</a></li>
+						<li class="list-unstyled" ><a href="#alpha_dash"><i class="fa fa-chevron-right"></i> alpha_dash</a></li>
+						<li class="list-unstyled" ><a href="#numeric"><i class="fa fa-chevron-right"></i> numeric</a></li>
+						<li class="list-unstyled" ><a href="#integer"><i class="fa fa-chevron-right"></i> integer</a></li>
+						<li class="list-unstyled" ><a href="#decimal"><i class="fa fa-chevron-right"></i> decimal</a></li>
+						<li class="list-unstyled" ><a href="#is_natural"><i class="fa fa-chevron-right"></i> is_natural</a></li>
+						<li class="list-unstyled" ><a href="#is_natural_no_zero"><i class="fa fa-chevron-right"></i> is_natural_no_zero</a></li>
+						<li class="list-unstyled" ><a href="#valid_ip"><i class="fa fa-chevron-right"></i> valid_ip</a></li>
+						<li class="list-unstyled" ><a href="#valid_url"><i class="fa fa-chevron-right"></i> valid_url</a></li>
+						<li class="list-unstyled" ><a href="#valid_base64"><i class="fa fa-chevron-right"></i> valid_base64</a></li>
+					</ul>
+					<a href="#themes"><h4>Themes</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#bootstrap"><i class="fa fa-chevron-right"></i> Bootstrap</a></li>
+						<!-- <li class="list-unstyled" ><a href="#foundation"><i class="fa fa-chevron-right"></i> Foundation</a></li> -->
+					</ul>
+					<a href="#plugins"><h4>Plugins</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#modal"><i class="fa fa-chevron-right"></i> modal</a></li>
+						<li class="list-unstyled" ><a href="#backbone"><i class="fa fa-chevron-right"></i> backbone</a></li>
+					</ul>
+					<a href="#extra_types"><h4>Extra Field Types</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#color"><i class="fa fa-chevron-right"></i> Color</a></li>
+					</ul>
+					<a href="./test/SpecRunner.html"><h4>Tests</h4></a>
+	<!-- 				<ul class>
+						<li class="list-unstyled" ><a href="#color"><i class="fa fa-chevron-right"></i> Tests</a></li>
+					</ul> -->
+					<br>
+					<br>
+
+				</div><!--/span-->
+				<div class="col-xs-12 col-sm-9">
+					<!--Introduction -->
+					<a name="intro" style="display:block;position:relative;top:-80px"></a>
+					<h2>CarbonJS Field Guide</h2>
+					<div class="alert alert-warning">NOTE: This is a beta version, possibly still containing bugs and some parts of api may 
+					still change slightly.</div>
+					<!-- <a name="intro" style="display:block;position:relative;top:-80px"></a> -->
+					<h4>What is it?</h4>
+					<p>
+					Carbon is an extensible JavaScript/jQuery library with an included set of CSS rules.
+					</p>
+					<p>
+					The core library does very little besides establish the framework without at least one plugin. Each input type is defined with a plugin allowing for many more input types than are normally available in plain html and more can be created as the need arises.
+					</p>
+					<p>
+					The basics include hidden, text, textarea, select, checkbox, radio, and password.
+					</p>
+					<p>
+					HTML5 adds quite a few more but it is difficult to rely on them since support in older browsers is sketchy at best, this is where Carbon comes in. With the proper plugin you can trust that the input will look, act and validate correctly. Its even possible to create input types that don't exist in any spec but act in similar and predictable ways.
+					</p>
+
+					<!--Getting Started -->
+					<a name="getting_started" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Getting Started</h4>
+					<p><b>Dependencies</b> - Carbon has two hard dependencies that needed. The first being jquery (or zepto) and the second being hogan.js. Strictly speaking the compile portion of hogan is not needed. </p>
+					<pre><code class="prettyprint">&lt;script src='http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js'&gt;&lt;/script&gt;<br>&lt;script src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'&gt;&lt;/script&gt;</code></pre>
+					<p>Next the core carbon engine will need to be loaded.</p>
+					<pre><code class="prettyprint">&lt;script type='text/javascript' src='carbon.min.js'&gt;&lt;/script&gt;</code></pre>
+					<p>And lastly a theme is required - the default theme is based on bootstrap and will also require the css for bootstrap to be included.</p>
+					<pre><code class="prettyprint">&lt;style src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'&gt;&lt;/style&gt;<br>&lt;script type='text/javascript' src='bootstrap.carbon.js'&gt;&lt;/script&gt;</code></pre>
+					<p>So now all together an example of a minimum setup would look something like this</p>
+					<pre><code class="prettyprint">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;style src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'&gt;&lt;/style&gt;
+    &lt;script src='http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js'&gt;&lt;/script&gt;
+    &lt;script src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'&gt;&lt;/script&gt;
+    &lt;script type='text/javascript' src='carbon.min.js'&gt;&lt;/script&gt;
+    &lt;script type='text/javascript' src='bootstrap.carbon.js'&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;div class="myForm"&gt;
+  &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+					<br>
+					<p>Now that we have all of our dependencies included we can begin enjoying the magic of carbon!</p>
+					<blockquote><code class="prettyprint">var options = {};<br> var myForm = $('.myForm').carbon(options);</code></blockquote>
+					<p>This will create a form in the element selected with 'selector' defined by your options.</p>
+
+					<!--Api -->
+					<a name="api" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>API</h4>
+					<h5>toJSON <code>myForm.toJSON([name]);</code></h5>
+					<p>
+						an object will be returned containing a serialized list of all fields maintained in the Carbon tree. If the optional 'name' parameter is supplied then only the value of the field with that name is returned.
+					</p>
+					<br>
+					<h5>destroy <code>myForm.destroy();</code></h5>
+					<p>
+						this will remove the form and clean up any residuals and remove all events
+					</p>
+					<br>
+					<h5>find <code>myForm.find(path || name);</code></h5>
+					<p>
+						the Carbon field that the path leads to is returned, for first level fields the path is just the name if it is contained within a fieldset the path would be <code>'fieldset_name.field_name'</code>
+					</p>
+					<br>
+					<h5>validate <code>myForm.validate();</code></h5>
+					<p>
+						all of the fields are validated and the status of the validation is returned. If a field fails validation the error message is added to that field if the theme supports it. The flag <code>myForm.valid</code> is also set to this status and an array of errors is containted in the <code>myForm.errors</code> attribute;
+
+					</p>
+					<br>
+					<h5>clearErrors <code>myForm.clearErrors();</code></h5>
+					<p>
+						this clears the 'valid' flag to true and empties the array of errors
+					</p>
+					<hr>
+
+
+					<!--options -->
+					<a name="options" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Options</h3>
+					<pre><code class="prettyprint">var options = {
+  legend: 'My Form',
+  name: 'myForm',
+  renderer: 'base', //this is the default (base, tabs, wizard, poppins, inline)
+};</code></pre>
+					<!--legend -->
+					<a name="legend" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>legend</h4>					
+					<p>
+						The legend of the form as it is to be rendered, if left blank no legend will be rendered.
+					</p>
+					<blockquote>options.legend = 'My Form'</blockquote>
+					<a name="defaults" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>defaults</h4>					
+					<p>
+						This is an object that will be used to set defaults on any field that is created, if an attribute is set here and not overridden in the specific field this is the value that will be used
+					</p>
+					<blockquote>options.defaults = {type: 'select'} // this would set the default type to select</blockquote>
+					<a name="renderer" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>renderer</h4>					
+					<p>
+						The default renderer is the basic renderer, and will render forms as you would expect in separate fieldsets. Some other renderers ship with carbon, you can find out more about these <a href="#renderers">here</a>. This is a modular component  of Carbon which means that others can be created.  
+					</p>
+					<blockquote>options.renderer = 'tabs'</blockquote>
+					<a name="name" style="display:block;position:relative;top:-80px"></a>
+					<br>					
+					<h4>name</h4>					
+					<p>
+						The name of your form. This can be used to reference the form after it is created. If no name is given one will be generated automatically. A reference to all forms created is maintained in the object <code>Carbon.instances</code>. Accesssing a form with the name "myForm" would look like this <code>Carbon.instances['myForm']</code>
+					</p>
+					<blockquote>options.name = 'myForm'</blockquote>
+					<a name="attributes" style="display:block;position:relative;top:-80px"></a>
+					<br>					
+					<h4>attributes</h4>					
+					<p>
+						If attributes is an object then carbon populates your form with the values contained in the attributes. If the keyword <code>hash</code> is set then carbon attempts to load the form with attributes retrieved in the url hash 
+					</p>
+					<blockquote>options.attributes = {first_name: 'Bob', last_name: 'Person'}</blockquote>
+					<a name="actions" style="display:block;position:relative;top:-80px"></a>
+					<br>					
+					<h4>actions</h4>					
+					<p>
+						The actions to be included in the form. By default the <code>cancel</code> and <code>save</code> actions are included. For a full list and instructions on creating new actions go <a href="#actions">here</a>.
+					</p>
+					<blockquote>options.actions = ['save']</blockquote>
+					<a name="fields" style="display:block;position:relative;top:-80px"></a>
+					<br>					
+					<h4>fields</h4>					
+					<p>
+						An array of fields that define each field to be included in the form. If no fields are defined then no form is drawn.
+					</p>
+					<blockquote>options.fields = []</blockquote>
+					<hr>
+
+
+					<!--field options -->
+					<a name="field_options" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Field Options</h3>
+					<pre><code class="prettyprint">var options = { fields: [
+  {
+    type: 'text',
+    name: 'first_name',
+    label: 'First Name'
+  }
+]};</code></pre>
+					<!--type -->
+					<a name="field_type" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>type <code>['string', null]</code></h4>					
+					<p>
+						This defines the type of form element to render. The default type is a simple text input.
+					</p>
+					<blockquote>options.fields[0].type = 'text'</blockquote>
+					<!--field name -->
+					<a name="field_name" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>name <code>['string', null]</code></h4>					
+					<p>
+						If this attribute is not set then the name will be set to the internally genderated uuid for this field. The 'name' attribute is set on the field in the html and is used to reference this field in the collection maintained by Carbon.
+					</p>
+					<blockquote>options.fields[0].name = 'first_name'</blockquote>
+					<!--field label -->
+					<a name="field_label" style="display:block;position:relative;top:-80px"></a>
+					<br>					
+					<h4>label <code>['string', 'bool', null]</code></h4>					
+					<p>
+						If a string is set this will be used as the label on the current field. To hide the label then this can be set to 'false'. The default label that will apply if no label is set will be the index of the field i.e. the first field will have a label of '0'.
+					</p>
+					<blockquote>options.fields[0].label = 'First Name'</blockquote>
+
+					<!--field target -->
+					<a name="field_target" style="display:block;position:relative;top:-80px"></a>
+					<br>					
+					<h4>target <code>['string', null]</code></h4>					
+					<p>
+						The target by default is the form or fieldset that contains the field however Carbon can manage fields accross different containers. If a selector string is passed in then the field will be appended to the element that is indicated by the selector.
+					</p>
+					<blockquote>options.fields[0].target = '.myForm'</blockquote>
+					<!--field value -->
+					<a name="field_value" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>value <code>['text', 'integer', 'bool', 'function']</code></h4>					
+					<p>
+						This is the default value of the field and has lower presidence than the attributes field on the form. 
+					</p>
+					<blockquote>options.fields[0].value = 'Default'</blockquote>
+					<!--field help -->
+					<a name="field_help" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>help <code>['string']</code></h4>					
+					<p>
+						This is the help text that will be shown to a user to guide them in filling out the field. By default no help text will be included.
+					</p>
+					<blockquote>options.fields[0].help = 'Put your first name here'</blockquote>
+					<!--field columns -->
+					<a name="field_columns" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>columns <code>['integer']</code></h4>					
+					<p>
+						Fields default to the full with but based on the grid that the theme uses this can be modified on a per field basis. The default bootstrap theme is based on a 12 column grid.
+					</p>
+					<blockquote>options.fields[0].columns = 12</blockquote>
+					<!--field show -->
+					<a name="field_show" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>show <code>['bool', 'function' 'Carbon.conditions']</code></h4>					
+					<p>
+						The show attribute must in one way or another result in a bool indicating if the field should be shown or not. By defualt this is set to 'true', if the value is simply set to false the field will not be shown. If show is set to a function then the function must return a boolean. The last option is to pass an object with the structure of <a href="#conditions"><code>Carbon.conditions</code></a> that is used to dynamically determine if the field should be shown based on the values of other fields.
+					</p>
+					<blockquote>options.fields[0].show = true</blockquote>
+					<!--field validate -->
+					<a name="field_validate" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>validate <code>['bool', 'function' 'Carbon.conditions']</code></h4>					
+					<p>
+						
+					</p>
+					<blockquote>options.fields[0].validate = true</blockquote>
+					<!--field required -->
+					<a name="field_required" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>required <code>['bool', 'function' 'Carbon.conditions']</code></h4>					
+					<p>
+
+					</p>
+					<blockquote>options.fields[0].required = true</blockquote>
+					<!--field placeholder -->
+					<a name="field_placeholder" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>placeholder  <code>['string']</code></h4>					
+					<p>
+						The placeholder attribute sets the placeholder for some field types, for example the 'text' type.
+					</p>
+					<blockquote>options.fields[0].placeholder = ''</blockquote>
+					<!--field pre -->
+					<a name="field_pre" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>pre <code>['string']</code></h4>					
+					<p>
+						This sting will be prepended to the field if the theme supports the pre attribute.
+					</p>
+					<blockquote>options.fields[0].pre = ''</blockquote>
+					<!--field post -->
+					<a name="field_post" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>post <code>['string']</code></h4>
+					<p>
+						This sting will be appended to the field if the theme supports the post attribute.
+					</p>
+					<blockquote>options.fields[0].post = ''</blockquote>
+					<!--field options -->
+					<a name="field_choices" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>options/choices  <code>['array', 'object', 'string', 'function']</code></h4>	
+					<p>
+						The 
+					</p>
+					<blockquote>options.fields[0].options = ''</blockquote>
+					<!--field max -->
+					<a name="field_max" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>max <code>['integer', null]</code></h4>
+					<p>
+						This field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a maximum number that the fields value can be. If the max is set on any field that would normally have its options/choices passed in then the max is used to generate a set of options for that field.
+					</p>
+					<blockquote>options.fields[0].max = ''</blockquote>
+					<!--field min -->
+					<a name="field_min" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>min <code>['integer', null]</code></h4>
+					<p>
+						Similar to the max field this field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a minimum number that the fields value can be. If the max is set on any field that would normally have its options/choices passed in then the min is used with the max to generate a set of options for that field. If max is set but min is not then min is assumed to be 0 when generating options.
+					</p>
+					<blockquote>options.fields[0].min = ''</blockquote>
+					<!--field step -->
+					<a name="field_step" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>step <code>['integer', null]</code></h4>					
+					<p>
+						Similar to the max field this field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a step number that the fields value will increase/decreases by when using the arrows. If the max is set on any field that would normally have its options/choices passed in then the min is used with the max to generate a set of options for that field. If max is set but step is not then step is assumed to be 1 when generating options.
+					</p>
+					<blockquote>options.fields[0].step = ''</blockquote>
+
+					<!--field types -->
+					<a name="field_types" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Field Types</h3>
+
+					<!--text -->
+					<a name="field_text" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>text</h4>
+					<p>
+						This is the default field type that is created if the type is not specified. This will generate an input of type text.
+					</p>
+					<blockquote>options.fields[0] = {type: 'text', name: ''}</blockquote>
+
+					<!--textarea -->
+					<a name="field_textarea" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>textarea</h4>
+					<p>
+						This will create a textarea with the value as the content.
+					</p>
+					<blockquote>options.fields[0] = {type: 'textarea', name: ''}</blockquote>
+
+					<!--select -->
+					<a name="field_select" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>select</h4>
+					<p>
+						This will create a select element generating the options based on the list of options/choices that are passed in.
+					</p>
+					<blockquote>options.fields[0] = {type: 'select', name: ''}</blockquote>
+
+					<!--radio -->
+					<a name="field_radio" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>radio</h4>
+					<p>
+						This will create a collection of radio buttons generated based on the list of options/choices that are passed in.
+					</p>
+					<blockquote>options.fields[0] = {type: 'radio', name: ''}</blockquote>
+
+					<!--checkbox -->
+					<a name="field_checkbox" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>checkbox</h4>
+					<p>
+						This will create a checkbox with true states being any of the following: true, 'true' 1, '1', 'on';<br>
+						The expected true state can also be set with the attribute <code>trueState</code> and the false state can be set with the attribute <code>falseState</code>
+					</p>
+					<blockquote>options.fields[0] = {type: 'checkbox', name: ''}</blockquote>
+
+					<!--fieldset -->
+					<a name="field_fieldset" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>fieldset</h4>
+					<p>
+						This field
+					</p>
+					<blockquote>options.fields[0] = {type: 'fieldset', name: ''}</blockquote>
+
+
+					<!--fieldsets -->
+					<a name="fieldsets" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Fieldsets</h3>
+
+					<!--fieldset -->
+					<a name="fieldset" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>fieldset</h4>
+					<p>
+
+					</p>
+					<blockquote>options.fields[0] = {type: 'fieldset', legend: 'Common Fields' fields: []}</blockquote>
+
+					<!--legend -->
+					<a name="fieldset_legend" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>legend / label</h4>
+					<p>
+						For consistancy with other fields you can set either the 'legend' or the 'label' attribute to render the legend for the fieldset. If you set both the 'legend' attribute is priority. If neither is set no legend is drawn for the basic renderer.
+					</p>
+					<blockquote>options.fields[0] = {type: 'fieldset', legend: 'Common Fields' fields: []}</blockquote>
+
+					<!--multiple -->
+					<a name="fieldset_multiple" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>multiple</h4>
+					<p>
+
+					</p>
+					<blockquote>options.fields[0] = {type: 'fieldset', legend: 'Common Fields' fields: []}</blockquote>
+
+					<!--duplicate -->
+					<a name="fieldset_duplicate" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>duplicate</h4>
+					<p>
+
+					</p>
+					<blockquote>options.fields[0] = {type: 'fieldset', legend: 'Common Fields' fields: []}</blockquote>
+
+					<!--max -->
+					<a name="fieldset_max" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>multiple.max</h4>
+					<p>
+						This is the maximum number duplications of the fieldset that is aloud.
+					</p>
+					<blockquote>options.fields[0] = {type: 'fieldset', legend: 'Common Fields' fields: []}</blockquote>
+
+					<!--events -->
+					<a name="events" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Events</h3>
+
+					<!--on -->
+					<a name="on" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>on('event', 'function')</h4>					
+					<p>
+Bind a callback function to an object. The callback will be invoked whenever the event is fired. If you have a large number of different events on a page, the convention is to use colons to namespace them: "poll:start", or "change:selection". The event string may also be a space-delimited list of several events...
+					</p>
+					<blockquote>carbon.on('change:myfield', function(){})</blockquote>
+
+					<!--delay -->
+					<a name="delay" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>delay('event', 'function', [delay])</h4>					
+					<p>
+						This works exatly like the on method except it will only be triggered after the event has not been fired again after the delay timeout. The default delay time is 250ms.
+					</p>
+					<blockquote>carbon.delay('change', function(){}, ['integer'])</blockquote>
+
+					<!--trigger -->
+					<a name="trigger" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>trigger('event')</h4>					
+					<p>
+						Trigger callbacks for the given event, or space-delimited list of events. Subsequent arguments to trigger will be passed along to the event callbacks.
+					</p>
+					<blockquote>carbon.trigger('change')</blockquote>
+
+					<!--built in events -->
+					<a name="built_in_events" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Built-in Events</h4>					
+					<p>
+						The list of built-in Carbon events. You're also free to trigger your own events as you see fit. The context is always set to that of the Carbon instance triggering the event.
+					</p>
+					<ul>
+						<!--initialize -->
+						<li><h5>initialize</h5>					
+						<p>
+							This event is fired as Carbon begins the initialization and is a good place to put set up code.
+						</p></li>
+
+						<!--change -->
+						<li><h5>change</h5>					
+						<p>
+							The change event is triggered whenever the value of a field is changed.
+						</p></li>
+
+						<!--destroy -->
+						<li><h5>destroy</h5>					
+						<p>
+							This event is fired when the destroy method is called but before anything has been destroyed.
+						</p></li>
+
+						<!--destroyed -->
+						<li><h5>destroyed</h5>					
+						<p>
+							Fires after everything related to the form has been destroyed.
+						</p></li>
+
+					</ul>
+					<!--renderers -->
+					<a name="renderers" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Renderers</h3>
+						Renderers control how a form is drawn and layed out.
+					<!--basic -->
+					<a name="renderer_basic" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>basic</h4>					
+					<p>
+						The 'basic' renderer will create the form in and fieldsets in the normal linear way that you would expect.
+					</p>
+
+					<!--tabs -->
+					<a name="renderer_tabs" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>tabs</h4>					
+					<p>
+						This renderer will divide any fieldsets into separate tabs with the legends of each fieldset as the tab titles.
+					</p>
+
+					<!--wizard -->
+					<a name="renderer_wizard" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>wizard</h4>			
+					<p>
+						This renderer will divide any fieldsets into separate sections with the legends of each fieldset as the steps in the wizard and will require you to finish them in order and validate before moving on. Actions will also be create automatically for stepping through and saving.
+					</p>
+
+					<!--poppins -->
+					<a name="renderer_poppins" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>poppins</h4>					
+					<p>
+						The poppins renderer handles the form differently, this will look for elements with the class poppins and a name matching the name of one of the fields, the value of that field will then be set to the contents of that element and set that element up to have a popup allow you to edit that value when it is clicked.
+					</p>
+
+ 					<!--inline -->
+<!--					<a name="renderer_inline" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>inline</h4>					
+					<p>
+
+					</p> -->
+
+
+					<!--conditions -->
+					<a name="conditions" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Conditions</h3>					
+		<pre><code class="prettyprint">{
+  "label": "Reason",
+  "name": "reason",
+  "type": "text",
+  "show": {
+    "matches": {
+      "name": "candy",
+      "value": "Chocolate"
+    },				
+    "not_matches": {
+      "name": "candy",
+      "value": "Chocolate"
+    },
+    "requires": {
+      "name": "candy"
+    }
+  }
+}</code></pre>
+
+					<!--requires -->
+					<a name="requires" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>requires</h4>					
+					<p>
+						The 'requires' condition requires that the field indicated with the 'name' attribute passes the required validation.
+					</p>
+
+					<!--matches -->
+					<a name="matches" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>matches</h4>					
+					<p>
+						The 'matches' condition requires that the value of the field indicated with the 'name' attribute matches the value that is set in the 'value' attribute.
+					</p>
+
+					<!--not_matches -->
+					<a name="not_matches" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>not_matches</h4>					
+					<p>
+						The 'matches' condition requires that the value of the field indicated with the 'name' attribute does not match the value that is set in the 'value' attribute.
+					</p>
+
+					<!--validation -->
+					<a name="validation" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Validation</h3>
+					<a name="required" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>required</h5>
+					<p>
+						fails validation if the field value is empty.	
+					</p>
+					<code>{validate: {required: true}</code>
+					<a name="matches" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>matches</h5>
+					<p>
+						fails validation if the field value does not match the value of the field indicated.	
+					</p>
+					<code>{validate: {matches: 'password_1'}</code>
+					<a name="valid_email" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>valid_email</h5>
+					<p>
+						fails validation if the field value is not a valid email address.	
+					</p>
+					<code>{validate: {valid_email: true}</code>
+					<a name="valid_emails" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>valid_emails</h5>
+					<p>
+						fails validation if any value in a comma separated list is not a valid email	
+					</p>
+					<code>{validate: {valid_emails: true}</code>
+					<a name="min_length" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>min_length</h5>
+					<p>
+						fails validation if the length of the fields value is shorter then the indicated value	
+					</p>
+					<code>{validate: {min_length: '8'}</code>
+					<a name="max_length" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>max_length</h5>
+					<p>
+						fails validation if the length of the fields value is longer then the indicated value	
+					</p>
+					<code>{validate: {max_length: '10'}</code>
+					<a name="exact_length" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>exact_length</h5>
+					<p>
+						fails validation if the length of the fields value is not exactly the same as the indicated value	
+					</p>
+					<code>{validate: {exact_length: '8'}</code>
+					<a name="greater_than" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>greater_than</h5>
+					<p>
+						fails validation if the value of the field is less than the indicated value after using parseFloat.
+					</p>
+					<code>{validate: {greater_than: '16'}</code>
+					<a name="less_than" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>less_than</h5>
+					<p>
+						fails validation if the value of the field is greater than the indicated value after using parseFloat.
+					</p>
+					<code>{validate: {less_than: '100'}</code>
+					<a name="alpha" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>alpha</h5>
+					<p>
+						fails validation if the value of the field contains anything other than alphabetical characters.
+					</p>
+					<code>{validate: {alpha: true}</code>
+					<a name="alpha_numeric" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>alpha_numeric</h5>
+					<p>
+						fails validation if the value of the field contains anything other than alpha-numeric characters.
+					</p>
+					<code>{validate: {alpha_numeric: true}</code>
+					<a name="alpha_dash" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>alpha_dash</h5>
+					<p>
+						fails validation if the value of the field contains anything other than alpha-numeric characters, underscores, or dashes.
+					</p>
+					<code>{validate: {alpha_dash: true}</code>
+					<a name="numeric" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>numeric</h5>
+					<p>
+						fails validation if the value of the field contains anything other than numeric characters.
+					</p>
+					<code>{validate: {numeric: true}</code>
+					<a name="integer" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>integer</h5>
+					<p>
+						fails validation if the value of the field contains anything other than an integer.
+					</p>
+					<code>{validate: {numeric: true}</code>
+					<a name="decimal" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>decimal</h5>
+					<p>
+						fails validation if the value of the field contains anything other than a decimal.
+					</p>
+					<code>{validate: {decimal: true}</code>
+					<a name="is_natural" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>is_natural</h5>
+					<p>
+						fails validation if the value of the field contains anything other than a natural number: 0, 1, 2, 3, etc.
+					</p>
+					<code>{validate: {is_natural: true}</code>
+					<a name="is_natural_no_zero" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>is_natural_no_zero</h5>
+					<p>
+						fails validation if the value of the field contains anything other than a natural number, but not zero: 1, 2, 3, etc.
+					</p>
+					<code>{validate: {is_natural_no_zero: true}</code>
+					<a name="valid_ip" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>valid_ip</h5>
+					<p>
+						fails validation if the value of the field is not a valid IP address.
+					</p>
+					<code>{validate: {valid_ip: true}</code>
+					<a name="valid_url" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>valid_url</h5>
+					<p>
+						fails validation if the value of the field is not a valid url.
+					</p>
+					<code>{validate: {valid_url: true}</code>
+					<a name="valid_base64" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>valid_base64</h5>
+					<p>
+						fails validation if the value of the field contains anything other than valid Base64 characters.
+					</p>
+					<code>{validate: {valid_base64: true}</code>
+					<br>
+
+
+
+					<!--themes -->
+					<a name="themes" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Themes</h3>
+						Themes help CarbonJS to fit seemlessly into your current site.
+					<!--bootstrap -->
+					<a name="bootstrap" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Bootstrap</h4>					
+					<p>
+						The bootstrp theme is the default theme and is the one that is tested most thoroughly. It impliments all of the basic elements and uses the 12 column grid. The pre and post pieces of form groups are also impilmented 
+					</p>
+
+
+					<!--plugins -->
+					<a name="plugins" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Plugins</h3>
+						Plugins are used to extend the functionality of CarbonJS as well as to impliment new features that may only make sense for a subset of people.
+					<!--modal -->
+					<a name="modal" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Modal</h4>					
+					<p>
+						This plugin will automatically create a modal popup of a form if the target is not selected or the target element is not found. In practice this would look like this: 
+						<pre><code class="prettyprint">var myForm = $().carbon(options);</code></pre>
+						To make use of this plugin the plugin just needs to be included and no target selected.
+					</p>
+					<!--backbone -->
+					<a name="backbone" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Backbone</h4>					
+					<p>
+						Using this plugin will allow you to bind your model to the form, the fields can be defined on the model as a 'schema' and the model will be updated using model.set on the 'save' event of the form. If you don't want to use all of the fields defined on in the schema just pass an arr with the names of the fields you do want to use, you can also use the array to change the order of the fields as this is taken as priority over the definition.
+
+						The schema should be defined as an object of the form 
+						<pre><code class="prettyprint">bbModel = new Backbone.model.extend({
+  "schema": {
+    "First Name": {}, //name and label are assumed to be 'first_name' and 'First Name' respectively
+    "Home Address": {name: 'address', type: 'address'}
+  }
+
+var myForm = $('.myform').carbon({model: new bbModel(), fields: ['first_name']});</code></pre>
+						To use this plugin the plugin just needs to be included and a model passed in to it. A reference to the model is also available at <code>myForm.options.model</code>, this is useful from within an event callback function. Two new events are also used with this plugin: 
+						
+					<ul>
+						<!--save -->
+						<li><h5>save</h5>					
+						<p>
+							triggered right before the model is updated with the new values
+						</p></li>
+						<!--saved -->
+						<li><h5>saved</h5>					
+						<p>
+							triggered right after the model is updated with the new values
+						</p></li>
+
+					</ul>
+					</p>
+
+
+					<hr>
+					<footer>
+						<p>&copy; Adam Smallcomb  2017</p>
+					</footer>
+				</div><!--/span-->
+
+			</div><!--/row-->
+
+		</div><!--/.container-->
+
+
+		<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script>
+		<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.min.js'></script>
+
+		<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3//jquery-ui.min.js'></script>
+		<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
+
+		<script type='text/javascript' src='bin/carbon.min.js'></script>
+		<script type='text/javascript' src='bin/bootstrap.carbon.js'></script>
+		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	</body>
+</html>

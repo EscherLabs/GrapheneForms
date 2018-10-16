@@ -27,6 +27,7 @@ carbon.performValidate = function(target, pValue){
 						estring = item.validate[r];
 					}
 					target.errors = estring.replace('{{label}}', item.label);
+					// target.errors = estring.replace('{{value}}', value);
 				}
 			}
 			carbon.handleError(target);
@@ -40,9 +41,9 @@ carbon.clearErrors = function() {
 };
 carbon.regex = {
 	numeric: /^[0-9]+$/,
-	integer: /^\-?[0-9]+$/,
+	// integer: /^\-?[0-9]+$/,
 	decimal: /^\-?[0-9]*\.?[0-9]+$/,
-	email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i,
+	// email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i,
 	// alpha: /^[a-z]+$/i,
 	// alphaNumeric: /^[a-z0-9]+$/i,
 	// alphaDash: /^[a-z0-9_-]+$/i,
@@ -50,15 +51,16 @@ carbon.regex = {
 	// naturalNoZero: /^[1-9][0-9]*$/i,
 	// ip: /^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})$/i,
 	// base64: /[^a-zA-Z0-9\/\+=]/i,
-	url: /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
-	date: /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
+	// url: /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
+	// date: /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
 };
-carbon.validations = {
+carbon.validations = 
+{
 	required:{
 		method: function(value, args) {
 			return this.satisfied(value);
 		},
-		message: 'The {{label}} field is required.'
+		message: '{{label}} is required.'
 	},
 	matches:{
 		method: function(value, matchName) {
@@ -67,38 +69,38 @@ carbon.validations = {
 			}
 			return false;
 		},
-		message: 'The {{label}} field does not match the %s field.'
+		message: '{{label}} does not match the %s field.'
 	},	
 	date:{
 		method: function(value, args) {
-	        return (carbon.regex.date.test(value) || value === '');
+	        return (/^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/.test(value) || value === '');
 		},
-		message: 'The {{label}} field should be in the format MM/DD/YYYY.'
+		message: '{{label}} should be in the format MM/DD/YYYY.'
 	},
 	valid_url:{
 		method: function(value) {
-			return (carbon.regex.url.test(value) || value === '');
+			return (/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(value) || value === '');
 		},
-		message: 'The {{label}} field must contain a valid Url.'
+		message: '{{label}} must contain a valid Url.'
 	},
 	valid_email:{
 		method: function(value) {
-			return (carbon.regex.email.test(value) || value === '');
+			return (/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i.test(value) || value === '');
 		},
-		message: 'The {{label}} field must contain a valid email address.'
+		message: '{{label}} must contain a valid email address.'
 	},
-	valid_emails:{
-		method: function(value) {
-			var result = value.split(",");
-			for (var i = 0; i < result.length; i++) {
-				if (!carbon.regex.email.test(result[i])) {
-					return false;
-				}
-			}
-			return true;
-		},
-		message: 'The {{label}} field must contain all valid email addresses.'
-	},
+	// valid_emails:{
+	// 	method: function(value) {
+	// 		var result = value.split(",");
+	// 		for (var i = 0; i < result.length; i++) {
+	// 			if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i.test(result[i])) {
+	// 				return false;
+	// 			}
+	// 		}
+	// 		return true;
+	// 	},
+	// 	message: '{{label}} must contain all valid email addresses.'
+	// },
 	min_length:{
 		method: function(value, length) {
 			if (!carbon.regex.numeric.test(length)) {
@@ -106,7 +108,7 @@ carbon.validations = {
 			}
 			return (value.length >= parseInt(length, 10));
 		},
-		message: 'The {{label}} field must be at least %s characters in length.'
+		message: '{{label}} must be at least %s characters in length.'
 	},
 	max_length:{
 		method: function(value, length) {
@@ -115,7 +117,7 @@ carbon.validations = {
 			}
 			return (value.length <= parseInt(length, 10));
 		},
-		message: 'The {{label}} field must not exceed %s characters in length.'
+		message: '{{label}} must not exceed %s characters in length.'
 	},
 	exact_length:{
 		method: function(value, length) {
@@ -124,7 +126,7 @@ carbon.validations = {
 			}
 			return (value.length === parseInt(length, 10));
 		},
-		message: 'The {{label}} field must be exactly %s characters in length.'
+		message: '{{label}} must be exactly %s characters in length.'
 	},
 	greater_than:{
 		method: function(value, param) {
@@ -133,7 +135,7 @@ carbon.validations = {
 			}
 			return (parseFloat(value) > parseFloat(param));
 		},
-		message: 'The {{label}} field must contain a number greater than %s.'
+		message: '{{label}} must contain a number greater than %s.'
 	},
 	less_than:{
 		method: function(value, param) {
@@ -142,13 +144,13 @@ carbon.validations = {
 			}
 			return (parseFloat(value) < parseFloat(param));
 		},
-		message: 'The {{label}} field must contain a number less than %s.'
+		message: '{{label}} must contain a number less than %s.'
 	},
 	numeric:{
 		method: function(value) {
-			return (carbon.regex.decimal.test(value) || value === '');
+			return (carbon.regex.numeric.test(value) || value === '');
 		},
-		message: 'The {{label}} field must contain only numbers.'
+		message: '{{label}} must contain only numbers.'
 	},
 	// alpha:{
 	// 	method: function(value) {

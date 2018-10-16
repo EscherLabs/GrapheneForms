@@ -4,8 +4,26 @@ var carbon = function(data, el){
     //initalize form
     this.options = _.assignIn({legend: '', data:{}, columns:carbon.columns},this.opts, data);
     this.el = document.querySelector(el || data.el);
-    this.el.innerHTML = carbon.render('container', this.options);
-    this.container = this.el.querySelector((el || data.el) + ' form');
+    this.on = this.events.on;
+    this.trigger = this.events.trigger;
+    this.debounce = this.events.debounce;
+
+    this.trigger('initialize');
+    
+    //set flag on all root fieldsets as a section
+    if(this.options.sections){
+        _.each(_.filter(this.options.fields,{type:'fieldset'}),function(item,i){
+            item.index = i;
+            item.section = true;
+            // item.text = item.legend || item.label || i;
+        return item})
+    }
+    
+    if(this.options.clear) {
+        this.el.innerHTML = carbon.render(this.options.sections+'_container', this.options);
+    }
+
+    this.container = this.el.querySelector((el || data.el) + ' form') || this.el;
     this.rows = {};
 
     //parse form values into JSON object
@@ -42,9 +60,7 @@ var carbon = function(data, el){
     this.field = function(name){
         return _.find(this.fields,{name:name})
     }.bind(this)
-    this.on = this.events.on;
-    this.trigger = this.events.trigger;
-    this.debounce = this.events.debounce;
+
     this.fields = _.map(this.options.fields, carbon.createField.bind(this, this, this.options.data||{}, null, null))
     _.each(this.fields, carbon.inflate.bind(this, this.options.data||{}))
     _.each(this.fields, function(field) {
@@ -92,7 +108,8 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         parent: parent,
         array:false,
         columns: this.options.columns,
-        offset: 0
+        offset: 0,
+        isChild:!(parent instanceof carbon)        
     }, carbon.types[fieldIn.type].defaults, fieldIn)
     
     field.item = fieldIn;
@@ -150,11 +167,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
 
     field.container =  field.el.querySelector('fieldset') || null;
 
-
-    //handle rows
-    if(field.type == 'fieldset'){// ||  field.isChild() || !this.sectionsEnabled) { 
-         field.rows = {};
-    }
+    if(!field.target && (this.options.clear || field.isChild)){
         var cRow;
         // cRow = field.owner.rows[field.owner.rows.length-1];
         var formRows = field.parent.container.querySelectorAll('form > .row,fieldset > .row');
@@ -176,6 +189,16 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         cRow.used += parseInt(field.offset, 10);
         cRow.ref.appendChild(field.el);
         field.row = temp;
+    }else{
+        if(!field.target){
+            field.target = '[name="'+field.name+'"]';
+        }
+        var temp = this.container.querySelector(field.target)
+        if(typeof temp !== 'undefined' && temp !== null    ){
+            temp.appendChild(field.el);
+        }
+       
+    }
     // }
     // else{
     //         field.rows = {};
@@ -211,11 +234,14 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
             if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)){
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 field.parent.fields.splice(index, 1);
-
-                field.parent.rows[field.row].used -= (field.offset + field.columns)
-                field.parent.rows[field.row].ref.removeChild(field.el);
-                if(field.parent.rows[field.row].used  == 0){
-                    field.parent.container.removeChild(field.parent.rows[field.row].ref);
+                if(!field.target){
+                    field.parent.rows[field.row].used -= (field.offset + field.columns)
+                    field.parent.rows[field.row].ref.removeChild(field.el);
+                    if(field.parent.rows[field.row].used  == 0){
+                        field.parent.container.removeChild(field.parent.rows[field.row].ref);
+                    }
+                }else{
+                    this.container.querySelector(field.target).removeChild(field.el);
                 }
                 _.each(['change', 'change:' + field.name, 'removed:' + field.name], _.partialRight(this.trigger, field) )
             }else{
@@ -261,7 +287,12 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
 carbon.update = function(field){
     field.el.innerHTML = carbon.types[field.type].render.call(field);
     var oldDiv = document.getElementById(field.id);
-    oldDiv.parentNode.replaceChild(field.el, oldDiv);
+    if(oldDiv == null){
+        // oldDiv.parentNode.appendChild(field.el, oldDiv);
+        
+    }else{
+        oldDiv.parentNode.replaceChild(field.el, oldDiv);
+    }
 }
 
 carbon.ajax = function(options){
@@ -282,6 +313,8 @@ carbon.ajax = function(options){
 
 carbon.default= {label_key: 'label', value_key: 'value'}
 carbon.prototype.opts = {
+    clear:true,
+    sections:'',
     suffix: ':',
     required: '<span style="color:red">*</span>'
 }
@@ -333,6 +366,11 @@ carbon.options = function(field) {
 
     return field;
 }
+
+carbon.i = 0;
+carbon.getUID = function() {
+    return 'f' + (carbon.i++);
+};
 
 carbon.types = {
     'basic':{
@@ -394,13 +432,32 @@ carbon.types = {
                 if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
             }.bind(this))
         }
+    },
+    'section':{
+        initialize: function(){
+            //handle rows
+            this.rows = {};
+        },        
+        render: function(){
+            if(this.owner.options.sections){
+                return carbon.render(this.owner.options.sections+'_fieldset', this);                
+            }else{
+                return carbon.render('_fieldset', this);                
+            }
+        },
+        // get: function(){
+        //     return this.el.querySelector('[name="' + this.name + '"]').value;
+        // },
+        // set: function(value){
+        //     this.el.querySelector('[name="' + this.name + '"]').value = value;
+        //     _.each(this.options, function(option, index){
+        //         if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+        //     }.bind(this))
+        // }
     }
 };
-carbon.i = 0;
-carbon.getUID = function() {
-    return 'f' + (carbon.i++);
-};
 
-carbon.types['text'] = carbon.types['checkbox'] = carbon.types['fieldset'] = carbon.types['color'] = carbon.types['basic'];
-carbon.types['radio']= carbon.types['select'] =  _.extend({},carbon.types['basic'],carbon.types['list']);
+carbon.types['hidden'] = carbon.types['textarea'] = carbon.types['text'] = carbon.types['checkbox'] = carbon.types['number'] = carbon.types['color'] = carbon.types['basic'];
+carbon.types['fieldset'] = _.extend({},carbon.types['basic'],carbon.types['section']);
+carbon.types['radio'] = carbon.types['select'] =  _.extend({},carbon.types['basic'],carbon.types['list']);
 carbon.types['email'] = _.extend({},carbon.types['basic'],{defaults:{validate: { 'valid_email': true }}});

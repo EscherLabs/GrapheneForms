@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="assets/css/normalize.css">
+  <link rel="stylesheet" href="assets/css/skeleton.css">
 
   </head>
   <body>
-   <div style="width:800px;margin:50px auto" id="form"></div>
+   <div style="width:800px;margin:50px auto" id="form">
+		<div name="f_n"></div>
+		Hello
+		<div name="last_name"></div>
+	</div>
    <pre style="width:800px;margin:50px auto" id="result"></pre>
     <script src="./assets/js/lodash.min.js"></script>    
-    <script type='text/javascript' src='./src/carbon.js'></script>
-    <script type='text/javascript' src='./src/carbon.validate.js'></script>
-    <script type='text/javascript' src='./src/carbon.events.js'></script>
-    <script type='text/javascript' src='./src/carbon.conditions.js'></script>
-    <script type='text/javascript' src='./src/carbon.skeleton.js'></script>
+    <script type='text/javascript' src='../src/carbon.js'></script>
+    <script type='text/javascript' src='../src/carbon.validate.js'></script>
+    <script type='text/javascript' src='../src/carbon.events.js'></script>
+    <script type='text/javascript' src='../src/carbon.conditions.js'></script>
+    <script type='text/javascript' src='../src/carbon.skeleton.js'></script>
 
     <script>
 
@@ -53,7 +57,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
         //     {name: 'checked', label: 'Checked?',type: 'checkbox', display: {matches:[{name:'number', value:['first','1']}]}},
         //     {name: 'last_name', label: 'Last Name', validate: {required:true}},
         //     {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
-        //     {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
+        //     {"label": "Favorite State",type:'select', "options": "./data/states.json", "label_key":'name'},
         //     {label: 'Candies', type:'fieldset', fields: [{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '', type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color', array: true}]}]},
 
         // ]
@@ -872,10 +876,10 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
                 "parse":"display"
               },
             {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
-            {"label": "Favorite State",type:'select', "options": "./states.json", "label_key":'name'},
+            {"label": "Favorite State",type:'select', "options": "./data/states.json", "label_key":'name'},
             {label: 'Candies', type:'fieldset', fields: [
 				{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '',
-				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color',columns:6, array: {max:2}}]}]},
+				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color',columns:6, array: {max:3}}]}]},
 
         ]
    }
@@ -920,6 +924,8 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
 
 	   ]
    }
+   options.sections = 'tabs'
+//    options.clear = false;
     var myCarbon = new carbon(options, '#form')
     // myCarbon.debounce('change', function(field){
     //     field.owner.validate();
