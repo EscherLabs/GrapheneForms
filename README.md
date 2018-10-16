@@ -1,2 +1,2 @@
 # carbon
-Field manager for consistnt forms
+Field manager for consistent forms
