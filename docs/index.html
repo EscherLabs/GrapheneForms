@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="assets/css/normalize.css">
-  <link rel="stylesheet" href="assets/css/skeleton.css">
+    <!--<link rel="stylesheet" href="assets/css/normalize.css">
+  <link rel="stylesheet" href="assets/css/skeleton.css">-->
 
+		<link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>
+		<link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
   </head>
   <body>
    <div style="width:800px;margin:50px auto" id="form">
@@ -13,8 +15,14 @@
 	</div>
    <pre style="width:800px;margin:50px auto" id="result"></pre>
     <script src="./assets/js/lodash.min.js"></script>    
-    <script type='text/javascript' src='assets/js/carbon.min.js'></script>
-    <script type='text/javascript' src='assets/js/carbon.skeleton.js'></script>
+    <script type='text/javascript' src='./assets/js/carbon.min.js'></script>
+    <!--<script type='text/javascript' src='./assets/js/carbon.events.js'></script>
+    <script type='text/javascript' src='./assets/js/carbon.conditions.js'></script>
+    <script type='text/javascript' src='./assets/js/carbon.validate.js'></script>    -->
+    <script type='text/javascript' src='./assets/js/hogan-3.0.1.js'></script>    
+    <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.carbon.js'></script>    */-->
+	<!--/*<script type='text/javascript' src='../src/carbon.skeleton.js'></script>*/-->
+	<script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script>
 
     <script>
 
@@ -850,7 +858,7 @@ ceremony_help_text = "If you have concerns regarding participation in your " +
             {name: 'last_name', label: '0Last Name', validate: {required:false},columns:6, "display": {
                     "matches": [
                         {"name": "f_n","value":["adam"]},
-                        {"name": "checked","value": [""]},
+                        {"name": "checked","value": [false]},
 
                     ],
                 },

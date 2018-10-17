@@ -33,7 +33,7 @@ var carbon = function(data, el){
         }
         var obj = {};
         _.each(this.fields, function(field) {
-            if(field.parsable){
+            if(field.isParsable){
                 if(field.fields){
                     if(field.array){
                         obj[field.name] = obj[field.name] || [];
@@ -85,7 +85,7 @@ carbon.inflate = function(atts, fieldIn, ind, list) {
         if(atts[field.name].length > 1){
             for(var i = 1; i<atts[field.name].length; i++) {
                 var newfield = carbon.createField.call(this, field.parent, atts, field.el, i, field.item);
-                field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id}), 0, newfield)
+                field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
                 field = newfield;
             }
         }
@@ -102,9 +102,9 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         label: fieldIn.legend || fieldIn.name,
         validate: false,
         valid: true,
-        parsable:true,
-        visible:true,
-        enabled:true,
+        isParsable:true,
+        isVisible:true,
+        isEnabled:true,
         parent: parent,
         array:false,
         columns: this.options.columns,
@@ -148,7 +148,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
     field.satisfied = carbon.types[field.type].satisfied.bind(field);
 
     field.active = function() {
-		return this.parent.active() && this.enabled && this.parsable && this.visible;
+		return this.parent.active() && this.isEnabled && this.isParsable && this.isVisible;
 	}
     field.set = function(value, silent){
         //not sure we should be excluding objects - test how to allow objects
@@ -221,7 +221,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
                 var atts = {};
                 // atts[field.name] = field.value;
                 var newField = carbon.createField.call(this, field.parent, atts, field.el ,null, field.item);
-                field.parent.fields.splice(index, 0, newField)
+                field.parent.fields.splice(index+1, 0, newField)
                 newField.el.querySelector('[name="'+field.name+'"]').focus();
 
                 _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], _.partialRight(this.trigger, field) )
@@ -266,19 +266,19 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
 
     carbon.processConditions.call(field, field.display, function(result){
         this.el.style.display = result ? "block" : "none";
-        this.visible = result;        
+        this.isVisible = result;        
     })      
-    // carbon.processConditions.call(field, field.visible, function(result){
-    //     this.el.style.visibility = result ? "visible" : "hidden";
-    //     this.visible = result;
+    // carbon.processConditions.call(field, field.isVisible, function(result){
+    //     this.el.style.visibility = result ? "isVisible" : "hidden";
+    //     this.isVisible = result;
     // })
     
     carbon.processConditions.call(field, field.enable, function(result){
-        this.enabled = result;        
-        carbon.types[this.type].enable.call(this,this.enabled);
+        this.isEnabled = result;        
+        carbon.types[this.type].enable.call(this,this.isEnabled);
     })
     carbon.processConditions.call(field, field.parse, function(result){
-        this.parsable = result
+        this.isParsable = result
     })
 
     return field;
@@ -366,7 +366,7 @@ carbon.options = function(field) {
 
     return field;
 }
-
+carbon.VERSION = '0.0.0.1';
 carbon.i = 0;
 carbon.getUID = function() {
     return 'f' + (carbon.i++);
@@ -397,10 +397,10 @@ carbon.types = {
             this.el.addEventListener('input', onchange);
         },
         get: function(){
-            return this.el.querySelector('[name="' + this.name + '"]').checked || this.el.querySelector('[name="' + this.name + '"]').value;
+            return this.el.querySelector('input[name="' + this.name + '"]').value;
         },
         set: function(value){
-            this.el.querySelector('[name="' + this.name + '"]').value = value;
+            this.el.querySelector('input[name="' + this.name + '"]').value = value;
         },
         satisfied: function(value){
             return (typeof value !== 'undefined' && value !== null && value !== '');            
@@ -409,6 +409,28 @@ carbon.types = {
             this.el.querySelector('input').disabled = !state;            
         }
         //display
+    },
+    'bool':{
+        // initialize: function(){
+        //     //handle rows
+        //     this.rows = {};
+        // },        
+        // render: function(){
+        //     if(this.owner.options.sections){
+        //         return carbon.render(this.owner.options.sections+'_fieldset', this);                
+        //     }else{
+        //         return carbon.render('_fieldset', this);                
+        //     }
+        // },
+        get: function(){
+                return this.el.querySelector('input[name="' + this.name + '"]').checked
+        },
+        // set: function(value){
+        //     this.el.querySelector('[name="' + this.name + '"]').value = value;
+        //     _.each(this.options, function(option, index){
+        //         if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+        //     }.bind(this))
+        // }
     },
     'list':{
         render: function(){
@@ -424,10 +446,10 @@ carbon.types = {
             }.bind(this));		
         },
         get: function(){
-            return this.el.querySelector('[name="' + this.name + '"]').value;
+            return this.el.querySelector('select[name="' + this.name + '"]').value;
         },
         set: function(value){
-            this.el.querySelector('[name="' + this.name + '"]').value = value;
+            this.el.querySelector('select[name="' + this.name + '"]').value = value;
             _.each(this.options, function(option, index){
                 if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
             }.bind(this))
@@ -457,7 +479,8 @@ carbon.types = {
     }
 };
 
-carbon.types['hidden'] = carbon.types['textarea'] = carbon.types['text'] = carbon.types['checkbox'] = carbon.types['number'] = carbon.types['color'] = carbon.types['basic'];
+carbon.types['hidden'] = carbon.types['textarea'] = carbon.types['text'] = carbon.types['number'] = carbon.types['color'] = carbon.types['basic'];
+carbon.types['checkbox'] = _.extend({},carbon.types['basic'],carbon.types['bool']);
 carbon.types['fieldset'] = _.extend({},carbon.types['basic'],carbon.types['section']);
 carbon.types['radio'] = carbon.types['select'] =  _.extend({},carbon.types['basic'],carbon.types['list']);
 carbon.types['email'] = _.extend({},carbon.types['basic'],{defaults:{validate: { 'valid_email': true }}});
