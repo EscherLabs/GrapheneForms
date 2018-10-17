@@ -1,5 +1,3 @@
-function mustache(l,a,m,c){function h(a,b){b=b.pop?b:b.split(".");a=a[b.shift()]||"";return 0 in b?h(a,b):a}var k=mustache,e="";a=Array.isArray(a)?a:a?[a]:[];a=c?0 in a?[]:[1]:a;for(c=0;c<a.length;c++){var d="",f=0,n,b="object"==typeof a[c]?a[c]:{},b=Object.assign({},m,b);b[""]={"":a[c]};l.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(a,c,l,m,p,q,g){f?d+=f&&!p||1<f?a:c:(e+=c.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(a,c,e,f,g,d){return c?h(b,c):f?h(b,d):g?k(h(b,d),b):e?"":(new Option(h(b,d))).innerHTML}),n=q);p?--f||(g=h(b,g),e=/^f/.test(typeof g)?e+g.call(b,d,function(a){return k(a,b)}):e+k(d,g,b,n),d=""):++f})}return e}
-
 carbon.stencils = {
     _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="carbon {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
     text: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
@@ -168,26 +166,11 @@ carbon.stencils = {
 
 
 carbon.columns = 12;
-carbon.columnClasses = {
-    1:'col-md-1',
-    2:'col-md-2',
-    3:'col-md-3',
-    4:'col-md-4',
-    5:'col-md-5',
-    6:'col-md-6',
-    7:'col-md-7',
-    8:'col-md-8',
-    9:'col-md-9',
-    10:'col-md-10',
-    11:'col-md-11',
-    12:'col-md-12'
-}
+carbon.columnClasses = _.map(new Array(13),function(item,i){return 'col-md-'+i})
+
 carbon.handleError = function(field){
-    field.el.querySelector('small').innerHTML = field.errors;
-}
-carbon.render = function(template, options){
-    return mustache(carbon.stencils[template||'text'] || carbon.stencils['text'],_.extend({},carbon.stencils,options))
-}
-carbon.processString = function(string,options){
-    return mustache(string||'',options||{})
+	if(!field.valid){
+		field.el.classList.add('has-error')		
+	}
+    field.el.querySelector('.font-xs.text-danger').innerHTML = field.errors;
 }

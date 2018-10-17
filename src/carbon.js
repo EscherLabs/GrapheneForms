@@ -1,3 +1,5 @@
+function mustache(l,a,m,c){function h(a,b){b=b.pop?b:b.split(".");a=a[b.shift()]||"";return 0 in b?h(a,b):a}var k=mustache,e="";a=Array.isArray(a)?a:a?[a]:[];a=c?0 in a?[]:[1]:a;for(c=0;c<a.length;c++){var d="",f=0,n,b="object"==typeof a[c]?a[c]:{},b=Object.assign({},m,b);b[""]={"":a[c]};l.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(a,c,l,m,p,q,g){f?d+=f&&!p||1<f?a:c:(e+=c.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(a,c,e,f,g,d){return c?h(b,c):f?h(b,d):g?k(h(b,d),b):e?"":(new Option(h(b,d))).innerHTML}),n=q);p?--f||(g=h(b,g),e=/^f/.test(typeof g)?e+g.call(b,d,function(a){return k(a,b)}):e+k(d,g,b,n),d=""):++f})}return e}
+
 var carbon = function(data, el){
     "use strict";
     
@@ -311,7 +313,7 @@ carbon.ajax = function(options){
     request.send();
 }
 
-carbon.default= {label_key: 'label', value_key: 'value'}
+carbon.default= {label_key: '{{label}}', value_key: '{{value}}'}
 carbon.prototype.opts = {
     clear:true,
     sections:'',
@@ -347,22 +349,26 @@ carbon.options = function(field) {
             field.options.push(i.toString());
             i+=field.step;
         }
+    }
+    if(typeof field.default !== 'undefined' && field.options[0] !== field.default) {
+		field.options.unshift(field.default);
 	}
     field.options =  _.map(field.options, function(item, i){
         if(typeof item === 'string' || typeof item === 'number') {
             item = {label: item};
-           	if(this.value_key !== 'index'){
+           	if(this.value_key !== '{{index}}'){
 				item.value = item.label;
             }
         }
-        var temp = _.assignIn({label: item[field.label_key], value: item[field.value_key] || i }, item);
+        item.index = item.index || ""+i;
+        
+        var temp = _.assignIn(item,{label: carbon.renderString(field.label_key,item), value: carbon.renderString(field.value_key,item) });
+        
         if(temp.value == field.value) { temp.selected = true;}
         return temp;
     }.bind(field))
     
-    if(typeof field.default !== 'undefined' && field.options[0] !== field.default) {
-		field.options.unshift(field.default);
-	}
+
 
     return field;
 }
@@ -373,7 +379,7 @@ carbon.getUID = function() {
 };
 
 carbon.types = {
-    'basic':{
+    'input':{
         defaults:{},
         create: function(){
             var tempEl = document.createElement("span");
@@ -411,28 +417,11 @@ carbon.types = {
         //display
     },
     'bool':{
-        // initialize: function(){
-        //     //handle rows
-        //     this.rows = {};
-        // },        
-        // render: function(){
-        //     if(this.owner.options.sections){
-        //         return carbon.render(this.owner.options.sections+'_fieldset', this);                
-        //     }else{
-        //         return carbon.render('_fieldset', this);                
-        //     }
-        // },
         get: function(){
                 return this.el.querySelector('input[name="' + this.name + '"]').checked
-        },
-        // set: function(value){
-        //     this.el.querySelector('[name="' + this.name + '"]').value = value;
-        //     _.each(this.options, function(option, index){
-        //         if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
-        //     }.bind(this))
-        // }
+        }
     },
-    'list':{
+    'collection':{
         render: function(){
             _.assignIn(this, carbon.options.call(this.owner, this));
             return carbon.render(this.type, this);
@@ -449,7 +438,7 @@ carbon.types = {
             return this.el.querySelector('select[name="' + this.name + '"]').value;
         },
         set: function(value){
-            this.el.querySelector('select[name="' + this.name + '"]').value = value;
+            this.el.querySelector('[name="' + this.name + '"]').value = value;
             _.each(this.options, function(option, index){
                 if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
             }.bind(this))
@@ -467,20 +456,29 @@ carbon.types = {
                 return carbon.render('_fieldset', this);                
             }
         },
-        // get: function(){
-        //     return this.el.querySelector('[name="' + this.name + '"]').value;
-        // },
-        // set: function(value){
-        //     this.el.querySelector('[name="' + this.name + '"]').value = value;
-        //     _.each(this.options, function(option, index){
-        //         if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
-        //     }.bind(this))
-        // }
+        get: function(){
+            // return this.el.querySelector('select[name="' + this.name + '"]').value;
+        },
     }
 };
+carbon.render = function(template, options){
+    return mustache(carbon.stencils[template||'text'] || carbon.stencils['text'],_.extend({},carbon.stencils,options))
+}
+carbon.renderString = function(string,options){
+    return mustache(string||'',options||{})
+}
+carbon.types['hidden'] = carbon.types['textarea'] = carbon.types['text'] = carbon.types['number'] = carbon.types['color'] = carbon.types['input'];
+carbon.types['checkbox'] = _.extend({},carbon.types['input'],carbon.types['bool']);
+carbon.types['fieldset'] = _.extend({},carbon.types['input'],carbon.types['section']);
+carbon.types['select'] =  _.extend({},carbon.types['input'],carbon.types['collection']);
+carbon.types['radio'] = _.extend({},carbon.types['input'],carbon.types['collection'],{
+    get: function(){
+        return (this.el.querySelector('[type="radio"][name="' + this.name + '"]:checked')||{value:''}).value; 
+    },
+    // set:function(value){
+    //     // this.self.find('[value="' + this.value + '"]').prop('checked', true);
+    //     // this.el.querySelector('[type="radio"][name="' + this.name + '"][value="'+value+'"]'); 
+    // }
+});
 
-carbon.types['hidden'] = carbon.types['textarea'] = carbon.types['text'] = carbon.types['number'] = carbon.types['color'] = carbon.types['basic'];
-carbon.types['checkbox'] = _.extend({},carbon.types['basic'],carbon.types['bool']);
-carbon.types['fieldset'] = _.extend({},carbon.types['basic'],carbon.types['section']);
-carbon.types['radio'] = carbon.types['select'] =  _.extend({},carbon.types['basic'],carbon.types['list']);
-carbon.types['email'] = _.extend({},carbon.types['basic'],{defaults:{validate: { 'valid_email': true }}});
+carbon.types['email'] = _.extend({},carbon.types['input'],{defaults:{validate: { 'valid_email': true }}});

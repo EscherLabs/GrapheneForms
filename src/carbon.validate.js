@@ -17,7 +17,7 @@ carbon.performValidate = function(target, pValue){
 	target.valid = true;
 	target.errors = '';
 
-	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.parsable){
+	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.isParsable){
 		for(var r in item.validate){
 			if(!carbon.validations[r].method.call(target, value, item.validate[r])){
 				if((typeof item.show === 'undefined') || target.isVisible){
@@ -25,9 +25,8 @@ carbon.performValidate = function(target, pValue){
 					var estring = carbon.validations[r].message;
 					if(typeof item.validate[r] == 'string') {
 						estring = item.validate[r];
-					}
-					target.errors = estring.replace('{{label}}', item.label);
-					// target.errors = estring.replace('{{value}}', value);
+					}													
+					target.errors = carbon.renderString(estring,item);
 				}
 			}
 			carbon.handleError(target);
