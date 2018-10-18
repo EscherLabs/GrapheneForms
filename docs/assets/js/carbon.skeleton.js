@@ -6,7 +6,7 @@ carbon.stencils = {
     </div>`,
     text: `<div class="row">
         {{>_label}}
-        <input class="six columns" name="{{name}}" type="{{type}}" value="{{value}}" id="{{id}}" />
+        <input class="six columns" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
         {{>_error}}
         {{>actions}}       
     </div>`,    
@@ -32,7 +32,7 @@ carbon.stencils = {
     radio: `<div class="row">
         {{>_label}}
         {{#options}}
-        <label><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/checked}}  value="{{value}}" type="radio">{{label}}</label>        
+        <label><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">{{label}}</label>        
         {{/options}}
         </span>
         {{>_error}}
@@ -53,7 +53,7 @@ carbon.stencils = {
     _label: `      
     <label class="three columns" for="{{name}}">{{label}}{{#validate.required}}{{{owner.opts.required}}}{{/validate.required}}{{owner.opts.suffix}}</label>        
     `,
-    _error:`<small style="color:red;display:block; "></small>`,
+    _error:`<small style="color:red;display:block;"></small>`,
     tabs_container: `<div class="carbon">
     <ul class="nav nav-tabs" style="margin-bottom:15px">
     {{#fields}}

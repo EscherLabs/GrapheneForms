@@ -12,6 +12,9 @@
 		<!-- Bootstrap core CSS -->
 		<link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>
 		<link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
+    <script src="./assets/js/lodash.min.js"></script>    
+		<script type='text/javascript' src='./assets/js/carbon.min.js'></script>
+		<script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script>
 
 		<!-- Custom styles for this template -->
 		<link rel='stylesheet' type='text/css' href='assets/css/demo.css'>
@@ -40,7 +43,7 @@
 							<div style="line-height: 10px;height: 0px;margin-top: 5px;"><i class="fa-white fa fa-circle-o"></i> <i class="fa-white fa fa-circle-o" style="color: #BA7D10;"></i></div>
 							<div style="line-height: 10px; height: 0px; margin-top: 10px;margin-left: -6px;"><i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle-o"></i></div>
 							<div style="margin-top: -5px;height: 0px;"><i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle-o"></i></div>
-						</span> <span style="line-height: 40px;margin-left:10px;font-size: 20px;font-weight: 200;color: #cccccf;">Carbon.js</span>
+						</span> <span style="line-height: 40px;margin-left:10px;font-size: 20px;font-weight: 200;color: #cccccf;">carbon.js</span>
 					</a>
 				</div>
 				<div class="collapse navbar-collapse">
@@ -91,14 +94,10 @@
 						<li class="list-unstyled" ><a href="#field_validate"><i class="fa fa-chevron-right"></i> validate</a></li>
 						<li class="list-unstyled" ><a href="#field_required"><i class="fa fa-chevron-right"></i> required</a></li>
 						<li class="list-unstyled" ><a href="#field_placeholder"><i class="fa fa-chevron-right"></i> placeholder</a></li>
-						<li class="list-unstyled" ><a href="#field_pre"><i class="fa fa-chevron-right"></i> pre</a></li>
-						<li class="list-unstyled" ><a href="#field_post"><i class="fa fa-chevron-right"></i> post</a></li>
-						<li class="list-unstyled" ><a href="#field_choices"><i class="fa fa-chevron-right"></i> options/choices</a></li>
+						<li class="list-unstyled" ><a href="#field_choices"><i class="fa fa-chevron-right"></i> options</a></li>
 						<li class="list-unstyled" ><a href="#field_max"><i class="fa fa-chevron-right"></i> max</a></li>
 						<li class="list-unstyled" ><a href="#field_min"><i class="fa fa-chevron-right"></i> min</a></li>
 						<li class="list-unstyled" ><a href="#field_step"><i class="fa fa-chevron-right"></i> step</a></li>
-						<li class="list-unstyled" ><a href="#field_true_state"><i class="fa fa-chevron-right"></i> trueState</a></li>
-						<li class="list-unstyled" ><a href="#field_false_state"><i class="fa fa-chevron-right"></i> falseState</a></li>
 					</ul>
 					<a href="#field_types"><h4>Field Types</h4></a>
 					<ul class>
@@ -196,43 +195,27 @@
 				<div class="col-xs-12 col-sm-9">
 					<!--Introduction -->
 					<a name="intro" style="display:block;position:relative;top:-80px"></a>
-					<h2>CarbonJS Field Guide</h2>
-					<div class="alert alert-warning">NOTE: This is a beta version, possibly still containing bugs and some parts of api may 
+					<h2>carbon Field Guide</h2>
+					<div class="alert alert-warning">NOTE: This is a apha version, possibly still containing bugs and some parts of api may 
 					still change slightly.</div>
 					<!-- <a name="intro" style="display:block;position:relative;top:-80px"></a> -->
 					<h4>What is it?</h4>
 					<p>
-					Carbon is an extensible JavaScript/jQuery library with an included set of CSS rules.
-					</p>
-					<p>
-					The core library does very little besides establish the framework without at least one plugin. Each input type is defined with a plugin allowing for many more input types than are normally available in plain html and more can be created as the need arises.
-					</p>
-					<p>
-					The basics include hidden, text, textarea, select, checkbox, radio, and password.
-					</p>
-					<p>
-					HTML5 adds quite a few more but it is difficult to rely on them since support in older browsers is sketchy at best, this is where Carbon comes in. With the proper plugin you can trust that the input will look, act and validate correctly. Its even possible to create input types that don't exist in any spec but act in similar and predictable ways.
+					carbon is an extensible JavaScript library for managing forms, includeing rendering, loading, parsing, validation, conditional fields and much more.
 					</p>
 
 					<!--Getting Started -->
 					<a name="getting_started" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>Getting Started</h4>
-					<p><b>Dependencies</b> - Carbon has two hard dependencies that needed. The first being jquery (or zepto) and the second being hogan.js. Strictly speaking the compile portion of hogan is not needed. </p>
-					<pre><code class="prettyprint">&lt;script src='http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js'&gt;&lt;/script&gt;<br>&lt;script src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'&gt;&lt;/script&gt;</code></pre>
-					<p>Next the core carbon engine will need to be loaded.</p>
-					<pre><code class="prettyprint">&lt;script type='text/javascript' src='carbon.min.js'&gt;&lt;/script&gt;</code></pre>
-					<p>And lastly a theme is required - the default theme is based on bootstrap and will also require the css for bootstrap to be included.</p>
-					<pre><code class="prettyprint">&lt;style src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'&gt;&lt;/style&gt;<br>&lt;script type='text/javascript' src='bootstrap.carbon.js'&gt;&lt;/script&gt;</code></pre>
-					<p>So now all together an example of a minimum setup would look something like this</p>
+					<p><b>Dependencies</b> - carbon has only dependency is <a href="https://lodash.com/">lodash.js</a></p>
+
+					<p>A minimum setup would look something like this</p>
 					<pre><code class="prettyprint">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
-    &lt;style src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'&gt;&lt;/style&gt;
-    &lt;script src='http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js'&gt;&lt;/script&gt;
-    &lt;script src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'&gt;&lt;/script&gt;
+    &lt;script src='assets/js/lodash.min.js'&gt;&lt;/script&gt;
     &lt;script type='text/javascript' src='carbon.min.js'&gt;&lt;/script&gt;
-    &lt;script type='text/javascript' src='bootstrap.carbon.js'&gt;&lt;/script&gt;
   &lt;/head&gt;
   &lt;body&gt;
   &lt;div class="myForm"&gt;
@@ -240,9 +223,16 @@
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 					<br>
-					<p>Now that we have all of our dependencies included we can begin enjoying the magic of carbon!</p>
-					<blockquote><code class="prettyprint">var options = {};<br> var myForm = $('.myForm').carbon(options);</code></blockquote>
-					<p>This will create a form in the element selected with 'selector' defined by your options.</p>
+					<p>Now that we all set up we can begin enjoying the magic of carbon!</p>
+					<pre><code class="prettyprint">var config = {
+  "el": ".myForm"
+  "fields": [
+    {"name": "Example"}
+  ]
+};
+var myForm = new carbon(config);</code></pre>
+<br>
+					<div class="well myForm"></div>
 
 					<!--Api -->
 					<a name="api" style="display:block;position:relative;top:-80px"></a>
@@ -250,7 +240,7 @@
 					<h4>API</h4>
 					<h5>toJSON <code>myForm.toJSON([name]);</code></h5>
 					<p>
-						an object will be returned containing a serialized list of all fields maintained in the Carbon tree. If the optional 'name' parameter is supplied then only the value of the field with that name is returned.
+						an object will be returned containing a serialized list of all fields maintained in the carbon tree. If the optional 'name' parameter is supplied then only the value of the field with that name is returned.
 					</p>
 					<br>
 					<h5>destroy <code>myForm.destroy();</code></h5>
@@ -260,7 +250,7 @@
 					<br>
 					<h5>find <code>myForm.find(path || name);</code></h5>
 					<p>
-						the Carbon field that the path leads to is returned, for first level fields the path is just the name if it is contained within a fieldset the path would be <code>'fieldset_name.field_name'</code>
+						the carbon field that the path leads to is returned, for first level fields the path is just the name if it is contained within a fieldset the path would be <code>'fieldset_name.field_name'</code>
 					</p>
 					<br>
 					<h5>validate <code>myForm.validate();</code></h5>
@@ -279,11 +269,13 @@
 					<!--options -->
 					<a name="options" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h3>Options</h3>
-					<pre><code class="prettyprint">var options = {
-  legend: 'My Form',
-  name: 'myForm',
-  renderer: 'base', //this is the default (base, tabs, wizard, poppins, inline)
+					<h3>Configuration Options</h3>
+					<pre><code class="prettyprint">var config = {
+  "legend": "My Form",
+  "name": "myForm",
+	"fields":[
+		{"name": "Example"}
+  ]
 };</code></pre>
 					<!--legend -->
 					<a name="legend" style="display:block;position:relative;top:-80px"></a>
@@ -292,26 +284,12 @@
 					<p>
 						The legend of the form as it is to be rendered, if left blank no legend will be rendered.
 					</p>
-					<blockquote>options.legend = 'My Form'</blockquote>
-					<a name="defaults" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>defaults</h4>					
-					<p>
-						This is an object that will be used to set defaults on any field that is created, if an attribute is set here and not overridden in the specific field this is the value that will be used
-					</p>
-					<blockquote>options.defaults = {type: 'select'} // this would set the default type to select</blockquote>
-					<a name="renderer" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>renderer</h4>					
-					<p>
-						The default renderer is the basic renderer, and will render forms as you would expect in separate fieldsets. Some other renderers ship with carbon, you can find out more about these <a href="#renderers">here</a>. This is a modular component  of Carbon which means that others can be created.  
-					</p>
-					<blockquote>options.renderer = 'tabs'</blockquote>
+					<blockquote>config.legend = 'My Form'</blockquote>
 					<a name="name" style="display:block;position:relative;top:-80px"></a>
 					<br>					
 					<h4>name</h4>					
 					<p>
-						The name of your form. This can be used to reference the form after it is created. If no name is given one will be generated automatically. A reference to all forms created is maintained in the object <code>Carbon.instances</code>. Accesssing a form with the name "myForm" would look like this <code>Carbon.instances['myForm']</code>
+						The name of your form. This can be used to reference the form after it is created. If no name is given one will be generated automatically. A reference to all forms created is maintained in the object <code>carbon.instances</code>. Accesssing a form with the name "myForm" would look like this <code>carbon.instances['myForm']</code>
 					</p>
 					<blockquote>options.name = 'myForm'</blockquote>
 					<a name="attributes" style="display:block;position:relative;top:-80px"></a>
@@ -321,13 +299,6 @@
 						If attributes is an object then carbon populates your form with the values contained in the attributes. If the keyword <code>hash</code> is set then carbon attempts to load the form with attributes retrieved in the url hash 
 					</p>
 					<blockquote>options.attributes = {first_name: 'Bob', last_name: 'Person'}</blockquote>
-					<a name="actions" style="display:block;position:relative;top:-80px"></a>
-					<br>					
-					<h4>actions</h4>					
-					<p>
-						The actions to be included in the form. By default the <code>cancel</code> and <code>save</code> actions are included. For a full list and instructions on creating new actions go <a href="#actions">here</a>.
-					</p>
-					<blockquote>options.actions = ['save']</blockquote>
 					<a name="fields" style="display:block;position:relative;top:-80px"></a>
 					<br>					
 					<h4>fields</h4>					
@@ -335,6 +306,20 @@
 						An array of fields that define each field to be included in the form. If no fields are defined then no form is drawn.
 					</p>
 					<blockquote>options.fields = []</blockquote>
+					<a name="actions" style="display:block;position:relative;top:-80px"></a>
+					<br>					
+					<h4>actions</h4>					
+					<p>
+						The actions to be included in the form. By default the <code>cancel</code> and <code>save</code> actions are included. For a full list and instructions on creating new actions go <a href="#actions">here</a>.
+					</p>
+					<blockquote>options.actions = ['save']</blockquote>
+					<a name="defaults" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>defaults</h4>					
+					<p>
+						This is an object that will be used to set defaults on any field that is created, if an attribute is set here and not overridden in the specific field this is the value that will be used
+					</p>
+					<blockquote>config.defaults = {type: 'select'} // this would set the default type to select</blockquote>
 					<hr>
 
 
@@ -362,7 +347,7 @@
 					<br>
 					<h4>name <code>['string', null]</code></h4>					
 					<p>
-						If this attribute is not set then the name will be set to the internally genderated uuid for this field. The 'name' attribute is set on the field in the html and is used to reference this field in the collection maintained by Carbon.
+						If this attribute is not set then the name will be set to the internally genderated uuid for this field. The 'name' attribute is set on the field in the html and is used to reference this field in the collection maintained by carbon.
 					</p>
 					<blockquote>options.fields[0].name = 'first_name'</blockquote>
 					<!--field label -->
@@ -379,7 +364,7 @@
 					<br>					
 					<h4>target <code>['string', null]</code></h4>					
 					<p>
-						The target by default is the form or fieldset that contains the field however Carbon can manage fields accross different containers. If a selector string is passed in then the field will be appended to the element that is indicated by the selector.
+						The target by default is the form or fieldset that contains the field however carbon can manage fields accross different containers. If a selector string is passed in then the field will be appended to the element that is indicated by the selector.
 					</p>
 					<blockquote>options.fields[0].target = '.myForm'</blockquote>
 					<!--field value -->
@@ -409,15 +394,15 @@
 					<!--field show -->
 					<a name="field_show" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>show <code>['bool', 'function' 'Carbon.conditions']</code></h4>					
+					<h4>show <code>['bool', 'function' 'carbon.conditions']</code></h4>					
 					<p>
-						The show attribute must in one way or another result in a bool indicating if the field should be shown or not. By defualt this is set to 'true', if the value is simply set to false the field will not be shown. If show is set to a function then the function must return a boolean. The last option is to pass an object with the structure of <a href="#conditions"><code>Carbon.conditions</code></a> that is used to dynamically determine if the field should be shown based on the values of other fields.
+						The show attribute must in one way or another result in a bool indicating if the field should be shown or not. By defualt this is set to 'true', if the value is simply set to false the field will not be shown. If show is set to a function then the function must return a boolean. The last option is to pass an object with the structure of <a href="#conditions"><code>carbon.conditions</code></a> that is used to dynamically determine if the field should be shown based on the values of other fields.
 					</p>
 					<blockquote>options.fields[0].show = true</blockquote>
 					<!--field validate -->
 					<a name="field_validate" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>validate <code>['bool', 'function' 'Carbon.conditions']</code></h4>					
+					<h4>validate <code>['bool', 'function' 'carbon.conditions']</code></h4>					
 					<p>
 						
 					</p>
@@ -425,7 +410,7 @@
 					<!--field required -->
 					<a name="field_required" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>required <code>['bool', 'function' 'Carbon.conditions']</code></h4>					
+					<h4>required <code>['bool', 'function' 'carbon.conditions']</code></h4>					
 					<p>
 
 					</p>
@@ -438,26 +423,11 @@
 						The placeholder attribute sets the placeholder for some field types, for example the 'text' type.
 					</p>
 					<blockquote>options.fields[0].placeholder = ''</blockquote>
-					<!--field pre -->
-					<a name="field_pre" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>pre <code>['string']</code></h4>					
-					<p>
-						This sting will be prepended to the field if the theme supports the pre attribute.
-					</p>
-					<blockquote>options.fields[0].pre = ''</blockquote>
-					<!--field post -->
-					<a name="field_post" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>post <code>['string']</code></h4>
-					<p>
-						This sting will be appended to the field if the theme supports the post attribute.
-					</p>
 					<blockquote>options.fields[0].post = ''</blockquote>
 					<!--field options -->
 					<a name="field_choices" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>options/choices  <code>['array', 'object', 'string', 'function']</code></h4>	
+					<h4>options  <code>['array', 'object', 'string', 'function']</code></h4>	
 					<p>
 						The 
 					</p>
@@ -467,7 +437,7 @@
 					<br>
 					<h4>max <code>['integer', null]</code></h4>
 					<p>
-						This field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a maximum number that the fields value can be. If the max is set on any field that would normally have its options/choices passed in then the max is used to generate a set of options for that field.
+						This field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a maximum number that the fields value can be. If the max is set on any field that would normally have its options passed in then the max is used to generate a set of options for that field.
 					</p>
 					<blockquote>options.fields[0].max = ''</blockquote>
 					<!--field min -->
@@ -475,7 +445,7 @@
 					<br>
 					<h4>min <code>['integer', null]</code></h4>
 					<p>
-						Similar to the max field this field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a minimum number that the fields value can be. If the max is set on any field that would normally have its options/choices passed in then the min is used with the max to generate a set of options for that field. If max is set but min is not then min is assumed to be 0 when generating options.
+						Similar to the max field this field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a minimum number that the fields value can be. If the max is set on any field that would normally have its options passed in then the min is used with the max to generate a set of options for that field. If max is set but min is not then min is assumed to be 0 when generating options.
 					</p>
 					<blockquote>options.fields[0].min = ''</blockquote>
 					<!--field step -->
@@ -483,7 +453,7 @@
 					<br>
 					<h4>step <code>['integer', null]</code></h4>					
 					<p>
-						Similar to the max field this field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a step number that the fields value will increase/decreases by when using the arrows. If the max is set on any field that would normally have its options/choices passed in then the min is used with the max to generate a set of options for that field. If max is set but step is not then step is assumed to be 1 when generating options.
+						Similar to the max field this field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a step number that the fields value will increase/decreases by when using the arrows. If the max is set on any field that would normally have its options passed in then the min is used with the max to generate a set of options for that field. If max is set but step is not then step is assumed to be 1 when generating options.
 					</p>
 					<blockquote>options.fields[0].step = ''</blockquote>
 
@@ -515,7 +485,7 @@
 					<br>
 					<h4>select</h4>
 					<p>
-						This will create a select element generating the options based on the list of options/choices that are passed in.
+						This will create a select element generating the options based on the list of options that are passed in.
 					</p>
 					<blockquote>options.fields[0] = {type: 'select', name: ''}</blockquote>
 
@@ -524,7 +494,7 @@
 					<br>
 					<h4>radio</h4>
 					<p>
-						This will create a collection of radio buttons generated based on the list of options/choices that are passed in.
+						This will create a collection of radio buttons generated based on the list of options that are passed in.
 					</p>
 					<blockquote>options.fields[0] = {type: 'radio', name: ''}</blockquote>
 
@@ -565,9 +535,9 @@
 					<!--legend -->
 					<a name="fieldset_legend" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>legend / label</h4>
+					<h4>legend </h4>
 					<p>
-						For consistancy with other fields you can set either the 'legend' or the 'label' attribute to render the legend for the fieldset. If you set both the 'legend' attribute is priority. If neither is set no legend is drawn for the basic renderer.
+						For consistancy with other fields you can set either the 'legend' attribute to render the legend for the fieldset. If you set both the 'legend' attribute is priority. If neither is set no legend is drawn for the basic renderer.
 					</p>
 					<blockquote>options.fields[0] = {type: 'fieldset', legend: 'Common Fields' fields: []}</blockquote>
 
@@ -635,13 +605,13 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<br>
 					<h4>Built-in Events</h4>					
 					<p>
-						The list of built-in Carbon events. You're also free to trigger your own events as you see fit. The context is always set to that of the Carbon instance triggering the event.
+						The list of built-in carbon events. You're also free to trigger your own events as you see fit. The context is always set to that of the carbon instance triggering the event.
 					</p>
 					<ul>
 						<!--initialize -->
 						<li><h5>initialize</h5>					
 						<p>
-							This event is fired as Carbon begins the initialization and is a good place to put set up code.
+							This event is fired as carbon begins the initialization and is a good place to put set up code.
 						</p></li>
 
 						<!--change -->
@@ -908,7 +878,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<a name="themes" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h3>Themes</h3>
-						Themes help CarbonJS to fit seemlessly into your current site.
+						Themes help carbon to fit seemlessly into your current site.
 					<!--bootstrap -->
 					<a name="bootstrap" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -922,7 +892,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<a name="plugins" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h3>Plugins</h3>
-						Plugins are used to extend the functionality of CarbonJS as well as to impliment new features that may only make sense for a subset of people.
+						Plugins are used to extend the functionality of carbon as well as to impliment new features that may only make sense for a subset of people.
 					<!--modal -->
 					<a name="modal" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -932,42 +902,10 @@ Bind a callback function to an object. The callback will be invoked whenever the
 						<pre><code class="prettyprint">var myForm = $().carbon(options);</code></pre>
 						To make use of this plugin the plugin just needs to be included and no target selected.
 					</p>
-					<!--backbone -->
-					<a name="backbone" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Backbone</h4>					
-					<p>
-						Using this plugin will allow you to bind your model to the form, the fields can be defined on the model as a 'schema' and the model will be updated using model.set on the 'save' event of the form. If you don't want to use all of the fields defined on in the schema just pass an arr with the names of the fields you do want to use, you can also use the array to change the order of the fields as this is taken as priority over the definition.
-
-						The schema should be defined as an object of the form 
-						<pre><code class="prettyprint">bbModel = new Backbone.model.extend({
-  "schema": {
-    "First Name": {}, //name and label are assumed to be 'first_name' and 'First Name' respectively
-    "Home Address": {name: 'address', type: 'address'}
-  }
-
-var myForm = $('.myform').carbon({model: new bbModel(), fields: ['first_name']});</code></pre>
-						To use this plugin the plugin just needs to be included and a model passed in to it. A reference to the model is also available at <code>myForm.options.model</code>, this is useful from within an event callback function. Two new events are also used with this plugin: 
-						
-					<ul>
-						<!--save -->
-						<li><h5>save</h5>					
-						<p>
-							triggered right before the model is updated with the new values
-						</p></li>
-						<!--saved -->
-						<li><h5>saved</h5>					
-						<p>
-							triggered right after the model is updated with the new values
-						</p></li>
-
-					</ul>
-					</p>
-
 
 					<hr>
 					<footer>
-						<p>&copy; Adam Smallcomb  2017</p>
+						<p>&copy; Adam Smallcomb  2018</p>
 					</footer>
 				</div><!--/span-->
 
@@ -976,14 +914,22 @@ var myForm = $('.myform').carbon({model: new bbModel(), fields: ['first_name']})
 		</div><!--/.container-->
 
 
-		<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script>
-		<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.min.js'></script>
+		<!-- <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script> -->
+		<!-- <script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.min.js'></script> -->
 
-		<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3//jquery-ui.min.js'></script>
-		<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
+		<!-- <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3//jquery-ui.min.js'></script> -->
+		<!-- <script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script> -->
 
-		<script type='text/javascript' src='bin/carbon.min.js'></script>
-		<script type='text/javascript' src='bin/bootstrap.carbon.js'></script>
+		<!-- <script type='text/javascript' src='bin/carbon.min.js'></script> -->
+		<!-- <script type='text/javascript' src='bin/bootstrap.carbon.js'></script> -->
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+		<script>
+		var config = {
+			"el":".myForm",
+			"fields":[     {"name":"Example"}   ] 
+		};
+		var myForm = new carbon(config)
+
+		</script>
 	</body>
 </html>

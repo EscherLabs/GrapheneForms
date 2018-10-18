@@ -6,7 +6,7 @@ carbon.stencils = {
     </div>`,
     text: `<div class="row">
         {{>_label}}
-        <input class="six columns" name="{{name}}" type="{{type}}" value="{{value}}" id="{{id}}" />
+        <input class="six columns" name="{{name}}" type="{{type}}" {{#selected}} checked=checked {{/checked}} value="{{value}}" id="{{id}}" />
         {{>_error}}
         {{>actions}}       
     </div>`,    
