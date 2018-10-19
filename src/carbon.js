@@ -520,7 +520,7 @@ carbon.types = {
         },
         update: function(item, silent) {
             if(typeof item === 'object') {
-                _.extend(this.item, item);
+                _.extend(this, this.item, item);
             }
             
             var oldDiv = document.getElementById(this.id);
@@ -532,7 +532,6 @@ carbon.types = {
 
             if(!silent) {
                 this.owner.trigger('change:'+this.name, this);
-                
                 this.owner.trigger('change',this);
             }
         },
