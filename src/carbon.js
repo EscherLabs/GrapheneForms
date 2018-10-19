@@ -112,14 +112,17 @@ carbon.inflate = function(atts, fieldIn, ind, list) {
     if(!field.array && field.fields){
         _.each(field.fields, carbon.inflate.bind(this, atts[field.name] || {}) );
     }
-    if(field.array && typeof atts[field.name] == 'object') {
-        if(atts[field.name].length > 1){
-            for(var i = 1; i<atts[field.name].length; i++) {
-                var newfield = carbon.createField.call(this, field.parent, atts, field.el, i, field.item);
-                field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
-                field = newfield;
-            }
+    if(field.array) {
+        var count = field.array.min||0;
+        if((typeof atts[field.name] == 'object' && atts[field.name].length > 1)){
+            if(atts[field.name].length> count){count = atts[field.name].length}
         }
+        for(var i = 1; i<count; i++) {
+            var newfield = carbon.createField.call(this, field.parent, atts, field.el, i, field.item);
+            field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
+            field = newfield;
+        }
+        
     }
 }
 
@@ -450,7 +453,6 @@ carbon.options = function(opts, value, count) {
         count = count||(newOpts.options.length-1);
         _.each(opts.optgroups,function(section){
             // var section = carbon.options.obj.call(this,section,this.value,count);
-            debugger;
             section.options = carbon.optionsObj( _.merge({options:[]},carbon.default, section),value,count);
             section.id = carbon.getUID();
             newOpts.options.push({"section":section});
