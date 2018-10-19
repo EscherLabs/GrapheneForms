@@ -46,7 +46,7 @@ var carbon = function(data, el){
         }
         var obj = {};
         _.each(this.fields, function(field) {
-            if(field.isParsable){
+            if(field.parsable){
                 if(field.fields){
                     if(field.array){
                         obj[field.name] = obj[field.name] || [];
@@ -133,14 +133,14 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         label: fieldIn.legend || fieldIn.name,
         validate: false,
         valid: true,
-        isParsable:true,
-        isVisible:true,
-        isEnabled:true,
+        parsable:true,
+        visible:true,
+        enabled:true,
         parent: parent,
         array:false,
         columns: this.options.columns,
         offset: 0,
-        isChild:!(parent instanceof carbon)        
+        ischild:!(parent instanceof carbon)        
     }, carbon.types[fieldIn.type].defaults, fieldIn)
     
     if(field.name == ''){field.name = field.id;}
@@ -182,7 +182,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
     field.destroy = carbon.types[field.type].destroy.bind(field);
     
     field.active = function() {
-		return this.parent.active() && this.isEnabled && this.isParsable && this.isVisible;
+		return this.parent.active() && this.enabled && this.parsable && this.visible;
 	}
     field.set = function(value, silent){
         //not sure we should be excluding objects - test how to allow objects
@@ -193,9 +193,9 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
 		}
     }.bind(field)
 
-    field.get = carbon.types[field.type].get.bind(field);
+    field.get = field.get || carbon.types[field.type].get.bind(field);
     
-    field.render = carbon.types[field.type].render.bind(field);
+    field.render = field.render || carbon.types[field.type].render.bind(field);
     
     field.el = carbon.types[field.type].create.call(field);
 
@@ -300,22 +300,21 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
 
     carbon.processConditions.call(field, field.display, function(result){
         this.el.style.display = result ? "block" : "none";
-        this.isVisible = result;        
+        this.visible = result;        
     })      
-    // carbon.processConditions.call(field, field.isVisible, function(result){
-    //     this.el.style.visibility = result ? "isVisible" : "hidden";
-    //     this.isVisible = result;
+    // carbon.processConditions.call(field, field.visible, function(result){
+    //     this.el.style.visibility = result ? "visible" : "hidden";
+    //     this.visible = result;
     // })
     
     carbon.processConditions.call(field, field.enable, function(result){
-        this.isEnabled = result;        
-        carbon.types[this.type].enable.call(this,this.isEnabled);
+        this.enabled = result;        
+        carbon.types[this.type].enable.call(this,this.enabled);
     })
     carbon.processConditions.call(field, field.parse, function(result){
-        this.isParsable = result
+        this.parsable = result
     })
     carbon.processConditions.call(field, field.required, function(result){
-        debugger;
         this.validate.required = result
         this.update();
     })
@@ -358,55 +357,131 @@ carbon.prototype.opts = {
     required: '<span style="color:red">*</span>'
 }
 
-/* Process the options of a field for normalization */
-carbon.options = function(field) {
-    if(typeof field.options == 'function') {
-        field.action = field.options;
-        field.options = field.action.call(this, field);
-    }
-	if(typeof field.options == 'string') {
-        field.path = field.options;
-        field.options = false;
-        carbon.ajax({path: field.path, success:function(field, data) {
-            field.options = data;  
-            field = carbon.options(field);
-            // carbon.update(field)
-            field.update()
-        }.bind(null, field )})
-		return field;
-    }
-    field = _.merge({options: []}, carbon.default, field);
+ //  var temp = {
+  //   options:{
+  //    options:[],
+  //    url:"",
+  //   //  function(){},
+  //    sections:[
+  //      {
+  //       label:"",
+  //       format:{
+  //         label:"{{label}}",
+  //         value:"{{value}}",
+  //       },
+  //       url:"",
+  //       min:null,
+  //       max:null,
+  //       step:1,
+  //       options:[],
+  //       "display": {
+  //         "matches": [
+  //           {"name": "f_n","value":["", "tim"]},
+  //         ],
+  //       } 
+  //       "enabled": {
+  //         "matches": [
+  //           {"name": "f_n","value":["", "tim"]},
+  //         ],
+  //       }
+  //      }
+  //    ]
+  //  }
+  // }
+
+carbon.optionsObj = function(opts,value,count){
 
 	// If max is set on the field, assume a number set is desired. 
 	// min defaults to 0 and the step defaults to 1.
-	if(typeof field.max !== 'undefined') {
-		field.min = (field.min || 0);
-		field.step = (field.step || 1)
-        var i = field.min;
-        while(i <= field.max) {
-            field.options.push(i.toString());
-            i+=field.step;
+	if(typeof opts.max !== 'undefined') {
+        for(var i = (opts.min || 0);i<=opts.max;i=i+(opts.step || 1)){
+            opts.options.push(""+i);
         }
     }
-    if(typeof field.default !== 'undefined' && field.options[0] !== field.default) {
-		field.options.unshift(field.default);
-	}
-    field.options =  _.map(field.options, function(item, i){
+    return _.map(opts.options, function(item, i){
         if(typeof item === 'string' || typeof item === 'number') {
-            item = {label: item};
-           	if(this.format.value !== '{{index}}'){
-				item.value = item.label;
-            }
+            item = {label: item, value:item};
         }
-        item.index = item.index || ""+i;
-        var temp = _.assignIn(item,{label: carbon.renderString(field.format.label,item), value: carbon.renderString(field.format.value,item) });
-        
-        if(temp.value == field.value) { temp.selected = true;}
-        return temp;
-    }.bind(field))
-    return field;
+        item.index = item.index || ""+(count+i);
+        _.assignIn(item,{label: carbon.renderString(this.format.label,item), value: carbon.renderString(this.format.value,item) });
+        if(item.value == value) { item.selected = true;}
+        return item;
+    }.bind(opts))
 }
-carbon.VERSION = '0.0.0.1';
+
+/* Process the options of a field for normalization */
+carbon.options = function(opts, value, count) {
+    count = count||0;
+    var newOpts = {options:[]};
+    if(typeof opts == 'object' && !_.isArray(opts)){
+        _.merge(newOpts, opts);    
+    }
+    
+    if(typeof opts == 'function') {
+        newOpts.action = opts;
+        newOpts.options = newOpts.action.call(this);
+    }
+
+	if(typeof opts == 'string' || typeof newOpts.url == 'string') {
+        newOpts.path = opts.url || opts;
+        newOpts.options = false;
+        newOpts.url = null;
+        carbon.ajax({path: newOpts.path, success:function(data) {
+            this.options.options = data;  
+            this.options = carbon.options.call(this,this.options,this.value);
+            // carbon.update(field)
+            this.update()
+        }.bind(this)})
+        // field.options = newOpts;
+		return newOpts;
+    }
+
+    if(_.isArray(opts)){
+        opts = _.merge({options:[]}, carbon.default, {options:opts});        
+    }else{
+        opts = _.merge({options:[]}, carbon.default, opts);        
+    }
+
+    // if(typeof field.default !== 'undefined' && field.options[0] !== field.default) {
+	// 	field.options.unshift(field.default);
+	// }
+    newOpts.options =  carbon.optionsObj(opts,value,count);
+    if(_.isArray(opts.optgroups)){
+        count = count||(newOpts.options.length-1);
+        _.each(opts.optgroups,function(section){
+            // var section = carbon.options.obj.call(this,section,this.value,count);
+            debugger;
+            section.options = carbon.optionsObj( _.merge({options:[]},carbon.default, section),value,count);
+            section.id = carbon.getUID();
+            newOpts.options.push({"section":section});
+
+            carbon.processConditions.call(this, section.enable, function(id, result){
+                var op = this.el.querySelectorAll('[data-id="'+id+'"]');
+                for (var i = 0; i < op.length; i++) {
+                      op[i].disabled = !result;
+                  }
+            }.bind(this,section.id))            
+            carbon.processConditions.call(this, section.display, function(id, result){
+                var op = this.el.querySelectorAll('[data-id="'+id+'"]');
+                for (var i = 0; i < op.length; i++) {
+                      op[i].hidden = !result;
+                  }
+            }.bind(this,section.id))
+
+            count += section.options.length;
+        }.bind(this))
+    }
+    return newOpts;
+}
+
+
+
+
+
+
+
+
+carbon.VERSION = '0.0.0.2';
 carbon.i = 0;
 carbon.getUID = function() {
     return 'f' + (carbon.i++);
@@ -489,7 +564,7 @@ carbon.types = {
     },
     'collection':{
         render: function(){
-            _.assignIn(this, carbon.options.call(this.owner, this));
+            this.options = carbon.options.call(this,this.options, this.value);
             return carbon.render(this.type, this);
         },
         initialize: function(){

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!--<link rel="stylesheet" href="assets/css/normalize.css">-->
-  <!--<link rel="stylesheet" href="assets/css/skeleton.css">-->
+    <link rel="stylesheet" href="assets/css/normalize.css">
+  <link rel="stylesheet" href="assets/css/skeleton.css">
 
-		 <link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'> 
-		 <link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'> 
+		 <!-- <link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>  -->
+		 <!-- <link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>  -->
   </head>
   <body>
    <div style="width:800px;margin:50px auto" id="form">
@@ -23,10 +23,10 @@
     <script type='text/javascript' src='../src/carbon.validate.js'></script>    
     <!-- <script type='text/javascript' src='../src/hogan-3.0.1.js'></script>     -->
     <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.carbon.js'></script>    */-->
-	<!--<script type='text/javascript' src='./assets/js/carbon.skeleton.js'></script>-->
-	 <script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script> 
+	<script type='text/javascript' src='./assets/js/carbon.skeleton.js'></script>
+	 <!-- <script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script>  -->
 
-    <script>
+  <script>
 
 
 ceremony_help_text = "If you have concerns regarding participation in your " +
@@ -889,45 +889,25 @@ return false;
                 },
                 "parse":"display"
               },
-            {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}],format:{"label":'{{index}}: {{label}}'}},
-            {"label": "Favorite State",type:'select', "options": "./data/states.json", format:{"label":'({{value}}) {{name}}'}},
+              {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}],format:{"label":'{{index}}: {{label}}'}},
+              {name: 'Another', type:'select', options:{options:[{visible:false,label:"Please Choose One"}],optgroups:[
+                {label:"stuff",format:{"label":'{{label}}'}, options:[3,4,5,9]},
+                {format:{"label":'{{index}}: {{label}}'},min:2,max:10,"display": {
+                    "matches": [
+                        {"name": "checked","value": [true]},
+
+                    ],
+                }}
+                
+              ]}},
+              {"label": "Favorite State",type:'select', "options": {url:"./data/states.json",format:{"label":'({{value}}) {{name}}'}} },
             {label: 'Candies', type:'fieldset', fields: [
 				{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '',
 				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color',columns:6, array: {min:2,max:3}}]}]},
 
         ]
    }
-  //  var temp = {
-  //   options:{
-  //    options:[],
-  //    url:"",
-  //   //  function(){},
-  //    sections:[
-  //      {
-  //       label:"",
-  //       format:{
-  //         label:"{{label}}",
-  //         value:"{{value}}",
-  //       },
-  //       url:"",
-  //       min:null,
-  //       max:null,
-  //       step:1,
-  //       options:[],
-  //       "display": {
-  //         "matches": [
-  //           {"name": "f_n","value":["", "tim"]},
-  //         ],
-  //       } 
-  //       "enabled": {
-  //         "matches": [
-  //           {"name": "f_n","value":["", "tim"]},
-  //         ],
-  //       }
-  //      }
-  //    ]
-  //  }
-  // }
+ 
 
    opstions = {
 	   fields:[

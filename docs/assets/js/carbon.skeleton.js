@@ -1,6 +1,6 @@
 carbon.stencils = {
     _container: `<div class="carbon">
-        <form>
+        <form novalidate>
             <legend for="{{name}}"><h4>{{legend}}</h4></legend>
         </form>
     </div>`,
@@ -8,7 +8,7 @@ carbon.stencils = {
         {{>_label}}
         <input class="six columns" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
         {{>_error}}
-        {{>actions}}       
+        {{>_actions}}       
     </div>`,    
     hidden: `<div class="row">
         <input name="{{name}}" type="hidden" value="{{value}}" id="{{id}}" />
@@ -17,17 +17,30 @@ carbon.stencils = {
         {{>_label}}
         <textarea class="six columns" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
         {{>_error}}
-        {{>actions}}       
+        {{>_actions}}       
     </div>`,
     select: `<div class="row">
         {{>_label}}    
         <select class="six columns" name="{{name}}" value="{{value}}" id="{{id}}" />
-        {{#options}}
-        <option {{#selected}} selected=selected {{/selected}} value="{{value}}">{{label}}</option>
-        {{/options}}
+			{{#options}}{{#options}}
+				{{^section}}
+				<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+				{{/section}}
+				{{#section}}
+				{{#section.label}}
+				<optgroup label="{{label}}" data-id="{{section.id}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}">
+				{{/section.label}}
+					{{#options}}
+					<option data-id="{{section.id}}" {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+					{{/options}}
+					{{#section.label}}
+				</optgroup>
+				{{/section.label}}
+				{{/section}}
+			{{/options}}{{/options}}
         </select>
         {{>_error}}
-        {{>actions}}       
+        {{>_actions}}       
     </div>`,
     radio: `<div class="row">
         {{>_label}}
@@ -36,15 +49,15 @@ carbon.stencils = {
         {{/options}}
         </span>
         {{>_error}}
-        {{>actions}}       
+        {{>_actions}}       
     </div>`,
     _fieldset: `<div class="carbon">
         <fieldset name="{{name}}">
             <legend for="{{name}}"><h5>{{label}}</h5></legend><hr>
-            {{>actions}}       
+            {{>_actions}}       
         </fieldset>
     </div>`,
-    actions: `      
+    _actions: `      
         {{#array}}
         <input style="padding: 0 ;width:38px;" class="carbon-add" type="button" value="+">
         <input style="padding: 0 ;width:38px;" class="carbon-minus" type="button" value="-">
@@ -68,9 +81,9 @@ carbon.stencils = {
     </form>
     </div>`,
     tabs_fieldset: `<div class="carbon">
-        <fieldset name="{{name}}" {{#isChild}}class="hello there"{{/isChild}}
+        <fieldset name="{{name}}" {{#childild}}class="hello there"{{/childild}}
             <legend for="{{name}}"><h5>{{label}}</h5></legend><hr>
-            {{>actions}}       
+            {{>_actions}}       
         </fieldset>
     </div>`
 };
