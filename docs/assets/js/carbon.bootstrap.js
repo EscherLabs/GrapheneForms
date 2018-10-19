@@ -24,7 +24,7 @@ carbon.stencils = {
     label:`
     {{^hideLabel}}
 	{{#label}}<label for="{{guid}}" {{#inline}}style="text-align:left"{{/inline}} class="control-label col-md-{{#inline}}12{{/inline}}{{^inline}}4{{/inline}}">
-  {{{label}}}:{{#required}}<span class="text-danger">*</span>{{/required}}
+  {{{label}}}:{{#validate.required}}<span class="text-danger">*</span>{{/validate.required}}
 </label>{{/label}}
 {{/hideLabel}}`,
     textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
@@ -115,7 +115,7 @@ carbon.stencils = {
     carbon__label: `
     {{^hideLabel}}
 	{{#label}}<label for="{{guid}}" {{#inline}}style="text-align:left"{{/inline}} class="control-label col-md-{{#inline}}12{{/inline}}{{^inline}}4{{/inline}}">
-  {{{label}}}:{{#required}}<span class="text-danger">*</span>{{/required}}
+  {{{label}}}:{{#validate.required}}<span class="text-danger">*</span>{{/validate.required}}
 </label>{{/label}}
 {{/hideLabel}}
     `,

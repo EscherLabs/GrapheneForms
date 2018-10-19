@@ -1,5 +1,3 @@
-function mustache(l,a,m,c){function h(a,b){b=b.pop?b:b.split(".");a=a[b.shift()]||"";return 0 in b?h(a,b):a}var k=mustache,e="";a=Array.isArray(a)?a:a?[a]:[];a=c?0 in a?[]:[1]:a;for(c=0;c<a.length;c++){var d="",f=0,n,b="object"==typeof a[c]?a[c]:{},b=Object.assign({},m,b);b[""]={"":a[c]};l.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(a,c,l,m,p,q,g){f?d+=f&&!p||1<f?a:c:(e+=c.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(a,c,e,f,g,d){return c?h(b,c):f?h(b,d):g?k(h(b,d),b):e?"":(new Option(h(b,d))).innerHTML}),n=q);p?--f||(g=h(b,g),e=/^f/.test(typeof g)?e+g.call(b,d,function(a){return k(a,b)}):e+k(d,g,b,n),d=""):++f})}return e}
-
 var carbon = function(data, el){
     "use strict";
     
@@ -52,14 +50,14 @@ var carbon = function(data, el){
                 if(field.fields){
                     if(field.array){
                         obj[field.name] = obj[field.name] || [];
-                        obj[field.name].unshift(toJSON.call(field));
+                        obj[field.name].push(toJSON.call(field));
                     }else{
                         obj[field.name] = toJSON.call(field);
                     }
                 }else{
                     if(field.array){
                         obj[field.name] = obj[field.name] || [];
-                        obj[field.name].unshift(field.get());
+                        obj[field.name].push(field.get());
                     }else{
                         obj[field.name] = field.get();
                     }
@@ -97,10 +95,11 @@ var carbon = function(data, el){
 		delete carbon.instances[this.options.name];
 
 		this.trigger('destroyed');
-	};
-
-    
+	};   
 }
+
+carbon.m = function (l,a,m,c){function h(a,b){b=b.pop?b:b.split(".");a=a[b.shift()]||"";return 0 in b?h(a,b):a}var k=carbon.m,e="";a=_.isArray(a)?a:a?[a]:[];a=c?0 in a?[]:[1]:a;for(c=0;c<a.length;c++){var d="",f=0,n,b="object"==typeof a[c]?a[c]:{},b=_.assign({},m,b);b[""]={"":a[c]};l.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(a,c,l,m,p,q,g){f?d+=f&&!p||1<f?a:c:(e+=c.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(a,c,e,f,g,d){return c?h(b,c):f?h(b,d):g?k(h(b,d),b):e?"":(new Option(h(b,d))).innerHTML}),n=q);p?--f||(g=h(b,g),e=/^f/.test(typeof g)?e+g.call(b,d,function(a){return k(a,b)}):e+k(d,g,b,n),d=""):++f})}return e}
+
 carbon.instances = {};
 //creates multiple instances of duplicatable fields if input attributes exist for them
 carbon.inflate = function(atts, fieldIn, ind, list) {
@@ -259,7 +258,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
                 field.parent.fields.splice(index+1, 0, newField)
                 newField.el.querySelector('[name="'+field.name+'"]').focus();
 
-                _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], _.partialRight(this.trigger, field) )
+                _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], function(event){field.owner.trigger(event,field.owner,field)}.bind(field))
             }
         }.bind(this, field));
     }
@@ -278,7 +277,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
                 }else{
                     this.container.querySelector(field.target).removeChild(field.el);
                 }
-                _.each(['change', 'change:' + field.name, 'removed:' + field.name], _.partialRight(this.trigger, field) )
+                _.each(['change', 'change:'+field.name, 'removed:'+field.name], function(event){field.owner.trigger(event,field.owner,field)}.bind(field))
             }else{
                 field.set(null);
             }
@@ -316,6 +315,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         this.isParsable = result
     })
     carbon.processConditions.call(field, field.required, function(result){
+        debugger;
         this.validate.required = result
         this.update();
     })
@@ -426,7 +426,7 @@ carbon.types = {
         render: function(){
             return carbon.render(this.type, this);
         },
-        destroy(){
+        destroy:function(){
             this.el.removeEventListener('change',this.onchangeEvent );		
             this.el.removeEventListener('change',this.onchange );		
             this.el.removeEventListener('input', this.onchangeEvent);
@@ -528,10 +528,10 @@ carbon.types = {
     }
 };
 carbon.render = function(template, options){
-    return mustache(carbon.stencils[template||'text'] || carbon.stencils['text'],_.extend({},carbon.stencils,options))
+    return carbon.m(carbon.stencils[template||'text'] || carbon.stencils['text'],_.extend({},carbon.stencils,options))
 }
 carbon.renderString = function(string,options){
-    return mustache(string||'',options||{})
+    return carbon.m(string||'',options||{})
 }
 carbon.types['hidden'] = carbon.types['textarea'] = carbon.types['text'] = carbon.types['number'] = carbon.types['color'] = carbon.types['input'];
 carbon.types['checkbox'] = _.extend({},carbon.types['input'],carbon.types['bool']);

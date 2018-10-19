@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="assets/css/normalize.css">
-  <link rel="stylesheet" href="assets/css/skeleton.css">
+    <!--<link rel="stylesheet" href="assets/css/normalize.css">-->
+  <!--<link rel="stylesheet" href="assets/css/skeleton.css">-->
 
-		<!-- <link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'> -->
-		<!-- <link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'> -->
+		 <link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'> 
+		 <link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'> 
   </head>
   <body>
    <div style="width:800px;margin:50px auto" id="form">
@@ -15,16 +15,16 @@
 	</div>
    <pre style="width:800px;margin:50px auto" id="result"></pre>
     <script src="./assets/js/lodash.min.js"></script>    
-    <script type='text/javascript' src='./assets/js/carbon.min.js'></script>
-    <!-- <script type='text/javascript' src='../src/carbon.js'></script> -->
+    <!--<script type='text/javascript' src='./assets/js/carbon.min.js'></script>-->
+     <script type='text/javascript' src='../src/carbon.js'></script> 
     
-    <!-- <script type='text/javascript' src='../src/carbon.events.js'></script>
+     <script type='text/javascript' src='../src/carbon.events.js'></script>
     <script type='text/javascript' src='../src/carbon.conditions.js'></script>
-    <script type='text/javascript' src='../src/carbon.validate.js'></script>    -->
+    <script type='text/javascript' src='../src/carbon.validate.js'></script>    
     <!-- <script type='text/javascript' src='../src/hogan-3.0.1.js'></script>     -->
     <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.carbon.js'></script>    */-->
-	<script type='text/javascript' src='./assets/js/carbon.skeleton.js'></script>
-	<!-- <script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script> -->
+	<!--<script type='text/javascript' src='./assets/js/carbon.skeleton.js'></script>-->
+	 <script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script> 
 
     <script>
 
@@ -893,7 +893,7 @@ return false;
             {"label": "Favorite State",type:'select', "options": "./data/states.json", format:{"label":'({{value}}) {{name}}'}},
             {label: 'Candies', type:'fieldset', fields: [
 				{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '',
-				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color',columns:6, array: {min:2,max:2}}]}]},
+				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color',columns:6, array: {min:2,max:3}}]}]},
 
         ]
    }
