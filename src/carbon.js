@@ -12,7 +12,7 @@ var carbon = function(data, el){
     
     //set flag on all root fieldsets as a section
     if(this.options.sections){
-        _.each(_.filter(this.options.fields,{type:'fieldset'}),function(item,i){
+        _.each(_.filter(this.options.schema,{type:'fieldset'}),function(item,i){
             item.index = i;
             item.section = true;
             // item.text = item.legend || item.label || i;
@@ -27,7 +27,7 @@ var carbon = function(data, el){
     
         this.container = this.el.querySelector((el || data.el) + ' form') || this.el;
         this.rows = {};
-        this.fields = _.map(this.options.fields, carbon.createField.bind(this, this, this.options.data||{}, null, null))
+        this.fields = _.map(this.options.schema, carbon.createField.bind(this, this, this.options.data||{}, null, null))
         _.each(this.fields, carbon.inflate.bind(this, this.options.data||{}))
         _.each(this.fields, function(field) {
             field.owner.events.trigger('change:' + field.name, field);
@@ -72,7 +72,7 @@ var carbon = function(data, el){
     this.set = function(name,value) {
         _.find(this.fields, {name: name}).set(value);
     }.bind(this),
-    this.field = function(name){
+    this.find = function(name){
         return _.find(this.fields,{name:name})
     }.bind(this)
 
@@ -146,6 +146,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         offset: 0,
         ischild:!(parent instanceof carbon)        
     }, carbon.types[fieldIn.type].defaults, fieldIn)
+    field.validate.required = field.validate.required|| field.required;
     
     if(field.name == ''){field.name = field.id;}
     field.item = fieldIn;
@@ -321,7 +322,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
     carbon.processConditions.call(field, field.parse, function(result){
         this.parsable = result
     })
-    carbon.processConditions.call(field, field.required, function(result){
+    carbon.processConditions.call(field, field.validate.required, function(result){
         this.validate.required = result
         this.update();
     })
