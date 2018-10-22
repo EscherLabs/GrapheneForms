@@ -95,7 +95,8 @@ var carbon = function(data, el){
 		delete carbon.instances[this.options.name];
 
 		this.trigger('destroyed');
-	};   
+	};
+
 }
 
 carbon.m = function (l,a,m,c){function h(a,b){b=b.pop?b:b.split(".");a=a[b.shift()]||"";return 0 in b?h(a,b):a}var k=carbon.m,e="";a=_.isArray(a)?a:a?[a]:[];a=c?0 in a?[]:[1]:a;for(c=0;c<a.length;c++){var d="",f=0,n,b="object"==typeof a[c]?a[c]:{},b=_.assign({},m,b);b[""]={"":a[c]};l.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(a,c,l,m,p,q,g){f?d+=f&&!p||1<f?a:c:(e+=c.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(a,c,e,f,g,d){return c?h(b,c):f?h(b,d):g?k(h(b,d),b):e?"":(new Option(h(b,d))).innerHTML}),n=q);p?--f||(g=h(b,g),e=/^f/.test(typeof g)?e+g.call(b,d,function(a){return k(a,b)}):e+k(d,g,b,n),d=""):++f})}return e}
@@ -276,6 +277,9 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
                     field.parent.rows[field.row].ref.removeChild(field.el);
                     if(field.parent.rows[field.row].used  == 0){
                         field.parent.container.removeChild(field.parent.rows[field.row].ref);
+                        delete field.parent.rows[field.row];
+                    }else{
+                        carbon.types[field.parent.type].reflow.call(field.parent);
                     }
                 }else{
                     this.container.querySelector(field.target).removeChild(field.el);
@@ -601,6 +605,11 @@ carbon.types = {
         get: function(){
             // return this.el.querySelector('select[name="' + this.name + '"]').value;
         },
+        reflow: function(){
+            _.each(this.fields,function(field){
+                debugger;
+            }.bind(this.rows))
+        }
     }
 };
 carbon.render = function(template, options){
