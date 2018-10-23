@@ -163,6 +163,8 @@
 					<a href="#themes"><h4>Themes</h4></a>
 					<ul class>
 						<li class="list-unstyled" ><a href="#bootstrap"><i class="fa fa-chevron-right"></i> Bootstrap</a></li>
+						<li class="list-unstyled" ><a href="#skeleton"><i class="fa fa-chevron-right"></i> Skeleton</a></li>
+						<li class="list-unstyled" ><a href="#Bulma"><i class="fa fa-chevron-right"></i> Bulma</a></li>
 						<li class="list-unstyled" ><a href="#foundation"><i class="fa fa-chevron-right"></i> Foundation</a></li>
 					</ul>
 					<a href="#plugins"><h4>Plugins</h4></a>
@@ -522,7 +524,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<a name="field_format" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>format  <code>['object']</code></h4>
-					<p class="text-muted">default = {'label':'{{label}}','value':'{{value}}'}; <span class="text-success">select, radio</span></p>																								
+					<p class="text-muted">default = { 'label': {{label}}', 'value': '{{value}}' }; <span class="text-success">select, radio</span></p>																								
 					<p>
 						This option allows you to define custom labels and values to use for building options, this allows you to use existing data to generate usable form elements.
 						<br>note: 'index' is a built in value that is available to generate labels and values. 
@@ -536,30 +538,25 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--on -->
 					<a name="on" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>on('event', function(event, form, [field]){})</h4>					
+					<h4>.on('event', function(event, form, [field]){})</h4>					
 					<p>
 Bind a callback function to an object. The callback will be invoked whenever the event is fired. If you have a large number of different events on a page, the convention is to use colons to namespace them: "poll:start", or "change:selection". The event string may also be a space-delimited list of several events...
 					</p>
-					<blockquote>carbon.on('change:myfield', function(){})</blockquote>
-
 					<!--delay -->
 					<a name="debounce" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>debounce('event', 'function', [delay])</h4>					
+					<h4>.debounce('event', 'function', [delay])</h4>					
 					<p>
 						This works exatly like the on method except it will only be triggered after the event has not been fired again after the delay timeout. The default delay time is 250ms.
 					</p>
-					<blockquote>carbon.debounce('change', function(){}, 250)</blockquote>
 
 					<!--trigger -->
 					<a name="trigger" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>trigger('event')</h4>					
+					<h4>.trigger('event')</h4>					
 					<p>
 						Trigger callbacks for the given event, or space-delimited list of events. Subsequent arguments to trigger will be passed along to the event callbacks.
 					</p>
-					<blockquote>carbon.trigger('change')</blockquote>
-
 					<!--built in events -->
 					<a name="built_in_events" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -577,7 +574,12 @@ Bind a callback function to an object. The callback will be invoked whenever the
 						<!--change -->
 						<li><h5>change</h5>					
 						<p>
-							The change event is triggered whenever the value of a field is changed.
+							The change event is triggered whenever a field is changed or any change is made to the form.
+						</p></li>
+						<!--change field-->
+						<li><h5>change:fieldname</h5>					
+						<p>
+							The change event is triggered whenever a field is changed.
 						</p></li>
 
 						<!--destroy -->

@@ -2,13 +2,14 @@ var carbon = function(data, el){
     "use strict";
     
     //initalize form
-    this.options = _.assignIn({legend: '', data:{}, columns:carbon.columns,name: carbon.getUID()},this.opts, data);
+    this.options = _.assignIn({legend: '', data:'search', columns:carbon.columns,name: carbon.getUID(),schema:data.fields},this.opts, data);
     this.el = document.querySelector(el || data.el);
     this.on = this.events.on;
     this.trigger = this.events.trigger;
     this.debounce = this.events.debounce;
-
-    this.trigger('initialize');
+    if (typeof this.options.data == 'string'){
+        this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
+    }
     
     //set flag on all root fieldsets as a section
     if(this.options.sections){
@@ -19,6 +20,7 @@ var carbon = function(data, el){
         return item})
     }
     
+    this.trigger('initialize');
 
     var create = function(){
         if(this.options.clear) {

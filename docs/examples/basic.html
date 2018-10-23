@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <link rel="stylesheet" href="../assets/css/normalize.css">
+  <link rel="stylesheet" href="../assets/css/skeleton.css">
+  </head>
+  <body>
+    <div style="padding:20px">
+              <h4>Example - Basic Form</h4>
+
+    <div class="row ">
+        <pre class="six columns" id="code"><code></code></pre>
+        <div class="six columns" id="form"></div>
+        <pre class="twelve columns" id="result"><code></code></pre>
+
+    </div>
+    </div>
+    <script src="../assets/js/lodash.min.js"></script>    
+    <!--/*<script src='../assets/js/carbon.min.js'></script>*/-->
+    <script type='text/javascript' src='../../src/carbon.js'></script>  
+    <script type='text/javascript' src='../../src/carbon.events.js'></script> 
+    <script type='text/javascript' src='../../src/carbon.conditions.js'></script> 
+    <script type='text/javascript' src='../../src/carbon.validate.js'></script>    
+    <script src='../assets/js/carbon.skeleton.js'></script>
+
+    <script>
+    options = {
+        legend: 'Basic Form',
+        fields:[
+            {label: 'Field Label', name: 'label'},
+        ]
+    }
+    document.querySelector('#code code').innerHTML = JSON.stringify(options,null,2);
+    var myCarbon = new carbon(options, '#form')
+    myCarbon.debounce('change',function(d){
+        if(typeof d.owner !== 'undefined'){
+        document.querySelector('#result code').innerHTML = JSON.stringify(d.owner.toJSON(),null,2);
+        d.owner.validate()
+        }else{
+        if(typeof d.toJSON !== 'undefined'){
+            document.querySelector('#result code').innerHTML = JSON.stringify(d.toJSON(),null,2);
+            d.validate()
+        }
+        }
+    })
+
+    myCarbon.trigger('change',myCarbon)
+
+
+    </script>
+   </body>
+</html>
