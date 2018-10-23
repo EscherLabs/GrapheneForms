@@ -12,9 +12,10 @@
 		<!-- Bootstrap core CSS -->
 		<link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>
 		<link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
+		<link rel='stylesheet' type='text/css' href='./assets/css/milligram.min.css'>
     <script src="./assets/js/lodash.min.js"></script>    
 		<script type='text/javascript' src='./assets/js/carbon.min.js'></script>
-		<script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script>
+		<script type='text/javascript' src='./assets/js/carbon.mg.js'></script>
 
 		<!-- Custom styles for this template -->
 		<link rel='stylesheet' type='text/css' href='assets/css/demo.css'>
@@ -163,8 +164,10 @@
 					<a href="#themes"><h4>Themes</h4></a>
 					<ul class>
 						<li class="list-unstyled" ><a href="#bootstrap"><i class="fa fa-chevron-right"></i> Bootstrap</a></li>
+						<li class="list-unstyled" ><a href="#milligram"><i class="fa fa-chevron-right"></i> Milligram</a></li>						
 						<li class="list-unstyled" ><a href="#skeleton"><i class="fa fa-chevron-right"></i> Skeleton</a></li>
-						<li class="list-unstyled" ><a href="#Bulma"><i class="fa fa-chevron-right"></i> Bulma</a></li>
+						<li class="list-unstyled" ><a href="#bulma"><i class="fa fa-chevron-right"></i> Bulma</a></li>
+						<li class="list-unstyled" ><a href="#uikit"><i class="fa fa-chevron-right"></i> UIKit</a></li>
 						<li class="list-unstyled" ><a href="#foundation"><i class="fa fa-chevron-right"></i> Foundation</a></li>
 					</ul>
 					<a href="#plugins"><h4>Plugins</h4></a>
@@ -242,7 +245,7 @@ var myForm = new carbon(config);</code></pre>
 					<br>
 					<h5>validate <code>myForm.validate();</code></h5>
 					<p>
-						all of the fields are validated and the status of the validation is returned. If a field fails validation the error message is added to that field if the theme supports it. The flag <code>myForm.valid</code> is also set to this status and an array of errors is containted in the <code>myForm.errors</code> attribute;
+						all of the fields are validated and the status of the validation is returned. If a field fails validation the error message is added to that field if the theme supports it. The flag <code>myForm.valid</code> is also set to this status and an array of errors is containted in the <code>myForm.errors</code> property;
 
 					</p>
 					<br>
@@ -300,7 +303,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<br>
 					<h4>default</h4>					
 					<p>
-						This is an object that defines what a default field that is created looks for any undefined attribute. For example by default if the type is not defined a text field is created, if you would preer that a textarea is default you could define default to be <code>{"type":"textarea"}</code>
+						This is an object that defines what a default field that is created looks for any undefined property. For example by default if the type is not defined a text field is created, if you would preer that a textarea is default you could define default to be <code>{"type":"textarea"}</code>
 					</p>
 					<blockquote><pre><code class="prettyprint">config.default = {"type": "textarea"} // this would set the default type to textearea</code></pre></blockquote>
 					<a name="actions" style="display:block;position:relative;top:-80px"></a>
@@ -345,26 +348,27 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--type -->
 					<a name="field_type" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>type <code>['string', null]</code></h4>	
+					<h4>type <code>['string', null]</code> <a class="pull-right" href="./examples/types.html">Example</a></h4>	
 					<p class="text-muted">default = 'text' </p>				
 					<p>
 						This defines the type of form element to render. The default type is a simple text input.<br>
 						supported types out of the box are:
 						<ul>
-								<li>text <span class="text-muted">(and sub types)</span>
+								<li>text <span class="text-muted">(and its variations)</span>
 									<ul><li>hidden</li>
 										<li>number</li>
 										<li>color</li>
 										<li>email</li></ul>
 								</li>
 								<li>textarea</li>
+								<li>checkbox</li>
 								<li>select</li>
 								<li>radio</li>
-								<li>checkbox</li>
-								
 								<li>fieldset</li>
 							</ul>
-							This list can be expanded through plugins
+							
+							<br>
+							This list can be expanded through plugins 
 					</p>
 					
 					<!--field name -->
@@ -374,7 +378,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>														
 					
 					<p>
-						If this attribute is not set then the name will be set to the internally genderated uuid for this field. The 'name' attribute is set on the field in the html and is used to reference this field in the collection maintained by carbon.
+						If this property is not set then the name will be set to the internally genderated uuid for this field. The 'name' property is set on the field in the html and is used to reference this field in the collection maintained by carbon.
 					</p>
 					<!--field label -->
 					<a name="field_label" style="display:block;position:relative;top:-80px"></a>
@@ -387,7 +391,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field value -->
 					<a name="field_value" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>value <code>['text', 'integer', 'bool', 'function']</code></h4>	
+					<h4>value <code>['text', 'integer', 'bool', 'function']</code><a class="pull-right" href="./examples/values.html">Example</a></h4>	
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>														
 					<p>
 						This is the default value of the field and has lower precedence than the data field on the form. 
@@ -403,9 +407,10 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field placeholder -->
 					<a name="field_placeholder" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>placeholder  <code>['string']</code></h4>					
+					<h4>placeholder  <code>['string']</code><a class="pull-right" href="./examples/placeholder.html">Example</a></h4>					
+					<p class="text-muted"><span class="text-success">(text, number, email, textarea, select)</span> default = "";</p>																													
 					<p>
-						The placeholder attribute sets the placeholder for some field types, for example the 'text' type.
+						The placeholder property sets the placeholder for some field types, for example the 'text' type.
 					</p>					
 					<!--field target -->
 					<a name="field_target" style="display:block;position:relative;top:-80px"></a>
@@ -438,7 +443,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 						By defualt this is set to 'true', if the value is simply set to false the field will not be shown. If show is set to a function then the function must return a boolean. The last option is to pass an object with the structure of <a href="#conditions"><code>carbon.conditions</code></a> that is used to dynamically determine if the field should be shown based on the values of other fields.
 					</p>
 					<p>
-							The 'display' attribute must in one way or another result in a bool indicating if the field should be shown or not. 							
+							The 'display' property must in one way or another result in a bool indicating if the field should be shown or not. 							
 					</p>
 					<!--field show -->
 					<a name="field_enable" style="display:block;position:relative;top:-80px"></a>
@@ -449,7 +454,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 						See as <a href="#field_display">display</a> for acceptable values here.
 					</p>
 					<p>
-							The 'enable' attribute must in one way or another result in a bool indicating if the field should be endable for editing/changing. 							
+							The 'enable' property must in one way or another result in a bool indicating if the field should be endable for editing/changing. 							
 					</p>
 					<!--field show -->
 					<a name="field_parse" style="display:block;position:relative;top:-80px"></a>
@@ -460,7 +465,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 							See as <a href="#field_display">display</a> for acceptable values here.
 					</p>
 					<p>
-							The 'parse' attribute must in one way or another result in a bool indicating if the field should be included in a 'toJSON' call on the form. 							
+							The 'parse' property must in one way or another result in a bool indicating if the field should be included in a 'toJSON' call on the form. 							
 					</p>					
 					<!--field required -->
 					<a name="field_required" style="display:block;position:relative;top:-80px"></a>
@@ -471,7 +476,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 							See as <a href="#field_display">display</a> for acceptable values here.
 					</p>
 					<p>
-							The 'parse' attribute must in one way or another result in a bool indicating if the field should be a required field. 							
+							The 'parse' property must in one way or another result in a bool indicating if the field should be a required field. 							
 					</p>
 
 					<!--field validate -->
@@ -626,7 +631,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<br>
 					<h4>requires</h4>					
 					<p>
-						The 'requires' condition requires that the field indicated with the 'name' attribute passes the required validation.
+						The 'requires' condition requires that the field indicated with the 'name' property passes the required validation.
 					</p>
 
 					<!--matches -->
@@ -634,7 +639,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<br>
 					<h4>matches</h4>					
 					<p>
-						The 'matches' condition requires that the value of the field indicated with the 'name' attribute matches the value that is set in the 'value' attribute.
+						The 'matches' condition requires that the value of the field indicated with the 'name' property matches the value that is set in the 'value' property.
 					</p>
 
 					<!--not_matches -->
@@ -642,7 +647,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<br>
 					<h4>not_matches</h4>					
 					<p>
-						The 'matches' condition requires that the value of the field indicated with the 'name' attribute does not match the value that is set in the 'value' attribute.
+						The 'matches' condition requires that the value of the field indicated with the 'name' property does not match the value that is set in the 'value' property.
 					</p>
 
 					<!--validation -->

@@ -18,6 +18,7 @@ carbon.stencils = {
 		{{>_actions}}
 	</div>
 </div>`,
+hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />`,
     textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}

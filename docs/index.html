@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="assets/css/normalize.css">
-  <link rel="stylesheet" href="assets/css/skeleton.css">
-
+    <!-- <link rel="stylesheet" href="assets/css/normalize.css">
+  <link rel="stylesheet" href="assets/css/skeleton.css"> -->
+  <link rel="stylesheet" href="assets/css/milligram.min.css">
+  
 		 <!-- <link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>  -->
 		 <!-- <link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>  -->
   </head>
@@ -23,7 +24,7 @@
      <script type='text/javascript' src='../src/carbon.validate.js'></script>     
     <!-- <script type='text/javascript' src='../src/hogan-3.0.1.js'></script>     -->
     <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.carbon.js'></script>    */-->
-	<script type='text/javascript' src='./assets/js/carbon.skeleton.js'></script>
+	<script type='text/javascript' src='./assets/js/carbon.mg.js'></script>
 	 <!-- <script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script>  -->
 
   <script>
@@ -890,7 +891,7 @@ return false;
                 "parse":"display"
               },
               {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other',selected:true},'mother'],format:{"label":'{{index}}: {{label}}'}},
-              {name: 'Another', type:'select', options:{options:[{visible:false,label:"Please Choose One"}],optgroups:[
+              {name: 'Another', type:'select', options:{ placeholder:'Please choose one',options:[],optgroups:[
                 {label:"stuff",format:{"label":'{{label}}'}, options:[3,4,5,9]},
                 {format:{"label":'{{index}}: {{label}}'},min:2,max:10,"display": {
                     "matches": [

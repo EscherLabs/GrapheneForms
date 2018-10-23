@@ -6,7 +6,7 @@ carbon.stencils = {
     </div>`,
     text: `<div class="row">
         {{>_label}}
-        <input class="six columns" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
+        <input placeholder="{{placeholder}}" class="six columns" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
         {{>_error}}
         {{>_actions}}       
     </div>`,    
@@ -15,7 +15,7 @@ carbon.stencils = {
     </div>`,
     textarea: `<div class="row">
         {{>_label}}
-        <textarea class="six columns" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
+        <textarea placeholder="{{placeholder}}" class="six columns" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
         {{>_error}}
         {{>_actions}}       
     </div>`,
@@ -43,13 +43,16 @@ carbon.stencils = {
         {{>_actions}}       
     </div>`,
     radio: `<div class="row">
+        <fieldset>
         {{>_label}}
-        {{#options}}
-        <label><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">{{label}}</label>        
-        {{/options}}
+        <span class="six columns">
+        {{#options}}{{#options}}
+        <label ><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
+        {{/options}}{{/options}}
         </span>
         {{>_error}}
-        {{>_actions}}       
+        {{>_actions}}     
+        </fieldset>
     </div>`,
     _fieldset: `<div class="carbon">
         <fieldset name="{{name}}">

@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  <!-- <link rel="stylesheet" href="../assets/css/normalize.css"> -->
   <link rel="stylesheet" href="../assets/css/milligram.min.css">
   </head>
   <body>
     <div style="padding:20px">
-    <h4>Example - Basic Form</h4>
-
+    <h4>Example - Placeholder</h4>
     <div class="container ">
         <div class="row ">
                 <pre class="column" id="code">Form Definition<code  class="prettyprint"></code></pre>
@@ -18,25 +16,23 @@
     </div>
     <script src="../assets/js/lodash.min.js"></script>    
     <script src='../assets/js/carbon.min.js'></script> 
-    <!-- <script type='text/javascript' src='../../src/carbon.js'></script>  
-    
-      <script type='text/javascript' src='../../src/carbon.events.js'></script> 
-     <script type='text/javascript' src='../../src/carbon.conditions.js'></script> 
-     <script type='text/javascript' src='../../src/carbon.validate.js'></script>   -->
     <script src='../assets/js/carbon.mg.js'></script>
-
     <script>
     options = {
-        legend: 'Basic Form',
+        legend: 'Placeholder Form',
+        name: 'myForm',
         fields:[
-        {label: 'Field Label', name: 'label', columns:6},
-        {label: 'Field Label2', name: 'label3', columns:6},
-        {label: 'Field Label23', name: 'label34'}
+            {label: 'Text', type: 'text', placeholder: 'Type here'},
+            {label: 'Number', type: 'number', placeholder:'Count them'},
+            {label: 'Email', type: 'email', placeholder:'test@gmail.com'},
+            {label: 'Textarea', type: 'textarea', placeholder:"Type your long form answer here"},
+            {label: 'Select', type: 'select', options:[1,2,3], placeholder:'Choose One'},
         ]
     }
+    
     document.querySelector('#code code').innerHTML = JSON.stringify(options,null,2);
     var myCarbon = new carbon(options, '#form')
-    myCarbon.debounce('change',function(d){
+    myCarbon.on('change',function(d){
         if(typeof d.owner !== 'undefined'){
         document.querySelector('#result code').classList = "prettyprint"
         document.querySelector('#result code').innerHTML = JSON.stringify(d.owner.toJSON(),null,2);
@@ -52,11 +48,9 @@
         }
     })
 
-    myCarbon.trigger('change',myCarbon)
-
+    myCarbon.trigger('change', myCarbon)
 
     </script>
-        <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
-        
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
    </body>
 </html>

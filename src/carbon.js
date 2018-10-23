@@ -167,13 +167,13 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         }else{
             if(typeof field.item.value === 'function') {
                 //uncomment this when ready to test function as value for input
-                field.valueFunc = item.value;
+                field.valueFunc = field.item.value;
                 field.derivedValue = function() {
-                    return field.valueFunc.call(field.owner.toJSON());
+                    return field.valueFunc.call(field, field.owner.toJSON());
                 };
                 field.item.value = field.item.value = field.derivedValue();
                 field.owner.on('change', function(){
-                    this.set(this.derivedValue());
+                    this.set.call(this,this.derivedValue());
                 }.bind(field));
             } else {
                 //may need to search deeper in atts?
@@ -195,8 +195,8 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         //not sure we should be excluding objects - test how to allow objects
         if(this.value != value && typeof value !== 'object') {
             this.value = value;
-            carbon.types[this.type].set(value);
-			if(!silent){this.trigger('change')};
+            carbon.types[this.type].set.call(this,value);
+			if(!silent){this.owner.trigger('change')};
 		}
     }.bind(field)
 
@@ -454,7 +454,8 @@ carbon.options = function(opts, value, count) {
 
     // if(typeof field.default !== 'undefined' && field.options[0] !== field.default) {
 	// 	field.options.unshift(field.default);
-	// }
+    // }
+
     newOpts.options =  carbon.optionsObj(opts,value,count);
     if(_.isArray(opts.optgroups)){
         count = count||(newOpts.options.length-1);
@@ -479,6 +480,9 @@ carbon.options = function(opts, value, count) {
 
             count += section.options.length;
         }.bind(this))
+    }
+    if(typeof opts.placeholder == 'string'){
+        newOpts.options.unshift({label:opts.placeholder, value:'',enabled:false,visible:false,selected:true})
     }
     return newOpts;
 }
@@ -556,6 +560,16 @@ carbon.types = {
         }
         //display
     },
+    'textarea':{
+        defaults:{},
+        set: function(value){
+            this.selected = (value == this.options[1]);
+            this.el.querySelector('textarea[name="' + this.name + '"]').innerHTML = value;
+        },
+        get: function(){
+            return this.el.querySelector('textarea[name="' + this.name + '"]').value;
+        }
+    },
     'bool':{
         defaults:{options:[false, true]},
         render: function(){
@@ -588,8 +602,8 @@ carbon.types = {
         },
         set: function(value){
             this.el.querySelector('[name="' + this.name + '"]').value = value;
-            _.each(this.options, function(option, index){
-                if(option.value == value) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+            _.each(this.options.options, function(option, index){
+                if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
             }.bind(this))
         }
     },
@@ -621,7 +635,8 @@ carbon.render = function(template, options){
 carbon.renderString = function(string,options){
     return carbon.m(string||'',options||{})
 }
-carbon.types['hidden'] = carbon.types['textarea'] = carbon.types['text'] = carbon.types['number'] = carbon.types['color'] = carbon.types['input'];
+carbon.types['hidden'] = carbon.types['text'] = carbon.types['number'] = carbon.types['color'] = carbon.types['input'];
+carbon.types['textarea'] = _.extend({},carbon.types['input'],carbon.types['textarea']);
 carbon.types['checkbox'] = _.extend({},carbon.types['input'],carbon.types['bool']);
 carbon.types['fieldset'] = _.extend({},carbon.types['input'],carbon.types['section']);
 carbon.types['select'] =  _.extend({},carbon.types['input'],carbon.types['collection']);
@@ -629,10 +644,11 @@ carbon.types['radio'] = _.extend({},carbon.types['input'],carbon.types['collecti
     get: function(){
         return (this.el.querySelector('[type="radio"][name="' + this.name + '"]:checked')||{value:''}).value; 
     },
-    // set:function(value){
-    //     // this.self.find('[value="' + this.value + '"]').prop('checked', true);
-    //     // this.el.querySelector('[type="radio"][name="' + this.name + '"][value="'+value+'"]'); 
-    // }
+    set:function(value){
+
+        this.el.querySelector('[value="'+value+'"]').checked = 'checked'
+        
+    }
 });
 
 carbon.types['email'] = _.extend({},carbon.types['input'],{defaults:{validate: { 'valid_email': true }}});

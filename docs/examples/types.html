@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <link rel="stylesheet" href="../assets/css/milligram.min.css">
+    </head>
+    <body>
+      <div style="padding:20px">
+      <h4>Example - Types</h4>
+      <div class="container ">
+          <div class="row ">
+                  <pre class="column" id="code">Form Definition<code  class="prettyprint"></code></pre>
+                  <div class="column column-40" id="form"></div>
+                  <pre class="column" id="result">myform.toJSON() =<code class="prettyprint"></code></pre>
+              </div>
+          </div>
+      </div>
+      <script src="../assets/js/lodash.min.js"></script>    
+      <script src='../assets/js/carbon.min.js'></script> 
+      <script src='../assets/js/carbon.mg.js'></script>
+      
+    <script>
+    options = {
+        legend: 'Types Form',
+        name: 'myForm',
+        fields:[
+            {label: 'Text', type: 'text'},
+            {label: 'Hidden', type: 'hidden', value:'hidden field'},
+            {label: 'Number', type: 'number'},
+            {label: 'Color', type: 'color'},
+            {label: 'Email', type: 'email'},
+            {label: 'Textarea', type: 'textarea'},
+            {label: 'Checkbox', type: 'checkbox'},
+            {label: 'Select', type: 'select', options:[1,2,3]},
+            {label: 'Radio', type: 'radio', options:[1,2,3]},
+            {label: 'Fieldset', type: 'fieldset', fields:[
+                {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
+                {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
+            ]},
+
+        ]
+    }
+    document.querySelector('#code code').innerHTML = JSON.stringify(options,null,2);
+    var myCarbon = new carbon(options, '#form')
+    myCarbon.debounce('change',function(d){
+        if(typeof d.owner !== 'undefined'){
+        document.querySelector('#result code').classList = "prettyprint"
+        document.querySelector('#result code').innerHTML = JSON.stringify(d.owner.toJSON(),null,2);
+        d.owner.validate();
+        PR.prettyPrint();
+        }else{
+        if(typeof d.toJSON !== 'undefined'){
+            document.querySelector('#result code').classList = "prettyprint"
+            document.querySelector('#result code').innerHTML = JSON.stringify(d.toJSON(),null,2);
+            d.validate();
+            PR.prettyPrint();
+        }
+        }
+    })
+
+    myCarbon.trigger('change',myCarbon)
+
+
+    </script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+   </body>
+</html>
