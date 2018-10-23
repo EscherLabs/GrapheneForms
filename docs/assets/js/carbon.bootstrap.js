@@ -125,7 +125,7 @@ select_options:`
     _label: `
     {{^hideLabel}}
 	{{#label}}<label for="{{guid}}" {{#inline}}style="text-align:left"{{/inline}} class="control-label col-md-{{#inline}}12{{/inline}}{{^inline}}4{{/inline}}">
-  {{{label}}}:{{#validate.required}}<span class="text-danger">*</span>{{/validate.required}}
+  {{{label}}}{{suffix}}{{#validate.required}}{{requiredText}}{{/validate.required}}
 </label>{{/label}}
 {{/hideLabel}}
     `,

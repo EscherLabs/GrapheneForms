@@ -147,7 +147,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         columns: this.options.columns,
         offset: 0,
         ischild:!(parent instanceof carbon)        
-    }, carbon.types[fieldIn.type].defaults, fieldIn)
+    }, this.opts,carbon.types[fieldIn.type].defaults, fieldIn)
     field.validate.required = field.validate.required|| field.required;
     
     if(field.name == ''){field.name = field.id;}
@@ -364,7 +364,7 @@ carbon.prototype.opts = {
     clear:true,
     sections:'',
     suffix: ':',
-    required: '<span style="color:red">*</span>'
+    requiredText: '<span style="color:red">*</span>'
 }
 
  //  var temp = {

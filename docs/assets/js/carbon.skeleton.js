@@ -67,7 +67,7 @@ carbon.stencils = {
         {{/array}}
     `,
     _label: `      
-    <label class="three columns" for="{{name}}">{{label}}{{#validate.required}}{{{owner.opts.required}}}{{/validate.required}}{{owner.opts.suffix}}</label>        
+    <label class="three columns" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>        
     `,
     _error:`<small style="color:red;display:block;"></small>`,
     tabs_container: `<div class="carbon">

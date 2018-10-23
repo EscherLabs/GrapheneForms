@@ -16,7 +16,7 @@ text: `
 `,        checkbox: `
 <label>&nbsp;<label>
     <input name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
-    <label class="label-inline" for="{{name}}">{{label}}{{#validate.required}}{{{owner.opts.required}}}{{/validate.required}}</label>        
+    <label class="label-inline" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}</label>        
     
     {{>_error}}
     </div>
@@ -80,7 +80,7 @@ text: `
         {{/array}}
     `,
     _label: `      
-    <label class="" for="{{name}}">{{label}}{{#validate.required}}{{{owner.opts.required}}}{{/validate.required}}{{owner.opts.suffix}}</label>        
+    <label class="" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>        
     `,
     _error:`<small style="color:red;display:block;"></small>`,
     tabs_container: `<div class="carbon">

@@ -901,10 +901,10 @@ return false;
                 }}
                 
               ]}},
-              {"label": "Favorite State",type:'select', "options": {url:"./data/states.json",format:{"label":'({{value}}) {{name}}'}} },
+              {"label": "Favorite State", suffix:'',type:'select', "options": {url:"./data/states.json",format:{"label":'({{value}}) {{name}}'}} },
             {label: 'Candies', type:'fieldset', fields: [
 				{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '',
-				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color',columns:6, array: {min:2,max:3}}]}]},
+				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'text',columns:6, array: {min:2,max:3}}]}]},
 
         ]
    }
