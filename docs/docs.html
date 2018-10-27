@@ -51,7 +51,7 @@
 					<ul class="nav navbar-nav">
 						<li class="active"><a href="./docs.html"><i class="fa fa-life-ring"></i> Docs</a></li>
 						<li><a href="./demo.html"><i class="fa fa-flask"></i> Demo</a></li>
-						<li><a href="./examples.html"><i class="fa fa-flask"></i> Examples</a></li>
+						<li><a href="./examples/"><i class="fa fa-flask"></i> Examples</a></li>
 						<!-- <li><a href="./editor.html"><i class="fa fa-check-square-o"></i> Editor</a></li> -->
 						<!-- <li><a href="./api.html"><i class="fa fa-code"></i> Docs</a></li> -->
 					</ul>
@@ -429,7 +429,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field columns -->
 					<a name="field_columns" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>columns <code>['integer'] => 12</code></h4>
+					<h4>columns <code>['integer'] => 12</code><a class="pull-right" href="./examples/columns.html">Example</a></h4>
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>																			
 					<p>
 						Fields default to the full width but based on the grid that the theme uses fields can be set to be smaller (1-12).
@@ -476,7 +476,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 							See as <a href="#field_display">display</a> for acceptable values here.
 					</p>
 					<p>
-							The 'parse' property must in one way or another result in a bool indicating if the field should be a required field. 							
+							The 'required' property must in one way or another result in a bool indicating if the field should be a required field. 							
 					</p>
 
 					<!--field validate -->
@@ -491,7 +491,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field max -->
 					<a name="field_max" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>max <code>['integer', null]</code></h4>
+					<h4>max <code>['integer', null]</code><a class="pull-right" href="./examples/generate.html">Example</a></h4>
 					<p class="text-muted">default = null; <span class="text-success">select, radio, number</span></p>																			
 					<p>
 						This field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a maximum number that the fields value can be. If the max is set on any field that would normally have its options passed in then the max is used to generate a set of options for that field.
@@ -499,7 +499,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field min -->
 					<a name="field_min" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>min <code>['integer', null]</code></h4>
+					<h4>min <code>['integer', null]</code><a class="pull-right" href="./examples/generate.html">Example</a></h4>
 					<p class="text-muted">default = 0; <span class="text-success">select, radio, number</span></p>																								
 					<p>
 						Similar to the max field this field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a minimum number that the fields value can be. If the max is set on any field that would normally have its options passed in then the min is used with the max to generate a set of options for that field. If max is set but min is not then min is assumed to be 0 when generating config.
@@ -507,7 +507,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field step -->
 					<a name="field_step" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>step <code>['integer', null]</code></h4>					
+					<h4>step <code>['integer', null]</code><a class="pull-right" href="./examples/generate.html">Example</a></h4>					
 					<p class="text-muted">default = 1; <span class="text-success">select, radio, number</span></p>					
 					<p>
 						Similar to the max field this field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a step number that the fields value will increase/decreases by when using the arrows. If the max is set on any field that would normally have its options passed in then the min is used with the max to generate a set of options for that field. If max is set but step is not then step is assumed to be 1 when generating config.
@@ -528,8 +528,10 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field options -->
 					<a name="field_format" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>format  <code>['object']</code></h4>
-					<p class="text-muted">default = { 'label': {{label}}', 'value': '{{value}}' }; <span class="text-success">select, radio</span></p>																								
+					<h4>format  <code>['object']</code><a class="pull-right" href="./examples/format.html">Example</a></h4>
+					
+						<span class="text-success">select, radio</span> <pre style="display:inline"><code class="prettyprint">{ label: '{{label}}', value: '{{value}}' }</code></pre>
+						<p></p>																								
 					<p>
 						This option allows you to define custom labels and values to use for building options, this allows you to use existing data to generate usable form elements.
 						<br>note: 'index' is a built in value that is available to generate labels and values. 
@@ -874,7 +876,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
     'name': 'first_name',
     'label': 'First Name',
 		'value':		'John',
-		'validate': {'required': true}
+		'validate': {'required': true},
 	},  
 	{
     'type':           'text',

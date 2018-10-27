@@ -6,7 +6,7 @@
   </head>
   <body>
     <div style="padding:20px">
-    <h4><a href="./">Examples</a> - Basic Form</h4>
+    <h4><a href="./">Examples</a> - Format</h4>
 
     <div class="container ">
         <div class="row ">
@@ -27,15 +27,16 @@
 
     <script>
     options = {
-        legend: 'Basic Form',
         fields:[
-        {label: 'Field Label', name: 'label'}
+        {label: 'Custom label', name: 'label',type:'select',options:{max:10, format:{ label:'Option {{index}}' }}},
+        {label: 'Custom value', name: 'value',type:'select',options:{max:12,min:1, format:{ value:'option-{{value}}' }}},
+        {label: 'Both', name: 'both',type:'select',options:{max:12,min:1, format:{ label:'{{value}} Column(s)' ,value:'col-md-{{value}}' }},help:'Select a bootstrap column class'}
         ]
     }
     document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
     var myCarbon = new carbon(options, '#form')
     myCarbon.debounce('change',function(d){
-        if(typeof d.owner !== 'undefined'){
+      if(typeof d.owner !== 'undefined'){
         document.querySelector('#result code').classList = "prettyprint"
         document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.owner.toJSON(),null,2);
         d.owner.validate();

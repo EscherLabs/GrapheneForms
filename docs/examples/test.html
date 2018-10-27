@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="../assets/css/normalize.css">
+  <link rel="stylesheet" href="../assets/css/skeleton.css">
+  <!-- <link rel="stylesheet" href="../assets/css/milligram.min.css"> -->
+  
+		 <!-- <link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>  -->
+		 <!-- <link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>  -->
+  </head>
+  <body>
+   <div style="width:800px;margin:50px auto" id="form">
+		<div name="f_n"></div>
+		Hello
+		<div name="last_name"></div>
+	</div>
+   <pre style="width:800px;margin:50px auto" id="result"></pre>
+    <script src="../assets/js/lodash.min.js"></script>    
+    <!--<script type='text/javascript' src='./assets/js/carbon.min.js'></script>-->
+      <script type='text/javascript' src='../../src/carbon.js'></script>  
+    
+      <script type='text/javascript' src='../../src/carbon.events.js'></script> 
+     <script type='text/javascript' src='../../src/carbon.conditions.js'></script> 
+     <script type='text/javascript' src='../../src/carbon.validate.js'></script>     
+    <!-- <script type='text/javascript' src='../src/hogan-3.0.1.js'></script>     -->
+    <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.carbon.js'></script>    */-->
+	<script type='text/javascript' src='../assets/js/carbon.skeleton.js'></script>
+	 <!-- <script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script>  -->
+
+  <script>
+
+
+ceremony_help_text = "If you have concerns regarding participation in your " +
+    "assigned ceremony, please contact commence@binghamton.edu";
+
+    
+    ceremonies = {
+        "Decker Ceremoiny":"Tuesday",
+    }
+
+    options ={
+//         data:{
+//   "f_n": [
+//     "Bob"
+//   ],
+
+//   "number": "hello",
+//   "favorite_state": "NC",
+//   "candies": {
+//     "candy": "skittles",
+//     "brand": "mars",
+//     "flavors": [
+//       {
+//         "flavor": "Lemon",
+//         "color": [
+//           "Yellow"
+//         ]
+//       }
+//     ]
+//   }
+// },
+        legend:'My Form',
+        // fields:[
+        //     {label:'First Name', name: 'f_n', array:true},
+        //     {name: 'checked', label: 'Checked?',type: 'checkbox', display: {matches:[{name:'number', value:['first','1']}]}},
+        //     {name: 'last_name', label: 'Last Name', validate: {required:true}},
+        //     {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other'}]},
+        //     {"label": "Favorite State",type:'select', "options": "./data/states.json", "label_key":'name'},
+        //     {label: 'Candies', type:'fieldset', fields: [{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '', type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'color', array: true}]}]},
+
+        // ]
+        fields:[
+    		{
+    			"label": "Preferred Email",
+    			"name": "pref_email",
+    			"type": "email",
+    			"placeholder": "myemail@gmail.com",
+    			"value": "",
+    			"help": "",
+    		},
+            {
+                "label": "Address Line 1",
+                "name": "address_line_1",
+                "type": "text",
+            },
+            {
+                "label": "Address Line 2",
+                "name": "address_line_2",
+                "type": "text",
+            },
+            {
+                "label": "City",
+                "name": "city",
+                "type": "text",
+            },
+            {
+                "label": "State/Province/Region",
+                "name": "state",
+                "type": "text",
+            },
+            {
+                "label": "Zipcode",
+                "name": "zip",
+                "type": "text",
+            },
+            {
+                "label": "Country",
+                "name": "country",
+                "type": "select",
+                "options":[]
+            },
+    		{
+    			"label": "Please indicate the school you are affiliated with",
+    			"name": "school",
+    			"type": "select",
+    			"required": false,
+    			"options": [
+    				{
+    					"label": "Harpur College of Arts and Sciences",
+    					"value": "Harpur"
+    				},
+    				{
+    					"label": "College of Community and Public Affairs",
+    					"value": "CCPA"
+    				},
+    				{
+    					"label": "Decker School of Nursing",
+    					"value": "Decker"
+    				},
+    				{
+    					"label": "Graduate School of Education",
+    					"value": "GSoE"
+    				},
+    				{
+    					"label": "School of Management",
+    					"value": "SoM"
+    				},
+    				{
+    					"label": "Thomas J. Watson School of Engineering and Applied Science",
+    					"value": "Watson"
+    				}
+    			],
+    			"enabled": true
+    		},
+    		{
+    			"label": "Degree Receiving?",
+    			"name": "degree_type",
+    			"type": "select",
+    			"help": "",
+    			"required": false,
+    			"options": [
+    				{
+    					"label": "Bachelor's",
+    					"value": "bachelors"
+    				},
+    				{
+    					"label": "Master's",
+    					"value": "masters"
+    				},
+    				{
+    					"label": "Doctoral",
+    					"value": "doctoral"
+    				}
+    			],
+    		},
+    // -- BEGIN DOCTORAL SPECIFIC QUESTIONS -- //
+    		{
+    			"label": "What degree will you be receiving?",
+    			"name": "degree",
+    			"type": "select",
+    			"help": "",
+    			"required": true,
+    			"value":"",
+    			"options": [
+    			    {
+    					"label": "",
+    					"value": ""
+    				},
+    				{
+    					"label": "PhD",
+    					"value": "phd"
+    				},
+    				{
+    					"label": "EdD",
+    					"value": "edD"
+    				},
+    				{
+    					"label": "DNP",
+    					"value": "dnp"
+    				}
+    			],
+    			"display": {
+                    "matches": [{
+                        "name": "degree_type",
+                        "value": ["doctoral"]
+                    }]
+                },
+                "parsable":"display"
+    		},
+    		{
+    			"label": "Who is your dissertation advisor",
+    			"name": "doc_advisor",
+    			"type": "text",
+    			"display": {
+                    "matches": [{
+                        "name": "degree_type",
+                        "value": ["doctoral"]
+                    }]
+                }
+    		},
+    		{
+    			"label": "Will you be attending the doctoral reception?",
+    			"name": "doc_reception",
+    			"type": "radio",
+    			"help": "You are cordially invited to the doctoral reception to be held at 6:15 – 7:15 p.m. in the West Gym lobby, immediately following the Graduate Ceremony on Friday, May 19th.",
+    			"required": false,
+    			"options": [
+    				{
+    					"label": "Yes",
+    					"value": "yes"
+    				},
+    				{
+    					"label": "No",
+    					"value": "no"
+    				}
+    			],
+    			"display": {
+                    "matches": [{
+                        "name": "degree_type",
+                        "value": ["doctoral"]
+                    }]
+                }
+    		},
+    		{
+    			"label": "How many guests will you be bringing (not including your advisor)?",
+    			"name": "doc_num_guests",
+    			"type": "number",
+    			"placeholder": "",
+    			"value": "",
+    			"help": "(If Doctor, If Attending Doctoral Reception)",
+    			"display": {
+                    "matches": [{
+                        "name": "degree_type",
+                        "value": ["doctoral"]
+                    }]
+                }
+    		},
+            {
+    			"label": "Which ceremony will you be attending?",
+    			"name": "ceremony",
+    			"type": "select",
+    			"enabled": false,
+    			"value": "Graduate Ceremony",
+                "options": [{"label": "Graduate Ceremony (Friday, May 19 @ 3:30PM)","value": "Graduate Ceremony"}],
+    			"display": {
+                    "matches": [{"name": "degree_type","value": ["doctoral"]}],
+                },
+                "parsable":"display"
+    		},
+    // -- END DOCTORAL SPECIFIC QUESTIONS -- //
+    // -- BEGIN BACHELORS SPECIFIC QUESTIONS -- //
+    		{
+    			"label": "What degree will you be receiving?",
+    			"name": "degree",
+    			"type": "select",
+    			"enabled": false,
+    			"value": "BS",
+    			"options": [
+    				{
+    					"label": "Bachelor of Science (BS)",
+    					"value": "BS"
+    				},
+    			],
+    			"display": {
+                    "matches": [
+                        {"name": "degree_type", "value": "bachelors"}, 
+                        {"name": "school","value": 
+                            ["","SoM","Watson","Decker"]
+                        }
+                    ],
+                },
+                "parsable":"display"
+    		},
+    		{
+    			"label": "What degree will you be receiving?",
+    			"name": "degree",
+    			"type": "select",
+    			"enabled": true,
+    			"options": [
+    				{
+    					"label": "Bachelor of Arts (BA)",
+    					"value": "BA"
+    				},
+    				{
+    					"label": "Bachelor of Science (BS)",
+    					"value": "BS"
+    				},
+    				{
+    					"label": "Bachelor of Music (MusB)",
+    					"value": "MusB"
+    				},
+    				{
+    					"label": "Bachelor of Fine Arts (BFA)",
+    					"value": "BFA"
+    				},
+    			],
+    			"display": {
+                    "matches": [
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                        {"name": "school", "value": ["Harpur"]}
+                    ],
+                },
+                "parsable":"display"
+    		},
+            {
+    			"label": "Which ceremony will you be attending?",
+    			"help": ceremony_help_text,
+    			"name": "ceremony",
+    			"type": "select",
+    			"enabled": false,
+    			"value": "Watson Ceremony",
+    			"options": [
+    				{
+    					"label": "Thomas J. Watson School of Engineering and Applied Science Ceremony (Saturday, May 20 @ 8:00AM)",
+    					"value": "Watson Ceremony"
+    				},
+    			],
+    			"display": {
+                    "matches": [
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                        {"name": "school","value": ["Watson"]}
+                    ],
+                },
+                "parsable":"display"
+    		},
+    		{
+    			"label": "Which ceremony will you be attending?",
+    			"help": ceremony_help_text,
+    			"name": "ceremony",
+    			"type": "select",
+                "enabled": false,
+    			"value": "CCPA Ceremony",
+    			"options": [
+    				{
+    					"label": "College of Community and Public Affairs Ceremony (Saturday, May 20 @ 11:30AM)",
+    					"value": "CCPA Ceremony"
+    				},
+    			],
+    			"display": {
+                    "matches": [
+                        {"name": "degree_type", "value": "bachelors"}, 
+                        {"name": "school","value": "CCPA"}
+                    ],
+                },
+                "parsable":"display"
+    		},
+    		{
+    			"label": "Which ceremony will you be attending?",
+    			"help": ceremony_help_text,
+    			"name": "ceremony",
+    			"type": "select",
+    			"enabled": false,
+    			"value": "SoM Ceremony",
+    			"options": [
+    				{
+    					"label": "School of Management Ceremony (Saturday, May 20 @ 3:00PM)",
+    					"value": "SoM Ceremony"
+    				},
+    			],
+    			"display": {
+                    "matches": [
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                        {"name": "school","value": ["SoM"]}
+                    ],
+                },
+                "parsable":"display"
+    		},
+    		{
+    			"label": "Which ceremony will you be attending?",
+    			"help": ceremony_help_text,
+    			"name": "ceremony",
+    			"type": "select",
+    			"enabled": false,
+    			"value": "Decker Ceremony",
+    			"options": [
+    				{
+    					"label": "Decker School of Nursing Ceremony (Saturday, May 20 @ 6:00PM)",
+    					"value": "Decker Ceremony"
+    				},
+    			],
+    			"display": {
+                    "matches": [
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                        {"name": "school","value": ["Decker"]}
+                    ],
+                },
+                "parsable":"display"
+    		},
+    		// this one
+    		{
+    			"label": "Which department will you be walking with?",
+    			"name": "department",
+    			"type": "select",
+    			"help": "**NOTE: If you are a double-major, please select the major you will be walking behind.",
+    			"options": [
+    				 "Africana Studies",
+    				"Anthropology",
+    				"Art and Design",
+					"Art History",
+    				{
+    					"label": "Asian and Asian American Studies",
+    					"value": "Asian and Asian American Studies"
+    				},
+    				{
+    					"label": "Biochemistry",
+    					"value": "Biochemistry"
+    				},
+    				{
+    					"label": "Biological Sciences",
+    					"value": "Biological Sciences"
+    				},
+    				{
+    					"label": "Chemistry",
+    					"value": "Chemistry"
+    				},
+    				{
+    					"label": "Cinema",
+    					"value": "Cinema"
+    				},
+    				{
+    					"label": "Classical and Near Eastern Studies",
+    					"value": "Classical and Near Eastern Studies"
+    				},
+    				{
+    					"label": "Comparative Literature",
+    					"value": "Comparative Literature"
+    				},
+    				{
+    					"label": "Economics",
+    					"value": "Economics"
+    				},
+    				{
+    					"label": "English",
+    					"value": "English"
+    				},
+    				{
+    					"label": "Environmental Studies",
+    					"value": "Environmental Studies"
+    				},
+    				{
+    					"label": "Geography",
+    					"value": "Geography"
+    				},
+    				{
+    					"label": "Geological Sciences",
+    					"value": "Geological Sciences"
+    				},
+    				{
+    					"label": "German and Russian Studies",
+    					"value": "German and Russian Studies"
+    				},
+    				{
+    					"label": "Global and International Affairs",
+    					"value": "Global and International Affairs"
+    				},
+    				{
+    					"label": "History",
+    					"value": "History"
+    				},
+    				{
+    					"label": "Individualized Major Program",
+    					"value": "Individualized Major Program"
+    				},
+    				{
+    					"label": "Integrative Neuroscience",
+    					"value": "Integrative Neuroscience"
+    				},
+    				{
+    					"label": "Judaic Studies",
+    					"value": "Judaic Studies"
+    				},
+    				{
+    					"label": "Latin American and Caribbean Area Studies",
+    					"value": "Latin American and Caribbean Area Studies"
+    				},
+    				{
+    					"label": "Linguistics",
+    					"value": "Linguistics"
+    				},
+    				{
+    					"label": "Mathematical Sciences",
+    					"value": "Mathematical Sciences"
+    				},
+    				{
+    					"label": "Medieval and Early Modern Studies",
+    					"value": "Medieval and Early Modern Studies"
+    				},
+    				{
+    					"label": "Music",
+    					"value": "Music"
+    				},
+    				{
+    					"label": "Philosophy",
+    					"value": "Philosophy"
+    				},
+    				{
+    					"label": "Philosophy, Politics and Law",
+    					"value": "Philosophy, Politics and Law"
+    				},
+    				{
+    					"label": "Physics",
+    					"value": "Physics"
+    				},
+    				{
+    					"label": "Political Science",
+    					"value": "Political Science"
+    				},
+    				{
+    					"label": "Psychology",
+    					"value": "Psychology"
+    				},
+    				{
+    					"label": "Romance Languages",
+    					"value": "Romance Languages"
+    				},
+    				{
+    					"label": "Sociology",
+    					"value": "Sociology"
+    				},
+    				{
+    					"label": "Theatre",
+    					"value": "Theatre"
+    				}
+    			],
+    			"display": {
+                    "matches": [
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                        {"name": "school","value": ["Harpur"]}
+                    ],
+                },"parsable":"display",
+    		},
+    		// drives this one
+    		{
+    			"label": "Which ceremony will you be attending?",
+    			"help": ceremony_help_text,
+    			"name": "ceremony",
+    			"type": "select",
+    			"enabled":false,
+    			"value": "Harpur 1 Ceremony",
+                "options": [{"label": "Harpur 1 Ceremony (Sunday, May 21 @ 8:30AM)","value": "Harpur 1 Ceremony"}],
+    			"display": {
+                    "matches": [
+                        {"name": "department", "value": 
+                            ["Africana Studies","Anthropology","Art and Design",
+                            "Art History","Asian and Asian American Studies","Biochemistry",
+                            "Biological Sciences","Chemistry","Cinema","Classical and Near Eastern Studies",
+                            "Comparative Literature","Economics"]}, 
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                    ],
+                },
+                "parsable":"display"
+    		},
+    		{
+    			"label": "Which ceremony will you be attending?",
+    			"help": ceremony_help_text,
+    			"name": "ceremony",
+    			"type": "select",
+    			"value": "Harpur 2 Ceremony",
+          "options": [{"label": "Harpur 2 Ceremony  (Sunday, May 21 @ 12:00PM)","value": "Harpur 2 Ceremony"}],
+    			"display": {
+                    "matches": [
+                        {"name": "department", "value": 
+                            ["English","Environmental Studies","Geography","Geological Sciences",
+                            "German and Russian Studies","Global and International Affairs","History",
+                            "Individualized Major Program","Integrative Neuroscience","Judaic Studies",
+                            "Latin American and Caribbean Area Studies","Linguistics"]}, 
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+                    ],
+                },
+                "parsable":"display"
+    		},
+    		{
+    			"label": "Which ceremony will you be attending?",
+    			"help": ceremony_help_text,
+    			"name": "ceremony",
+    			"type": "select",
+    			"enabled":false,
+    			"value": "Harpur 3 Ceremony",
+    			"options": [{"label": "Harpur 3 Ceremony  (Sunday, May 21 @ 3:30PM)","value": "Harpur 3 Ceremony"}],
+    			"display": {
+                    "matches": [
+                        {"name": "department", "value": 
+                            ["Mathematical Sciences","Medieval and Early Modern Studies","Music",
+                            "Philosophy","Philosophy, Politics and Law","Physics","Political Science",
+                            "Psychology","Romance Languages","Sociology","Theatre"]}, 
+                        {"name": "degree_type", "value": ["bachelors"]}, 
+
+                    ],
+                },
+                "parsable":"display"
+    		},
+    // -- END BACHELORS SPECIFIC QUESTIONS -- //
+    // -- BEGIN MASTERS SPECIFIC QUESTIONS -- //
+    		{
+    			"label": "What degree will you be receiving?",
+    			"name": "degree",
+    			"type": "select",
+    			"enabled":true,
+    			"options": [
+    				{
+    					"label": "Master of Arts (MA)",
+    					"value": "MA"
+    				},
+    				{
+    					"label": "Master of Arts in Teaching (MAT)",
+    					"value": "MAT"
+    				},
+    				{
+    					"label": "Master of Business  (MBA)",
+    					"value": "MBA"
+    				},
+    				{
+    					"label": "Master of Engineering (MEng)",
+    					"value": "MEng"
+    				},
+    				{
+    					"label": "Master of Science (MS)",
+    					"value": "MS"
+    				},
+    				{
+    					"label": "Master of Science in Education (MSEd)",
+    					"value": "MSEd"
+    				},
+    				{
+    					"label": "Master of Social Work (MSW)",
+    					"value": "MSW"
+    				},
+    				{
+    					"label": "Master of Public Administration (MPA)",
+    					"value": "MPA"
+    				},
+    				{
+    					"label": "Other (Please Specify)",
+    					"value": "Other"
+    				}
+    			],
+    			"display": {
+                    "matches": [{"name": "degree_type","value": ["masters"]}]
+                },
+                "parsable":"display"
+    		},
+    		{
+    			"label": "What degree will you be receiving? (Other)",
+    			"name": "degree_other",
+    			"display": {
+                    "matches": [
+                        {"name": "degree_type","value": ["masters"]},
+                        {"name": "degree","value": ["Other"]}
+    			        ]
+                }
+            },
+            {
+                "label": "Which ceremony will you be attending?",
+                "name": "ceremony",
+                "type": "select",
+                "enabled":false,
+                "value": "Graduate Ceremony",
+			    "options": [{"label": "Graduate Ceremony  (Friday, May 19 @ 3:30PM)","value": "Graduate Ceremony"}],
+                "display": {
+                    "matches": [
+                        {"name": "degree_type", "value": ["masters"]}, 
+                        {"name": "school","value": 
+                            ["Harpur","Watson","SoM"]
+                        }
+                    ],
+                },
+                "parsable":"display"
+    		},
+    		{
+    			"label": "Which ceremony will you be attending?",
+    			"name": "ceremony",
+    			"type": "select",
+    			"enabled": false,
+    			"value": "CCPA Ceremony",
+    			"options": [
+    				{
+    					"label": "College of Community and Public Affairs Ceremony  (Saturday, May 20 @ 11:30AM)",
+    					"value": "CCPA Ceremony"
+    				},
+    			],
+    			"display": {
+                    "matches": [
+                        {"name": "degree_type", "value": ["masters"]}, 
+                        {"name": "school","value": ["CCPA","GSoE"]}
+                    ],
+                },
+                "parsable":"display"
+    		},
+    		{
+    			"label": "Which ceremony will you be attending?",
+    			"name": "ceremony",
+    			"type": "select",
+    			"enabled": false,
+    			"value": "Decker Ceremony",
+    			"options": [
+    				{
+    					"label": "Decker School of Nursing Ceremony (Saturday, May 20 @ 6:00PM)",
+    					"value": "Decker Ceremony"
+    				},
+    			],
+    			"display": {
+                    "matches": [
+                        {"name": "degree_type", "value": ["masters"]}, 
+                        {"name": "school","value": ["Decker"]}
+                    ],
+                },
+                "parsable":"display"
+    		},
+    // -- END MASTERS SPECIFIC QUESTIONS -- //
+    		{
+    			"label": "Which department will you be walking with?",
+    			"name": "department",
+    			"type": "select",
+    			"options": [
+    				{
+    					"label": "Bioenngineering/Biomedical Engineering",
+    					"value": "Bioengineering/Biomedical Engineering"
+    				},
+    				{
+    					"label": "Computer Science",
+    					"value": "Computer Science"
+    				},
+    				{
+    					"label": "Computer Engineering/Electrical Engineering",
+    					"value": "Computer Engineering/Electrical Engineering"
+    				},
+    				{
+    					"label": "Mechanical Engineering",
+    					"value": "Mechanical Engineering"
+    				},
+    				{
+    					"label": "Systems Science and Industrial Engineering",
+    					"value": "Systems Science and Industrial Engineering"
+    				},
+    			],
+    			"display": {
+                    "matches": [
+                        {"name": "ceremony","value":["Watson Ceremony","Graduate Ceremony"]},
+                        {"name": "degree_type", "value": ["masters","bachelors"]}, 
+                        {"name": "school","value": ["Watson"]}
+                    ],
+                },
+                "parsable":"display",
+    		},
+    		{
+    			"label": "Which department will you be walking with?",
+    			"name": "department",
+    			"type": "select",
+    			"options": [
+    				{
+    					"label": "Human Development",
+    					"value": "Human Development"
+    				},
+    				{
+    					"label": "Public Administration",
+    					"value": "Public Administration"
+    				},
+    				{
+    					"label": "Social Work",
+    					"value": "Social Work"
+    				},
+    				{
+    					"label": "Student Affairs Administration",
+    					"value": "Student Affairs Administration"
+    				},
+    			],
+    			"display": { 
+    			    "matches": [
+                        {"name": "ceremony","value":["CCPA Ceremony"]},
+                        {"name": "degree_type", "value": ["masters","bachelors"]}, 
+                        {"name": "school","value": ["CCPA"]}
+                    ],
+                },
+                "parsable":"display",
+    		},
+    		{
+    			"label": "Do you, or any of your guests, require an American Sign Language (ASL) interpreter in addition to the open captioning available during the ceremony?",
+    			"name": "asl",
+    			"type": "radio",
+    			"options": [
+    				{
+    					"label": "Yes",
+    					"value": "Yes"
+    				},
+    				{
+    					"label": "No",
+    					"value": "No"
+    				},
+    			]
+    		},
+    		{
+    			"label": "Do you or your guests require any special disability accommodations?",
+    			"name": "disability_accom",
+    			"type": "textarea",
+    			"help": "Please describe the accommodations you or your guests require during the ceremony.  We have handicap accessible seating and parking, wheelchairs, stage lifts, and more.  If you require additional information, please contact Services for Students with Disabilities at 607-777-2686 or the Commencement Office at 607-777-2140.",
+    		},
+    		{
+    			"label": "Are you a military veteran?",
+    			"name": "veteran",
+    			"type": "radio",
+    			"options": [
+    				{
+    					"label": "Yes",
+    					"value": "Yes"
+    				},
+    				{
+    					"label": "No",
+    					"value": "No"
+    				},
+    			]
+    		},
+    		{"label":"ID","name":"id","type":"hidden"},
+    	]
+    };
+    // options = {
+    //   data: {first_name: 'John', last_name: 'Doe'},//optional
+    //   fields: [
+    //     {label: 'First Name'}, 
+    //     {label: 'Last Name'}
+    //   ], actions: false};
+
+
+
+   options={
+        data:{
+        "f_n": [
+          "Bob",
+          "steve"
+        ],
+        "checked":true,
+        // "number": 3,
+        "favorite_state": "NC",
+        "candies": {
+          "candy": "skittles",
+          "brand": "mars",
+          "flavors": [
+            {
+              "flavor": "Lemon",
+              "color": [
+                "#0000ff",
+                "#ff0000"
+              ]
+            }
+          ]
+        }
+	  },
+	  suffix:'-',
+      legend:'My Form',
+        schema:[
+            {label:'First Name', name: 'f_n', array:false,type:'email',columns:6,"required": {
+                    "matches": [
+                        {"name": "checked","value": [true]},
+
+                    ],
+                },satisfied:function(stuff,more){
+return false;
+                }},
+            {name: 'checked', label: 'Checked?',type: 'checkbox',required:true,columns:6,options:[false,true]},// , display: {matches:[{name:'number', value:['first','1']}]}},
+            {name: 'last_name', label: '0Last Name', validate: {required:false},columns:6, "display": {
+                    "matches": [
+                        {"name": "f_n","value":["adam"]},
+                        {"name": "checked","value": [false]},
+
+                    ],
+                },
+                "parse":"display"
+              },            
+              {name: 'last_name', label: '1Last Name', validate: {required:false},columns:6, "display": {
+                    "matches": [
+                        {"name": "f_n","value":["adam"]},
+                        {"name": "checked","value": true},
+
+                    ],
+                },
+                "parse":"display"
+              },
+            {name: 'last_name', label: '2Last Name', validate: {required:false},columns:6, "display": {
+                    "matches": [
+                        {"name": "f_n","value":["", "tim"]},
+                    ],
+                },
+                "parse":"display"
+              },
+              {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other',selected:true},'mother'],format:{"label":'{{index}}: {{label}}'}},
+              {name: 'Another', type:'select', options:{ placeholder:'Please choose one',options:[],optgroups:[
+                {label:"stuff",format:{"label":'{{label}}'}, options:[3,4,5,9]},
+                {format:{"label":'{{index}}: {{label}}'},min:2,max:10,"display": {
+                    "matches": [
+                        {"name": "checked","value": [true]},
+
+                    ],
+                }}
+                
+              ]}},
+              {"label": "Favorite State", suffix:'',type:'select', "options": {url:"../data/states.json",format:{"label":'({{value}}) {{name}}'}} },
+            {label: 'Candies', type:'fieldset', fields: [
+				{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '',
+				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'text',columns:6, array: {min:2,max:3}}]}]},
+
+        ]
+   }
+ 
+
+   opstions = {
+	   fields:[
+
+	   {type: 'fieldset', name:'basics', legend: 'General', hideLabel: true, inline: true, fields:[
+			{type: 'text', required: true, label: 'Field Label', name: 'label'},
+			{type: 'text', label: 'Name', name: 'name'},
+			{type: 'select', label: 'Display', name: 'type', value: 'dropdown', choices: [
+				{name: 'Dropdown', value: 'select'},
+				{name: 'Radio', value: 'radio'},
+				{name: 'Range', value: 'range'}
+			]},
+			{type: 'text', label: 'Default Value', name: 'value'},
+			{type: 'checkbox', label: 'Required', name: 'required'},
+			
+			{type: 'textarea', label: 'Instructions', name: 'help'},
+			
+			{type: 'text', label: 'External List', name: 'choices'},
+
+			{type: 'text', label: 'Label key', name: 'label_key',display:{'not_matches':{"name":"choices","value":""}}},
+			{type: 'text', label: 'Value key', name: 'value_key',display:{'not_matches':{"name":"choices","value":""}}},
+
+			{type: 'number', label: 'Max', name: 'max',display:{'matches':{"name":"choices","value":""}}},
+			{type: 'number', label: 'Min', name: 'min',placeholder:'1',display:{'not_matches':{"name":"max","value":0}}},
+			{type: 'number', label: 'Step', name: 'step',placeholder:'1',display:{'not_matches':{"name":"max","value":0}}},
+			// {type: 'fieldset', name:'default', legend: 'default Option',flatten:false, fields:[
+			// 	{type: 'fieldset', label: false, multiple: {duplicate: false},flatten:false, name: 'default', fields: [
+			// 		{label: 'Label'},
+			// 		{label: 'Value'}
+			// 	]}
+			// ]}
+		]},
+		// {type: 'fieldset', name:'choices_c', legend: '<i class="fa fa-th-list"></i> Options', hideLabel: true,  inline: true, fields:[
+			{type: 'fieldset', label: 'Options',  array: {max:2}, name: 'options', fields: [
+				{label: 'Label'},
+				{label: 'Value'}
+			]}
+		// ]}
+
+	   ]
+   }
+  //  options.sections = 'tabs'
+//    options.clear = false;
+// options = {
+// 	   fields:[
+//        {}
+//      ]}
+options.el = '#form';
+    var myCarbon = new carbon(options)
+    // myCarbon.debounce('change', function(field){
+    //     field.owner.validate();
+    //     document.querySelector('#result').innerHTML = JSON.stringify(myCarbon.toJSON(), null, 2)
+    // })
+
+
+
+	myCarbon.debounce('change',function(d){
+		if(typeof d.owner !== 'undefined'){
+      document.querySelector('#result').innerHTML = JSON.stringify(d.owner.toJSON(),null,2);
+      d.owner.validate()
+    }else{
+      if(typeof d.toJSON !== 'undefined'){
+        document.querySelector('#result').innerHTML = JSON.stringify(d.toJSON(),null,2);
+        d.validate()
+      }
+    }
+  })
+  myCarbon.trigger('change',myCarbon)
+
+
+    </script>
+   </body>
+</html>

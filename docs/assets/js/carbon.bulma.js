@@ -5,35 +5,44 @@ carbon.stencils = {
     </form>
 </div>`,
 text: `
-<div class="row">
-<div class="column">
+<div class="field">
     {{>_label}}
-    <input style="width:100%" placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
-    {{>_error}}
+    <div class="control">
+    <input class="input" placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
     </div>
+    {{>_error}}
     {{>_actions}}   
 </div>    
 `,checkbox: `
-    <input name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+<div class="field">
+
+<div class="control">
+
+    <input class="checkbox" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
     <label class="label-inline" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}</label>        
+    </div>
     
     {{>_error}}
     </div>
-    {{>_actions}}   
+    {{>_actions}}  
+    </div> 
 `,    
     hidden: `<input name="{{name}}" type="hidden" value="{{value}}" id="{{id}}" />`,
     textarea: `
-    <div class="row">
-    <div class="column">
+    <div class="field">
         {{>_label}}
-        <textarea placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
+        <div class="control">
+        <textarea class="textarea" placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
         {{>_error}}
         </div>
         {{>_actions}}   
     </div>    `,
     select: `
         {{>_label}}    
-        <select name="{{name}}" value="{{value}}" id="{{id}}" />
+
+    <div class="control" style="width:100%">
+    <div class="select" style="width:100%">
+        <select name="{{name}}" style="width:100%" value="{{value}}" id="{{id}}" />
 			{{#options}}{{#options}}
 				{{^section}}
 				<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
@@ -52,21 +61,21 @@ text: `
 			{{/options}}{{/options}}
         </select>
         {{>_error}}
+        </div></div>
         {{>_actions}}       
     `,
     radio: `
         {{>_label}}
-        <span class="">
+        <div class="control">
         {{#options}}{{#options}}
-        <label ><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
+        <label class="radio"><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
         {{/options}}{{/options}}
-        </span>
+        </div>
         {{>_error}}
         {{>_actions}}`,
     _fieldset: `<div class="carbon">
-        <fieldset name="{{name}}">
-        <legend for="{{name}}"><h5>{{label}}</h5></legend>
-        <hr style="margin:-20px 0 20px 0">
+        <fieldset style="border: 0 none;box-shadow:none;padding:0" class="box" name="{{name}}">
+        <legend class="subtitle" for="{{name}}"><h5>{{label}}</h5></legend>
         {{>_actions}}       
         </fieldset>
     </div>`,
@@ -80,9 +89,7 @@ text: `
         {{/array}}
     `,
     _label: `      
-    <label class="" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>           
-    <small class="form-help"> {{{help}}}</small>
-    
+    <label class="label" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>        
     `,
     _error:`<small style="color:red;display:block;"></small>`,
     tabs_container: `<div class="carbon">
@@ -106,8 +113,9 @@ text: `
     </div>`
 };
 carbon.columns = 12;
-carbon.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-'+item+' column'})
+carbon.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column'})
 carbon.prototype.opts.suffix = ""
+carbon.prototype.opts.rowClass = "columns"
 
 carbon.handleError = function(field){
     field.el.querySelector('small').innerHTML = field.errors;

@@ -5,12 +5,12 @@
   </head>
   <body>
     <div style="padding:20px">
-    <h4>Example - Values</h4>
+    <h4><a href="./">Examples</a> - Values</h4>
     <div class="container ">
         <div class="row ">
-                <pre class="column" id="code">Form Definition<code  class="prettyprint"></code></pre>
-                <div class="column column-40" id="form"></div>
-                <pre class="column" id="result">myform.toJSON() =<code class="prettyprint"></code></pre>
+                <div class="column" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
+                <div class="column column-40" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new carbon(config, '#form');</code></pre><hr><div id="form"></div></div>
+                <div class="column" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
             </div>
         </div>
     </div>
@@ -19,8 +19,6 @@
     <script src='../assets/js/carbon.mg.js'></script>
     <script>
     options = {
-        legend: 'Values Form',
-        name: 'myForm',
         fields:[
             {label: 'Text', type: 'text', value: 'Some Text'},
             {label: 'Hidden', type: 'hidden', value:'hidden field'},
@@ -33,21 +31,21 @@
             {label: 'Radio', type: 'radio', options:[1,2,3],value:2}
         ]
     }
-    document.querySelector('#code code').innerHTML = JSON.stringify(options,null,2);
+    document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
     var myCarbon = new carbon(options, '#form')
     myCarbon.on('change',function(d){
         if(typeof d.owner !== 'undefined'){
-        document.querySelector('#result code').classList = "prettyprint"
-        document.querySelector('#result code').innerHTML = JSON.stringify(d.owner.toJSON(),null,2);
-        d.owner.validate();
-        PR.prettyPrint();
-        }else{
-        if(typeof d.toJSON !== 'undefined'){
             document.querySelector('#result code').classList = "prettyprint"
-            document.querySelector('#result code').innerHTML = JSON.stringify(d.toJSON(),null,2);
-            d.validate();
+            document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.owner.toJSON(),null,2);
+            d.owner.validate();
             PR.prettyPrint();
-        }
+            }else{
+            if(typeof d.toJSON !== 'undefined'){
+                document.querySelector('#result code').classList = "prettyprint"
+                document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
+                d.validate();
+                PR.prettyPrint();
+            }
         }
     })
 

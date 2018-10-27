@@ -5,7 +5,8 @@
   </head>
   <body>
     <div style="padding:20px">
-    <h4><a href="./">Examples</a> - Placeholder</h4>
+    <h4><a href="./">Examples</a> - Columns</h4>
+
     <div class="container ">
         <div class="row ">
                 <div class="column" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
@@ -17,38 +18,44 @@
     <script src="../assets/js/lodash.min.js"></script>    
     <script src='../assets/js/carbon.min.js'></script> 
     <script src='../assets/js/carbon.mg.js'></script>
+
     <script>
     options = {
         fields:[
-            {label: 'Text', type: 'text', placeholder: 'Type here'},
-            {label: 'Number', type: 'number', placeholder:'Count them'},
-            {label: 'Email', type: 'email', placeholder:'test@gmail.com'},
-            {label: 'Textarea', type: 'textarea', placeholder: "Type your long form answer here"},
-            {label: 'Select', type: 'select', options:{options:[1,2,3], placeholder:'Choose One'}},
+        {label: 'Three', columns:3},
+        {label: 'Six',columns:6},
+        {label: 'Six again', columns:6},
+        {label: 'Five',columns:5},
+        {label: '1',columns:1},
+        {label: 'Eight',columns:8},
+        {label: 'Four',columns:4},
+        {label: 'Two',columns:2},
+        {label: 'Ten',columns:10},
+        {label: 'Twelve',columns:12},
+        {label: 'Seven',columns:7},
+        {label: 'New Row',columns:4, row:true}
         ]
     }
-    
     document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
     var myCarbon = new carbon(options, '#form')
-    myCarbon.on('change',function(d){
-        if(typeof d.owner !== 'undefined'){
+    myCarbon.debounce('change',function(d){
+      if(typeof d.owner !== 'undefined'){
+        document.querySelector('#result code').classList = "prettyprint"
+        document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.owner.toJSON(),null,2);
+        d.owner.validate();
+        PR.prettyPrint();
+        }else{
+        if(typeof d.toJSON !== 'undefined'){
             document.querySelector('#result code').classList = "prettyprint"
-            document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.owner.toJSON(),null,2);
-            d.owner.validate();
+            document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
+            d.validate();
             PR.prettyPrint();
-            }else{
-            if(typeof d.toJSON !== 'undefined'){
-                document.querySelector('#result code').classList = "prettyprint"
-                document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
-                d.validate();
-                PR.prettyPrint();
-            }
         }
+      }
     })
 
-    myCarbon.trigger('change', myCarbon)
-
+    myCarbon.trigger('change',myCarbon)
     </script>
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>                
    </body>
 </html>

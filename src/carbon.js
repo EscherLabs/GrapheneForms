@@ -2,7 +2,7 @@ var carbon = function(data, el){
     "use strict";
     
     //initalize form
-    this.options = _.assignIn({legend: '', data:'search', columns:carbon.columns,name: carbon.getUID(),schema:data.fields},this.opts, data);
+    this.options = _.assignIn({legend: '', default:carbon.default, data:'search', columns:carbon.columns,name: carbon.getUID(),schema:data.fields},this.opts, data);
     this.el = document.querySelector(el || data.el);
     this.on = this.events.on;
     this.trigger = this.events.trigger;
@@ -106,12 +106,11 @@ carbon.m = function (l,a,m,c){function h(a,b){b=b.pop?b:b.split(".");a=a[b.shift
 carbon.instances = {};
 //creates multiple instances of duplicatable fields if input attributes exist for them
 carbon.inflate = function(atts, fieldIn, ind, list) {
-    var field;    
+    var newList = list;    
     if(fieldIn.array){
-        field = _.findLast(list, {name: _.uniqBy(list,'name')[ind].name});
-    }else{
-        field = _.findLast(list, {name:list[ind].name});
+        newList = _.uniqBy(newList,'name');
     }
+    var field = _.findLast(newList, {name: newList[ind].name});
     if(!field.array && field.fields){
         _.each(field.fields, carbon.inflate.bind(this, atts[field.name] || {}) );
     }
@@ -130,7 +129,7 @@ carbon.inflate = function(atts, fieldIn, ind, list) {
 }
 
 carbon.createField = function(parent, atts, el, index, fieldIn ) {
-    fieldIn.type = fieldIn.type || 'text';
+    fieldIn.type = fieldIn.type || this.options.default.type;
     //work carbon.default in here
     var field = _.assignIn({
         name: (fieldIn.label||'').toLowerCase().split(' ').join('_'), 
@@ -147,7 +146,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         columns: this.options.columns,
         offset: 0,
         ischild:!(parent instanceof carbon)        
-    }, this.opts,carbon.types[fieldIn.type].defaults, fieldIn)
+    }, this.opts,carbon.default,carbon.types[fieldIn.type].defaults, fieldIn)
     field.validate.required = field.validate.required|| field.required;
     
     if(field.name == ''){field.name = field.id;}
@@ -158,7 +157,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
     if(field.array && typeof atts[field.name] == 'object'){
         field.value =  atts[field.name][index||0];
     }else{
-        field.value =  atts[field.name] || field.value || field.default;
+        field.value =  atts[field.name] || field.value;
     }
 
 	if(field.item.value !== 0){
@@ -177,7 +176,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
                 }.bind(field));
             } else {
                 //may need to search deeper in atts?
-                field.value =  atts[field.name] || field.value || field.default || '';
+                field.value =  atts[field.name] || field.value || '';
             }  
         }
 	} else {
@@ -211,18 +210,18 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
     if(!field.target && (this.options.clear || field.isChild)){
         var cRow;
         // cRow = field.owner.rows[field.owner.rows.length-1];
-        var formRows = field.parent.container.querySelectorAll('form > .row,fieldset > .row');
+        var formRows = field.parent.container.querySelectorAll('form > .'+field.owner.options.rowClass+',fieldset > .'+field.owner.options.rowClass);
         var temp =(formRows[formRows.length-1] || {}).id;
         if(typeof temp !== 'undefined') {
             cRow = field.parent.rows[temp];	
         }
-        if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns){
+        if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns || field.row == true){
             var temp = carbon.getUID();
             cRow = {};
             cRow.used = 0;
             cRow.ref  = document.createElement("div");
             cRow.ref.setAttribute("id", temp);
-            cRow.ref.setAttribute("class", 'row');
+            cRow.ref.setAttribute("class", field.owner.options.rowClass);
             field.parent.rows[temp] = cRow;
             field.parent.container.appendChild(cRow.ref);
         }
@@ -359,11 +358,12 @@ carbon.ajax = function(options){
     request.send();
 }
 
-carbon.default ={format:{label: '{{label}}', value: '{{value}}'}} 
+carbon.default ={type:'text',format:{label: '{{label}}', value: '{{value}}'}} 
 carbon.prototype.opts = {
     clear:true,
     sections:'',
     suffix: ':',
+    rowClass: 'row',
     requiredText: '<span style="color:red">*</span>'
 }
 
@@ -635,7 +635,9 @@ carbon.render = function(template, options){
 carbon.renderString = function(string,options){
     return carbon.m(string||'',options||{})
 }
-carbon.types['hidden'] = carbon.types['text'] = carbon.types['number'] = carbon.types['color'] = carbon.types['input'];
+
+carbon.types['text'] = carbon.types['number'] = carbon.types['color'] = carbon.types['input'];
+carbon.types['hidden'] = _.extend({},carbon.types['input'],{defaults:{columns:0}});
 carbon.types['textarea'] = _.extend({},carbon.types['input'],carbon.types['textarea']);
 carbon.types['checkbox'] = _.extend({},carbon.types['input'],carbon.types['bool']);
 carbon.types['fieldset'] = _.extend({},carbon.types['input'],carbon.types['section']);

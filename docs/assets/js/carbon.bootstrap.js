@@ -175,6 +175,7 @@ select_options:`
 carbon.columns = 12;
 
 carbon.columnClasses = _.map(new Array(13),function(item,i){return 'col-md-'+i})
+carbon.default.inline = true;
 
 carbon.handleError = function(field){
 	if(!field.valid){

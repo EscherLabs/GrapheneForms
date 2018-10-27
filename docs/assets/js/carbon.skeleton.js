@@ -6,22 +6,29 @@ carbon.stencils = {
     </div>`,
     text: `<div class="row">
         {{>_label}}
-        <input placeholder="{{placeholder}}" class="six columns" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
+        <input placeholder="{{placeholder}}" class="u-full-width" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
         {{>_error}}
-        {{>_actions}}       
     </div>`,    
+     checkbox: `
+        <label style="margin-top: 30px;" for="{{name}}">
+        <input name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+        
+        <span class="label-body">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}</span>
+        </label>                
+        {{>_error}}
+    `,    
+    
     hidden: `<div class="row">
         <input name="{{name}}" type="hidden" value="{{value}}" id="{{id}}" />
     </div>`,
     textarea: `<div class="row">
         {{>_label}}
-        <textarea placeholder="{{placeholder}}" class="six columns" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
+        <textarea placeholder="{{placeholder}}" class="u-full-width" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
         {{>_error}}
-        {{>_actions}}       
     </div>`,
     select: `<div class="row">
         {{>_label}}    
-        <select class="six columns" name="{{name}}" value="{{value}}" id="{{id}}" />
+        <select class="u-full-width" name="{{name}}" value="{{value}}" id="{{id}}" />
 			{{#options}}{{#options}}
 				{{^section}}
 				<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
@@ -40,34 +47,31 @@ carbon.stencils = {
 			{{/options}}{{/options}}
         </select>
         {{>_error}}
-        {{>_actions}}       
     </div>`,
     radio: `<div class="row">
         <fieldset>
         {{>_label}}
-        <span class="six columns">
+        <span class="u-full-width">
         {{#options}}{{#options}}
         <label ><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
         {{/options}}{{/options}}
         </span>
         {{>_error}}
-        {{>_actions}}     
         </fieldset>
     </div>`,
     _fieldset: `<div class="carbon">
         <fieldset name="{{name}}">
-            <legend for="{{name}}"><h5>{{label}}</h5></legend><hr>
-            {{>_actions}}       
+            <legend for="{{name}}"><h5>{{label}}</h5></legend><hr style="margin:-20px 0 20px 0">
+            {{#array}}{{>_actions}} {{/array}}      
         </fieldset>
     </div>`,
     _actions: `      
-        {{#array}}
         <input style="padding: 0 ;width:38px;" class="carbon-add" type="button" value="+">
         <input style="padding: 0 ;width:38px;" class="carbon-minus" type="button" value="-">
-        {{/array}}
     `,
     _label: `      
-    <label class="three columns" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>        
+    {{#array}}<div style="float:right">{{>_actions}}</div>{{/array}}
+    <label for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>        
     `,
     _error:`<small style="color:red;display:block;"></small>`,
     tabs_container: `<div class="carbon">
@@ -92,7 +96,7 @@ carbon.stencils = {
 };
 carbon.columns = 12;
 carbon.columnClasses = _.map(['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'],function(item){return item+' columns'})
-
+carbon.prototype.opts.suffix = ""
 carbon.handleError = function(field){
     field.el.querySelector('small').innerHTML = field.errors;
 }
