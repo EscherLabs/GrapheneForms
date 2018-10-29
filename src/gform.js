@@ -1,8 +1,8 @@
-var carbon = function(data, el){
+var gform = function(data, el){
     "use strict";
     
     //initalize form
-    this.options = _.assignIn({legend: '', default:carbon.default, data:'search', columns:carbon.columns,name: carbon.getUID(),schema:data.fields},this.opts, data);
+    this.options = _.assignIn({legend: '', default:gform.default, data:'search', columns:gform.columns,name: gform.getUID(),schema:data.fields},this.opts, data);
     this.el = document.querySelector(el || data.el);
     this.on = this.events.on;
     this.trigger = this.events.trigger;
@@ -24,51 +24,25 @@ var carbon = function(data, el){
 
     var create = function(){
         if(this.options.clear) {
-            this.el.innerHTML = carbon.render(this.options.sections+'_container', this.options);
+            this.el.innerHTML = gform.render(this.options.sections+'_container', this.options);
         }
     
         this.container = this.el.querySelector((el || data.el) + ' form') || this.el;
         this.rows = {};
-        this.fields = _.map(this.options.schema, carbon.createField.bind(this, this, this.options.data||{}, null, null))
-        _.each(this.fields, carbon.inflate.bind(this, this.options.data||{}))
+        this.fields = _.map(this.options.schema, gform.createField.bind(this, this, this.options.data||{}, null, null))
+        _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
         _.each(this.fields, function(field) {
             field.owner.events.trigger('change:' + field.name, field);
         })
-        carbon.instances[this.options.name] = this;
+        gform.instances[this.options.name] = this;
         
     }
 
     this.restore = create.bind(this);
 
 
-    //parse form values into JSON object
-    var toJSON = function(name) {
-        if(typeof name == 'string') {
-            return _.find(this.fields, {name: name}).get();
-        }
-        var obj = {};
-        _.each(this.fields, function(field) {
-            if(field.parsable){
-                if(field.fields){
-                    if(field.array){
-                        obj[field.name] = obj[field.name] || [];
-                        obj[field.name].push(toJSON.call(field));
-                    }else{
-                        obj[field.name] = toJSON.call(field);
-                    }
-                }else{
-                    if(field.array){
-                        obj[field.name] = obj[field.name] || [];
-                        obj[field.name].push(field.get());
-                    }else{
-                        obj[field.name] = field.get();
-                    }
-                }
-            }
-        }.bind(this))
-        return obj;
-    }
-    this.toJSON = toJSON.bind(this);
+ 
+    this.toJSON = gform.toJSON.bind(this);
 
     create.call(this)
     this.set = function(name,value) {
@@ -94,25 +68,43 @@ var carbon = function(data, el){
 		// if(typeof this.renderer.destroy === 'function') { this.renderer.destroy(); }
 
 		//Remove the global reference to our form
-		delete carbon.instances[this.options.name];
+		delete gform.instances[this.options.name];
 
 		this.trigger('destroyed');
 	};
 
 }
+//parse form values into JSON object
+gform.toJSON = function(name) {
+    if(typeof name == 'string' && name.length>0) {
+        name = name.split('.');
+        return _.find(this.fields, {name: name.shift()}).get(name.join('.'));
+    }
+    var obj = {};
+    _.each(this.fields, function(field) {
+        if(field.parsable){
+            if(field.array){
+                obj[field.name] = obj[field.name] || [];
+                obj[field.name].push(field.get());
+            }else{
+                obj[field.name] = field.get();
+            }
+        }
+    }.bind(this))
+    return obj;
+}
+gform.m = function (l,a,m,c){function h(a,b){b=b.pop?b:b.split(".");a=a[b.shift()]||"";return 0 in b?h(a,b):a}var k=gform.m,e="";a=_.isArray(a)?a:a?[a]:[];a=c?0 in a?[]:[1]:a;for(c=0;c<a.length;c++){var d="",f=0,n,b="object"==typeof a[c]?a[c]:{},b=_.assign({},m,b);b[""]={"":a[c]};l.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(a,c,l,m,p,q,g){f?d+=f&&!p||1<f?a:c:(e+=c.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(a,c,e,f,g,d){return c?h(b,c):f?h(b,d):g?k(h(b,d),b):e?"":(new Option(h(b,d))).innerHTML}),n=q);p?--f||(g=h(b,g),e=/^f/.test(typeof g)?e+g.call(b,d,function(a){return k(a,b)}):e+k(d,g,b,n),d=""):++f})}return e}
 
-carbon.m = function (l,a,m,c){function h(a,b){b=b.pop?b:b.split(".");a=a[b.shift()]||"";return 0 in b?h(a,b):a}var k=carbon.m,e="";a=_.isArray(a)?a:a?[a]:[];a=c?0 in a?[]:[1]:a;for(c=0;c<a.length;c++){var d="",f=0,n,b="object"==typeof a[c]?a[c]:{},b=_.assign({},m,b);b[""]={"":a[c]};l.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(a,c,l,m,p,q,g){f?d+=f&&!p||1<f?a:c:(e+=c.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(a,c,e,f,g,d){return c?h(b,c):f?h(b,d):g?k(h(b,d),b):e?"":(new Option(h(b,d))).innerHTML}),n=q);p?--f||(g=h(b,g),e=/^f/.test(typeof g)?e+g.call(b,d,function(a){return k(a,b)}):e+k(d,g,b,n),d=""):++f})}return e}
-
-carbon.instances = {};
+gform.instances = {};
 //creates multiple instances of duplicatable fields if input attributes exist for them
-carbon.inflate = function(atts, fieldIn, ind, list) {
+gform.inflate = function(atts, fieldIn, ind, list) {
     var newList = list;    
     if(fieldIn.array){
         newList = _.uniqBy(newList,'name');
     }
     var field = _.findLast(newList, {name: newList[ind].name});
     if(!field.array && field.fields){
-        _.each(field.fields, carbon.inflate.bind(this, atts[field.name] || {}) );
+        _.each(field.fields, gform.inflate.bind(this, atts[field.name] || {}) );
     }
     if(field.array) {
         var count = field.array.min||0;
@@ -120,7 +112,7 @@ carbon.inflate = function(atts, fieldIn, ind, list) {
             if(atts[field.name].length> count){count = atts[field.name].length}
         }
         for(var i = 1; i<count; i++) {
-            var newfield = carbon.createField.call(this, field.parent, atts, field.el, i, field.item);
+            var newfield = gform.createField.call(this, field.parent, atts, field.el, i, field.item);
             field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
             field = newfield;
         }
@@ -128,15 +120,15 @@ carbon.inflate = function(atts, fieldIn, ind, list) {
     }
 }
 
-carbon.createField = function(parent, atts, el, index, fieldIn ) {
+gform.createField = function(parent, atts, el, index, fieldIn ) {
     fieldIn.type = fieldIn.type || this.options.default.type;
-    //work carbon.default in here
+    //work gform.default in here
     var field = _.assignIn({
         name: (fieldIn.label||'').toLowerCase().split(' ').join('_'), 
-        id: carbon.getUID(), 
+        id: gform.getUID(), 
         // type: 'text', 
         label: fieldIn.legend || fieldIn.name,
-        validate: false,
+        validate: {},
         valid: true,
         parsable:true,
         visible:true,
@@ -145,8 +137,8 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         array:false,
         columns: this.options.columns,
         offset: 0,
-        ischild:!(parent instanceof carbon)        
-    }, this.opts,carbon.default,carbon.types[fieldIn.type].defaults, fieldIn)
+        ischild:!(parent instanceof gform)        
+    }, this.opts,gform.default,gform.types[fieldIn.type].defaults, fieldIn)
     field.validate.required = field.validate.required|| field.required;
     
     if(field.name == ''){field.name = field.id;}
@@ -183,9 +175,9 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
 		field.value = 0;
 	}
 
-    field.satisfied = field.satisfied || carbon.types[field.type].satisfied.bind(field);
-    field.update = carbon.types[field.type].update.bind(field);
-    field.destroy = carbon.types[field.type].destroy.bind(field);
+    field.satisfied = field.satisfied || gform.types[field.type].satisfied.bind(field);
+    field.update = gform.types[field.type].update.bind(field);
+    field.destroy = gform.types[field.type].destroy.bind(field);
     
     field.active = function() {
 		return this.parent.active() && this.enabled && this.parsable && this.visible;
@@ -194,16 +186,16 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
         //not sure we should be excluding objects - test how to allow objects
         if(this.value != value && typeof value !== 'object') {
             this.value = value;
-            carbon.types[this.type].set.call(this,value);
-			if(!silent){this.owner.trigger('change')};
+            gform.types[this.type].set.call(this,value);
+			if(!silent){this.owner.trigger('change');this.owner.trigger('change:'+this.name)};
 		}
     }.bind(field)
 
-    field.get = field.get || carbon.types[field.type].get.bind(field);
+    field.get = field.get || gform.types[field.type].get.bind(field);
     
-    field.render = field.render || carbon.types[field.type].render.bind(field);
+    field.render = field.render || gform.types[field.type].render.bind(field);
     
-    field.el = carbon.types[field.type].create.call(field);
+    field.el = gform.types[field.type].create.call(field);
 
     field.container =  field.el.querySelector('fieldset') || null;
 
@@ -216,7 +208,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
             cRow = field.parent.rows[temp];	
         }
         if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns || field.row == true){
-            var temp = carbon.getUID();
+            var temp = gform.getUID();
             cRow = {};
             cRow.used = 0;
             cRow.ref  = document.createElement("div");
@@ -251,16 +243,16 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
     // }
 
 
-    carbon.types[field.type].initialize.call(field);
+    gform.types[field.type].initialize.call(field);
 
-    var add = field.el.querySelector('.carbon-add');
+    var add = field.el.querySelector('.gform-add');
     if(add !== null){
         add.addEventListener('click', function(field){
             if(_.countBy(field.parent.fields, {name: field.name}).true < (field.array.max || 5)){
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 var atts = {};
                 // atts[field.name] = field.value;
-                var newField = carbon.createField.call(this, field.parent, atts, field.el ,null, field.item);
+                var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item);
                 field.parent.fields.splice(index+1, 0, newField)
                 newField.el.querySelector('[name="'+field.name+'"]').focus();
 
@@ -268,7 +260,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
             }
         }.bind(this, field));
     }
-    var minus = field.el.querySelector('.carbon-minus');
+    var minus = field.el.querySelector('.gform-minus');
     if(minus !== null){
         minus.addEventListener('click', function(field){
             if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)){
@@ -281,7 +273,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
                         field.parent.container.removeChild(field.parent.rows[field.row].ref);
                         delete field.parent.rows[field.row];
                     }else{
-                        carbon.types[field.parent.type].reflow.call(field.parent);
+                        gform.types[field.parent.type].reflow.call(field.parent);
                     }
                 }else{
                     this.container.querySelector(field.target).removeChild(field.el);
@@ -300,30 +292,30 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
                 newatts = atts[field.name]||{};
             }
 
-            field.fields = _.map(field.fields, carbon.createField.bind(this, field, newatts, null, null) );
+            field.fields = _.map(field.fields, gform.createField.bind(this, field, newatts, null, null) );
                  if(field.array){
-                    _.each(field.fields, carbon.inflate.bind(this, newatts) );
+                    _.each(field.fields, gform.inflate.bind(this, newatts) );
                 }
         
     }
 
-    carbon.processConditions.call(field, field.display, function(result){
+    gform.processConditions.call(field, field.display, function(result){
         this.el.style.display = result ? "block" : "none";
         this.visible = result;        
     })      
-    // carbon.processConditions.call(field, field.visible, function(result){
+    // gform.processConditions.call(field, field.visible, function(result){
     //     this.el.style.visibility = result ? "visible" : "hidden";
     //     this.visible = result;
     // })
     
-    carbon.processConditions.call(field, field.enable, function(result){
+    gform.processConditions.call(field, field.enable, function(result){
         this.enabled = result;        
-        carbon.types[this.type].enable.call(this,this.enabled);
+        gform.types[this.type].enable.call(this,this.enabled);
     })
-    carbon.processConditions.call(field, field.parse, function(result){
+    gform.processConditions.call(field, field.parse, function(result){
         this.parsable = result
     })
-    carbon.processConditions.call(field, field.validate.required, function(result){
+    gform.processConditions.call(field, field.validate.required, function(result){
         this.validate.required = result
         this.update();
     })
@@ -331,8 +323,8 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
     return field;
 }
 
-// carbon.update = function(field){
-//     field.el.innerHTML = carbon.types[field.type].render.call(field);
+// gform.update = function(field){
+//     field.el.innerHTML = gform.types[field.type].render.call(field);
 //     var oldDiv = document.getElementById(field.id);
 //     if(oldDiv == null){
 //         // oldDiv.parentNode.appendChild(field.el, oldDiv);
@@ -342,7 +334,7 @@ carbon.createField = function(parent, atts, el, index, fieldIn ) {
 //     }
 // }
 
-carbon.ajax = function(options){
+gform.ajax = function(options){
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if(request.readyState === 4) {
@@ -358,8 +350,8 @@ carbon.ajax = function(options){
     request.send();
 }
 
-carbon.default ={type:'text',format:{label: '{{label}}', value: '{{value}}'}} 
-carbon.prototype.opts = {
+gform.default ={type:'text',format:{label: '{{label}}', value: '{{value}}'}} 
+gform.prototype.opts = {
     clear:true,
     sections:'',
     suffix: ':',
@@ -399,7 +391,7 @@ carbon.prototype.opts = {
   //  }
   // }
 
-carbon.optionsObj = function(opts,value,count){
+gform.optionsObj = function(opts,value,count){
 
 	// If max is set on the field, assume a number set is desired. 
 	// min defaults to 0 and the step defaults to 1.
@@ -413,14 +405,14 @@ carbon.optionsObj = function(opts,value,count){
             item = {label: item, value:item};
         }
         item.index = item.index || ""+(count+i);
-        _.assignIn(item,{label: carbon.renderString(this.format.label,item), value: carbon.renderString(this.format.value,item) });
+        _.assignIn(item,{label: gform.renderString(this.format.label,item), value: gform.renderString(this.format.value,item) });
         if(item.value == value) { item.selected = true;}
         return item;
     }.bind(opts))
 }
 
 /* Process the options of a field for normalization */
-carbon.options = function(opts, value, count) {
+gform.options = function(opts, value, count) {
     count = count||0;
     var newOpts = {options:[]};
     if(typeof opts == 'object' && !_.isArray(opts)){
@@ -429,17 +421,17 @@ carbon.options = function(opts, value, count) {
     
     if(typeof opts == 'function') {
         newOpts.action = opts;
-        newOpts.options = newOpts.action.call(this);
+        opts.options = newOpts.action.call(this);
     }
 
 	if(typeof opts == 'string' || typeof newOpts.url == 'string') {
         newOpts.path = opts.url || opts;
         newOpts.options = false;
         newOpts.url = null;
-        carbon.ajax({path: newOpts.path, success:function(data) {
+        gform.ajax({path: newOpts.path, success:function(data) {
             this.options.options = data;  
-            this.options = carbon.options.call(this,this.options,this.value);
-            // carbon.update(field)
+            this.options = gform.options.call(this,this.options,this.value);
+            // gform.update(field)
             this.update()
         }.bind(this)})
         // field.options = newOpts;
@@ -447,31 +439,31 @@ carbon.options = function(opts, value, count) {
     }
 
     if(_.isArray(opts)){
-        opts = _.merge({options:[]}, carbon.default, {options:opts});        
+        opts = _.merge({options:[]}, gform.default, {options:opts});        
     }else{
-        opts = _.merge({options:[]}, carbon.default, opts);        
+        opts = _.merge({options:[]}, gform.default, opts);        
     }
 
     // if(typeof field.default !== 'undefined' && field.options[0] !== field.default) {
 	// 	field.options.unshift(field.default);
     // }
 
-    newOpts.options =  carbon.optionsObj(opts,value,count);
+    newOpts.options =  gform.optionsObj(opts,value,count);
     if(_.isArray(opts.optgroups)){
         count = count||(newOpts.options.length-1);
         _.each(opts.optgroups,function(section){
-            // var section = carbon.options.obj.call(this,section,this.value,count);
-            section.options = carbon.optionsObj( _.merge({options:[]},carbon.default, section),value,count);
-            section.id = carbon.getUID();
+            // var section = gform.options.obj.call(this,section,this.value,count);
+            section.options = gform.optionsObj( _.merge({options:[]},gform.default, section),value,count);
+            section.id = gform.getUID();
             newOpts.options.push({"section":section});
 
-            carbon.processConditions.call(this, section.enable, function(id, result){
+            gform.processConditions.call(this, section.enable, function(id, result){
                 var op = this.el.querySelectorAll('[data-id="'+id+'"]');
                 for (var i = 0; i < op.length; i++) {
                       op[i].disabled = !result;
                   }
             }.bind(this,section.id))            
-            carbon.processConditions.call(this, section.display, function(id, result){
+            gform.processConditions.call(this, section.display, function(id, result){
                 var op = this.el.querySelectorAll('[data-id="'+id+'"]');
                 for (var i = 0; i < op.length; i++) {
                       op[i].hidden = !result;
@@ -494,25 +486,25 @@ carbon.options = function(opts, value, count) {
 
 
 
-carbon.VERSION = '0.0.0.2';
-carbon.i = 0;
-carbon.getUID = function() {
-    return 'f' + (carbon.i++);
+gform.VERSION = '0.0.0.2';
+gform.i = 0;
+gform.getUID = function() {
+    return 'f' + (gform.i++);
 };
 
-carbon.types = {
+gform.types = {
     'input':{
         defaults:{},
         create: function(){
             var tempEl = document.createElement("span");
             tempEl.setAttribute("id", this.id);
             // tempEl.setAttribute("data-columns", this.columns);
-            tempEl.setAttribute("class", ' '+carbon.columnClasses[this.columns]);
+            tempEl.setAttribute("class", ' '+gform.columnClasses[this.columns]);
             tempEl.innerHTML = this.render();
             return tempEl;
         },
         render: function(){
-            return carbon.render(this.type, this);
+            return gform.render(this.type, this);
         },
         destroy:function(){
             this.el.removeEventListener('change',this.onchangeEvent );		
@@ -537,9 +529,9 @@ carbon.types = {
             var oldDiv = document.getElementById(this.id);
 
             this.destroy();
-            this.el = carbon.types[this.type].create.call(this);
+            this.el = gform.types[this.type].create.call(this);
             oldDiv.parentNode.replaceChild(this.el,oldDiv);
-            carbon.types[this.type].initialize.call(this);
+            gform.types[this.type].initialize.call(this);
 
             if(!silent) {
                 this.owner.trigger('change:'+this.name, this);
@@ -563,7 +555,6 @@ carbon.types = {
     'textarea':{
         defaults:{},
         set: function(value){
-            this.selected = (value == this.options[1]);
             this.el.querySelector('textarea[name="' + this.name + '"]').innerHTML = value;
         },
         get: function(){
@@ -574,7 +565,7 @@ carbon.types = {
         defaults:{options:[false, true]},
         render: function(){
             this.selected = (this.value == this.options[1]);
-            return carbon.render(this.type, this);
+            return gform.render(this.type, this);
         },
         set: function(value){
             this.selected = (value == this.options[1]);
@@ -586,8 +577,8 @@ carbon.types = {
     },
     'collection':{
         render: function(){
-            this.options = carbon.options.call(this,this.options, this.value);
-            return carbon.render(this.type, this);
+            this.options = gform.options.call(this,this.options, this.value);
+            return gform.render(this.type, this);
         },
         initialize: function(){
             if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
@@ -614,13 +605,13 @@ carbon.types = {
         },        
         render: function(){
             if(this.owner.options.sections){
-                return carbon.render(this.owner.options.sections+'_fieldset', this);                
+                return gform.render(this.owner.options.sections+'_fieldset', this);                
             }else{
-                return carbon.render('_fieldset', this);                
+                return gform.render('_fieldset', this);                
             }
         },
-        get: function(){
-            // return this.el.querySelector('select[name="' + this.name + '"]').value;
+        get: function(name){
+            return gform.toJSON.call(this,name)
         },
         reflow: function(){
             _.each(this.fields,function(field){
@@ -629,20 +620,20 @@ carbon.types = {
         }
     }
 };
-carbon.render = function(template, options){
-    return carbon.m(carbon.stencils[template||'text'] || carbon.stencils['text'],_.extend({},carbon.stencils,options))
+gform.render = function(template, options){
+    return gform.m(gform.stencils[template||'text'] || gform.stencils['text'],_.extend({},gform.stencils,options))
 }
-carbon.renderString = function(string,options){
-    return carbon.m(string||'',options||{})
+gform.renderString = function(string,options){
+    return gform.m(string||'',options||{})
 }
 
-carbon.types['text'] = carbon.types['number'] = carbon.types['color'] = carbon.types['input'];
-carbon.types['hidden'] = _.extend({},carbon.types['input'],{defaults:{columns:0}});
-carbon.types['textarea'] = _.extend({},carbon.types['input'],carbon.types['textarea']);
-carbon.types['checkbox'] = _.extend({},carbon.types['input'],carbon.types['bool']);
-carbon.types['fieldset'] = _.extend({},carbon.types['input'],carbon.types['section']);
-carbon.types['select'] =  _.extend({},carbon.types['input'],carbon.types['collection']);
-carbon.types['radio'] = _.extend({},carbon.types['input'],carbon.types['collection'],{
+gform.types['text']     = gform.types['number'] = gform.types['color'] = gform.types['input'];
+gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:0}});
+gform.types['textarea'] = _.extend({}, gform.types['input'], gform.types['textarea']);
+gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
+gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
+gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection']);
+gform.types['radio']    = _.extend({}, gform.types['input'], gform.types['collection'], {
     get: function(){
         return (this.el.querySelector('[type="radio"][name="' + this.name + '"]:checked')||{value:''}).value; 
     },
@@ -653,4 +644,4 @@ carbon.types['radio'] = _.extend({},carbon.types['input'],carbon.types['collecti
     }
 });
 
-carbon.types['email'] = _.extend({},carbon.types['input'],{defaults:{validate: { 'valid_email': true }}});
+gform.types['email'] = _.extend({},gform.types['input'],{defaults:{validate: { 'valid_email': true }}});

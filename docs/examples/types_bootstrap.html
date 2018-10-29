@@ -10,14 +10,14 @@
       <div class="container ">
           <div class="row ">
                 <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
-                <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new carbon(config, '#form');</code></pre><hr><div id="form"></div></div>                
+                <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>                
                 <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
               </div>
           </div>
       </div>
       <script src="../assets/js/lodash.min.js"></script>    
-      <script src='../assets/js/carbon.min.js'></script> 
-      <script src='../assets/js/carbon.bootstrap.js'></script>
+      <script src='../assets/js/gform.min.js'></script> 
+      <script src='../assets/js/gform.bootstrap.js'></script>
       
     <script>
     options = {
@@ -39,8 +39,8 @@
         ]
     }
     document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
-    var myCarbon = new carbon(options, '#form')
-    myCarbon.debounce('change',function(d){
+    var mygform = new gform(options, '#form')
+    mygform.debounce('change',function(d){
         if(typeof d.owner !== 'undefined'){
             document.querySelector('#result code').classList = "prettyprint"
             document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.owner.toJSON(),null,2);
@@ -56,7 +56,7 @@
         }
     })
 
-    myCarbon.trigger('change',myCarbon)
+    mygform.trigger('change',mygform)
 
 
     </script>

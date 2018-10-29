@@ -1,5 +1,5 @@
-carbon.stencils = {
-    _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="carbon {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
+gform.stencils = {
+    _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
     text: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
@@ -105,7 +105,7 @@ select_options:`
 {{#array}}
 <hr>
 <div class="btn-group actions">
-	<div class="carbon-add btn btn-white"><i class="fa fa-plus text-success"></i></div><div class="btn btn-white carbon-minus"><i class="fa fa-minus text-danger"></i></div>
+	<div class="gform-add btn btn-white"><i class="fa fa-plus text-success"></i></div><div class="btn btn-white gform-minus"><i class="fa fa-minus text-danger"></i></div>
 </div>
 {{/array}}
 {{^hideLabel}}
@@ -118,8 +118,8 @@ select_options:`
 </fieldset>`,
 	_actions: `{{#array}}
 	<div class="btn-group actions pull-right">
-	<div class="carbon-add btn btn-white"><i class="fa fa-plus text-success"></i></div>
-	<div class="btn btn-white carbon-minus"><i class="fa fa-minus text-danger"></i></div>
+	<div class="gform-add btn btn-white"><i class="fa fa-plus text-success"></i></div>
+	<div class="btn btn-white gform-minus"><i class="fa fa-minus text-danger"></i></div>
 	</div>
 	{{/array}}`,
     _label: `
@@ -151,7 +151,7 @@ select_options:`
 		{{>_actions}}
 	</div>
 </div>`,
-//     tabs_container: _.template(`<div class="carbon">
+//     tabs_container: _.template(`<div class="gform">
 //     <ul class="nav nav-tabs" style="margin-bottom:15px">
 //     <% _.forEach(fields, function(field) { %> 
 //         <% if(field.section){%><li>
@@ -163,21 +163,21 @@ select_options:`
 //         <legend for="<%= name %>"><h4><%= legend %></h4></legend>
 //     </form>
 //     </div>`),
-//     tabs_fieldset: _.template(`<div class="carbon">
+//     tabs_fieldset: _.template(`<div class="gform">
 //         <fieldset name="<%= name %>" <%if(!isChild){ %>class="hello there"<% }; %>>
 //             <legend for="<%= name %>"><h5><%= label %></h5></legend><hr>
-//             <%if(array){%><%=carbon.render("actions")%><%}; %>        
+//             <%if(array){%><%=gform.render("actions")%><%}; %>        
 //         </fieldset>
 //     </div>`)
 };
 
 
-carbon.columns = 12;
+gform.columns = 12;
 
-carbon.columnClasses = _.map(new Array(13),function(item,i){return 'col-md-'+i})
-carbon.default.inline = true;
+gform.columnClasses = _.map(new Array(13),function(item,i){return 'col-md-'+i})
+gform.default.inline = true;
 
-carbon.handleError = function(field){
+gform.handleError = function(field){
 	if(!field.valid){
 		field.el.classList.add('has-error')		
 	}

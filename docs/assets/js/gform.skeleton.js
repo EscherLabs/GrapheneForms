@@ -1,5 +1,5 @@
-carbon.stencils = {
-    _container: `<div class="carbon">
+gform.stencils = {
+    _container: `<div class="gform">
         <form novalidate>
             <legend for="{{name}}"><h4>{{legend}}</h4></legend>
         </form>
@@ -59,22 +59,22 @@ carbon.stencils = {
         {{>_error}}
         </fieldset>
     </div>`,
-    _fieldset: `<div class="carbon">
+    _fieldset: `<div class="gform">
         <fieldset name="{{name}}">
             <legend for="{{name}}"><h5>{{label}}</h5></legend><hr style="margin:-20px 0 20px 0">
             {{#array}}{{>_actions}} {{/array}}      
         </fieldset>
     </div>`,
     _actions: `      
-        <input style="padding: 0 ;width:38px;" class="carbon-add" type="button" value="+">
-        <input style="padding: 0 ;width:38px;" class="carbon-minus" type="button" value="-">
+        <input style="padding: 0 ;width:38px;" class="gform-add" type="button" value="+">
+        <input style="padding: 0 ;width:38px;" class="gform-minus" type="button" value="-">
     `,
     _label: `      
     {{#array}}<div style="float:right">{{>_actions}}</div>{{/array}}
     <label for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>        
     `,
     _error:`<small style="color:red;display:block;"></small>`,
-    tabs_container: `<div class="carbon">
+    tabs_container: `<div class="gform">
     <ul class="nav nav-tabs" style="margin-bottom:15px">
     {{#fields}}
         {{#section}}<li>
@@ -87,16 +87,16 @@ carbon.stencils = {
         <legend for="{{name}}"><h4>{{legend}}</h4></legend>
     </form>
     </div>`,
-    tabs_fieldset: `<div class="carbon">
+    tabs_fieldset: `<div class="gform">
         <fieldset name="{{name}}" {{#childild}}class="hello there"{{/childild}}
             <legend for="{{name}}"><h5>{{label}}</h5></legend><hr>
             {{>_actions}}       
         </fieldset>
     </div>`
 };
-carbon.columns = 12;
-carbon.columnClasses = _.map(['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'],function(item){return item+' columns'})
-carbon.prototype.opts.suffix = ""
-carbon.handleError = function(field){
+gform.columns = 12;
+gform.columnClasses = _.map(['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'],function(item){return item+' columns'})
+gform.prototype.opts.suffix = ""
+gform.handleError = function(field){
     field.el.querySelector('small').innerHTML = field.errors;
 }

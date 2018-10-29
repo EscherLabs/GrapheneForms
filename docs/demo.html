@@ -7,7 +7,7 @@
 		<meta name="author" content="Adam Smallcomb">
 		<link rel="icon" href="./assets/favicon.png">
 		
-		<title>Carbon Fields - Demo</title>
+		<title>gform Fields - Demo</title>
 		<link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>
 		<link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
 		<link rel='stylesheet' type='text/css' href='assets/css/demo.css'>
@@ -27,16 +27,19 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="./" style="line-height: 40px;font-size:10px;">
-						<span style="color: #FFB62F;float:left ">
+										<img style="height:30px" src="./assets/img/graphene_forms_white.png">
+
+						<!--<span style="color: #FFB62F;float:left ">
 							<div style="line-height: 10px;height: 0px;margin-top: 5px;"><i class="fa-white fa fa-circle-o"></i> <i class="fa-white fa fa-circle-o" style="color: #BA7D10;"></i></div>
 							<div style="line-height: 10px; height: 0px; margin-top: 10px;margin-left: -6px;"><i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle-o"></i></div>
 							<div style="margin-top: -5px;height: 0px;"><i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle-o"></i></div>
-						</span> <span style="line-height: 40px;margin-left:10px;font-size: 20px;font-weight: 200;color: #cccccf;">Carbon.js</span>
+						</span> <span style="line-height: 40px;margin-left:10px;font-size: 20px;font-weight: 200;color: #cccccf;">gform.js</span>-->
 					</a>
 				</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
 						<li><a href="./docs.html"><i class="fa fa-life-ring"></i> Docs</a></li>
+						<li><a href="./examples/"><i class="fa fa-list"></i> Examples</a></li>
 						<!-- <li class="active"><a href="./demo.html"><i class="fa fa-flask"></i> Demo</a></li> -->
 						<li class="dropdown ">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"><i class="fa fa-flask"></i> Demo <span class="caret"></span></a>
@@ -51,6 +54,7 @@
 								<li><a href="?demo=builder" id="builder">Builder</a></li>
 							</ul>
 						</li>
+
 					</ul>
 				</div><!-- /.nav-collapse -->
 			</div><!-- /.container -->
@@ -101,26 +105,26 @@
 		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" charset="utf-8"></script>
 
 		<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script>
-		<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.min.js'></script>
+		<!--/*<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.min.js'></script>*/-->
 
-		<!-- // <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3//jquery-ui.min.js'></script> -->
+		 <!--// <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3//jquery-ui.min.js'></script> -->
 
 		<script type="text/javascript" src="assets/js/sortable.js"></script>
 		<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
 		
 		<script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/jStorage/0.4.4/jstorage.min.js"></script>
+		<script type='text/javascript' src='assets/js/lodash.min.js'></script>	
 
-		<script type="text/javascript" src="assets/js/carbon.min.js"></script>
+		<script type="text/javascript" src="assets/js/gform.min.js"></script>
 
 		<script type='text/javascript' src='assets/js/cob.js'></script>
-		<script type='text/javascript' src='assets/js/lodash.min.js'></script>	
 		<script type='text/javascript' src='assets/js/form.cob.js'></script>	
 		<!--/*<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js'></script>*/-->
 
 
 
 		<script type='text/javascript' src='assets/vendor/js/colorpicker.min.js'></script>
-		<script type='text/javascript' src='assets/js/bootstrap.full.carbon.js'></script>
+		<script type='text/javascript' src='assets/js/gform.bootstrap.js'></script>
 		<script type='text/javascript' src='assets/js/demo.js'></script>
 
 		<script type='text/template' name="itemContainer">
@@ -133,7 +137,7 @@
 
 
 		<script type='text/javascript' >
-			templates['itemContainer'] = Hogan.compile(document.getElementsByName('itemContainer')[0].innerHTML)
+			gform.stencils['itemContainer'] = document.getElementsByName('itemContainer')[0].innerHTML;//Hogan.compile(document.getElementsByName('itemContainer')[0].innerHTML)
 
 		</script>
 

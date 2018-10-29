@@ -7,7 +7,7 @@
 		<meta name="author" content="Adam Smallcomb">
 		<link rel="icon" href="./assets/favicon.png">
 
-		<title>Carbon Home</title>
+		<title>Home - Graphene Forms</title>
 
 		<!-- Bootstrap core CSS -->
 		<link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>
@@ -36,16 +36,18 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="./" style="line-height: 40px;font-size:10px;">
-						<span style="color: #FFB62F;float:left ">
+					<img style="height:30px" src="./assets/img/graphene_forms_white.png">
+						<!--<span style="color: #FFB62F;float:left ">
 							<div style="line-height: 10px;height: 0px;margin-top: 5px;"><i class="fa-white fa fa-circle-o"></i> <i class="fa-white fa fa-circle-o" style="color: #BA7D10;"></i></div>
 							<div style="line-height: 10px; height: 0px; margin-top: 10px;margin-left: -6px;"><i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle" style="color: #BA7D10;"></i> <i class="fa fa-circle-o"></i></div>
 							<div style="margin-top: -5px;height: 0px;"><i class="fa fa-circle-o" style="color: #BA7D10;"></i> <i class="fa fa-circle-o"></i></div>
-						</span> <span style="line-height: 40px;margin-left:10px;font-size: 20px;font-weight: 200;color: #cccccf;">Carbon.js</span>
+						</span> <span style="line-height: 40px;margin-left:10px;font-size: 20px;font-weight: 200;color: #cccccf;">gform.js</span>-->
 					</a>
 				</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
 						<li><a href="./docs.html"><i class="fa fa-life-ring"></i> Docs</a></li>
+						<li><a href="./examples/"><i class="fa fa-list"></i> Examples</a></li>
 						<li><a href="./demo.html"><i class="fa fa-flask"></i> Demo</a></li>
 						<!-- <li><a href="./editor.html"><i class="fa fa-check-square-o"></i> Editor</a></li> -->
 					</ul>
@@ -57,16 +59,16 @@
 
 			<div class="row">
 				<div class="col-md-6">
-					<a class="btn btn-default pull-right" href="https://github.com/Cloverstone/Carbon"><i class="fa fa-github-alt"></i> View on github</a>
+					<a class="btn btn-default pull-right" href="https://github.com/Cloverstone/gform"><i class="fa fa-github-alt"></i> View on github</a>
 				</div><!--/span-->
 
 				<div class="col-md-6">
-					<a class="btn btn-default" href="https://github.com/Cloverstone/Carbon/archive/master.zip"><i class="fa fa-download"></i> Get Code</a>
+					<a class="btn btn-default" href="https://github.com/Cloverstone/gform/archive/master.zip"><i class="fa fa-download"></i> Get Code</a>
 				</div><!--/span-->
 			</div><!--/row-->
 
 			<hr>
-			<p>Carbon is a comprehensive form library that aims to make form creation, usage and maintanance easier for developers though a simple JSON Descriptor.</p>
+			<p>gform is a comprehensive form library that aims to make form creation, usage and maintanance easier for developers though a simple JSON Descriptor.</p>
 			<p>
 				Just a few things included out of the box:
 				<ul>
@@ -87,17 +89,17 @@
 &lt;html&gt;
   &lt;head&gt;
     &lt;style src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'&gt;&lt;/style&gt;
-    &lt;script src='//twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js'&gt;&lt;/script&gt;
-    &lt;script src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'&gt;&lt;/script&gt;
-    &lt;script type='text/javascript' src='carbon.min.js'&gt;&lt;/script&gt;
-    &lt;script type='text/javascript' src='bootstrap.carbon.js'&gt;&lt;/script&gt;
+    &lt;script type='text/javascript' src='gform.min.js'&gt;&lt;/script&gt;
+    &lt;script type='text/javascript' src='gform.bootstrap.js'&gt;&lt;/script&gt;
     &lt;script type="text/javascript"&gt;
-      $('.myForm').carbon({
-      attributes: {first_name: 'John', last_name: 'Doe'},//optional
-      fields: [
-        {label: 'First Name'}, 
-        {label: 'Last Name'}
-      ], actions: false});
+      var myForm = new gform({
+        attributes: {first_name: 'John', last_name: 'Doe'},//optional
+        fields: [
+          {label: 'First Name'}, 
+          {label: 'Last Name'}
+        ], 
+        actions: false
+      }, '.myForm');
     &lt;/script&gt;
   &lt;/head&gt;
   &lt;body&gt;
@@ -109,23 +111,23 @@
 			<div class="myForm"></div>
 			<hr>
 			<footer>
-				<p>&copy; Adam Smallcomb 2017</p>
+				<p>&copy; Adam Smallcomb 2018</p>
 			</footer>
 
 		</div><!--/.container-->
 
 
 		<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script>
-		<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.min.js'></script>
+		<script type='text/javascript' src='./assets/js/lodash.min.js'></script>    
 
 		<!-- // <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3//jquery-ui.min.js'></script> -->
 		<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
 
-		<script type='text/javascript' src='assets/js/carbon.min.js'></script>
-		<script type='text/javascript' src='assets/js/bootstrap.carbon.js'></script>
+		<script type='text/javascript' src='assets/js/gform.min.js'></script>
+		<script type='text/javascript' src='assets/js/gform.bootstrap.js'></script>
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
-		<script>$('.myForm').carbon({      attributes: {first_name: 'John', last_name: 'Doe'},
-fields:[{label:'First Name'}, {label: 'Last Name'}], actions: false});</script>
+		<script>new gform({      attributes: {first_name: 'John', last_name: 'Doe'},
+fields:[{label:'First Name'}, {label: 'Last Name'}], actions: false},'.myForm');</script>
 	</body>
 </html>

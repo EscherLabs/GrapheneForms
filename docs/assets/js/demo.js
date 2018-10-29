@@ -49,7 +49,7 @@ $('#cobler').on('click', function(e) {
       var temp = $.extend(true, {}, forms[form]);
       for(var i in temp.fields){
 
-        temp.fields[i] = Carbon.normalizeItem(Carbon.processOpts(temp.fields[i]), i);
+        temp.fields[i] = gform.normalizeItem(gform.processOpts(temp.fields[i]), i);
         switch(temp.fields[i].type) {
           case "select":
           case "radio":
@@ -86,10 +86,10 @@ document.addEventListener('DOMContentLoaded', function(){
   editor.getSession().on('change', function(e) {
     try {
       forms[form] = JSON.parse(editor.getValue());
-      for(var i in Carbon.instances){
-        Carbon.instances[i].destroy();
+      for(var i in gform.instances){
+        gform.instances[i].destroy();
       }
-      $('.target').carbon(
+      $('.target').gform(
         $.extend({autoFocus: false, actions: ['save'], name: 'myForm', attributes: QueryStringToHash(document.location.hash.substr(1) || "") }, forms[form] ) )
       .on('change', function(){
         $('.result').html("<pre>"+JSON.stringify(this.toJSON(), undefined, "\t")+"</pre>");

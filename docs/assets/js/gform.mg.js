@@ -1,5 +1,5 @@
-carbon.stencils = {
-    _container: `<div class="carbon">
+gform.stencils = {
+    _container: `<div class="gform">
     <form novalidate>
     {{#legend}}<legend for="{{name}}"><h4>{{legend}}</h4></legend>{{/legend}}
     </form>
@@ -63,7 +63,7 @@ text: `
         </span>
         {{>_error}}
         {{>_actions}}`,
-    _fieldset: `<div class="carbon">
+    _fieldset: `<div class="gform">
         <fieldset name="{{name}}">
         <legend for="{{name}}"><h5>{{label}}</h5></legend>
         <hr style="margin:-20px 0 20px 0">
@@ -74,8 +74,8 @@ text: `
         {{#array}}
         <hr>
         <div class="column">
-        <input style="padding: 0 ;width:38px;" class="carbon-add button button-outline" type="button" value="+">
-        <input style="padding: 0 ;width:38px;" class="carbon-minus button button-outline" type="button" value="-">
+        <input style="padding: 0 ;width:38px;" class="gform-add button button-outline" type="button" value="+">
+        <input style="padding: 0 ;width:38px;" class="gform-minus button button-outline" type="button" value="-">
         </div>
         {{/array}}
     `,
@@ -85,7 +85,7 @@ text: `
     
     `,
     _error:`<small style="color:red;display:block;"></small>`,
-    tabs_container: `<div class="carbon">
+    tabs_container: `<div class="gform">
     <ul class="nav nav-tabs" style="margin-bottom:15px">
     {{#fields}}
         {{#section}}<li>
@@ -98,17 +98,17 @@ text: `
         <legend for="{{name}}"><h4>{{legend}}</h4></legend>
     </form>
     </div>`,
-    tabs_fieldset: `<div class="carbon">
+    tabs_fieldset: `<div class="gform">
         <fieldset name="{{name}}" {{#childild}}class="hello there"{{/childild}}
             <legend for="{{name}}"><h5>{{label}}</h5></legend><hr>
             {{>_actions}}       
         </fieldset>
     </div>`
 };
-carbon.columns = 12;
-carbon.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-'+item+' column'})
-carbon.prototype.opts.suffix = ""
+gform.columns = 12;
+gform.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-'+item+' column'})
+gform.prototype.opts.suffix = ""
 
-carbon.handleError = function(field){
+gform.handleError = function(field){
     field.el.querySelector('small').innerHTML = field.errors;
 }

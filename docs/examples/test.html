@@ -16,16 +16,16 @@
 	</div>
    <pre style="width:800px;margin:50px auto" id="result"></pre>
     <script src="../assets/js/lodash.min.js"></script>    
-    <!--<script type='text/javascript' src='./assets/js/carbon.min.js'></script>-->
-      <script type='text/javascript' src='../../src/carbon.js'></script>  
+    <!--<script type='text/javascript' src='./assets/js/gform.min.js'></script>-->
+      <script type='text/javascript' src='../../src/gform.js'></script>  
     
-      <script type='text/javascript' src='../../src/carbon.events.js'></script> 
-     <script type='text/javascript' src='../../src/carbon.conditions.js'></script> 
-     <script type='text/javascript' src='../../src/carbon.validate.js'></script>     
+      <script type='text/javascript' src='../../src/gform.events.js'></script> 
+     <script type='text/javascript' src='../../src/gform.conditions.js'></script> 
+     <script type='text/javascript' src='../../src/gform.validate.js'></script>     
     <!-- <script type='text/javascript' src='../src/hogan-3.0.1.js'></script>     -->
-    <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.carbon.js'></script>    */-->
-	<script type='text/javascript' src='../assets/js/carbon.skeleton.js'></script>
-	 <!-- <script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script>  -->
+    <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.gform.js'></script>    */-->
+	<script type='text/javascript' src='../assets/js/gform.skeleton.js'></script>
+	 <!-- <script type='text/javascript' src='./assets/js/gform.bootstrap.js'></script>  -->
 
   <script>
 
@@ -958,15 +958,15 @@ return false;
 //        {}
 //      ]}
 options.el = '#form';
-    var myCarbon = new carbon(options)
-    // myCarbon.debounce('change', function(field){
+    var mygform = new gform(options)
+    // mygform.debounce('change', function(field){
     //     field.owner.validate();
-    //     document.querySelector('#result').innerHTML = JSON.stringify(myCarbon.toJSON(), null, 2)
+    //     document.querySelector('#result').innerHTML = JSON.stringify(mygform.toJSON(), null, 2)
     // })
 
 
 
-	myCarbon.debounce('change',function(d){
+	mygform.debounce('change',function(d){
 		if(typeof d.owner !== 'undefined'){
       document.querySelector('#result').innerHTML = JSON.stringify(d.owner.toJSON(),null,2);
       d.owner.validate()
@@ -977,7 +977,7 @@ options.el = '#form';
       }
     }
   })
-  myCarbon.trigger('change',myCarbon)
+  mygform.trigger('change',mygform)
 
 
     </script>

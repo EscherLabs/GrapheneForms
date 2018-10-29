@@ -7,15 +7,11 @@
 		<meta name="author" content="Adam Smallcomb">
 		<link rel="icon" href="./assets/favicon.png">
 
-		<title>Carbon Fieldguide</title>
+		<title>Documentation - Graphene:Forms</title>
 
 		<!-- Bootstrap core CSS -->
 		<link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>
 		<link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
-		<!--<link rel='stylesheet' type='text/css' href='./assets/css/milligram.min.css'>-->
-    <script src="./assets/js/lodash.min.js"></script>    
-		<script type='text/javascript' src='./assets/js/carbon.min.js'></script>
-		<script type='text/javascript' src='./assets/js/carbon.bootstrap.js'></script>
 
 		<!-- Custom styles for this template -->
 		<link rel='stylesheet' type='text/css' href='assets/css/demo.css'>
@@ -40,18 +36,20 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="./" style="line-height: 40px;font-size:10px;">
-						<span style="color: #5D99D4;float:left ">
+										<img style="height:30px" src="./assets/img/graphene_forms_white.png">
+
+						<!--<span style="color: #5D99D4;float:left ">
 							<div style="line-height: 10px;height: 0px;margin-top: 5px;"><i class="fa-white fa fa-circle-o"></i> <i class="fa-white fa fa-circle-o" style="color: #5D99D4;"></i></div>
 							<div style="line-height: 10px; height: 0px; margin-top: 10px;margin-left: -6px;"><i class="fa fa-circle-o" style="color: #5D99D4;"></i> <i class="fa fa-circle-o" style="color: #2866A4;"></i> <i class="fa fa-circle-o" style="color: #2866A4;"></i></div>
 							<div style="margin-top: -5px;height: 0px;"><i class="fa fa-circle-o" style="color: #5D99D4;"></i> <i class="fa fa-circle-o"></i></div>
-						</span> <span style="line-height: 40px;margin-left:10px;font-size: 20px;font-weight: 200;color: #cccccf;">carbon.js</span>
+						</span> <span style="line-height: 40px;margin-left:10px;font-size: 20px;font-weight: 200;color: #cccccf;">gform.js</span>-->
 					</a>
 				</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="./docs.html"><i class="fa fa-life-ring"></i> Docs</a></li>
+						<li class="active"><a href="./docs.html"><i class="fa fa-life-ring"></i> Documentation</a></li>
+						<li><a href="./examples/"><i class="fa fa-list"></i> Examples</a></li>
 						<li><a href="./demo.html"><i class="fa fa-flask"></i> Demo</a></li>
-						<li><a href="./examples/"><i class="fa fa-flask"></i> Examples</a></li>
 						<!-- <li><a href="./editor.html"><i class="fa fa-check-square-o"></i> Editor</a></li> -->
 						<!-- <li><a href="./api.html"><i class="fa fa-code"></i> Docs</a></li> -->
 					</ul>
@@ -65,7 +63,7 @@
 
 				<div class="col-sm-3" ></div>
 				<div class="hidden-xs" style="position:fixed;overflow:auto;top:100px;bottom:0;width:200px" id="sidebar" role="navigation">
-					<h4>What is carbon?</h4>
+					<h4>What is Graphene:Forms?</h4>
 					<ul class>
 						<li class="list-unstyled" ><a href="#intro"><i class="fa fa-chevron-right"></i> Introduction</a></li>
 						<li class="list-unstyled" ><a href="#getting_started"><i class="fa fa-chevron-right"></i> Getting Started</a></li>
@@ -174,7 +172,7 @@
 					<ul class>
 						<li class="list-unstyled" ><a href="#modal"><i class="fa fa-chevron-right"></i> modal</a></li>
 					</ul>
-					<a href="./test/SpecRunner.html"><h4>Tests</h4></a>
+					<a href="./test/tests.html?random=false"><h4>Tests</h4></a>
 	<!-- 				<ul class>
 						<li class="list-unstyled" ><a href="#color"><i class="fa fa-chevron-right"></i> Tests</a></li>
 					</ul> -->
@@ -185,27 +183,27 @@
 				<div class="col-xs-12 col-sm-9">
 					<!--Introduction -->
 					<a name="intro" style="display:block;position:relative;top:-80px"></a>
-					<h2>carbon Docs</h2>
+					<h2>Graphene:Forms Documentation</h2>
 					<div class="alert alert-warning">NOTE: This is a apha version, possibly still containing bugs and some parts of api may 
 					still change slightly.</div>
 					<!-- <a name="intro" style="display:block;position:relative;top:-80px"></a> -->
 					<h4>What is it?</h4>
 					<p>
-					carbon is an extensible JavaScript library for managing forms, includeing rendering, loading, parsing, validation, conditional fields and much more.
+					Graphene:Forms is an extensible JavaScript library for managing forms, includeing rendering, loading, parsing, validation, conditional fields and much more.
 					</p>
 
 					<!--Getting Started -->
 					<a name="getting_started" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>Getting Started</h4>
-					<p><b>Dependencies</b> - carbon has only dependency: <a href="https://lodash.com/">lodash.js</a></p>
+					<p><b>Dependencies</b> - Graphene:Forms has only dependency: <a href="https://lodash.com/">lodash.js</a></p>
 
 					<p>A minimum setup would look something like this</p>
 					<pre><code class="prettyprint">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
     &lt;script src='assets/js/lodash.min.js'&gt;&lt;/script&gt;
-    &lt;script src='assets/js/carbon.min.js'&gt;&lt;/script&gt;
+    &lt;script src='assets/js/gform.min.js'&gt;&lt;/script&gt;
   &lt;/head&gt;
   &lt;body&gt;
   &lt;div class="myForm"&gt;
@@ -213,14 +211,14 @@
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 					<br>
-					<p>Now that we all set up we can begin enjoying the magic of carbon!</p>
+					<p>Now that we all set up we can begin enjoying the magic of gform!</p>
 					<pre><code class="prettyprint">var config = {
   "el":     ".myForm"
   "fields": [
     {"name": "Example"}
   ]
 };
-var myForm = new carbon(config);</code></pre>
+var myForm = new gform(config);</code></pre>
 <br>
 					<div class="well myForm"></div>
 
@@ -230,7 +228,7 @@ var myForm = new carbon(config);</code></pre>
 					<h4>API</h4>
 					<h5>toJSON <code>myForm.toJSON([name]);</code></h5>
 					<p>
-						an object will be returned containing a serialized list of all fields maintained in the carbon tree. If the optional 'name' parameter is supplied then only the value of the field with that name is returned.
+						an object will be returned containing a serialized list of all fields maintained in the gform tree. If the optional 'name' parameter is supplied then only the value of the field with that name is returned.
 					</p>
 					<br>
 					<h5>destroy <code>myForm.destroy();</code></h5>
@@ -240,7 +238,7 @@ var myForm = new carbon(config);</code></pre>
 					<br>
 					<h5>find <code>myForm.find(path || name);</code></h5>
 					<p>
-						the carbon field that the path leads to is returned, for first level fields the path is just the name if it is contained within a fieldset the path would be <code>'fieldset_name.field_name'</code>
+						the gform field that the path leads to is returned, for first level fields the path is just the name if it is contained within a fieldset the path would be <code>'fieldset_name.field_name'</code>
 					</p>
 					<br>
 					<h5>validate <code>myForm.validate();</code></h5>
@@ -271,7 +269,7 @@ var myForm = new carbon(config);</code></pre>
     { 'name': 'first_name' }
 ]
 };
-var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm"></div></div></div>
+var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"></div></div></div>
 					<!--legend -->
 					<a name="legend" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -283,13 +281,13 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<br>					
 					<h4>name</h4>					
 					<p>
-						The name of your form. This can be used to reference the form after it is created. If no name is given one will be generated automatically. A reference to all forms created is maintained in the object <code>carbon.instances</code>. Accesssing a form with the name "myForm" would look like this <code>carbon.instances['myForm']</code>
+						The name of your form. This can be used to reference the form after it is created. If no name is given one will be generated automatically. A reference to all forms created is maintained in the object <code>gform.instances</code>. Accesssing a form with the name "myForm" would look like this <code>gform.instances['myForm']</code>
 					</p>
 					<a name="data" style="display:block;position:relative;top:-80px"></a>
 					<br>					
 					<h4>data</h4>					
 					<p>
-						If data is an object then carbon populates your form with the values contained in the data. <br>
+						If data is an object then gform populates your form with the values contained in the data. <br>
 						If data is set to <code>hash</code> the form is populated with data from the url hash.<br>
 						Lastly the data can be set to a url and the data will be fetched and populated from the response.
 					</p>
@@ -378,7 +376,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>														
 					
 					<p>
-						If this property is not set then the name will be set to the internally genderated uuid for this field. The 'name' property is set on the field in the html and is used to reference this field in the collection maintained by carbon.
+						If this property is not set then the name will be set to the internally genderated uuid for this field. The 'name' property is set on the field in the html and is used to reference this field in the collection maintained by Graphene:Forms.
 					</p>
 					<!--field label -->
 					<a name="field_label" style="display:block;position:relative;top:-80px"></a>
@@ -437,10 +435,10 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field show -->
 					<a name="field_display" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>display <code>['bool', 'function' 'carbon.conditions']</code></h4>
+					<h4>display <code>['bool', 'function' 'gform.conditions']</code></h4>
 					<p class="text-muted">default = true; <span class="text-success">all types</span></p>																			
 					<p>
-						By defualt this is set to 'true', if the value is simply set to false the field will not be shown. If show is set to a function then the function must return a boolean. The last option is to pass an object with the structure of <a href="#conditions"><code>carbon.conditions</code></a> that is used to dynamically determine if the field should be shown based on the values of other fields.
+						By defualt this is set to 'true', if the value is simply set to false the field will not be shown. If show is set to a function then the function must return a boolean. The last option is to pass an object with the structure of <a href="#conditions"><code>gform.conditions</code></a> that is used to dynamically determine if the field should be shown based on the values of other fields.
 					</p>
 					<p>
 							The 'display' property must in one way or another result in a bool indicating if the field should be shown or not. 							
@@ -448,7 +446,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field show -->
 					<a name="field_enable" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>enable <code>['bool', 'function' 'carbon.conditions']</code></h4>
+					<h4>enable <code>['bool', 'function' 'gform.conditions']</code></h4>
 					<p class="text-muted">default = true; <span class="text-success">all types</span></p>																			
 					<p>
 						See as <a href="#field_display">display</a> for acceptable values here.
@@ -459,7 +457,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field show -->
 					<a name="field_parse" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>parse <code>['bool', 'function' 'carbon.conditions']</code></h4>
+					<h4>parse <code>['bool', 'function' 'gform.conditions']</code></h4>
 					<p class="text-muted">default = true; <span class="text-success">all types</span></p>																			
 					<p>
 							See as <a href="#field_display">display</a> for acceptable values here.
@@ -470,7 +468,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field required -->
 					<a name="field_required" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>required <code>['bool', 'function' 'carbon.conditions']</code></h4>
+					<h4>required <code>['bool', 'function' 'gform.conditions']</code></h4>
 					<p class="text-muted">default = false; <span class="text-success">all types</span></p>																			
 					<p>
 							See as <a href="#field_display">display</a> for acceptable values here.
@@ -482,7 +480,7 @@ var myForm = new carbon(config);</code></pre></div><div class="col-md-6 dataForm
 					<!--field validate -->
 					<a name="field_validate" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>validate <code>['bool', 'function' 'carbon.conditions']</code></h4>	
+					<h4>validate <code>['bool', 'function' 'gform.conditions']</code></h4>	
 					<p class="text-muted">default = {}; <span class="text-success">all types</span></p>																			
 					<p>
 						
@@ -569,13 +567,13 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<br>
 					<h4>Built-in Events</h4>					
 					<p>
-						The list of built-in carbon events. You're also free to trigger your own events as you see fit. The context is always set to that of the carbon instance triggering the event.
+						The list of built-in events. You're also free to trigger your own events as you see fit. The context is always set to that of the form instance triggering the event.
 					</p>
 					<ul>
 						<!--initialize -->
 						<li><h5>initialize</h5>					
 						<p>
-							This event is fired as carbon begins the initialization and is a good place to put set up code.
+							This event is fired as Graphene:Forms begins the initialization and is a good place to put set up code.
 						</p></li>
 
 						<!--change -->
@@ -804,7 +802,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<a name="themes" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h3>Themes</h3>
-						Themes help carbon to fit seemlessly into your current site.
+						Themes help gform to fit seemlessly into your current site.
 					<!--bootstrap -->
 					<a name="bootstrap" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -818,14 +816,14 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<a name="plugins" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h3>Plugins</h3>
-						Plugins are used to extend the functionality of carbon as well as to impliment new features that may only make sense for a subset of people.
+						Plugins are used to extend the functionality of gform as well as to impliment new features that may only make sense for a subset of people.
 					<!--modal -->
 					<a name="modal" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>Modal</h4>					
 					<p>
 						This plugin will automatically create a modal popup of a form if the target is not selected or the target element is not found. In practice this would look like this: 
-						<pre><code class="prettyprint">var myForm = $().carbon(options);</code></pre>
+						<pre><code class="prettyprint">var myForm = $().gform(options);</code></pre>
 						To make use of this plugin the plugin just needs to be included and no target selected.
 					</p>
 
@@ -839,22 +837,16 @@ Bind a callback function to an object. The callback will be invoked whenever the
 
 		</div><!--/.container-->
 
-
-		<!-- <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script> -->
-		<!-- <script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.min.js'></script> -->
-
-		<!-- <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3//jquery-ui.min.js'></script> -->
-		<!-- <script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script> -->
-
-		<!-- <script type='text/javascript' src='bin/carbon.min.js'></script> -->
-		<!-- <script type='text/javascript' src='bin/bootstrap.carbon.js'></script> -->
+		<script type='text/javascript' src='./assets/js/lodash.min.js'></script>    
+		<script type='text/javascript' src='./assets/js/gform.min.js'></script>
+		<script type='text/javascript' src='./assets/js/gform.bootstrap.js'></script>
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 		<script>
 		var config = {
 			"el":".myForm",
 			"fields":[     {"name":"Example"}   ] 
 		};
-		var myForm = new carbon(config)
+		var myForm = new gform(config)
 
 
 		config = {
@@ -866,7 +858,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
 								{"name": "first_name"}
 							]
 						}
-		var dataForm = new carbon(config)
+		var dataForm = new gform(config)
 
 		 config ={
 'el': '.fieldForm',
@@ -893,7 +885,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
 		
   }
 ]};
-var fieldForm = new carbon(config)
+var fieldForm = new gform(config)
 
 		</script>
 	</body>

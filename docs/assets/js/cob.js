@@ -124,9 +124,9 @@ function Cobler(options) {
 		}
 		
 		function deactivate() {
-			// if(typeof myCarbon !== 'undefined'){
-			// 	myCarbon.destroy();
-			// 	myCarbon = undefined;
+			// if(typeof mygform !== 'undefined'){
+			// 	mygform.destroy();
+			// 	mygform = undefined;
 			// }
 			active = null;
 			var elems = target.getElementsByClassName(cob.options.active);
@@ -262,7 +262,7 @@ function Cobler(options) {
 Cobler.types = {};
 
 
-carbonEditor = function(container){
+gformEditor = function(container){
 	return function(){
 		var formConfig = {
 			renderer: 'tabs', 
@@ -277,12 +277,12 @@ carbonEditor = function(container){
 			formConfig.actions = false;
 			events = 'change';
 		}	
-		var myCarbon = new Carbon(formConfig, opts.formTarget ||  $(container.elementOf(this)));
-		myCarbon.on(events, function(){
-		 	container.update(myCarbon.toJSON(), this);
-		 	myCarbon.trigger('saved');
+		var mygform = new gform(formConfig, opts.formTarget ||  $(container.elementOf(this)));
+		mygform.on(events, function(){
+		 	container.update(mygform.toJSON(), this);
+		 	mygform.trigger('saved');
 		}, this);
-		myCarbon.on('cancel',function(){
+		mygform.on('cancel',function(){
 		 	container.update(this.get(), this)
 		}, this)
 	}

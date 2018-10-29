@@ -1,3 +1,3 @@
 #! /bin/bash
-minify src/carbon.js src/carbon.events.js src/carbon.conditions.js src/carbon.validate.js src/carbon.skeleton.js > bin/carbon.min.js 
-minify src/carbon.js src/carbon.events.js src/carbon.conditions.js src/carbon.validate.js > docs/assets/js/carbon.min.js
+minify src/gform.js src/gform.events.js src/gform.conditions.js src/gform.validate.js src/gform.skeleton.js > bin/gform.min.js 
+minify src/gform.js src/gform.events.js src/gform.conditions.js src/gform.validate.js > docs/assets/js/gform.min.js

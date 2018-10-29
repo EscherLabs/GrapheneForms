@@ -1,4 +1,4 @@
-carbon.prototype.events = (function (_) {
+gform.prototype.events = (function (_) {
   'use strict';
 
   // keys are event names

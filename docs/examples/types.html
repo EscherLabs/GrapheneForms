@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-        <link rel="stylesheet" href="../assets/css/milligram.min.css">
+  <head>    
+      <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Adam Smallcomb">
+    <link rel="icon" href="../assets/favicon.png">
+
+    <title>Example:Types - Graphene:Forms</title>
+    <link rel="stylesheet" href="../assets/css/milligram.min.css">
     </head>
     <body>
       <div style="padding:20px">
@@ -9,14 +16,14 @@
       <div class="container ">
           <div class="row ">
                 <div class="column" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
-                <div class="column column-40" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new carbon(config, '#form');</code></pre><hr><div id="form"></div></div>
+                <div class="column column-40" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>
                 <div class="column" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
               </div>
           </div>
       </div>
       <script src="../assets/js/lodash.min.js"></script>    
-      <script src='../assets/js/carbon.min.js'></script> 
-      <script src='../assets/js/carbon.mg.js'></script>
+      <script src='../assets/js/gform.min.js'></script> 
+      <script src='../assets/js/gform.mg.js'></script>
       
     <script>
     options = {
@@ -38,8 +45,8 @@
         ]
     }
     document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
-    var myCarbon = new carbon(options, '#form')
-    myCarbon.debounce('change',function(d){
+    var mygform = new gform(options, '#form')
+    mygform.debounce('change',function(d){
         if(typeof d.owner !== 'undefined'){
             document.querySelector('#result code').classList = "prettyprint"
             document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.owner.toJSON(),null,2);
@@ -55,7 +62,7 @@
         }
     })
 
-    myCarbon.trigger('change',myCarbon)
+    mygform.trigger('change',mygform)
 
 
     </script>

@@ -2,38 +2,40 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Carbon Test Suite</title>
+  <title>gform Test Suite</title>
 
-  <link rel="shortcut icon" type="image/png" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.5.2/jasmine_favicon.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.5.2/jasmine.css">
+  <link rel="shortcut icon" type="image/png" href="lib/jasmine-3.3.0/jasmine_favicon.png">
+  <link rel="stylesheet" href="lib/jasmine-3.3.0/jasmine.css">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.5.2/jasmine.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.5.2/jasmine-html.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.5.2/boot.js"></script>
+  <script src="lib/jasmine-3.3.0/jasmine.js"></script>
+  <script src="lib/jasmine-3.3.0/jasmine-html.js"></script>
+  <script src="lib/jasmine-3.3.0/boot.js"></script>
 
 
-    <script src="../../assets/js/lodash.min.js"></script>    
-    <script type='text/javascript' src='../../src/carbon.js'></script>
-    <script type='text/javascript' src='../../src/carbon.validate.js'></script>
-    <script type='text/javascript' src='../../src/carbon.events.js'></script>
-    <script type='text/javascript' src='../../src/carbon.conditions.js'></script>
-    <script type='text/javascript' src='../../src/carbon.skeleton.js'></script>
+    <script src="../assets/js/lodash.min.js"></script>    
+    <!--<script src='../assets/js/gform.min.js'></script> -->
+    <script src='../../src/gform.js'></script> 
+    <script src='../../src/gform.events.js'></script> 
+    <script src='../../src/gform.conditions.js'></script> 
+    <script src='../../src/gform.validate.js'></script>
+    <script src='../assets/js/gform.mg.js'></script> 
   <!-- include spec files here... -->
   <!-- <script src="spec/SpecHelper.js"></script>-->
-  <script src="spec/CarbonSpec.js"></script>
+  <script src="spec/gformSpec.js"></script>
   <script src="spec/InputSpec.js"></script>
-  <!--<script src="spec/TextareaSpec.js"></script>
+  <script src="spec/TextareaSpec.js"></script>
   <script src="spec/HiddenSpec.js"></script>
   <script src="spec/CheckboxSpec.js"></script>
-  --><script src="spec/SelectSpec.js"></script><!--
+  <script src="spec/SelectSpec.js"></script>
   <script src="spec/RadioSpec.js"></script>
   <script src="spec/FieldsetSpec.js"></script>
-  <script src="spec/MultiSpec.js"></script>
-  <script src="spec/ValidationSpec.js"></script>-->
+  <!--/*<script src="spec/MultiSpec.js"></script>*/-->
+  <!--<script src="spec/ValidationSpec.js"></script>-->
+  
 
 </head>
 
 <body>
-  <div id="carbon" style="display:none"></div>
+  <div id="gform" style="display:none"></div>
 </body>
 </html>

@@ -1,16 +1,16 @@
-carbon.prototype.errors = {};
-carbon.prototype.validate = function(){
-	carbon.clearErrors.call(this);
-    _.each(this.fields, carbon.validateItem)
+gform.prototype.errors = {};
+gform.prototype.validate = function(){
+	gform.clearErrors.call(this);
+    _.each(this.fields, gform.validateItem)
 	return this.valid;
 };
-carbon.handleError = carbon.update;
-carbon.validateItem = function(item){
-	carbon.performValidate(item);
+gform.handleError = gform.update;
+gform.validateItem = function(item){
+	gform.performValidate(item);
 	item.owner.errors[item.name] = item.errors;
 	item.owner.valid = item.valid && item.owner.valid;
 };
-carbon.performValidate = function(target, pValue){
+gform.performValidate = function(target, pValue){
 	var item = target;
 	var value = target.get();
 	if(typeof pValue !== 'undefined'){value = pValue;}
@@ -19,26 +19,26 @@ carbon.performValidate = function(target, pValue){
 
 	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.isParsable){
 		for(var r in item.validate){
-			if(!carbon.validations[r].method.call(target, value, item.validate[r])){
+			if(!gform.validations[r].method.call(target, value, item.validate[r])){
 				if((typeof item.show === 'undefined') || target.isVisible){
 					target.valid = false;
-					var estring = carbon.validations[r].message;
+					var estring = gform.validations[r].message;
 					if(typeof item.validate[r] == 'string') {
 						estring = item.validate[r];
 					}													
-					target.errors = carbon.renderString(estring,item);
+					target.errors = gform.renderString(estring,item);
 				}
 			}
-			carbon.handleError(target);
+			gform.handleError(target);
 		}
 	}
 };
-carbon.clearErrors = function() {
+gform.clearErrors = function() {
 	this.valid = true;
 	this.errors = {};
 	//add code fore removing errors here
 };
-carbon.regex = {
+gform.regex = {
 	numeric: /^[0-9]+$/,
 	// integer: /^\-?[0-9]+$/,
 	decimal: /^\-?[0-9]*\.?[0-9]+$/,
@@ -53,7 +53,7 @@ carbon.regex = {
 	// url: /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
 	// date: /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
 };
-carbon.validations = 
+gform.validations = 
 {
 	required:{
 		method: function(value, args) {
@@ -63,7 +63,7 @@ carbon.validations =
 	},
 	matches:{
 		method: function(value, matchName) {
-			if (el == this.carbon[matchName]) {
+			if (el == this.gform[matchName]) {
 				return value === el.value;
 			}
 			return false;
@@ -102,7 +102,7 @@ carbon.validations =
 	// },
 	min_length:{
 		method: function(value, length) {
-			if (!carbon.regex.numeric.test(length)) {
+			if (!gform.regex.numeric.test(length)) {
 				return false;
 			}
 			return (value.length >= parseInt(length, 10));
@@ -111,7 +111,7 @@ carbon.validations =
 	},
 	max_length:{
 		method: function(value, length) {
-			if (!carbon.regex.numeric.test(length)) {
+			if (!gform.regex.numeric.test(length)) {
 				return false;
 			}
 			return (value.length <= parseInt(length, 10));
@@ -120,7 +120,7 @@ carbon.validations =
 	},
 	exact_length:{
 		method: function(value, length) {
-			if (!carbon.regex.numeric.test(length)) {
+			if (!gform.regex.numeric.test(length)) {
 				return false;
 			}
 			return (value.length === parseInt(length, 10));
@@ -129,7 +129,7 @@ carbon.validations =
 	},
 	greater_than:{
 		method: function(value, param) {
-			if (!carbon.regex.decimal.test(value)) {
+			if (!gform.regex.decimal.test(value)) {
 				return false;
 			}
 			return (parseFloat(value) > parseFloat(param));
@@ -138,7 +138,7 @@ carbon.validations =
 	},
 	less_than:{
 		method: function(value, param) {
-			if (!carbon.regex.decimal.test(value)) {
+			if (!gform.regex.decimal.test(value)) {
 				return false;
 			}
 			return (parseFloat(value) < parseFloat(param));
@@ -147,61 +147,61 @@ carbon.validations =
 	},
 	numeric:{
 		method: function(value) {
-			return (carbon.regex.numeric.test(value) || value === '');
+			return (gform.regex.numeric.test(value) || value === '');
 		},
 		message: '{{label}} must contain only numbers.'
 	},
 	// alpha:{
 	// 	method: function(value) {
-	// 		return (carbon.regex.alpha.test(value) || value === '');
+	// 		return (gform.regex.alpha.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must only contain alphabetical characters.'
 	// },
 	// alpha_numeric:{
 	// 	method: function(value) {
-	// 		return (carbon.regex.alphaNumeric.test(value) || value === '');
+	// 		return (gform.regex.alphaNumeric.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must only contain alpha-numeric characters.'
 	// },
 	// alpha_dash:{
 	// 	method: function(value) {
-	// 		return (carbon.regex.alphaDash.test(value) || value === '');
+	// 		return (gform.regex.alphaDash.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must only contain alpha-numeric characters, underscores, and dashes.'
 	// },
 	// integer:{
 	// 	method: function(value) {
-	// 		return (carbon.regex.integer.test(value) || value === '');
+	// 		return (gform.regex.integer.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain an integer.'
 	// },
 	// decimal:{
 	// 	method: function(value) {
-	// 		return (carbon.regex.decimal.test(value) || value === '');
+	// 		return (gform.regex.decimal.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain a decimal number.'
 	// },
 	// is_natural:{
 	// 	method: function(value) {
-	// 		return (carbon.regex.natural.test(value) || value === '');
+	// 		return (gform.regex.natural.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain only positive numbers.'
 	// },
 	// is_natural_no_zero:{
 	// 	method: function(value) {
-	// 		return (carbon.regex.naturalNoZero.test(value) || value === '');
+	// 		return (gform.regex.naturalNoZero.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain a number greater than zero.'
 	// },
 	// valid_ip:{
 	// 	method: function(value) {
-	// 		return (carbon.regex.ip.test(value) || value === '');
+	// 		return (gform.regex.ip.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain a valid IP.'
 	// },
 	// valid_base64:{
 	// 	method: function(value) {
-	// 		return (carbon.regex.base64.test(value) || value === '');
+	// 		return (gform.regex.base64.test(value) || value === '');
 	// 	},
 	// 	message: 'The {{label}} field must contain a base64 string.'
 	// }

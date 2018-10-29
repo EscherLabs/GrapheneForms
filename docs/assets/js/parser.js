@@ -36,11 +36,11 @@ try {
     var temp = JSON.parse(editor.getValue());
 
       fields = getItems(temp);
-      for(var i in Carbon.instances){
-        Carbon.instances[i].destroy();
+      for(var i in gform.instances){
+        gform.instances[i].destroy();
       }
       console.log(JSON.stringify(fields, undefined, "\t"));
-      $('.target').carbon(
+      $('.target').gform(
       	$.extend({flatten:false,autoFocus: false, actions: false, name: 'myForm', attributes: temp}, {fields:fields}) ).delay('change', function(){
         var json = this.toJSON();
 				  $('.result').html("<pre>"+JSON.stringify(json, undefined, "\t")+"</pre>");
