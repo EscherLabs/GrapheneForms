@@ -65,7 +65,20 @@ describe('Select Input', function () {
 
   it('should load choices from function', function () {
 
-    // mygform.destroy();
+    mygform.destroy();
+    mygform = new gform({fields:{
+      Title: {name: 'test', label: 'Label Field', type: 'select', options: function(){
+        return [{"label":"Title","value":"second"},{"label":"Top Right","name":"topright"},{"label":"Bottom Right","name":"bottomright"},{"label":"Bottom Left","name":"bottomleft"},{"label":"Top Left","name":"topleft"}];
+      }}}
+    }, '#gform');
+    expect(document.querySelector('select[name=test] option')).not.toBe(null);
+
+  });
+
+
+  it('should load optGroups', function () {
+
+    mygform.destroy();
     mygform = new gform({fields:{
       Title: {name: 'test', label: 'Label Field', type: 'select', options: function(){
         return [{"label":"Title","value":"second"},{"label":"Top Right","name":"topright"},{"label":"Bottom Right","name":"bottomright"},{"label":"Bottom Left","name":"bottomleft"},{"label":"Top Left","name":"topleft"}];

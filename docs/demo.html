@@ -8,8 +8,8 @@
 		<link rel="icon" href="./assets/favicon.png">
 		
 		<title>gform Fields - Demo</title>
-		<link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>
-		<link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
+		<link rel='stylesheet' type='text/css' href='assets/css/font-awesome.min.css'>
+		<link rel='stylesheet' type='text/css' href='assets/css/bootstrap.min.css'>
 		<link rel='stylesheet' type='text/css' href='assets/css/demo.css'>
 		<link rel='stylesheet' type='text/css' href='assets/css/cobler.css'>
 		<link rel='stylesheet' type='text/css' href='assets/vendor/css/colorpicker.min.css'>
@@ -26,8 +26,8 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="./" style="line-height: 40px;font-size:10px;">
-										<img style="height:30px" src="./assets/img/graphene_forms_white.png">
+					<a class="navbar-brand" href="./">
+										<img style="height:30px;margin-top:5px" src="./assets/img/graphene_forms_white.png">
 
 						<!--<span style="color: #FFB62F;float:left ">
 							<div style="line-height: 10px;height: 0px;margin-top: 5px;"><i class="fa-white fa fa-circle-o"></i> <i class="fa-white fa fa-circle-o" style="color: #BA7D10;"></i></div>
@@ -38,20 +38,26 @@
 				</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
-						<li><a href="./docs.html"><i class="fa fa-life-ring"></i> Docs</a></li>
+						<li><a href="./docs.html"><i class="fa fa-life-ring"></i> Documentation</a></li>
 						<li><a href="./examples/"><i class="fa fa-list"></i> Examples</a></li>
 						<!-- <li class="active"><a href="./demo.html"><i class="fa fa-flask"></i> Demo</a></li> -->
 						<li class="dropdown ">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"><i class="fa fa-flask"></i> Demo <span class="caret"></span></a>
 							<ul class="dropdown-menu">
-								<li><a href="?demo=example" id="example">Example</a></li>
+								<!--<li><a href="?demo=example" id="example">Example</a></li>-->
 								<li><a href="?demo=basic" id="basic">Basic</a></li>
-								<li><a href="?demo=conditional" id="conditional">Conditional</a></li>								
+								<li><a href="?demo=types" id="types">Field Types</a></li>
+								<li><a href="?demo=values" id="values">Fields with values</a></li>
+								<li><a href="?demo=placeholder" id="values">Fields with placeholder</a></li>
+								<li><a href="?demo=columns" id="values">Columns</a></li>
+								<li><a href="?demo=generate" id="values">Generate Options</a></li>
+								<li><a href="?demo=format" id="values">Options format</a></li>
+								<!--<li><a href="?demo=conditional" id="conditional">Conditional</a></li>								
 								<li><a href="?demo=fieldsets" id="builder">Fieldsets</a></li>
 								<li><a href="?demo=duplicate" id="duplicate">Duplicate</a></li>
 								<li><a href="?demo=nonfields" id="nonfields">Non Fields</a></li>
 								<li><a href="?demo=auto" id="auto">Auto Types</a></li>
-								<li><a href="?demo=builder" id="builder">Builder</a></li>
+								<li><a href="?demo=builder" id="builder">Builder</a></li>-->
 							</ul>
 						</li>
 
@@ -65,10 +71,11 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<div class="btn-group" role="group" aria-label="...">
-								<button type="button" id="schema" class="active btn btn-default">Options</button>
-								<button type="button" id="json" class="btn btn-default">Output</button>
-								<button type="button" id="cobler" class="btn btn-default">Editor</button>
+								<button type="button" id="schema" class="active btn btn-default">Configure</button>
+								<button type="button" id="json" class="btn btn-default">Use</button>
+								<button type="button" id="cobler" class="btn btn-default">GUI Edit</button>
 							</div>
+							<a class="pull-right" href="examples/">Examples</a>
 						</div>
 						<div class="panel-body">
 							<div id="schema_editor" class="view view_schema"></div>		
@@ -85,7 +92,7 @@
 					</div>
 				</div>
 				<div class="col-md-6 col-sm-8 col-xs-12">
-					<div class="panel panel-success">
+					<div class="panel panel-primary">
 						<div class="panel-heading"><b>Form</b></div>
 						<div class="panel-body">
 							<div class="target"></div>
@@ -104,18 +111,27 @@
 
 		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" charset="utf-8"></script>
 
-		<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'></script>
+		<script type='text/javascript' src='assets/js/jquery.min.js'></script>
 		<!--/*<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/hogan.js/3.0.2/hogan.min.js'></script>*/-->
 
 		 <!--// <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3//jquery-ui.min.js'></script> -->
 
 		<script type="text/javascript" src="assets/js/sortable.js"></script>
-		<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
+		<script type='text/javascript' src='assets/js/bootstrap.min.js'></script>
 		
 		<script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/jStorage/0.4.4/jstorage.min.js"></script>
 		<script type='text/javascript' src='assets/js/lodash.min.js'></script>	
 
-		<script type="text/javascript" src="assets/js/gform.min.js"></script>
+		<!--<script type="text/javascript" src="assets/js/gform.min.js"></script>-->
+
+
+		<script type='text/javascript' src='../src/gform.js'></script>  
+     	<!--<script type='text/javascript' src='../src/gform.events.js'></script> -->
+     	<script type='text/javascript' src='../src/gform.conditions.js'></script> 
+     	<script type='text/javascript' src='../src/gform.validate.js'></script>     
+
+
+	 
 
 		<script type='text/javascript' src='assets/js/cob.js'></script>
 		<script type='text/javascript' src='assets/js/form.cob.js'></script>	
@@ -125,6 +141,7 @@
 
 		<script type='text/javascript' src='assets/vendor/js/colorpicker.min.js'></script>
 		<script type='text/javascript' src='assets/js/gform.bootstrap.js'></script>
+		<script type='text/javascript' src='assets/js/example_forms.js'></script>
 		<script type='text/javascript' src='assets/js/demo.js'></script>
 
 		<script type='text/template' name="itemContainer">
@@ -151,6 +168,6 @@
 		}
 	});
 </script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
+<script src="assets/js/summernote.min.js"></script>
 
 </body></html>

@@ -2,6 +2,7 @@ describe('gform Initialization', function () {
 
 	beforeEach(function() {
     // triggerOnChange = jasmine.createSpy();
+    debugger;
 		mygform = new gform({name: 'gformTest', fields:[{label:'test' ,value: 'hello'}]}, '#gform')//.on('change', triggerOnChange);
 	//	mygform.on('initialized', function(){ done(); }, this, mygform.initialized);
 	});

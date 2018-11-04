@@ -62,7 +62,7 @@ gform.conditions = {
 		}.bind(this, args);
 
 		for(var i in args){
-			gform.events.on('change:' + args[i].name, callback)
+			gform.on('change:' + args[i].name, callback)
 		}
 		
 	}

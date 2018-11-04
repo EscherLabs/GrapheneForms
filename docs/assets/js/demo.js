@@ -35,10 +35,14 @@ $('#cobler').on('click', function(e) {
       })
       cb.on("change", function(){
         if(typeof forms[form] !== 'undefined' && form !== 'builder'){
+          // debugger;
           $.extend(forms[form], {fields: cb.toJSON()[0]});
+          // forms[form].fields = cb.toJSON()[0];
         }else{
-
+          // debugger;
           $.extend(forms[form], {fields: cb.toJSON()[0]});
+          // forms[form].fields = cb.toJSON()[0];
+
           $.jStorage.set('form', JSON.stringify(forms[form], undefined, "\t"));
         }
       })
@@ -48,8 +52,8 @@ $('#cobler').on('click', function(e) {
     if(typeof forms[form] !== 'undefined'){
       var temp = $.extend(true, {}, forms[form]);
       for(var i in temp.fields){
-
-        temp.fields[i] = gform.normalizeItem(gform.processOpts(temp.fields[i]), i);
+        // debugger;
+        temp.fields[i] = gform.options(temp.fields[i]);//gform.normalizeItem(, i);
         switch(temp.fields[i].type) {
           case "select":
           case "radio":
@@ -86,17 +90,19 @@ document.addEventListener('DOMContentLoaded', function(){
   editor.getSession().on('change', function(e) {
     try {
       forms[form] = JSON.parse(editor.getValue());
+
       for(var i in gform.instances){
         gform.instances[i].destroy();
       }
-      $('.target').gform(
-        $.extend({autoFocus: false, actions: ['save'], name: 'myForm', attributes: QueryStringToHash(document.location.hash.substr(1) || "") }, forms[form] ) )
-      .on('change', function(){
+      var temp = new gform(
+        $.extend({autoFocus: false, actions: ['save'], name: 'myForm', data: QueryStringToHash(document.location.hash.substr(1) || "") }, forms[form] ) ,'.target')
+      temp.on('change', function(){
+        debugger;
         $('.result').html("<pre>"+JSON.stringify(this.toJSON(), undefined, "\t")+"</pre>");
-      })
-      .on('save', function(){
+      }.bind(temp))
+      temp.on('save', function(){
         if(this.validate()) { location.hash = '#'+$.param(this.toJSON());}}
-      );
+      ).bind(this);
     } catch (e) {
       return false;
     }
@@ -107,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function(){
     delete forms['builder'][i].widgetType;
   }
 
-  form = (urlParams['demo'] || 'example');
+  form = (urlParams['demo'] || 'basic');
 
   setSchema(forms[form])
 });
@@ -115,146 +121,13 @@ document.addEventListener('DOMContentLoaded', function(){
 
 function setSchema(obj){
   forms[form] = obj;
+  
   for(var i in forms[form].fields){
     delete forms[form].fields[i].widgetType;
   }
   editor.setValue(JSON.stringify(forms[form], undefined, "\t"));
 }
 
-//data
-forms = {
-  "auto": {
-    "fields": {
-      "Text": {},
-      "Text 2": "",
-      "Color": "color",
-      "Options 1": ["hello"],
-      "Options 2": ["hello","goodbye"],
-      "Options 3": ["hello", "more","Another", "dasdf"],
-      "Options 5": ["hello", "more","Another", "final","past"],
-      "Is?": {"type": "checkbox"}
-    }
-  },
-  "nonfields": {
-    "attributes":{"name": "John Doe", "candy": "Other"},
-    "inline": true,
-    "fields": [
-      {
-        "label": "Name"
-      },
-      {
-        "label": "Title"
-      },
-      {
-        "label": "Favorite Candy",
-        "name": "candy",
-        "type": "select",
-        "value": "",
-        "choices": [
-          "Lolipops",
-          "Chocolate",
-          "Other"
-        ]
-      }
-    ]
-  },
-  "duplicate": {
-    "fields": [
-      {
-        "label": "Name"
-      },
-      {
-        "label": "Title"
-      },
-      {"name": "fc_container", "legend": "Favorite Candies", "fields": {
-        "fc": {"label":false, "multiple": {"duplicate": true, "max": 4, "min": 2}, "fields": {
-          "Candy Type": {}
-        }
-      }}}
-    ]
-  },
-  "conditional": {
-    "fields": [
-      {
-        "label": "Name"
-      },
-      {
-        "label": "Title"
-      },
-      {
-        "label": "Favorite Candy",
-        "name": "candy",
-        "choices": [
-          "Lolipops",
-          "Chocolate",
-          "Other"
-        ]
-      },
-      {"label": "Reason", "type": "textarea", "show": {"matches": {"name": "candy", "value": "Chocolate"}}}  
-    ]
-  },
-  "basic": {
-    "fields": [
-      {
-        "label": "Name"
-      },
-      {
-        "label": "Job Title",
-        "name": "title"
-      },
-      {
-        "label": "Favorite State",
-        "choices": "data/states.json"
-      }
-    ]
-  },
-  "example": {      
-    "attributes": {"first_name": "John", "name_last": "Doe"},
-    "fields":[
-      {"label": "First Name"}, 
-      {"label": "Last Name", "name": "name_last"},
-      {"label": "Age", "type": "number"},
-      {"label": "Favorite Color", "type": "color"}
-    ]
-  },
-  "fieldsets":{
-	"attributes": {
-		"first_name": "John",
-		"other":{
-		  "email": "demo@gmail.com"
-		}
-	},
-	"renderer": "tabs",
-	"flatten": false,
-	"fields": [
-		{
-			"label": "Info",
-			"hideLabel": true,
-			"fields": [
-				{
-					"label": "First Name"
-				}
-			]
-		},
-		{
-			"label": "More",
-			"hideLabel": true,
-			"fields": [
-				{
-					"label": "Other",
-					"type": "fieldset",
-					"fields": [
-						{
-							"label": "Email",
-							"name": "email"
-						}
-					]
-				}
-			]
-		}
-	]
-}
-}
 
 /*utils*/
 

@@ -29,7 +29,7 @@ gform.stencils = {
     select: `<div class="row">
         {{>_label}}    
         <select class="u-full-width" name="{{name}}" value="{{value}}" id="{{id}}" />
-			{{#options}}{{#options}}
+			{{#options}}
 				{{^section}}
 				<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
 				{{/section}}
@@ -37,14 +37,14 @@ gform.stencils = {
 				{{#section.label}}
 				<optgroup label="{{label}}" data-id="{{section.id}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}">
 				{{/section.label}}
-					{{#options}}
+					{{#section.options}}
 					<option data-id="{{section.id}}" {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
-					{{/options}}
+					{{/section.options}}
 					{{#section.label}}
 				</optgroup>
 				{{/section.label}}
 				{{/section}}
-			{{/options}}{{/options}}
+			{{/options}}
         </select>
         {{>_error}}
     </div>`,

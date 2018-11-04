@@ -18,7 +18,7 @@ gform.performValidate = function(target, pValue){
 	target.errors = '';
 
 	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.isParsable){
-		for(var r in item.validate){
+		for(var r in item.validate) {
 			if(!gform.validations[r].method.call(target, value, item.validate[r])){
 				if((typeof item.show === 'undefined') || target.isVisible){
 					target.valid = false;

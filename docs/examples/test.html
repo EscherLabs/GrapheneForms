@@ -891,18 +891,28 @@ return false;
                 },
                 "parse":"display"
               },
-              {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''}, options:['first', 1,3,{value:'hello',label:'Other',selected:true},'mother'],format:{"label":'{{index}}: {{label}}'}},
-              {name: 'Another', type:'select', options:{ placeholder:'Please choose one',options:[],optgroups:[
-                {label:"stuff",format:{"label":'{{label}}'}, options:[3,4,5,9]},
-                {format:{"label":'{{index}}: {{label}}'},min:2,max:10,"display": {
+              {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''},format:{"label":'{{index}}: {{label}}'}, options:['first', 1,3,{value:'hello',label:'Other',selected:true},'mother']},
+			  {name: 'Another', type:'select', placeholder:'Please choose one', options:[
+				  {type:"optgroup",label:"stuff",format:{"label":'{{label}}'}, options:[3,4,5,9]},
+				  {type:"optgroup",format:{"label":'{{index}}: {{label}}'},min:2,max:10,"display": {
                     "matches": [
                         {"name": "checked","value": [true]},
 
                     ],
                 }}
+			  ]
+			//   ,optgroups:[
+            //     // {label:"stuff",format:{"label":'{{label}}'}, options:[3,4,5,9]},
+            //     {format:{"label":'{{index}}: {{label}}'},min:2,max:10,"display": {
+            //         "matches": [
+            //             {"name": "checked","value": [true]},
+
+            //         ],
+            //     }}
                 
-              ]}},
-              {"label": "Favorite State", suffix:'',type:'select', "options": {url:"../data/states.json",format:{"label":'({{value}}) {{name}}'}} },
+            //   ]
+			},
+              {"label": "Favorite State", suffix:'',type:'select', "options": "../data/states.json",format:{"label":'({{value}}) {{name}}'} },
             {label: 'Candies', type:'fieldset', fields: [
 				{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '',
 				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'text',columns:6, array: {min:2,max:3}}]}]},

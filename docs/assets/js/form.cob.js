@@ -1,13 +1,47 @@
+
+gformEditor = function(container){
+	return function(){
+		var formConfig = {
+			renderer: 'tabs', 
+			data: this.get(), 
+			fields: this.fields,
+			autoDestroy: true,
+			legend: 'Edit '+ this.get()['widgetType']
+		}
+		var opts = container.owner.options;
+		var events = 'save';
+		if(typeof opts.formTarget !== 'undefined' && opts.formTarget.length){
+			formConfig.actions = false;
+			events = 'change';
+		}	
+		for(var i in gform.instances){
+			gform.instances[i].destroy();
+		}
+		var mygform = new gform(formConfig, $(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
+		mygform.on(events, function(){
+			debugger;//flatten
+			var temp = mygform.toJSON();
+			if(typeof temp.basics !== 'undefined'){
+				temp = $.extend({},temp.basics,temp.options_c)
+			}
+		 	container.update(temp, this);
+		 	mygform.trigger('saved');
+		}.bind(this));
+		mygform.on('cancel',function(){
+		 	container.update(this.get(), this)
+		}.bind(this));
+	}
+}
 Cobler.types.textbox = function(container) {
 	function render(){
-		if(item.type == 'textarea'){
-			return gform.stencils['gform_textarea'].render(get(), gform.stencils);
-		}
-		return gform.stencils['gform_text'].render(get(), gform.stencils);
+	if(item.type == 'textarea'){
+      return gform.render('textarea', get());
+	}
+      return gform.render('text', get());
 	}
 	function get() {
 		item.widgetType = 'textbox';
-		item.isEnabled = true;
+		item.enabled = true;
 		return item;
 	}
 	function toJSON() {
@@ -20,12 +54,12 @@ Cobler.types.textbox = function(container) {
 		widgetType: 'textbox',
 		type: 'text',
 		label: 'Label',
-		isEnabled: true
+		enabled: true
 	}
 	var fields = [
 		{type: 'text', required: true, label: 'Field Label', name: 'label'},
 		{type: 'text', label: 'Name', name: 'name'},
-		{type: 'select', label: 'Display', name: 'type', value: 'dropdown', 'choices': [
+		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
 			{label: 'Single Line', value: 'text'},
 			{label: 'Multi-line', value: 'textarea'},
 			{label: 'Phone', value: 'phone'},
@@ -51,11 +85,12 @@ Cobler.types.textbox = function(container) {
 
 Cobler.types.select = function(container) {
 	function render() {
-		return gform.stencils['gform_' + item.type].render(get(), gform.stencils);
+		debugger;
+    return gform.render(item.type, get());
 	}
 	function get() {		
 		item.widgetType = 'select';
-		item.isEnabled = true;
+		item.enabled = true;
 		return item;
 	}
 	function toJSON() {
@@ -68,31 +103,31 @@ Cobler.types.select = function(container) {
 		widgetType: 'select',
 		type: 'select',
 		label: 'Label',
-		isEnabled: true
+		enabled: true
 	}
 	var fields = [
 		{type: 'fieldset', name:'basics', legend: '<i class="fa fa-th"></i> Basics', hideLabel: true, inline: true, fields:[
 			{type: 'text', required: true, label: 'Field Label', name: 'label'},
 			{type: 'text', label: 'Name', name: 'name'},
-			{type: 'select', label: 'Display', name: 'type', value: 'dropdown', choices: [
-				{name: 'Dropdown', value: 'select'},
-				{name: 'Radio', value: 'radio'},
-				{name: 'Range', value: 'range'}
+			{type: 'select', label: 'Display', name: 'type', value: 'select', options: [
+				{label: 'Dropdown', value: 'select'},
+				{label: 'Radio', value: 'radio'},
+				// {label: 'Range', value: 'range'}
 			]},
-			{type: 'text', label: 'External List', name: 'choices'},
+			// {type: 'text', label: 'External List', name: 'options'},
 
-			{type: 'text', label: 'Label-key', name: 'label_key'},
-			{type: 'text', label: 'Value-key', name: 'value_key'},
+			// {type: 'text', label: 'Label-key', name: 'label_key'},
+			// {type: 'text', label: 'Value-key', name: 'value_key'},
 
 			{type: 'text', label: 'Default Value', name: 'value'},
-			{type: 'number', label: 'Max', name: 'max'},
-			{type: 'number', label: 'Min', name: 'min'},
-			{type: 'number', label: 'Step', name: 'step'},
+			// {type: 'number', label: 'Max', name: 'max'},
+			// {type: 'number', label: 'Min', name: 'min'},
+			// {type: 'number', label: 'Step', name: 'step'},
 			{type: 'textarea', label: 'Instructions', name: 'help'},
 			{type: 'checkbox', label: 'Required', name: 'required'},
 		]},
-		{type: 'fieldset', name:'choices_c', legend: '<i class="fa fa-th-list"></i> Choices', hideLabel: true,  inline: true, fields:[
-			{type: 'fieldset', label: false, multiple: {duplicate: true}, name: 'options', fields: [
+		{type: 'fieldset', name:'options_c', legend: '<i class="fa fa-th-list"></i> options', hideLabel: true,  inline: true, fields:[
+			{type: 'fieldset', label: false, array: true, name: 'options', fields: [
 				{label: 'Label'},
 				{label: 'Value'}
 			]}
@@ -110,12 +145,13 @@ Cobler.types.select = function(container) {
 
 Cobler.types.checkbox = function(container) {
 	function render() {
-		item.container = 'span';
-		return gform.stencils['gform_checkbox'].render(get(), gform.stencils);
+		// item.container = 'span';
+    return gform.render('checkbox', get());
+
 	}
 	function get() {
 		item.widgetType = 'checkbox';
-		item.isEnabled = true;
+		item.enabled = true;
 
 		item.type = 'checkbox';
 		return item;
@@ -130,7 +166,7 @@ Cobler.types.checkbox = function(container) {
 		widgetType: 'checkbox',
 		type: 'checkbox',
 		label: 'Label',
-		isEnabled: true
+		enabled: true
 	}
 	var fields = [
 		{type: 'text', required: true, label: 'Field Label', name: 'label'},
@@ -153,11 +189,11 @@ Cobler.types.fieldset = function(container) {
 	function render() {
 		var temp = get();
 		temp.item = {legend : temp.legend};
-		return gform.stencils['gform_base_fieldset'].render(temp, gform.stencils);
+    return gform.render('gform_base_fieldset', get());
 	}
 	function get() {
 		item.widgetType = 'fieldset';
-		item.isEnabled = true;
+		item.enabled = true;
 
 		item.type = 'fieldset';
 		return item;

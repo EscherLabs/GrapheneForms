@@ -8,6 +8,8 @@ function Cobler(options) {
   var topics = {};
 	this.options = options
 	this.options.active = this.options.active || 'widget_active';
+	this.options.itemContainer = this.options.itemContainer || 'itemContainer';
+	this.options.itemTarget = this.options.itemTarget || 'cobler-li-content';
 
   options.removed = false;
 	//simple event bus with the topics object bound
@@ -31,13 +33,14 @@ function Cobler(options) {
 	function collection(target, items, cob){
 		var sortable;
 		function init() {
+			target.addEventListener('click', eventManager.bind(this));
 			if(!cob.options.disabled) {
 				target.addEventListener('click', instanceManager.bind(this));
 				target.className += ' cobler_container';
 				sortable = Sortable.create(target, {
 					forceFallback: !!cob.options.fallback,
 					group: cob.options.group || 'cb',
-					animation: 150,
+					animation: 50,
 					onSort: function (/**Event*/evt) {
 						if(cob.options.remove) {
 								cob.options.removed = items.splice(parseInt(evt.item.dataset.start, 10), 1)[0];
@@ -52,6 +55,7 @@ function Cobler(options) {
 						items.splice(getNodeIndex(evt.item), 0 , item);
 						evt.item.removeAttribute('data-start');
 						cob.publish('change', item);
+						cob.publish('reorder', item);
 					},
 					onStart: function (evt) {
 		        evt.item.dataset.start = getNodeIndex(evt.item);  // element index within parent
@@ -72,29 +76,51 @@ function Cobler(options) {
 			 	if(typeof A.dataset.type !== 'undefined') {
 					newItem = new Cobler.types[A.dataset.type](this);
 				}else{
-					var temp = cob.options.removed.get();
+					// var temp = cob.options.removed.get();
+					var temp = cob.options.removed.toJSON({editor:true});
 					newItem = new Cobler.types[temp.widgetType](this);
 					newItem.set(temp);
 					evt.newIndex = getNodeIndex(evt.item);
 				}
-				var renderedItem = renderItem(newItem);
+				var renderedItem = renderItem.call(this.owner,newItem);
 			 	var a = A.parentNode.replaceChild(renderedItem, A);
 				items.splice(evt.newIndex, 0 , newItem);
+				if(typeof newItem.initialize !== 'undefined'){
+					newItem.initialize(renderedItem)
+				}
+
 				if(typeof A.dataset.type !== 'undefined') {
-					// debugger;
 			 		activate(renderedItem);
 			 	}else{
 			 		cob.options.removed = false;
 			 	}
 			}
+			this.owner.publish('moved', newItem)
+		}
+		function eventManager(e){
+			if(typeof e.target.dataset.event !== 'undefined'){
+				var referenceNode = e.target.parentElement;
+				while(referenceNode !== null && !referenceNode.classList.contains('slice') && !referenceNode.classList.contains('widget')){
+					referenceNode = referenceNode.parentElement;
+				}
+
+				cob.publish(e.target.dataset.event, items[getNodeIndex(referenceNode)])
+			}
 		}
 		function instanceManager(e) {
-			var referenceNode = e.target.parentElement.parentElement;
+			var referenceNode = e.target.parentElement;
+			while(referenceNode !== null && !referenceNode.classList.contains('slice') && !referenceNode.classList.contains('widget')){
+				referenceNode = referenceNode.parentElement;
+			}
+
 			var classList = e.target.className.split(' ');
 			if(classList.indexOf('remove-item') >= 0){
-				var olditem = items.splice(getNodeIndex(referenceNode), 1);
-				target.removeChild(referenceNode);
-			 	cob.publish('change', olditem);
+				if(confirm('Are you sure you want to delete this widget?')){
+					var olditem = items.splice(getNodeIndex(referenceNode), 1);
+					target.removeChild(referenceNode);
+				 	cob.publish('remove', olditem);
+				 	cob.publish('change', olditem);
+			 	}
 			}else if(classList.indexOf('duplicate-item') >= 0){
 				deactivate();
 				var index = getNodeIndex(referenceNode);
@@ -116,18 +142,17 @@ function Cobler(options) {
 		function update(data, item) {
 			var item = item || items[active];
 			item.set(data);
-			var temp = renderItem(item);
+			var temp = renderItem.call(cob,item);
 			temp.className += ' ' + cob.options.active;
 			var modEL = elementOf(item);
 		 	var a = modEL.parentNode.replaceChild(temp, modEL);
+		 	if(typeof item.initialize !== 'undefined'){
+				item.initialize(temp)
+			}
 		 	cob.publish('change', item);
 		}
 		
 		function deactivate() {
-			// if(typeof mygform !== 'undefined'){
-			// 	mygform.destroy();
-			// 	mygform = undefined;
-			// }
 			active = null;
 			var elems = target.getElementsByClassName(cob.options.active);
 			[].forEach.call(elems, function(el) {
@@ -143,7 +168,7 @@ function Cobler(options) {
 			}
 		}
 		function addItem(widgetType, index, silent) {
-			if(typeof Cobler.types[widgetType.widgetType || widgetType] === 'undefined') {
+			if(typeof widgetType === 'undefined' || typeof Cobler.types[widgetType.widgetType || widgetType] === 'undefined') {
 				return false;
 			}
 			index = index || items.length;
@@ -152,19 +177,26 @@ function Cobler(options) {
 				newItem.set(widgetType);
 			}
 			items.splice(index, 0, newItem);
-			var renderedItem = renderItem(newItem);
-			target.insertBefore(renderedItem, target.getElementsByTagName('LI')[index]);
+			var renderedItem = renderItem.call(this.owner, newItem);
+
+			target.insertBefore(renderedItem, target.childNodes[index]);
+
+			// target.insertBefore(renderedItem, target.querySelectorAll(':scope > LI')[index]);
+
+			if(typeof newItem.initialize !== 'undefined'){
+				newItem.initialize(renderedItem)
+			}
 			if(!silent){
 				activate(renderedItem);
 				cob.publish('change', newItem)
 			}
 		}
-		function toJSON(obj) {
+		function toJSON(opts) {
 			var json = [];
 			for(var i in items){
-				json.push(items[i].toJSON());
+				json.push(items[i].toJSON(opts));
 			}
-			if(obj)return {target: target.dataset.id, items: json};
+			// if(typeof opts == 'undefined' || opts.object )return {target: target.dataset.id, items: json};
 			return json;
 		}
 		function toHTML() {
@@ -178,6 +210,7 @@ function Cobler(options) {
 			reset();
 			if(typeof sortable !== 'undefined') { sortable.destroy(); }
 			target.removeEventListener('click', instanceManager);
+			target.removeEventListener('click', eventManager);
 		}
 		function indexOf(item){
 			return items.indexOf(item);
@@ -197,7 +230,8 @@ function Cobler(options) {
 			owner: cob,
 			init: init,
 			indexOf: indexOf,
-			elementOf: elementOf
+			elementOf: elementOf,
+			items: items
 		}
 	}
 
@@ -205,12 +239,15 @@ function Cobler(options) {
 		var EL;
 		if(options.disabled){
 			EL = document.createElement('DIV');
-			EL.innerHTML = item.render();
 		} else {
 			EL = document.createElement('LI');
-			EL.innerHTML = templates.itemContainer.render();
-			EL.getElementsByClassName('cobler-li-content')[0].innerHTML = item.render();
 		}
+		EL.className = 'slice';
+					
+		EL.innerHTML = gform.render(item.template || this.options.itemContainer,item.get());
+
+		// EL.innerHTML = templates[item.template || this.options.itemContainer].render(item.get(), templates);
+		EL.getElementsByClassName(item.target || this.options.itemTarget)[0].innerHTML += item.render();
 		return EL;
 	}
 	function getNodeIndex(node) {
@@ -223,7 +260,6 @@ function Cobler(options) {
 	  return index;
 	}
 	function addCollection(target, item){
-		// debugger;
 		var newCol = new collection(target, item, this);
 		newCol.init();
 		collections.push(newCol);
@@ -254,36 +290,10 @@ function Cobler(options) {
 		clear: applyToEach.call(this, 'clear'),
 		deactivate: applyToEach.call(this, 'deactivate'),
 		destroy: applyToEach.call(this, 'destroy'),
-		on: this.subscribe//,
-		//trigger: this.publish.bind(this)
+		on: this.subscribe,
+		trigger: this.publish
 	};
 }
 
 Cobler.types = {};
 
-
-gformEditor = function(container){
-	return function(){
-		var formConfig = {
-			renderer: 'tabs', 
-			attributes: this.get(), 
-			fields: this.fields,
-			autoDestroy: true,
-			legend: 'Edit '+ this.get()['widgetType']
-		}
-		var opts = container.owner.options;
-		var events = 'save';
-		if(typeof opts.formTarget !== 'undefined' && opts.formTarget.length){
-			formConfig.actions = false;
-			events = 'change';
-		}	
-		var mygform = new gform(formConfig, opts.formTarget ||  $(container.elementOf(this)));
-		mygform.on(events, function(){
-		 	container.update(mygform.toJSON(), this);
-		 	mygform.trigger('saved');
-		}, this);
-		mygform.on('cancel',function(){
-		 	container.update(this.get(), this)
-		}, this)
-	}
-}
