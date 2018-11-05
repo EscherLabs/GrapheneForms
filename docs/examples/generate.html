@@ -29,10 +29,10 @@
     <script>
     options = {
         fields:[
-        {label: 'Up to Ten, min defaults to 0',type:'select',options:{max:10}},
-        {label: 'Start at two, step defaults to 1',type:'select',options:{min:2, max:10}},
-        {label: 'Step By Threes',type:'select',options:{min:1, max:10,step:3}},
-        {label: "Max must be set",type:'select',options:{ min:1, step:3}}
+        {label: 'Up to Ten, min defaults to 0',type:'select',max:10},
+        {label: 'Start at two, step defaults to 1',type:'select',min:2, max:10},
+        {label: 'Step By Threes',type:'select',min:1, max:10,step:3},
+        {label: "Max must be set",type:'select',min:1, step:3}
         ]
     }
     document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);

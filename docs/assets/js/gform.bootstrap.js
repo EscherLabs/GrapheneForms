@@ -45,7 +45,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />`,
 		{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
 		{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
 			<select class="form-control"  name="{{name}}" {{^enabled}}readonly disabled="true"{{/enabled}}  {{#multiple_enable}}multiple{{/multiple_enable}} >
-			{{#options}}{{#options}}
+			{{#options}}
 
 				{{^section}}
 				<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
@@ -64,7 +64,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />`,
 				{{/section.label}}
 				{{/section}}
 
-			{{/options}}{{/options}}
+			{{/options}}
 			</select>
 		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
 		{{^post}}{{#pre}}</div>{{/pre}}{{/post}}
@@ -87,23 +87,22 @@ select_options:`
 	{{/label}}
 		{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
 		{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
-			{{#options.options}}
+			{{#options}}
 			<div class="radio">
 				<label {{#inline}}class="radio-inline"{{/inline}}>
 					<input data-label="{{label}}" name="{{name}}" value="{{value}}" {{^enabled}}readonly{{/enabled}} type="radio" {{#selected}}checked=checked{{/selected}} >
 					{{{label}}}{{^label}}&nbsp;{{/label}}
 				</label>
 			</div>
-			{{/options.options}}
+			{{/options}}
 		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
 		{{^post}}{{#pre}}</div>{{/pre}}{{/post}}
 		{{>_addons}}
 		{{>_actions}}
 	</div>
 </div>`,
-    _fieldset: `<fieldset data-type="fieldset" name="{{name}}" id="{{id}}" class="{{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" >
+    _fieldset: `<fieldset data-type="fieldset" name="{{name}}" id="{{id}}" class="{{modifiers}} col-md-12" >
 {{#array}}
-<hr>
 <div class="btn-group actions">
 	<div class="gform-add btn btn-white"><i class="fa fa-plus text-success"></i></div><div class="btn btn-white gform-minus"><i class="fa fa-minus text-danger"></i></div>
 </div>
@@ -151,24 +150,19 @@ select_options:`
 		{{>_actions}}
 	</div>
 </div>`,
-//     tabs_container: _.template(`<div class="gform">
-//     <ul class="nav nav-tabs" style="margin-bottom:15px">
-//     <% _.forEach(fields, function(field) { %> 
-//         <% if(field.section){%><li>
-//             <a href="#tab<%=field.index%>" data-toggle="tab"><%=field.label%></a>
-//         </li>
-//         <%}%><% }); %>
-//     </ul>
-//     <form>
-//         <legend for="<%= name %>"><h4><%= legend %></h4></legend>
-//     </form>
-//     </div>`),
-//     tabs_fieldset: _.template(`<div class="gform">
-//         <fieldset name="<%= name %>" <%if(!isChild){ %>class="hello there"<% }; %>>
-//             <legend for="<%= name %>"><h5><%= label %></h5></legend><hr>
-//             <%if(array){%><%=gform.render("actions")%><%}; %>        
-//         </fieldset>
-//     </div>`)
+    tabs_container: `<div class="gform">
+<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
+	<ul class="nav nav-tabs" style="margin-bottom:15px">
+		{{#fields}}
+        {{#section}}
+		<li {{^index}}class="active"{{/index}}>
+            <a href="#tabs{{id}}" data-toggle="tab">{{{legend}}}</a>
+        </li>
+	    {{/section}}		
+		{{/fields}}
+    </ul></form>
+    </div>`,
+    tabs_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}}" id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`
 };
 
 

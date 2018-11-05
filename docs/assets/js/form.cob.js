@@ -2,11 +2,12 @@
 gformEditor = function(container){
 	return function(){
 		var formConfig = {
-			renderer: 'tabs', 
+			sections: 'tabs', 
 			data: this.get(), 
 			fields: this.fields,
 			autoDestroy: true,
 			legend: 'Edit '+ this.get()['widgetType']
+			
 		}
 		var opts = container.owner.options;
 		var events = 'save';
@@ -19,7 +20,6 @@ gformEditor = function(container){
 		}
 		var mygform = new gform(formConfig, $(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
 		mygform.on(events, function(){
-			debugger;//flatten
 			var temp = mygform.toJSON();
 			if(typeof temp.basics !== 'undefined'){
 				temp = $.extend({},temp.basics,temp.options_c)
@@ -85,7 +85,7 @@ Cobler.types.textbox = function(container) {
 
 Cobler.types.select = function(container) {
 	function render() {
-		debugger;
+		
     return gform.render(item.type, get());
 	}
 	function get() {		
@@ -120,9 +120,9 @@ Cobler.types.select = function(container) {
 			// {type: 'text', label: 'Value-key', name: 'value_key'},
 
 			{type: 'text', label: 'Default Value', name: 'value'},
-			// {type: 'number', label: 'Max', name: 'max'},
-			// {type: 'number', label: 'Min', name: 'min'},
-			// {type: 'number', label: 'Step', name: 'step'},
+			{type: 'number', label: 'Max', name: 'max'},
+			{type: 'number', label: 'Min', name: 'min'},
+			{type: 'number', label: 'Step', name: 'step'},
 			{type: 'textarea', label: 'Instructions', name: 'help'},
 			{type: 'checkbox', label: 'Required', name: 'required'},
 		]},

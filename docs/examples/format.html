@@ -35,9 +35,9 @@
     <script>
     options = {
         fields:[
-        {label: 'Custom label', name: 'label',type:'select',options:{max:10, format:{ label:'Option {{index}}' }}},
-        {label: 'Custom value', name: 'value',type:'select',options:{max:12,min:1, format:{ value:'option-{{value}}' }}},
-        {label: 'Both', name: 'both',type:'select',options:{max:12,min:1, format:{ label:'{{value}} Column(s)' ,value:'col-md-{{value}}' }},help:'Select a bootstrap column class'}
+        {label: 'Custom label', name: 'label',type:'select',max:10, format:{ label:'Option {{index}}' }},
+        {label: 'Custom value', name: 'value',type:'select',max:12,min:1, format:{ value:'option-{{value}}' }},
+        {label: 'Both', name: 'both',type:'select',max:12,min:1, format:{ label:'{{value}} Column(s)' ,value:'col-md-{{value}}' },help:'Select a bootstrap column class'}
         ]
     }
     document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);

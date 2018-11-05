@@ -52,9 +52,9 @@ gform.stencils = {
         <fieldset>
         {{>_label}}
         <span class="u-full-width">
-        {{#options}}{{#options}}
+        {{#options}}
         <label ><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
-        {{/options}}{{/options}}
+        {{/options}}
         </span>
         {{>_error}}
         </fieldset>

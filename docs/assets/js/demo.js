@@ -52,8 +52,7 @@ $('#cobler').on('click', function(e) {
     if(typeof forms[form] !== 'undefined'){
       var temp = $.extend(true, {}, forms[form]);
       for(var i in temp.fields){
-        // debugger;
-        temp.fields[i] = gform.options(temp.fields[i]);//gform.normalizeItem(, i);
+        temp.fields[i].options = gform.options(temp.fields[i]);//gform.normalizeItem(, i);
         switch(temp.fields[i].type) {
           case "select":
           case "radio":

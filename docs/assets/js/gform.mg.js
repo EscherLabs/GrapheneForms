@@ -34,7 +34,7 @@ text: `
     select: `
         {{>_label}}    
         <select name="{{name}}" value="{{value}}" id="{{id}}" />
-			{{#options}}{{#options}}
+			{{#options}}
 				{{^section}}
 				<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
 				{{/section}}
@@ -49,7 +49,7 @@ text: `
 				</optgroup>
 				{{/section.label}}
 				{{/section}}
-			{{/options}}{{/options}}
+			{{/options}}
         </select>
         {{>_error}}
         {{>_actions}}       
@@ -57,9 +57,9 @@ text: `
     radio: `
         {{>_label}}
         <span class="">
-        {{#options}}{{#options}}
+        {{#options}}
         <label ><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
-        {{/options}}{{/options}}
+        {{/options}}
         </span>
         {{>_error}}
         {{>_actions}}`,
