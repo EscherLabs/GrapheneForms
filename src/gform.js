@@ -11,6 +11,9 @@ var gform = function(data, el){
     }else{
         el = data.el = '';
     }
+    if(typeof this.el == 'undefined'){
+        this.el = document.querySelector('body');
+    }
     this.on = function (event, handler) {
         if (typeof this.handlers[event] !== 'object') {
         this.handlers[event] = [];
@@ -310,7 +313,7 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
         if(!field.target){
             field.target = '[name="'+field.name+'"]';
         }
-        var temp = this.container.querySelector(field.target)
+        var temp = this.el.querySelector(field.target)
         if(typeof temp !== 'undefined' && temp !== null    ){
             temp.appendChild(field.el);
         }else if(field.section){
@@ -386,11 +389,9 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
     }
 
     gform.processConditions.call(field, field.display, function(result){
-        if(this.visible !== result){
-            // this.parent.ref
-                              debugger;      
-            // gform.types[field.parent.type].reflow.call(field.parent);
-        }
+        // if(this.visible !== result){
+            // this.parent.reflow();
+        // }
         this.el.style.display = result ? "block" : "none";
         this.visible = result;        
     })      
@@ -497,11 +498,11 @@ gform.prototype.opts = {
   //  }
   // }
 
-gform.optionsObj = function(opts,value,count){
+gform.optionsObj = function(opts, value, count){
 	// If max is set on the field, assume a number set is desired. 
 	// min defaults to 0 and the step defaults to 1.
 
-	if(typeof opts.max !== 'undefined') {
+	if(typeof opts.max !== 'undefined' && opts.max !== '') {
         for(var i = (opts.min || 0);i<=opts.max;i=i+(opts.step || 1)){
             opts.options.push(""+i);
         }
@@ -511,9 +512,6 @@ gform.optionsObj = function(opts,value,count){
             // var section = {label:item.label};
             item.options = gform.optionsObj.call(this, _.merge({options:[]},gform.default, item),value,count);
             item.id = gform.getUID();
-
-            // item.section = item;
-            // this.options.push({"section":item});
 
             gform.processConditions.call(this, item.enable, function(id, result){
                 var op = this.el.querySelectorAll('[data-id="'+id+'"]');
@@ -528,14 +526,8 @@ gform.optionsObj = function(opts,value,count){
                   }
             }.bind(this,item.id))
             count += item.options.length;
-            // return section;
-            // debugger;
+
             return {section:item};
-            // return {section:{label:item.label,options:item.options,id:item.id}}
-            // return temp
-            // return item;
-
-
         }else{
             if(typeof item === 'string' || typeof item === 'number') {
                 item = {label: item, value:item};
@@ -571,51 +563,14 @@ gform.options = function(opts, value, count) {
         gform.ajax({path: newOpts.path, success:function(data) {
             this.options = data;  
             this.options = gform.options.call(this,this,this.value);
-            // gform.update(field)
             this.update()
         }.bind(this)})
-        // field.options = newOpts;
 		return newOpts;
     }
 
-    // if(_.isArray(opts.options)){
-        opts = _.merge({options:[]}, gform.default, opts);        
-    // }else{
-        // debugger;
-        // opts = _.merge({options:[]}, gform.default, opts.options);        
-    // }
+    opts = _.merge({options:[]}, gform.default, opts);        
 
-    // if(typeof field.default !== 'undefined' && field.options[0] !== field.default) {
-	// 	field.options.unshift(field.default);
-    // }
     newOpts.options =  gform.optionsObj.call(this,opts,value,count);
-
-    // if(_.isArray(opts.optgroups)){
-    //     count = count|| newOpts.options.length;
-    //     _.each(opts.optgroups, function(section) {
-
-    //         section.options = gform.optionsObj( _.merge({options:[]},gform.default, section),value,count);
-    //         section.id = gform.getUID();
-    //         newOpts.options.push({"section":section});
-
-    //         gform.processConditions.call(this, section.enable, function(id, result){
-    //             var op = this.el.querySelectorAll('[data-id="'+id+'"]');
-    //             for (var i = 0; i < op.length; i++) {
-    //                   op[i].disabled = !result;
-    //               }
-    //         }.bind(this,section.id))            
-    //         gform.processConditions.call(this, section.display, function(id, result){
-    //             var op = this.el.querySelectorAll('[data-id="'+id+'"]');
-    //             for (var i = 0; i < op.length; i++) {
-    //                   op[i].hidden = !result;
-    //               }
-    //         }.bind(this,section.id))
-
-    //         count += section.options.length;
-    //     }.bind(this))
-    // }
-
-
 
     if(typeof opts.placeholder == 'string'){
         newOpts.options.unshift({label:opts.placeholder, value:'',enabled:false,visible:false,selected:true})
@@ -625,12 +580,7 @@ gform.options = function(opts, value, count) {
 
 
 
-
-
-
-
-
-gform.VERSION = '0.0.0.2';
+gform.VERSION = '0.0.0.3';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
@@ -642,7 +592,6 @@ gform.types = {
         create: function(){
             var tempEl = document.createElement("span");
             tempEl.setAttribute("id", this.id);
-            // tempEl.setAttribute("data-columns", this.columns);
             tempEl.setAttribute("class", ''+gform.columnClasses[this.columns]);
             tempEl.innerHTML = this.render();
             return tempEl;
@@ -744,7 +693,11 @@ gform.types = {
     },
     'section':{
         create: function(){
-                return document.createRange().createContextualFragment(this.render()).firstElementChild;
+            var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
+
+            tempEl.setAttribute("id", this.id);
+            tempEl.setAttribute("class", tempEl.className+gform.columnClasses[this.columns]);
+            return tempEl;
         },
         initialize: function(){
             //handle rows
@@ -763,6 +716,53 @@ gform.types = {
         reflow: function(){
             gform.reflow.call(this)
         }
+    },
+    'button':{
+        defaults:{parsable:false, columns:2, target:".footer"},
+        create: function(){
+            var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
+            tempEl.setAttribute("id", this.id);
+            // tempEl.setAttribute("class", tempEl.className+' '+gform.columnClasses[this.columns]);
+            return tempEl;
+        },
+        initialize: function(){
+            this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
+            this.onclickEvent = function(){
+                if(this.enabled){
+                    this.owner.trigger(this.action, this.owner);
+                }
+            }.bind(this)
+            this.el.addEventListener('click',this.onclickEvent );	
+        },        
+        render: function(){
+            return gform.render('button', this);
+        },
+        satisfied: function(value){
+            return true    
+        },
+        update: function(item, silent) {
+            if(typeof item === 'object') {
+                _.extend(this, this.item, item);
+            }
+            
+            var oldDiv = document.getElementById(this.id);
+
+            this.destroy();
+            this.el = gform.types[this.type].create.call(this);
+            oldDiv.parentNode.replaceChild(this.el, oldDiv);
+            gform.types[this.type].initialize.call(this);
+        },        
+        destroy:function(){		
+            this.el.removeEventListener('click', this.onclickEvent);
+        },
+        get: function(name){
+            return null
+        },
+        set: function(value){
+        },
+        enable: function(state){
+            this.el.disabled = !state;
+        }
     }
 };
 gform.render = function(template, options){
@@ -773,7 +773,7 @@ gform.renderString = function(string,options){
 }
 
 gform.types['text']     = gform.types['number'] = gform.types['color'] = gform.types['input'];
-gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:0}});
+gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false}});
 gform.types['textarea'] = _.extend({}, gform.types['input'], gform.types['textarea']);
 gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);

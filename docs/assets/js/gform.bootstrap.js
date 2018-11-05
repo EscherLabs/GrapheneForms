@@ -1,5 +1,5 @@
 gform.stencils = {
-    _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
+    _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="footer row"></div>`,
     text: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
@@ -101,7 +101,7 @@ select_options:`
 		{{>_actions}}
 	</div>
 </div>`,
-    _fieldset: `<fieldset data-type="fieldset" name="{{name}}" id="{{id}}" class="{{modifiers}} col-md-12" >
+    _fieldset: `<div class="row"><fieldset data-type="fieldset" name="{{name}}" id="{{id}}" class="{{modifiers}} col-md-12" >
 {{#array}}
 <div class="btn-group actions">
 	<div class="gform-add btn btn-white"><i class="fa fa-plus text-success"></i></div><div class="btn btn-white gform-minus"><i class="fa fa-minus text-danger"></i></div>
@@ -114,7 +114,7 @@ select_options:`
 {{/item.legend}}
 {{/hideLabel}}
 <div style="position:relative;top:-20px">{{>_addons}}</div>
-</fieldset>`,
+</fieldset></div>`,
 	_actions: `{{#array}}
 	<div class="btn-group actions pull-right">
 	<div class="gform-add btn btn-white"><i class="fa fa-plus text-success"></i></div>
@@ -150,7 +150,8 @@ select_options:`
 		{{>_actions}}
 	</div>
 </div>`,
-    tabs_container: `<div class="gform">
+button:`<div class="btn btn-default {{modifiers}}" style="margin:0 15px 20px">{{{label}}}</div>`,
+    tab_container: `<div class="gform">
 <form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
 	<ul class="nav nav-tabs" style="margin-bottom:15px">
 		{{#fields}}
@@ -162,7 +163,25 @@ select_options:`
 		{{/fields}}
     </ul></form>
     </div>`,
-    tabs_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}}" id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`
+	tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}}" id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
+	modal_container:`<div class="modal fade" id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header {{modal.header_class}}">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">{{#icon}}<i class="fa fa-{{icon}}"></i> {{/icon}}{{{title}}}&nbsp;</h4>
+			</div>
+			<div class="modal-body">
+				{{{body}}}
+			</div>
+			<div class="modal-footer footer">
+				{{{footer}}}
+			</div>
+		</div>
+	</div>
+</div>
+`,
+modal_fieldset:`{{>_fieldset}}`
 };
 
 
