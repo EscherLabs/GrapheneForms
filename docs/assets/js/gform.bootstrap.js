@@ -1,5 +1,6 @@
 gform.stencils = {
-    _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="footer row"></div>`,
+	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
+    _container: `<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="footer row"></div>`,
     text: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
@@ -150,9 +151,9 @@ select_options:`
 		{{>_actions}}
 	</div>
 </div>`,
-button:`<div class="btn btn-default {{modifiers}}" style="margin:0 15px 20px">{{{label}}}</div>`,
-    tab_container: `<div class="gform">
-<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
+button:`<div class="btn btn-default {{modifiers}}" style="margin:0 15px">{{{label}}}</div>`,
+    tab_container: `
+<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
 	<ul class="nav nav-tabs" style="margin-bottom:15px">
 		{{#fields}}
         {{#section}}
@@ -161,22 +162,39 @@ button:`<div class="btn btn-default {{modifiers}}" style="margin:0 15px 20px">{{
         </li>
 	    {{/section}}		
 		{{/fields}}
-    </ul></form>
-    </div>`,
-	tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}}" id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
+	</ul></form>
+	</form><div class="footer row"></div>
+    `,
+	tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
 	modal_container:`<div class="modal fade" id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="myModalLabel">{{#icon}}<i class="fa fa-{{icon}}"></i> {{/icon}}{{{title}}}{{{title}}}&nbsp;</h4>
+				<h4 class="modal-title" id="myModalLabel">{{#icon}}<i class="fa fa-{{icon}}"></i> {{/icon}}{{{title}}}{{{legend}}}&nbsp;</h4>
 			</div>
 			<div class="modal-body">
 				{{{body}}}
-				{{>_container}}
+				{{^sections}}
+				<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}></form>
+				{{/sections}}
+				{{#sections}}
+				<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>   
+				<ul class="nav nav-tabs" style="margin-bottom:15px">
+					{{#fields}}
+					{{#section}}
+					<li {{^index}}class="active"{{/index}}>
+						<a href="#tabs{{id}}" data-toggle="tab">{{{legend}}}</a>
+					</li>
+					{{/section}}		
+					{{/fields}}
+				</ul></form>
+				{{/sections}}
+				
 			</div>
-			<div class="modal-footer footer">
+			<div class="modal-footer"  style="padding-right: 0;padding-left: 0;">
 				{{{footer}}}
+				<div class="footer"></div>
 			</div>
 		</div>
 	</div>

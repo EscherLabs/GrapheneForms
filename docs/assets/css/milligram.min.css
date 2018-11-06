@@ -596,3 +596,40 @@ img {
 .float-right {
   float: right;
 }
+
+
+ul.tabs{
+  margin: 0;
+  padding: 0 3.0rem;
+  list-style: none;
+}
+ul.tabs li{
+  background: none;
+  color: #333;
+  display: inline-block;
+  padding: .8rem 1rem .5rem;
+  cursor: pointer;
+  border:.1rem solid transparent;
+  border-bottom:none;
+  border-top-right-radius:.4rem;
+  border-top-left-radius:.4rem;
+  top:.1rem;
+  position:relative;
+}
+
+ul.tabs li.active{
+  background: #fcfcfc;
+  color: #333;
+  border-color:#9b4dca;
+}
+
+.tab-content{
+  display: none;
+  border-top:.1rem solid #9b4dca;
+  background: #fcfcfc;
+  padding: 1rem;
+}
+
+.tab-content.active{
+  display: inherit;
+}

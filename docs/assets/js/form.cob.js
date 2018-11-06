@@ -2,7 +2,7 @@
 gformEditor = function(container){
 	return function(){
 		var formConfig = {
-			sections: 'tabs', 
+			sections: 'tab', 
 			data: this.get(), 
 			fields: this.fields,
 			autoDestroy: true,

@@ -11,15 +11,7 @@ var gform = function(data, el){
     }else{
         el = data.el = '';
     }
-    if(typeof this.el == 'undefined'){
-        // this.options.clear = false;
-        // this.el = document.querySelector('body');
-        var temp = gform.create(gform.render('modal_container',this.options))
-        document.querySelector('body').appendChild(temp)
-        this.el = temp.querySelector('.modal-content')
 
-        $(temp).modal()
-    }
     this.on = function (event, handler) {
         if (typeof this.handlers[event] !== 'object') {
         this.handlers[event] = [];
@@ -35,10 +27,10 @@ var gform = function(data, el){
     this.debounce = function (event, handler) {
         this.on(event, _.debounce(handler, 250));
     }.bind(this);
+
     if (typeof this.options.data == 'string'){
         this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
     }
-    
     //set flag on all root fieldsets as a section
     if(this.options.sections){
         _.each(_.filter(this.options.schema,{type:'fieldset'}),function(item,i){
@@ -51,10 +43,8 @@ var gform = function(data, el){
     this.trigger('initialize');
 
     var create = function(){
-        if(this.options.clear) {
             this.el.innerHTML = gform.render(this.options.sections+'_container', this.options);
         }
-        debugger;
         this.container = this.el.querySelector((el || data.el) + ' form') || this.el;
         this.rows = {};
         this.fields = _.map(this.options.schema, gform.createField.bind(this, this, this.options.data||{}, null, null))
@@ -125,7 +115,6 @@ gform.reflow = function(){
             delete this.rows[i];
         }.bind(this))                        
         _.each(this.fields,function(field){
-            if(field.columns >0 && field.visible){
                 var cRow;
                 // cRow = field.owner.rows[field.owner.rows.length-1];
                 var formRows = field.parent.container.querySelectorAll('form > .'+field.owner.options.rowClass+',fieldset > .'+field.owner.options.rowClass);
@@ -288,7 +277,6 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
         field.reflow = gform.types[field.type].reflow.bind(field) || null;
     }
                         // gform.types[field.parent.type].reflow.call(field.parent);
-
     if(!field.target && !field.section && (this.options.clear || field.isChild)){
         if(field.columns >0){
 
@@ -475,38 +463,6 @@ gform.prototype.opts = {
     rowClass: 'row',
     requiredText: '<span style="color:red">*</span>'
 }
-
- //  var temp = {
-  //   options:{
-  //    options:[],
-  //    url:"",
-  //   //  function(){},
-  //    sections:[
-  //      {
-  //       label:"",
-  //       format:{
-  //         label:"{{label}}",
-  //         value:"{{value}}",
-  //       },
-  //       url:"",
-  //       min:null,
-  //       max:null,
-  //       step:1,
-  //       options:[],
-  //       "display": {
-  //         "matches": [
-  //           {"name": "f_n","value":["", "tim"]},
-  //         ],
-  //       } 
-  //       "enabled": {
-  //         "matches": [
-  //           {"name": "f_n","value":["", "tim"]},
-  //         ],
-  //       }
-  //      }
-  //    ]
-  //  }
-  // }
 
 gform.optionsObj = function(opts, value, count){
 	// If max is set on the field, assume a number set is desired. 
@@ -739,7 +695,6 @@ gform.types = {
             this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
             this.onclickEvent = function(){
                 if(this.enabled){
-                    this.owner.trigger(this.action, this.owner);
                 }
             }.bind(this)
             this.el.addEventListener('click',this.onclickEvent );	
@@ -748,7 +703,6 @@ gform.types = {
             return gform.render('button', this);
         },
         satisfied: function(value){
-            return true    
         },
         update: function(item, silent) {
             if(typeof item === 'object') {

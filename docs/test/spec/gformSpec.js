@@ -20,6 +20,7 @@ describe('gform Initialization', function () {
   });
 
 	it('should create a form', function () {
+    debugger;
 		expect(document.querySelector('form')).not.toBe(null);
 	});
 

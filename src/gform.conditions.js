@@ -19,20 +19,20 @@ gform.processConditions = function(conditions, func) {
 
 gform.conditions = {
 	requires: function(gform, args, func) {
-		return gform.events.on('change:' + args.name, function(args, local, topic, token) {
+		return gform.on('change:' + args.name, function(args, local, topic, token) {
 				func.call(this, (local.value !== null && local.value !== ''), token);
 			}.bind(this, args)
 		);
 	},
 	// valid_previous: function(gform, args) {},
 	not_matches: function(gform , args, func) {
-		return gform.events.on('change:' + args.name, function(args, local, topic, token) {
+		return gform.on('change:' + args.name, function(args, local, topic, token) {
 				func.call(this, (args.value  !== local.value), token);
 			}.bind(this, args)
 		);
 	},
 	test: function(gform, args, func) {
-		return gform.events.on('change:' + this.name, function(args, local, topic, token) {
+		return gform.on('change:' + this.name, function(args, local, topic, token) {
 				func.call(this, args(), token);
 			}.bind( this, args)
 		);
