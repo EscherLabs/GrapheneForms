@@ -4,9 +4,13 @@
     <!-- <link rel="stylesheet" href="../assets/css/normalize.css"> -->
   	<!-- <link rel="stylesheet" href="../assets/css/skeleton.css"> -->
   	<!-- <link rel="stylesheet" href="../assets/css/milligram.min.css"> -->
+  	 <!--<link rel="stylesheet" href="../assets/css/bulma.min.css"> -->
 	<link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'> 
 	<link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'> 
-  </head>
+		<script type='text/javascript' src='../assets/js/jquery.min.js'></script>
+
+		<script type='text/javascript' src='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>  
+		</head>
   <body>
    <div style="width:800px;margin:50px auto" id="form">
 		<div name="f_n"></div>
@@ -917,16 +921,18 @@ return false;
 				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'text',columns:6, array: {min:2,max:3}}]}]}
 			,
 			{
-				"label":"<i class=\"fa fa-check\"></i> Cancel",
+				"label":"<i class=\"fa fa-times\"></i> Cancel",
 				"action":"clear",
 				"modifiers": "btn-danger",
-				"type":"button"
+				"type":"button",
+				"target":'.modal-footer'
 			},
 			{
 				"label":"<i class=\"fa fa-check\"></i> Save",
 				"action":"save",
-				"modifiers": "btn-success",
-				"type":"button"
+				"modifiers": "btn-success pull-right",
+				"type":"button",
+				"target":'.modal-footer'
 			}
 
         ]
@@ -979,7 +985,7 @@ return false;
 // 	   fields:[
 //        {}
 //      ]}
-	options.el = '#form';
+	// options.el = '#form';
     var mygform = new gform(options)
     // mygform.debounce('change', function(field){
     //     field.owner.validate();

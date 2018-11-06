@@ -169,10 +169,11 @@ button:`<div class="btn btn-default {{modifiers}}" style="margin:0 15px 20px">{{
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="myModalLabel">{{#icon}}<i class="fa fa-{{icon}}"></i> {{/icon}}{{{title}}}&nbsp;</h4>
+				<h4 class="modal-title" id="myModalLabel">{{#icon}}<i class="fa fa-{{icon}}"></i> {{/icon}}{{{title}}}{{{title}}}&nbsp;</h4>
 			</div>
 			<div class="modal-body">
 				{{{body}}}
+				{{>_container}}
 			</div>
 			<div class="modal-footer footer">
 				{{{footer}}}

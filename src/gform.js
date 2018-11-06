@@ -12,7 +12,13 @@ var gform = function(data, el){
         el = data.el = '';
     }
     if(typeof this.el == 'undefined'){
-        this.el = document.querySelector('body');
+        // this.options.clear = false;
+        // this.el = document.querySelector('body');
+        var temp = gform.create(gform.render('modal_container',this.options))
+        document.querySelector('body').appendChild(temp)
+        this.el = temp.querySelector('.modal-content')
+
+        $(temp).modal()
     }
     this.on = function (event, handler) {
         if (typeof this.handlers[event] !== 'object') {
@@ -48,6 +54,7 @@ var gform = function(data, el){
         if(this.options.clear) {
             this.el.innerHTML = gform.render(this.options.sections+'_container', this.options);
         }
+        debugger;
         this.container = this.el.querySelector((el || data.el) + ' form') || this.el;
         this.rows = {};
         this.fields = _.map(this.options.schema, gform.createField.bind(this, this, this.options.data||{}, null, null))
@@ -133,6 +140,7 @@ gform.reflow = function(){
                     cRow.ref  = document.createElement("div");
                     cRow.ref.setAttribute("id", temp);
                     cRow.ref.setAttribute("class", field.owner.options.rowClass);
+                    cRow.ref.setAttribute("style", "margin-bottom:0;");
                     field.parent.rows[temp] = cRow;
                     field.parent.container.appendChild(cRow.ref);
                 }
@@ -298,6 +306,7 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
             cRow.ref  = document.createElement("div");
             cRow.ref.setAttribute("id", temp);
             cRow.ref.setAttribute("class", field.owner.options.rowClass);
+            cRow.ref.setAttribute("style", "margin-bottom:0;");
             field.parent.rows[temp] = cRow;
             field.parent.container.appendChild(cRow.ref);
         }
@@ -317,7 +326,7 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
         if(typeof temp !== 'undefined' && temp !== null    ){
             temp.appendChild(field.el);
         }else if(field.section){
-            field.owner.el.querySelector('.tab-content').appendChild(field.el);
+            field.owner.el.querySelector('.'+field.owner.options.sections+'-content').appendChild(field.el);
         }
        
     }
@@ -422,6 +431,7 @@ gform.rows = {
             cRow.ref  = document.createElement("div");
             cRow.ref.setAttribute("id", temp);
             cRow.ref.setAttribute("class", this.options.rowClass);
+            cRow.ref.setAttribute("style", "margin-bottom:0;");
             parent.rows[temp] = cRow;
             parent.container.appendChild(cRow.ref);
             return cRow
@@ -767,6 +777,9 @@ gform.types = {
 };
 gform.render = function(template, options){
     return gform.m(gform.stencils[template||'text'] || gform.stencils['text'],_.extend({},gform.stencils,options))
+}
+gform.create = function(text){
+   return document.createRange().createContextualFragment(text).firstElementChild;
 }
 gform.renderString = function(string,options){
     return gform.m(string||'', options||{})

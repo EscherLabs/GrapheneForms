@@ -5,14 +5,16 @@ gform.stencils = {
     </form>
 </div>`,
 text: `
+
 <div class="field">
-    {{>_label}}
-    <div class="control">
-    <input class="input" placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
-    </div>
-    {{>_error}}
     {{>_actions}}   
-</div>    
+  <label class="label">{{>_label}}</label>
+  <div class="control">
+    <input name="{{name}}" class="input" type="{{type}}" {{#selected}} checked {{/selected}} placeholder="{{placeholder}}" value="{{value}}" id="{{id}}">
+  </div>
+</div>
+
+    {{>_error}}
 `,checkbox: `
 <div class="field">
 
@@ -43,7 +45,7 @@ text: `
     <div class="control" style="width:100%">
     <div class="select" style="width:100%">
         <select name="{{name}}" style="width:100%" value="{{value}}" id="{{id}}" />
-			{{#options}}{{#options}}
+			{{#options}}
 				{{^section}}
 				<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
 				{{/section}}
@@ -58,7 +60,7 @@ text: `
 				</optgroup>
 				{{/section.label}}
 				{{/section}}
-			{{/options}}{{/options}}
+			{{/options}}
         </select>
         {{>_error}}
         </div></div>
@@ -67,9 +69,9 @@ text: `
     radio: `
         {{>_label}}
         <div class="control">
-        {{#options}}{{#options}}
+        {{#options}}
         <label class="radio"><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
-        {{/options}}{{/options}}
+        {{/options}}
         </div>
         {{>_error}}
         {{>_actions}}`,
@@ -81,7 +83,6 @@ text: `
     </div>`,
     _actions: `      
         {{#array}}
-        <hr>
         <div class="column">
         <input style="padding: 0 ;width:38px;" class="gform-add button button-outline" type="button" value="+">
         <input style="padding: 0 ;width:38px;" class="gform-minus button button-outline" type="button" value="-">
@@ -91,32 +92,15 @@ text: `
     _label: `      
     <label class="label" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>        
     `,
-    _error:`<small style="color:red;display:block;"></small>`,
-    tabs_container: `<div class="gform">
-    <ul class="nav nav-tabs" style="margin-bottom:15px">
-    {{#fields}}
-        {{#section}}<li>
-            <a href="#tab{{index}}" data-toggle="tab">{{label}}</a>
-        </li>
-        {{/section}}
-    {{/fields}}    
-    </ul>
-    <form>
-        <legend for="{{name}}"><h4>{{legend}}</h4></legend>
-    </form>
-    </div>`,
-    tabs_fieldset: `<div class="gform">
-        <fieldset name="{{name}}" {{#childild}}class="hello there"{{/childild}}
-            <legend for="{{name}}"><h5>{{label}}</h5></legend><hr>
-            {{>_actions}}       
-        </fieldset>
-    </div>`
+    _error:`<p class="help is-danger"></p>`,
+    tabs_container: `{{>_container}}`,
+    tabs_fieldset: `{{>_fieldset}}`
 };
 gform.columns = 12;
-gform.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column'})
+gform.columnClasses = _.map(['','is-one-fifth','is-one-fifth','is-one-quarter','is-one-third','is-two-fifths','is-half','is-three-fifths','is-two-thirds','is-three-quarters','is-four-fifths','is-four-fifths','is-full'],function(item){return ' column'})
 gform.prototype.opts.suffix = ""
 gform.prototype.opts.rowClass = "columns"
 
 gform.handleError = function(field){
-    field.el.querySelector('small').innerHTML = field.errors;
+    field.el.querySelector('help').innerHTML = field.errors;
 }

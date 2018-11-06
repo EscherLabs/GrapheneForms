@@ -185,6 +185,13 @@ input[type=search],
 input[type=tel],
 input[type=text],
 input[type=url],
+input[type=color],
+input[type=date],
+input[type=month],
+input[type=week],
+input[type=datetime],
+input[type=datetime-local],
+input:not([type]),
 textarea,
 select {
   appearance: none;
@@ -204,6 +211,13 @@ input[type=search]:focus,
 input[type=tel]:focus,
 input[type=text]:focus,
 input[type=url]:focus,
+input[type=color]:focus,
+input[type=date]:focus,
+input[type=month]:focus,
+input[type=week]:focus,
+input[type=datetime]:focus,
+input[type=datetime-local]:focus,
+input:not([type]):focus,
 textarea:focus,
 select:focus {
   border-color: #1690d8;
@@ -211,11 +225,11 @@ select:focus {
 }
 
 select {
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path fill="#d1d1d1" d="M9.37727 3.625l5.08154 6.93523L19.54036 3.625"/></svg>') center right no-repeat;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path fill="%23d1d1d1" d="M9.37727 3.625l5.08154 6.93523L19.54036 3.625"/></svg>') center right no-repeat;
   padding-right: 3rem;
 }
 select:focus {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path fill="#9b4dca" d="M9.37727 3.625l5.08154 6.93523L19.54036 3.625"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path fill="%231690d8" d="M9.37727 3.625l5.08154 6.93523L19.54036 3.625"/></svg>');
 }
 
 textarea {
@@ -466,6 +480,51 @@ th:last-child {
   padding-right: 0;
 }
 
+@media screen and (max-width: 40rem) {
+  table {
+    border-spacing: 0;
+    display: flex;
+    width: 100%;
+  }
+  table thead {
+    border-right: solid 0.1rem #e1e1e1;
+  }
+  table thead td,
+table thead th {
+    padding-left: 0;
+  }
+  table thead td:first-child,
+table thead th:first-child {
+    padding-left: 0;
+  }
+  table thead td:last-child,
+table thead th:last-child {
+    padding-right: 1.2rem;
+  }
+  table tbody {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  table tbody tr {
+    border-right: solid 0.1rem #e1e1e1;
+  }
+  table tbody tr:last-child {
+    border-right: none;
+  }
+  table td,
+table th {
+    display: block;
+  }
+  table td:first-child,
+table th:first-child {
+    padding-left: 1.2rem;
+  }
+  table td:last-child,
+table th:last-child {
+    padding-right: 1.2rem;
+  }
+}
 b,
 strong {
   font-weight: bold;
