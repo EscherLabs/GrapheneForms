@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- <link rel="stylesheet" href="../assets/css/normalize.css"> -->
+    <link rel="stylesheet" href="../assets/css/normalize.css">
   	<!-- <link rel="stylesheet" href="../assets/css/skeleton.css"> -->
-  	<!-- <link rel="stylesheet" href="../assets/css/milligram.min.css"> -->
+  	<link rel="stylesheet" href="../assets/css/milligram.min.css">
   	 <!--<link rel="stylesheet" href="../assets/css/bulma.min.css"> -->
-	<link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'> 
-	<link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'> 
+	<!-- <link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>  -->
+	<!-- <link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>  -->
 		<script type='text/javascript' src='../assets/js/jquery.min.js'></script>
 
-		<script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>  
+		<!-- <script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>   -->
 		</head>
   <body>
    <div style="width:800px;margin:50px auto" id="form">
@@ -27,8 +27,8 @@
      <script type='text/javascript' src='../../src/gform.validate.js'></script>     
     <!-- <script type='text/javascript' src='../src/hogan-3.0.1.js'></script>     -->
     <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.gform.js'></script>    */-->
-	<!-- <script type='text/javascript' src='../assets/js/gform.mg.js'></script> -->
-	 <script type='text/javascript' src='../assets/js/gform.bootstrap.js'></script> 
+	<script type='text/javascript' src='../assets/js/gform.mg.js'></script>
+	 <!-- <script type='text/javascript' src='../assets/js/gform.bootstrap.js'></script>  -->
 
   <script>
 
@@ -128,21 +128,21 @@ return false;
 				"action":"cancel",
 				"modifiers": "btn-danger",
 				"type":"button",
-				"target":'.modal-footer'
+				// "target":'.modal-footer'
 			},
 			{
 				"label":"<i class=\"fa fa-check\"></i> Save",
 				"action":"save",
 				"modifiers": "btn-success pull-right",
 				"type":"button",
-				"target":'.modal-footer'
+				// "target":'.modal-footer'
 			}
 
         ]
    }
  
 
-   optionss = {
+   options = {
 	   fields:[
 
 	   {type: 'fieldset', name:'basics', legend: 'General', hideLabel: true, inline: true, fields:[
@@ -173,12 +173,27 @@ return false;
 			// 	]}
 			// ]}
 		]},
-		// {type: 'fieldset', name:'choices_c', legend: '<i class="fa fa-th-list"></i> Options', hideLabel: true,  inline: true, fields:[
+		{type: 'fieldset', name:'choices_c', legend: '<i class="fa fa-th-list"></i> Options', hideLabel: true,  inline: true, fields:[
 			{type: 'fieldset', label: 'Options',  array: {max:2}, name: 'options', fields: [
 				{label: 'Label'},
 				{label: 'Value'}
 			]}
-		// ]}
+		]}
+			,
+			{
+				"label":"<i class=\"fa fa-times\"></i> Cancel",
+				"action":"cancel",
+				"modifiers": "btn-danger",
+				"type":"button",
+				// "target":'.modal-footer'
+			},
+			{
+				"label":"<i class=\"fa fa-check\"></i> Save",
+				"action":"save",
+				"modifiers": "btn-success pull-right",
+				"type":"button",
+				// "target":'.modal-footer'
+			}
 
 	   ]
    }

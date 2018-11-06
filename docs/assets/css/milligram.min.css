@@ -605,7 +605,6 @@ ul.tabs{
 }
 ul.tabs li{
   background: none;
-  color: #333;
   display: inline-block;
   padding: .8rem 1rem .5rem;
   cursor: pointer;
@@ -613,23 +612,23 @@ ul.tabs li{
   border-bottom:none;
   border-top-right-radius:.4rem;
   border-top-left-radius:.4rem;
-  top:.1rem;
-  position:relative;
+  margin-bottom:-.1rem;
 }
+ul.tabs li a{color: #606c76;}
 
+/* ul.tabs li.active a{  color: #333;} */
 ul.tabs li.active{
   background: #fcfcfc;
-  color: #333;
-  border-color:#9b4dca;
+  border-color:#1690d8;
 }
 
-.tab-content{
+.tab-pane{
   display: none;
-  border-top:.1rem solid #9b4dca;
+  border-top:.1rem solid #1690d8;
   background: #fcfcfc;
   padding: 1rem;
 }
 
-.tab-content.active{
+.tab-pane.active{
   display: inherit;
 }

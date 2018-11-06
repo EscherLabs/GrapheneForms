@@ -1,6 +1,6 @@
 gform.stencils = {
     _container: `
-    <form novalidate>
+    <form novalidate  {{^autocomplete}}autocomplete="false"{{/autocomplete}}>
     {{#legend}}<legend for="{{name}}"><h4>{{legend}}</h4></legend>{{/legend}}
     </form>
     <div class="row footer"></div>`,
@@ -84,9 +84,9 @@ _label: `
 `,
 _error:`<small style="color:red;display:block;"></small>`,
 button:`<span class="button {{modifiers}}" style="margin:0 10px 20px">{{{label}}}</span>`,
-tabs_container: `<div class="gform">
+tab_container: `
 <form id="{{name}}" novalidate {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
-	<ul class="tabs" style="margin-bottom:15px">
+	<ul class="tabs">
 		{{#fields}}
         {{#section}}
 		<li {{^index}}class="active"{{/index}}>
@@ -95,8 +95,8 @@ tabs_container: `<div class="gform">
 	    {{/section}}		
 		{{/fields}}
     </ul></form>
-    </div>`,
-tabs_fieldset: `{{#section}}<div class="tab-content {{^index}}active{{/index}}" id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`
+	<div class="footer row"></div>`,
+tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`
 };
 gform.columns = 12;
 gform.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-'+item+' column'})
