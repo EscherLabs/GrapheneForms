@@ -8,7 +8,6 @@
     <link rel="icon" href="../assets/favicon.png">
 
     <title>Example:Basic - Graphene:Forms</title>
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
     <link rel="stylesheet" href="../assets/css/normalize.css">    
     <link rel="stylesheet" href="../assets/css/milligram.min.css">
   </head>
@@ -43,23 +42,14 @@
     document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
     var mygform = new gform(options, '#form')
     mygform.on('change',function(d){
-        // if(typeof d.owner !== 'undefined'){
-        // document.querySelector('#result code').classList = "prettyprint"
-        // document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.owner.toJSON(),null,2);
-        // d.owner.validate();
-        // PR.prettyPrint();
-        // }else{
-        // if(typeof d.toJSON !== 'undefined'){
-            if(d.validate()){
-                document.querySelector('#result code').classList = "prettyprint"
-                document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
-                PR.prettyPrint();
-            }
-        // }
-        // }
+        if(d.validate()){
+            document.querySelector('#result code').classList = "prettyprint"
+            document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
+            PR.prettyPrint();
+        }
     })
 
-    mygform.trigger('change',mygform)
+    mygform.trigger('change', mygform)
 
 
     </script>

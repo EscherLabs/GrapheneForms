@@ -1,17 +1,8 @@
 var gform = function(data, el){
     "use strict";
+
+    //event management
     this.handlers = {};
-
-    //initalize form
-    this.options = _.assignIn({legend: '', default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
-
-    this.el = el || data.el;
-    if(typeof this.el == 'string'){
-        this.el = document.querySelector(this.el);
-    }else{
-        el = data.el = '';
-    }
-
     this.on = function (event, handler) {
         if (typeof this.handlers[event] !== 'object') {
         this.handlers[event] = [];
@@ -19,18 +10,24 @@ var gform = function(data, el){
         this.handlers[event].push(handler);
     }.bind(this);
     this.trigger = function (event) {
-    var args = Array.prototype.slice.call(arguments,1)
-      _.each(this.handlers[event], function (handler) {
-        handler.apply(this, args);
-      });
+        var args = Array.prototype.slice.call(arguments,1)
+        _.each(this.handlers[event], function (handler) {
+            handler.apply(this, args);
+        });
     }.bind(this);
     this.debounce = function (event, handler) {
         this.on(event, _.debounce(handler, 250));
     }.bind(this);
 
+    
+    //initalize form
+    // _.defaultsDeep({},
+    this.options = _.assignIn({legend: '', default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
+
     if (typeof this.options.data == 'string'){
         this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
     }
+
     //set flag on all root fieldsets as a section
     if(this.options.sections){
         _.each(_.filter(this.options.fields,{type:'fieldset'}),function(item,i){
@@ -40,28 +37,62 @@ var gform = function(data, el){
             // item.text = item.legend || item.label || i;
         return item})
     }
+    
+    this.el = el || data.el;
+    if(typeof this.el == 'string'){
+        this.el = document.querySelector(this.el);
+    }else{
+        el = '';
+    }
+
+    // if(typeof this.el == 'undefined'){
+    //     this.options.renderer = 'modal';
+    //     this.el = gform.create(gform.render('modal_container', this.options))
+    //     document.querySelector('body').appendChild(this.el)
+    //     data.el = '.modal-content'
+        
+    //     $(this.el).modal()
+    //     this.on('cancel', function(form){
+    //         $(form.el).modal('hide');
+    //     });
+    //     this.on('save', function(form){
+    //         console.log(form.toJSON())
+    //         $(form.el).modal('hide');
+    //     });
+    // }
+    this.trigger('initialize');
+
+    var create = function(){
+
     if(typeof this.el == 'undefined'){
         this.options.renderer = 'modal';
         this.el = gform.create(gform.render('modal_container', this.options))
         document.querySelector('body').appendChild(this.el)
-        data.el = '.modal-content'
-        
-        $(this.el).modal()
+        gform.addClass(this.el, 'active')
+
         this.on('cancel', function(form){
-            $(form.el).modal('hide');
+            gform.removeClass(form.el, 'active')
+            form.destroy();
+            document.body.removeChild(form.el);
+            delete this.el;
         });
         this.on('save', function(form){
             console.log(form.toJSON())
-            $(form.el).modal('hide');
+            gform.removeClass(form.el, 'active')
         });
+        this.el.querySelector('.close').addEventListener('click', function(e){
+            this.trigger('cancel', this, e)}.bind(this)
+        )
+        document.addEventListener('keyup',function(e) {
+            if (e.key === "Escape") { // escape key maps to keycode `27`
+               this.trigger('cancel', this, e)
+           }
+       }.bind(this));
     }
-    this.trigger('initialize');
-
-    var create = function(){
         if(this.options.clear && !(this.options.renderer == 'modal')){
             this.el.innerHTML = gform.render(this.options.sections+'_container', this.options);
         }
-        this.container = this.el.querySelector((el || data.el) + ' form') || this.el;
+        this.container = this.el.querySelector(el + ' form') || this.el;
 
         this.rows = {};
         this.fields = _.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
@@ -106,34 +137,16 @@ var gform = function(data, el){
     
     
     var tabs  = this.el.querySelectorAll('ul.tabs li')
-        for (var i = 0; i < tabs.length; i++) {
-            tabs[i].addEventListener('click', function(e){
-                e.preventDefault();
-                var activeTab = this.el.querySelector('ul.tabs .active');
-                activeTab.classList = activeTab.classList.value.split('active').join('')
-
-
-                activeTab = this.el.querySelector('.tab-pane.active');
-                activeTab.classList = activeTab.classList.value.split('active').join('');
-
-                e.currentTarget.classList = e.currentTarget.classList.value+" active";
-                this.el.querySelector('#'+e.currentTarget.firstElementChild.href.split('#')[1]).classList = this.el.querySelector('#'+e.currentTarget.firstElementChild.href.split('#')[1]).classList.value+" active";
-            }.bind(this))
-        }
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].addEventListener('click', function(e){
+            e.preventDefault();
+            gform.removeClass(this.el.querySelector('ul.tabs .active'), 'active')
+            gform.removeClass(this.el.querySelector('.tab-pane.active'), 'active')
+            gform.addClass(e.currentTarget,'active')
+            gform.addClass(this.el.querySelector('#'+e.currentTarget.firstElementChild.href.split('#')[1]),'active')
+        }.bind(this))
+    }
                   
-
-    // $('ul.tabs li').click(function(){
-    //     var tab_id = $(this).attr('data-tab');
-
-    //     $('ul.tabs li').removeClass('current');
-    //     $('.tab-content').removeClass('current');
-
-    //     $(this).addClass('current');
-    //     $("#"+tab_id).addClass('current');
-    // })
-
-
-
 }
 //parse form values into JSON object
 gform.toJSON = function(name) {
@@ -353,7 +366,7 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
         field.row = temp;
         }
     }else{
-
+debugger;
         if(!field.target){
             field.target = '[name="'+field.name+'"]';
         }
@@ -788,6 +801,17 @@ gform.renderString = function(string,options){
     return gform.m(string||'', options||{})
 }
 
+
+// add some classes. Eg. 'nav' and 'nav header'
+gform.addClass = function(elem, classes){
+    elem.className = _.chain(elem.className).split(/[\s]+/).union(classes.split(' ')).join(' ').value()
+
+};
+gform.removeClass = function(elem, classes){
+    elem.className = _.chain(elem.className).split(/[\s]+/).difference(classes.split(' ')).join(' ').value()
+};
+
+// remove the added classes
 gform.types['text']     = gform.types['number'] = gform.types['color'] = gform.types['input'];
 gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false}});
 gform.types['textarea'] = _.extend({}, gform.types['input'], gform.types['textarea']);

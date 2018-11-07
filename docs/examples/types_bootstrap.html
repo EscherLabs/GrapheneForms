@@ -41,18 +41,10 @@
     document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
     var mygform = new gform(options, '#form')
     mygform.debounce('change',function(d){
-        if(typeof d.owner !== 'undefined'){
+        if(d.validate()){
             document.querySelector('#result code').classList = "prettyprint"
-            document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.owner.toJSON(),null,2);
-            d.owner.validate();
+            document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
             PR.prettyPrint();
-            }else{
-            if(typeof d.toJSON !== 'undefined'){
-                document.querySelector('#result code').classList = "prettyprint"
-                document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
-                d.validate();
-                PR.prettyPrint();
-            }
         }
     })
 

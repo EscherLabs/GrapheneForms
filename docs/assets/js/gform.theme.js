@@ -65,16 +65,17 @@ radio: `
     {{>_actions}}`,
 _fieldset: `
     <fieldset name="{{name}}">
-    <legend for="{{name}}"><h5>{{{label}}}</h5></legend>
-    {{>_actions}}       
+    <div class="row">
+    {{^section}}<legend class="column" for="{{name}}"><h5>{{{label}}}</h5></legend>{{/section}}
+    {{>_actions}}
+    </div>   
     </fieldset>
 `,
 _actions: `      
     {{#array}}
-    <hr>
     <div class="column">
-    <input style="padding: 0 ;width:38px; border-color:green;color:green" class="gform-add button button-outline" type="button" value="+">
-    <input style="padding: 0 ;width:38px; border-color:red;color:red" class="gform-minus button button-outline" type="button" value="-">
+    <input style="padding: 0 ;padding:0 1.5rem; border-color:green;color:green;float:right;margin:0 5px" class="gform-add button button-outline" type="button" value="+">
+    <input style="padding: 0 ;padding:0 1.5rem; border-color:red;color:red;float:right;margin:0 5px" class="gform-minus button button-outline" type="button" value="-">
     </div>
     {{/array}}
 `,
@@ -83,7 +84,52 @@ _label: `
 <small class="form-help"> {{{help}}}</small>
 `,
 _error:`<small style="color:red;display:block;"></small>`,
-button:`<span class="button {{modifiers}}" style="margin:0 10px 0">{{{label}}}</span>`,
+button:`<button type="button" role=”button” class="button {{modifiers}}" style="margin:0 10px 0">{{{label}}}</button>`,
+tab_container: `
+<form id="{{name}}" novalidate {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>
+{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}
+	<ul class="tabs">
+		{{#fields}}
+        {{#section}}
+		<li {{^index}}class="active"{{/index}}>
+            <a href="#tabs{{id}}" data-toggle="tab">{{{legend}}}</a>
+        </li>
+	    {{/section}}		
+		{{/fields}}
+    </ul></form>
+	<div class="footer row"></div>`,
+tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
+modal_container:`<div class="modal">
+<div class="modal-background"></div>
+<div class="modal-card">
+  <header class="modal-card-head">
+    <legend class="modal-card-title">{{#legend}}{{{legend}}}{{/legend}}
+    </legend>
+    <span class="button button-outline close" aria-label="close" style="padding:0 1.5rem;margin:0">X</span>
+  </header>
+  <section class="modal-card-body">
+    {{^sections}}
+    <form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}></form>
+    {{/sections}}
+    {{#sections}}
+    <form id="{{name}}" novalidate {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>
+	<ul class="tabs">
+		{{#fields}}
+        {{#section}}
+		<li {{^index}}class="active"{{/index}}>
+            <a href="#tabs{{id}}" data-toggle="tab">{{{legend}}}</a>
+        </li>
+	    {{/section}}		
+		{{/fields}}
+    </ul></form>
+    {{/sections}}
+  </section>
+  <footer class="modal-card-foot">
+  <div class="footer" style="width:100%"></div>
+
+  </footer>
+</div>
+</div>`
 };
 
 gform.columns = 12;

@@ -3,21 +3,22 @@
   <head>
     <link rel="stylesheet" href="../assets/css/normalize.css">
   	<!-- <link rel="stylesheet" href="../assets/css/skeleton.css"> -->
-  	<link rel="stylesheet" href="../assets/css/milligram.min.css">
+  	<link rel="stylesheet" href="../assets/css/gform.css">
   	 <!--<link rel="stylesheet" href="../assets/css/bulma.min.css"> -->
 	<!-- <link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>  -->
 	<!-- <link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>  -->
-		<script type='text/javascript' src='../assets/js/jquery.min.js'></script>
+		<!-- <script type='text/javascript' src='../assets/js/jquery.min.js'></script> -->
 
 		<!-- <script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>   -->
 		</head>
   <body>
-   <div style="width:800px;margin:50px auto" id="form">
+   <div style="max-width:800px;padding:0 20px;margin:50px auto" id="form">
 		<div name="f_n"></div>
 		Hello
 		<div name="last_name"></div>
+		<div name="candies"></div>
 	</div>
-   <pre style="width:800px;margin:50px auto" id="result"></pre>
+   <pre style="max-width:800px;padding:0 20px;margin:50px auto" id="result"></pre>
     <script src="../assets/js/lodash.min.js"></script>    
     <!--<script type='text/javascript' src='./assets/js/gform.min.js'></script>-->
       <script type='text/javascript' src='../../src/gform.js'></script>  
@@ -27,7 +28,7 @@
      <script type='text/javascript' src='../../src/gform.validate.js'></script>     
     <!-- <script type='text/javascript' src='../src/hogan-3.0.1.js'></script>     -->
     <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.gform.js'></script>    */-->
-	<script type='text/javascript' src='../assets/js/gform.mg.js'></script>
+	<script type='text/javascript' src='../assets/js/gform.theme.js'></script>
 	 <!-- <script type='text/javascript' src='../assets/js/gform.bootstrap.js'></script>  -->
 
   <script>
@@ -142,7 +143,8 @@ return false;
    }
  
 
-   options = {
+   optionss = {
+     legend:"Select Options",
 	   fields:[
 
 	   {type: 'fieldset', name:'basics', legend: 'General', hideLabel: true, inline: true, fields:[
@@ -202,8 +204,9 @@ return false;
 
 	   ]
    }
-   options.sections = 'tab'
-//    options.clear = false;
+  //  options.sections = 'tab'
+  //  debugger;
+   options.clear = false;
 // options = {
 // 	   fields:[
 //        {}
