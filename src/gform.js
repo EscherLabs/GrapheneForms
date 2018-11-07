@@ -105,15 +105,32 @@ var gform = function(data, el){
     };
     
     
-    $('ul.tabs li').click(function(){
-        var tab_id = $(this).attr('data-tab');
+    var tabs  = this.el.querySelectorAll('ul.tabs li')
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].addEventListener('click', function(e){
+                e.preventDefault();
+                var activeTab = this.el.querySelector('ul.tabs .active');
+                activeTab.classList = activeTab.classList.value.split('active').join('')
 
-        $('ul.tabs li').removeClass('current');
-        $('.tab-content').removeClass('current');
 
-        $(this).addClass('current');
-        $("#"+tab_id).addClass('current');
-    })
+                activeTab = this.el.querySelector('.tab-pane.active');
+                activeTab.classList = activeTab.classList.value.split('active').join('');
+
+                e.currentTarget.classList = e.currentTarget.classList.value+" active";
+                this.el.querySelector('#'+e.currentTarget.firstElementChild.href.split('#')[1]).classList = this.el.querySelector('#'+e.currentTarget.firstElementChild.href.split('#')[1]).classList.value+" active";
+            }.bind(this))
+        }
+                  
+
+    // $('ul.tabs li').click(function(){
+    //     var tab_id = $(this).attr('data-tab');
+
+    //     $('ul.tabs li').removeClass('current');
+    //     $('.tab-content').removeClass('current');
+
+    //     $(this).addClass('current');
+    //     $("#"+tab_id).addClass('current');
+    // })
 
 
 

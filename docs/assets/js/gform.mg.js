@@ -1,7 +1,7 @@
 gform.stencils = {
     _container: `
     <form novalidate  {{^autocomplete}}autocomplete="false"{{/autocomplete}}>
-    {{#legend}}<legend for="{{name}}"><h4>{{legend}}</h4></legend>{{/legend}}
+    {{#legend}}<legend for="{{name}}"><h4>{{{legend}}}</h4></legend>{{/legend}}
     </form>
     <div class="row footer"></div>`,
 text: `
@@ -65,7 +65,7 @@ radio: `
     {{>_actions}}`,
 _fieldset: `
     <fieldset name="{{name}}">
-    <legend for="{{name}}"><h5>{{label}}</h5></legend>
+    <legend for="{{name}}"><h5>{{{label}}}</h5></legend>
     {{>_actions}}       
     </fieldset>
 `,
@@ -105,3 +105,15 @@ gform.prototype.opts.suffix = ""
 gform.handleError = function(field){
     field.el.querySelector('small').innerHTML = field.errors;
 }
+gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+				"label":"<i class=\"fa fa-times\"></i> Cancel",
+				"action":"cancel",
+				"modifiers": "button-outline",
+				"type":"button"			}});
+gform.types['save']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+				"label":"<i class=\"fa fa-check\"></i> Save",
+				"action":"save",
+				"modifiers": "float-right",
+				"type":"button"			}});
+
+

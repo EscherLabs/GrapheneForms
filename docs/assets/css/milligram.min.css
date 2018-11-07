@@ -600,7 +600,7 @@ img {
 
 ul.tabs{
   margin: 0;
-  padding: 0 3.0rem;
+  padding: 0 0.5rem;
   list-style: none;
 }
 ul.tabs li{
@@ -610,22 +610,20 @@ ul.tabs li{
   cursor: pointer;
   border:.1rem solid transparent;
   border-bottom:none;
-  border-top-right-radius:.4rem;
-  border-top-left-radius:.4rem;
+  border-radius:.4rem .4rem 0 0;
   margin-bottom:-.1rem;
 }
 ul.tabs li a{color: #606c76;}
 
-/* ul.tabs li.active a{  color: #333;} */
 ul.tabs li.active{
-  background: #fcfcfc;
+  background: #fff;
   border-color:#1690d8;
 }
 
 .tab-pane{
   display: none;
   border-top:.1rem solid #1690d8;
-  background: #fcfcfc;
+  background: #fff;
   padding: 1rem;
 }
 
