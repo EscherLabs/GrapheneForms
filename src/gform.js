@@ -92,10 +92,11 @@ var gform = function(data, el){
         if(this.options.clear && !(this.options.renderer == 'modal')){
             this.el.innerHTML = gform.render(this.options.sections+'_container', this.options);
         }
-        this.container = this.el.querySelector(el + ' form') || this.el;
+        this.container = this.el.querySelector('form') || this.el;
 
         this.rows = {};
         this.fields = _.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
+        // debugger;
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
         _.each(this.fields, function(field) {
             field.owner.trigger('change:' + field.name,field.owner, field);
@@ -135,17 +136,26 @@ var gform = function(data, el){
 		this.trigger('destroyed');
     };
     
-    
-    var tabs  = this.el.querySelectorAll('ul.tabs li')
-    for (var i = 0; i < tabs.length; i++) {
-        tabs[i].addEventListener('click', function(e){
+     this.el.querySelector('ul.tabs').addEventListener('click',function(e){
+         if(e.target.nodeName == "UL"){return;}
+         if(e.target.nodeName == 'LI'){
             e.preventDefault();
             gform.removeClass(this.el.querySelector('ul.tabs .active'), 'active')
             gform.removeClass(this.el.querySelector('.tab-pane.active'), 'active')
-            gform.addClass(e.currentTarget,'active')
-            gform.addClass(this.el.querySelector('#'+e.currentTarget.firstElementChild.href.split('#')[1]),'active')
-        }.bind(this))
-    }
+            gform.addClass(e.target,'active')
+            gform.addClass(this.el.querySelector('#'+e.target.parentElement.href.split('#')[1]),'active')
+         }
+     }.bind(this))
+    // var tabs  = this.el.querySelectorAll('ul.tabs li')
+    // for (var i = 0; i < tabs.length; i++) {
+    //     tabs[i].addEventListener('click', function(e){
+    //         e.preventDefault();
+    //         gform.removeClass(this.el.querySelector('ul.tabs .active'), 'active')
+    //         gform.removeClass(this.el.querySelector('.tab-pane.active'), 'active')
+    //         gform.addClass(e.currentTarget,'active')
+    //         gform.addClass(this.el.querySelector('#'+e.currentTarget.firstElementChild.href.split('#')[1]),'active')
+    //     }.bind(this))
+    // }
                   
 }
 //parse form values into JSON object
@@ -210,6 +220,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         newList = _.uniqBy(newList,'name');
     }
     var field = _.findLast(newList, {name: newList[ind].name});
+// debugger;
     if(!field.array && field.fields){
         _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
     }
@@ -366,7 +377,6 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
         field.row = temp;
         }
     }else{
-debugger;
         if(!field.target){
             field.target = '[name="'+field.name+'"]';
         }
@@ -435,12 +445,13 @@ debugger;
     if(field.fields){
         var newatts = {};
         if(field.array && typeof (atts[field.name]|| field.owner.options.data[field.name]) == 'object'){
-            newatts =  (atts[field.name]|| field.owner.options.data[field.name])[index||0] || {};
+            newatts =  (atts[field.name]|| field.owner.options.data[field.name])/*[index||0]*/ || {};
         }else{
             newatts = atts[field.name]|| field.owner.options.data[field.name] ||{};
         }
         field.fields = _.map(field.fields, gform.createField.bind(this, field, newatts, null, null) );
         if(field.array) {
+            // debugger;
             _.each(field.fields, gform.inflate.bind(this, newatts) );
         }
     }
@@ -720,9 +731,7 @@ gform.types = {
     'section':{
         create: function(){
             var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
-
-            // tempEl.setAttribute("id", tempEL.id || this.id);
-            tempEl.setAttribute("class", tempEl.className+gform.columnClasses[this.columns]);
+            gform.addClass(tempEl,gform.columnClasses[this.columns])
             return tempEl;
         },
         initialize: function(){
@@ -805,10 +814,11 @@ gform.renderString = function(string,options){
 // add some classes. Eg. 'nav' and 'nav header'
 gform.addClass = function(elem, classes){
     elem.className = _.chain(elem.className).split(/[\s]+/).union(classes.split(' ')).join(' ').value()
-
+    // return elem;
 };
 gform.removeClass = function(elem, classes){
     elem.className = _.chain(elem.className).split(/[\s]+/).difference(classes.split(' ')).join(' ').value()
+    // return elem
 };
 
 // remove the added classes

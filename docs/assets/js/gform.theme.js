@@ -65,6 +65,7 @@ radio: `
     {{>_actions}}`,
 _fieldset: `
     <fieldset name="{{name}}">
+    {{#array}}<hr style="margin: 0 0 10px;">{{/array}}
     <div class="row">
     {{^section}}<legend class="column" for="{{name}}"><h5>{{{label}}}</h5></legend>{{/section}}
     {{>_actions}}
@@ -91,9 +92,9 @@ tab_container: `
 	<ul class="tabs">
 		{{#fields}}
         {{#section}}
-		<li {{^index}}class="active"{{/index}}>
-            <a href="#tabs{{id}}" data-toggle="tab">{{{legend}}}</a>
-        </li>
+		
+            <a href="#tabs{{id}}" data-toggle="tab"><li {{^index}}class="active"{{/index}}>{{{legend}}}</li></a>
+        
 	    {{/section}}		
 		{{/fields}}
     </ul></form>
@@ -116,9 +117,9 @@ modal_container:`<div class="modal">
 	<ul class="tabs">
 		{{#fields}}
         {{#section}}
-		<li {{^index}}class="active"{{/index}}>
-            <a href="#tabs{{id}}" data-toggle="tab">{{{legend}}}</a>
-        </li>
+		
+            <a href="#tabs{{id}}" data-toggle="tab"><li {{^index}}class="active"{{/index}}>{{{legend}}}</li></a>
+        
 	    {{/section}}		
 		{{/fields}}
     </ul></form>

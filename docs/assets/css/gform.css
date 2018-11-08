@@ -267,7 +267,10 @@ ul.tabs {
   padding: 0 0.5rem;
   list-style: none;
 }
-ul.tabs li {
+ul.tabs a {
+  color: #606c76;
+}
+ul.tabs a li {
   background: none;
   display: inline-block;
   padding: 0.8rem 1rem 0.5rem;
@@ -277,10 +280,7 @@ ul.tabs li {
   border-radius: 0.4rem 0.4rem 0 0;
   margin-bottom: -0.1rem;
 }
-ul.tabs li a {
-  color: #606c76;
-}
-ul.tabs li.active {
+ul.tabs a li.active {
   background: #fff;
   border-color: #1690d8;
 }
@@ -308,12 +308,8 @@ ul.tabs li.active {
   overflow: hidden;
   position: fixed;
   z-index: 2;
-  opacity: 0;
-  transition: opacity 400ms 0ms;
 }
 .modal.active {
-  opacity: 1;
-  transition: opacity 600ms 0ms;
   display: flex;
 }
 

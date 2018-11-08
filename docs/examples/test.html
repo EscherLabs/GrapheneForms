@@ -124,50 +124,65 @@ return false;
 
 		// ]}
 			,
-			{
-				"label":"<i class=\"fa fa-times\"></i> Cancel",
-				"action":"cancel",
-				"modifiers": "btn-danger",
-				"type":"button",
-				// "target":'.modal-footer'
+				{
+				"type":"cancel",
 			},
 			{
-				"label":"<i class=\"fa fa-check\"></i> Save",
-				"action":"save",
-				"modifiers": "btn-success pull-right",
-				"type":"button",
-				// "target":'.modal-footer'
+				"type":"save",
 			}
 
         ]
    }
  
 
-   optionss = {
+   options = {
      legend:"Select Options",
+     data:		{
+			"label": "Field Label",
+			"name": "label",
+			"type": "select",
+			"value": "",
+			"max": "",
+			"min": "",
+			"step": "",
+			"help": "",
+			"required": false,
+      "choices_c":{
+			"options": [
+				{
+					"label": "Field Label",
+					"value": "1"
+				},
+				{
+					"label": "stuff",
+					"value": "2"
+				}
+      ]},
+			"enabled": true
+		},
 	   fields:[
 
 	   {type: 'fieldset', name:'basics', legend: 'General', hideLabel: true, inline: true, fields:[
 			{type: 'text', required: true, label: 'Field Label', name: 'label'},
 			{type: 'text', label: 'Name', name: 'name'},
-			{type: 'select', label: 'Display', name: 'type', value: 'dropdown', choices: [
-				{name: 'Dropdown', value: 'select'},
-				{name: 'Radio', value: 'radio'},
-				{name: 'Range', value: 'range'}
-			]},
-			{type: 'text', label: 'Default Value', name: 'value'},
-			{type: 'checkbox', label: 'Required', name: 'required'},
+			// {type: 'select', label: 'Display', name: 'type', value: 'dropdown', choices: [
+			// 	{name: 'Dropdown', value: 'select'},
+			// 	{name: 'Radio', value: 'radio'},
+			// 	{name: 'Range', value: 'range'}
+			// ]},
+			// {type: 'text', label: 'Default Value', name: 'value'},
+			// {type: 'checkbox', label: 'Required', name: 'required'},
 			
-			{type: 'textarea', label: 'Instructions', name: 'help'},
+			// {type: 'textarea', label: 'Instructions', name: 'help'},
 			
-			{type: 'text', label: 'External List', name: 'choices'},
+			// {type: 'text', label: 'External List', name: 'choices'},
 
-			{type: 'text', label: 'Label key', name: 'label_key',display:{'not_matches':{"name":"choices","value":""}}},
-			{type: 'text', label: 'Value key', name: 'value_key',display:{'not_matches':{"name":"choices","value":""}}},
+			// {type: 'text', label: 'Label key', name: 'label_key',display:{'not_matches':{"name":"choices","value":""}}},
+			// {type: 'text', label: 'Value key', name: 'value_key',display:{'not_matches':{"name":"choices","value":""}}},
 
-			{type: 'number', label: 'Max', name: 'max',display:{'matches':{"name":"choices","value":""}}},
-			{type: 'number', label: 'Min', name: 'min',placeholder:'1',display:{'not_matches':{"name":"max","value":0}}},
-			{type: 'number', label: 'Step', name: 'step',placeholder:'1',display:{'not_matches':{"name":"max","value":0}}},
+			// {type: 'number', label: 'Max', name: 'max',display:{'matches':{"name":"choices","value":""}}},
+			// {type: 'number', label: 'Min', name: 'min',placeholder:'1',display:{'not_matches':{"name":"max","value":0}}},
+			// {type: 'number', label: 'Step', name: 'step',placeholder:'1',display:{'not_matches':{"name":"max","value":0}}},
 			// {type: 'fieldset', name:'default', legend: 'default Option',flatten:false, fields:[
 			// 	{type: 'fieldset', label: false, multiple: {duplicate: false},flatten:false, name: 'default', fields: [
 			// 		{label: 'Label'},
@@ -176,12 +191,12 @@ return false;
 			// ]}
 		]},
 		{type: 'fieldset', name:'choices_c', legend: '<i class="fa fa-th-list"></i> Options', hideLabel: true,  inline: true, fields:[
-			{type: 'fieldset', label: 'Options',  array: {max:2}, name: 'options', fields: [
+			{type: 'fieldset', label: 'Options',  array: {max:2,}, name: 'options', fields: [
 				{label: 'Label'},
 				{label: 'Value'}
 			]}
-		]}
-			,		{
+		]},
+      {
 				"type":"cancel",
 			},
 			{
@@ -204,14 +219,14 @@ return false;
 
 	   ]
    }
-  //  options.sections = 'tab'
+   options.sections = 'tab'
   //  debugger;
-   options.clear = false;
+  //  options.clear = false;
 // options = {
 // 	   fields:[
 //        {}
 //      ]}
-	options.el = '#form';
+	// options.el = '#form';
     var mygform = new gform(options)
     // mygform.debounce('change', function(field){
     //     field.owner.validate();
@@ -221,18 +236,13 @@ return false;
 
 
 	mygform.debounce('change',function(d){
-		if(typeof d.owner !== 'undefined'){
-      document.querySelector('#result').innerHTML = JSON.stringify(d.owner.toJSON(),null,2);
-      d.owner.validate()
-    }else{
-      if(typeof d.toJSON !== 'undefined'){
-        document.querySelector('#result').innerHTML = JSON.stringify(d.toJSON(),null,2);
-        d.validate()
+      if(d.validate()){
+          document.querySelector('#result').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
       }
-    }
   })
   mygform.trigger('change',mygform)
   mygform.debounce('save',function(form){
+    console.log(form.toJSON())
   })
 
     </script>
