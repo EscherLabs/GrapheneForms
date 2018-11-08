@@ -36,22 +36,11 @@ gform.performValidate = function(target, pValue){
 gform.clearErrors = function() {
 	this.valid = true;
 	this.errors = {};
-	//add code fore removing errors here
+	//add code for removing errors here
 };
 gform.regex = {
 	numeric: /^[0-9]+$/,
-	// integer: /^\-?[0-9]+$/,
-	decimal: /^\-?[0-9]*\.?[0-9]+$/,
-	// email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i,
-	// alpha: /^[a-z]+$/i,
-	// alphaNumeric: /^[a-z0-9]+$/i,
-	// alphaDash: /^[a-z0-9_-]+$/i,
-	// natural: /^[0-9]+$/i,
-	// naturalNoZero: /^[1-9][0-9]*$/i,
-	// ip: /^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})$/i,
-	// base64: /[^a-zA-Z0-9\/\+=]/i,
-	// url: /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
-	// date: /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
+	decimal: /^\-?[0-9]*\.?[0-9]+$/
 };
 gform.validations = 
 {
@@ -88,18 +77,6 @@ gform.validations =
 		},
 		message: '{{label}} must contain a valid email address.'
 	},
-	// valid_emails:{
-	// 	method: function(value) {
-	// 		var result = value.split(",");
-	// 		for (var i = 0; i < result.length; i++) {
-	// 			if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i.test(result[i])) {
-	// 				return false;
-	// 			}
-	// 		}
-	// 		return true;
-	// 	},
-	// 	message: '{{label}} must contain all valid email addresses.'
-	// },
 	min_length:{
 		method: function(value, length) {
 			if (!gform.regex.numeric.test(length)) {
@@ -150,59 +127,5 @@ gform.validations =
 			return (gform.regex.numeric.test(value) || value === '');
 		},
 		message: '{{label}} must contain only numbers.'
-	},
-	// alpha:{
-	// 	method: function(value) {
-	// 		return (gform.regex.alpha.test(value) || value === '');
-	// 	},
-	// 	message: 'The {{label}} field must only contain alphabetical characters.'
-	// },
-	// alpha_numeric:{
-	// 	method: function(value) {
-	// 		return (gform.regex.alphaNumeric.test(value) || value === '');
-	// 	},
-	// 	message: 'The {{label}} field must only contain alpha-numeric characters.'
-	// },
-	// alpha_dash:{
-	// 	method: function(value) {
-	// 		return (gform.regex.alphaDash.test(value) || value === '');
-	// 	},
-	// 	message: 'The {{label}} field must only contain alpha-numeric characters, underscores, and dashes.'
-	// },
-	// integer:{
-	// 	method: function(value) {
-	// 		return (gform.regex.integer.test(value) || value === '');
-	// 	},
-	// 	message: 'The {{label}} field must contain an integer.'
-	// },
-	// decimal:{
-	// 	method: function(value) {
-	// 		return (gform.regex.decimal.test(value) || value === '');
-	// 	},
-	// 	message: 'The {{label}} field must contain a decimal number.'
-	// },
-	// is_natural:{
-	// 	method: function(value) {
-	// 		return (gform.regex.natural.test(value) || value === '');
-	// 	},
-	// 	message: 'The {{label}} field must contain only positive numbers.'
-	// },
-	// is_natural_no_zero:{
-	// 	method: function(value) {
-	// 		return (gform.regex.naturalNoZero.test(value) || value === '');
-	// 	},
-	// 	message: 'The {{label}} field must contain a number greater than zero.'
-	// },
-	// valid_ip:{
-	// 	method: function(value) {
-	// 		return (gform.regex.ip.test(value) || value === '');
-	// 	},
-	// 	message: 'The {{label}} field must contain a valid IP.'
-	// },
-	// valid_base64:{
-	// 	method: function(value) {
-	// 		return (gform.regex.base64.test(value) || value === '');
-	// 	},
-	// 	message: 'The {{label}} field must contain a base64 string.'
-	// }
+	}
 };

@@ -9,6 +9,9 @@ gform.processConditions = function(conditions, func) {
 	if (typeof conditions === 'boolean') {
 		return conditions;
 	}
+	if (typeof conditions === 'function') {
+		return conditions(this.owner, this)
+	}
 	if (typeof conditions === 'object') {
 		return _.map(conditions, function(item, c){
 			return gform.conditions[c].call(this, this.owner, item, (func || item.callBack))
@@ -20,7 +23,7 @@ gform.processConditions = function(conditions, func) {
 gform.conditions = {
 	requires: function(gform, args, func) {
 		return gform.on('change:' + args.name, function(args, local, topic, token) {
-				func.call(this, (local.value !== null && local.value !== ''), token);
+				func.call(this, local.find(args.path).satisfied(), token);
 			}.bind(this, args)
 		);
 	},
@@ -32,15 +35,15 @@ gform.conditions = {
 		);
 	},
 	test: function(gform, args, func) {
-		return gform.on('change:' + this.name, function(args, local, topic, token) {
-				func.call(this, args(), token);
+		return gform.on('change:' + args.name, function(args, local, topic, token) {
+				func.call(this, args.callback(), token);
 			}.bind( this, args)
 		);
 	},
 	contains: function(gform , args, func) {
-		return gform.on('change:' + args.name, $.proxy(function(args, local, topic, token) {
+		return gform.on('change:' + args.name, function(args, local, topic, token) {
 				func.call(this, (typeof local.value !== 'undefined'  && local.value.indexOf(args.value) !== -1 ), token);
-			}, this, args)
+			}.bind( this, args)
 		).lastToken;
 	},
 	matches: function(gform, args, func) {
