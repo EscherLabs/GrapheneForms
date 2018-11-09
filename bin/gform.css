@@ -185,8 +185,17 @@ input[type=search],
 input[type=tel],
 input[type=text],
 input[type=url],
+input[type=color],
+input[type=date],
+input[type=month],
+input[type=week],
+input[type=datetime],
+input[type=datetime-local],
+input:not([type]),
 textarea,
 select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
   appearance: none;
   background-color: transparent;
   border: 0.1rem solid #d1d1d1;
@@ -204,6 +213,13 @@ input[type=search]:focus,
 input[type=tel]:focus,
 input[type=text]:focus,
 input[type=url]:focus,
+input[type=color]:focus,
+input[type=date]:focus,
+input[type=month]:focus,
+input[type=week]:focus,
+input[type=datetime]:focus,
+input[type=datetime-local]:focus,
+input:not([type]):focus,
 textarea:focus,
 select:focus {
   border-color: #1690d8;
@@ -211,11 +227,11 @@ select:focus {
 }
 
 select {
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path fill="#d1d1d1" d="M9.37727 3.625l5.08154 6.93523L19.54036 3.625"/></svg>') center right no-repeat;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path fill="%23d1d1d1" d="M9.37727 3.625l5.08154 6.93523L19.54036 3.625"/></svg>') center right no-repeat;
   padding-right: 3rem;
 }
 select:focus {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path fill="#9b4dca" d="M9.37727 3.625l5.08154 6.93523L19.54036 3.625"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path fill="%231690d8" d="M9.37727 3.625l5.08154 6.93523L19.54036 3.625"/></svg>');
 }
 
 textarea {
@@ -251,8 +267,10 @@ ul.tabs {
   padding: 0 0.5rem;
   list-style: none;
 }
-
-ul.tabs li {
+ul.tabs a {
+  color: #606c76;
+}
+ul.tabs a li {
   background: none;
   display: inline-block;
   padding: 0.8rem 1rem 0.5rem;
@@ -262,12 +280,7 @@ ul.tabs li {
   border-radius: 0.4rem 0.4rem 0 0;
   margin-bottom: -0.1rem;
 }
-
-ul.tabs li a {
-  color: #606c76;
-}
-
-ul.tabs li.active {
+ul.tabs a li.active {
   background: #fff;
   border-color: #1690d8;
 }
@@ -278,40 +291,40 @@ ul.tabs li.active {
   background: #fff;
   padding: 1rem;
 }
-
 .tab-pane.active {
   display: inherit;
 }
 
-.modal-background, .modal {
+.modal {
   bottom: 0;
   left: 0;
-  position: absolute;
   right: 0;
   top: 0;
-}
-
-.modal {
   align-items: center;
   display: none;
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
   position: fixed;
-  z-index: 40;
+  z-index: 2;
 }
 .modal.active {
   display: flex;
 }
 
 .modal-background {
-  background-color: rgba(10, 10, 10, 0.86);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  background-color: rgba(40, 40, 40, 0.86);
 }
 
 .modal-content,
 .modal-card {
-  margin: 0 20px;
-  max-height: calc(100vh - 160px);
+  margin: 0;
+  max-height: 100vh;
   overflow: auto;
   position: relative;
   width: 100%;
@@ -320,15 +333,14 @@ ul.tabs li.active {
   .modal-content,
 .modal-card {
     margin: 0 auto;
-    max-height: calc(100vh - 40px);
-    width: 640px;
+    max-height: calc(100vh - 4rem);
+    width: 64rem;
   }
 }
 
 .modal-card {
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 40px);
   overflow: hidden;
   -ms-overflow-y: visible;
 }
@@ -340,26 +352,28 @@ ul.tabs li.active {
   display: flex;
   flex-shrink: 0;
   justify-content: flex-start;
-  padding: 20px;
+  padding: 2rem;
   position: relative;
 }
 
 .modal-card-head {
   border-bottom: 1px solid #d1d1d1;
-  border-top-left-radius: 0.4rem;
-  border-top-right-radius: 0.4rem;
+}
+@media (min-width: 40rem) {
+  .modal-card-head {
+    border-radius: 0.4rem 0.4rem 0 0;
+  }
 }
 
 .modal-card-title {
   flex-grow: 1;
   flex-shrink: 0;
-  font-size: 3rem;
+  font-size: 2rem;
   line-height: 1;
 }
 
 .modal-card-foot {
-  border-bottom-left-radius: 0.4rem;
-  border-bottom-right-radius: 0.4rem;
+  border-radius: 0 0 0.4rem 0.4rem;
   border-top: 1px solid #d1d1d1;
 }
 .modal-card-foot .button:not(:last-child) {
@@ -372,7 +386,7 @@ ul.tabs li.active {
   flex-grow: 1;
   flex-shrink: 1;
   overflow: auto;
-  padding: 20px;
+  padding: 2rem;
 }
 
 .container {
@@ -595,6 +609,51 @@ th:last-child {
   padding-right: 0;
 }
 
+@media screen and (max-width: 40rem) {
+  table {
+    border-spacing: 0;
+    display: flex;
+    width: 100%;
+  }
+  table thead {
+    border-right: solid 0.1rem #e1e1e1;
+  }
+  table thead td,
+table thead th {
+    padding-left: 0;
+  }
+  table thead td:first-child,
+table thead th:first-child {
+    padding-left: 0;
+  }
+  table thead td:last-child,
+table thead th:last-child {
+    padding-right: 1.2rem;
+  }
+  table tbody {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  table tbody tr {
+    border-right: solid 0.1rem #e1e1e1;
+  }
+  table tbody tr:last-child {
+    border-right: none;
+  }
+  table td,
+table th {
+    display: block;
+  }
+  table td:first-child,
+table th:first-child {
+    padding-left: 1.2rem;
+  }
+  table td:last-child,
+table th:last-child {
+    padding-right: 1.2rem;
+  }
+}
 b,
 strong {
   font-weight: bold;
