@@ -56,6 +56,13 @@ gform.types = {
           this.el.querySelector('input').disabled = !state;            
       },find:function(){
           return this;
+      },
+      focus:function(){
+          this.el.querySelector('[name="'+this.name+'"]').focus();
+          var temp = this.value;
+          this.set('');
+          this.set(temp)
+        //   this.el.querySelector('[name="'+this.name+'"]').select();
       }
       //display
   },
@@ -130,6 +137,9 @@ gform.types = {
       },
       reflow: function(){
           gform.reflow.call(this)
+      },
+      focus:function(){
+          gform.types[this.fields[0].type].focus.call(this.fields[0]);
       }
   },
   'button':{

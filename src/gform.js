@@ -8,15 +8,18 @@ var gform = function(data, el){
         this.handlers[event] = [];
         }
         this.handlers[event].push(handler);
+        return this;
     }.bind(this);
     this.trigger = function (event) {
         var args = Array.prototype.slice.call(arguments,1)
         _.each(this.handlers[event], function (handler) {
             handler.apply(this, args);
         });
+        return this;
     }.bind(this);
     this.debounce = function (event, handler) {
         this.on(event, _.debounce(handler, 250));
+        return this;
     }.bind(this);
 
     
@@ -131,6 +134,9 @@ var gform = function(data, el){
             }
         }.bind(this))
     }
+     gform.types[this.fields[0].type].focus.call(this.fields[0])
+
+    return this;
                   
 }
 gform.find = function(name){
@@ -364,14 +370,13 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
     if(add !== null){
         add.addEventListener('click', function(field){
             if(_.countBy(field.parent.fields, {name: field.name}).true < (field.array.max || 5)){
-                var index = _.findIndex(field.parent.fields,{id:field.id});
+                var index = _.findIndex(field.parent.fields, {id: field.id});
                 var atts = {};
-                // atts[field.name] = field.value;
                 var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item);
                 field.parent.fields.splice(index+1, 0, newField)
-                newField.el.querySelector('[name="'+field.name+'"]').focus();
-                        // gform.types[field.parent.type].reflow.call(field.parent);
-                        field.parent.reflow();
+                field.parent.reflow();
+                gform.types[newField.type].focus.call(newField);
+
                 _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], function(event){field.owner.trigger(event,field.owner,field)}.bind(field))
             }
         }.bind(this, field));
@@ -379,22 +384,21 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
     var minus = field.el.querySelector('.gform-minus');
     if(minus !== null){
         minus.addEventListener('click', function(field){
-            if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)){
+            if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)) {
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 field.parent.fields.splice(index, 1);
-                if(!field.target){
-                    field.parent.rows[field.row].used -= (field.offset + field.columns)
+                if(!field.target) {
+                    field.parent.rows[field.row].used -= (field.offset + field.columns);
                     field.parent.rows[field.row].ref.removeChild(field.el);
                     if(field.parent.rows[field.row].used  == 0){
                         field.parent.container.removeChild(field.parent.rows[field.row].ref);
                         delete field.parent.rows[field.row];
                     }
-                        gform.types[field.parent.type].reflow.call(field.parent);
-                    
+                    gform.types[field.parent.type].reflow.call(field.parent);
                 }else{
-                    this.container.querySelector(field.target).removeChild(field.el);
+                    this.container.querySelector( field.target ).removeChild(field.el);
                 }
-                _.each(['change', 'change:'+field.name, 'removed:'+field.name], function(event){field.owner.trigger(event,field.owner,field)}.bind(field))
+                _.each( [ 'change', 'change:' + field.name, 'removed:' + field.name ], function( event ) { field.owner.trigger( event, field.owner, field) }.bind( field ) )
             }else{
                 field.set(null);
             }

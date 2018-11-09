@@ -85,20 +85,18 @@ _label: `
 <small class="form-help"> {{{help}}}</small>
 `,
 _error:`<small style="color:red;display:block;"></small>`,
-button:`<button type="button" role=”button” class="button {{modifiers}}" style="margin:0 10px 0">{{{label}}}</button>`,
+button:`<button type="button" role="button" class="button {{modifiers}}" style="margin:0 15px 0">{{{label}}}</button>`,
 tab_container: `
 <form id="{{name}}" novalidate {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>
 {{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}
 	<ul class="tabs">
 		{{#fields}}
         {{#section}}
-		
             <a href="#tabs{{id}}" data-toggle="tab"><li {{^index}}class="active"{{/index}}>{{{legend}}}</li></a>
-        
 	    {{/section}}		
 		{{/fields}}
     </ul></form>
-	<div class="footer row"></div>`,
+	<div class="footer"></div>`,
 tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
 modal_container:`<div class="modal">
 <div class="modal-background"></div>

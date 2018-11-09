@@ -227,7 +227,13 @@ return false;
 //        {}
 //      ]}
 	options.el = '#form';
-    var mygform = new gform(options)
+    var mygform = new gform(options).debounce('change',function(d){
+      if(d.validate()){
+          document.querySelector('#result').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
+      }
+  }).debounce('save',function(form){
+    console.log(form.toJSON())
+  })
     // mygform.debounce('change', function(field){
     //     field.owner.validate();
     //     document.querySelector('#result').innerHTML = JSON.stringify(mygform.toJSON(), null, 2)
@@ -235,15 +241,11 @@ return false;
 
 
 
-	mygform.debounce('change',function(d){
-      if(d.validate()){
-          document.querySelector('#result').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
-      }
-  })
+	// mygform
   mygform.trigger('change',mygform)
-  mygform.debounce('save',function(form){
-    console.log(form.toJSON())
-  })
+  // mygform.debounce('save',function(form){
+  //   console.log(form.toJSON())
+  // })
 
     </script>
    </body>
