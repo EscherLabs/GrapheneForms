@@ -252,7 +252,7 @@ gform.normalizeField = function(fieldIn,parent){
         columns: this.options.columns||gform.columns,
         offset: 0,
         ischild:!(parent instanceof gform)        
-    }, this.opts,gform.default,gform.types[fieldIn.type].defaults, fieldIn)
+    }, this.opts,gform.default,this.options.default,gform.types[fieldIn.type].defaults, fieldIn)
     field.validate.required = field.validate.required|| field.required;
     
     if(field.name == ''){field.name = field.id;}

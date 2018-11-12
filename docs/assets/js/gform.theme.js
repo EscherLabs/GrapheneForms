@@ -5,10 +5,10 @@ gform.stencils = {
     </form>
     <div class="row footer"></div>`,
 text: `
-<div class="row">
+<div class="row row-wrap">
 <div class="column">
     {{>_label}}
-    <input style="width:100%" placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
+    <input style="width:100%"{{#maxlength}} maxlength="{{maxlength}}"{{/maxlength}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
     {{>_error}}
     </div>
     {{>_actions}}   
@@ -23,7 +23,7 @@ text: `
 `,    
 hidden: `<input name="{{name}}" type="hidden" value="{{value}}" id="{{id}}" />`,
 textarea: `
-<div class="row">
+<div class="row row-wrap">
 <div class="column">
     {{>_label}}
     <textarea placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
@@ -79,10 +79,10 @@ _actions: `
     <input style="padding: 0 ;padding:0 1.5rem; border-color:red;color:red;float:right;margin:0 5px" class="gform-minus button button-outline" type="button" value="-">
     </div>
     {{/array}}
+    <small class="column form-help" style="position:relative;top:-15px"> {{{help}}}</small>
 `,
 _label: `      
 <label class="" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>           
-<small class="form-help"> {{{help}}}</small>
 `,
 _error:`<small style="color:red;display:block;"></small>`,
 button:`<button type="button" role="button" class="button {{modifiers}}" style="margin:0 15px 0">{{{label}}}</button>`,

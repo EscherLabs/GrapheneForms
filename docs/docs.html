@@ -75,7 +75,7 @@
 						<li class="list-unstyled" ><a href="#legend"><i class="fa fa-chevron-right"></i> legend</a></li>
 						<li class="list-unstyled" ><a href="#name"><i class="fa fa-chevron-right"></i> name</a></li>
 						<li class="list-unstyled" ><a href="#data"><i class="fa fa-chevron-right"></i> data</a></li>
-						<li class="list-unstyled" ><a href="#schema"><i class="fa fa-chevron-right"></i> schema</a></li>
+						<li class="list-unstyled" ><a href="#schema"><i class="fa fa-chevron-right"></i> fields</a></li>
 						<li class="list-unstyled" ><a href="#default"><i class="fa fa-chevron-right"></i> default</a></li>
 						<li class="list-unstyled" ><a href="#actions"><i class="fa fa-chevron-right"></i> actions</a></li>
 					</ul>
@@ -257,7 +257,7 @@ var myForm = new gform(config);</code></pre>
 					<!--options -->
 					<a name="configuration" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h3>Configuration Options</h3>
+					<h3>Configuration</h3>
 					
 						<br>
 												<div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = {
@@ -293,9 +293,9 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					</p>
 					<a name="schema" style="display:block;position:relative;top:-80px"></a>
 					<br>					
-					<h4>schema</h4>					
+					<h4>fields</h4>					
 					<p>
-						An array of fields that define each field to be included in the form. If no schema are defined then no form is drawn.
+						An array of fields that define each field to be included in the form. If no fields are defined then no form is drawn.
 					</p>
 					<a name="default" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -372,7 +372,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<!--field name -->
 					<a name="field_name" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>name <code>['string', null]</code></h4>
+					<h4>name <code>['string', null]</code><a class="pull-right" href="./examples/name.html">Example</a></h4>
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>														
 					
 					<p>
@@ -381,7 +381,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<!--field label -->
 					<a name="field_label" style="display:block;position:relative;top:-80px"></a>
 					<br>					
-					<h4>label <code>['string', 'bool', null]</code></h4>
+					<h4>label <code>['string', 'bool', null]</code><a class="pull-right" href="./examples/label.html">Example</a></h4>
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>														
 					<p>
 						If a string is set this will be used as the label on the current field. To hide the label then this can be set to 'false'. The default label that will apply if no label is set will be the index of the field i.e. the first field will have a label of '0'.
@@ -397,7 +397,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<!--field help -->
 					<a name="field_help" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>help <code>['string']</code></h4>	
+					<h4>help <code>['string']</code><a class="pull-right" href="./examples/help.html">Example</a></h4>	
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>														
 					<p>
 						This is the help text that will be shown to a user to guide them in filling out the field. By default no help text will be included.
@@ -513,7 +513,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<!--field options -->
 					<a name="field_options" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>options  <code>['array', 'object', 'string', 'function']</code></h4>
+					<h4>options  <code>['array', 'string', 'function']</code><a class="pull-right" href="./examples/options.html">Example</a></h4>
 					<p class="text-muted"><span class="text-success">(select, radio)</span> default = [];</p>																								
 					<p class="text-muted"><span class="text-success">(checkbox)</span> default = [false, true];</p>																								
 					
@@ -523,7 +523,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<p>
 						For 
 					</p>
-					<!--field options -->
+					<!--field format -->
 					<a name="field_format" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>format  <code>['object']</code><a class="pull-right" href="./examples/format.html">Example</a></h4>
@@ -532,7 +532,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 						<p></p>																								
 					<p>
 						This option allows you to define custom labels and values to use for building options, this allows you to use existing data to generate usable form elements.
-						<br>note: 'index' is a built in value that is available to generate labels and values. 
+						<br>note: 'index' is a calculated value that is available to generate labels and values. 
 					</p>					
 
 					<!--events -->
@@ -675,13 +675,13 @@ Bind a callback function to an object. The callback will be invoked whenever the
 						fails validation if the field value is not a valid email address.	
 					</p>
 					<code>{validate: {valid_email: true}</code>
-					<a name="valid_emails" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="valid_emails" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>valid_emails</h5>
 					<p>
 						fails validation if any value in a comma separated list is not a valid email	
 					</p>
-					<code>{validate: {valid_emails: true}</code>
+					<code>{validate: {valid_emails: true}</code> -->
 					<a name="min_length" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>min_length</h5>
@@ -717,7 +717,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
 						fails validation if the value of the field is greater than the indicated value after using parseFloat.
 					</p>
 					<code>{validate: {less_than: '100'}</code>
-					<a name="alpha" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="alpha" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>alpha</h5>
 					<p>
@@ -779,7 +779,7 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<p>
 						fails validation if the value of the field is not a valid IP address.
 					</p>
-					<code>{validate: {valid_ip: true}</code>
+					<code>{validate: {valid_ip: true}</code>-->
 					<a name="valid_url" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>valid_url</h5>
@@ -787,13 +787,13 @@ Bind a callback function to an object. The callback will be invoked whenever the
 						fails validation if the value of the field is not a valid url.
 					</p>
 					<code>{validate: {valid_url: true}</code>
-					<a name="valid_base64" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="valid_base64" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>valid_base64</h5>
 					<p>
 						fails validation if the value of the field contains anything other than valid Base64 characters.
 					</p>
-					<code>{validate: {valid_base64: true}</code>
+					<code>{validate: {valid_base64: true}</code> -->
 					<br>
 
 
