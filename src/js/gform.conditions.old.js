@@ -13,32 +13,12 @@ gform.processConditions = function(conditions, func) {
 		return conditions(this.owner, this)
 	}
 	if (typeof conditions === 'object') {
-		// return _.map(conditions, function(item, c){
-		// 	return gform.conditions[c].call(this, this.owner, item, (func || item.callBack))
-		// }.bind(this))
-		// debugger;
-		var callback = function(rules,func){
-			func.call(this,gform.rules.call(this, rules, func))
-		}.bind(this, conditions, func)
-
-
-// debugger;
-		for(var i in conditions) {
-			this.owner.sub('change:' + _.values(conditions[i])[0].name, callback)
-		}
-		
+		return _.map(conditions, function(item, c){
+			return gform.conditions[c].call(this, this.owner, item, (func || item.callBack))
+		}.bind(this))
 	}
-	
 	return true;
 };
-
-gform.rules = function(rules,func){
-return _.every(_.map(rules, function(rule, i){
-	return _.every(_.map(rule, function(args,name,rule) {
-		return gform.conditions[name](this.owner, this, args)
-	}.bind(this)));
-}.bind(this)))
-}
 
 gform.conditions = {
 	requires: function(gform, args, func) {
@@ -66,15 +46,27 @@ gform.conditions = {
 			}.bind( this, args)
 		).lastToken;
 	},
-	matches: function(gform, field, args) {
-		var val = args.value;
-		var localval = gform.toJSON()[args.name];
+	matches: function(gform, args, func) {
+		var callback = function(args, local) {
+			func.call(this, function(args, gform) {
+				var status = true;
+				var i = 0;
+				while(status && i < args.length) {
+					var val = args[i].value; 
+					var localval = gform.toJSON()[args[i++].name];
+					if(typeof val== "object" && localval !== null){
+						status = (val.indexOf(localval) !== -1);
+					}else{
+						status = (val == localval);
+					}
+				}
+				return status;
+			}(args, gform));
+		}.bind(this, args);
 
-		if(typeof val== "object" && localval !== null){
-			return (val.indexOf(localval) !== -1);
-		}else{
-			return (val == localval);
+		for(var i in args){
+			gform.sub('change:' + args[i].name, callback)
 		}
+		
 	}
 }; 
-

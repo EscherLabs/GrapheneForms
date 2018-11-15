@@ -3,30 +3,31 @@ var gform = function(data, el){
 
     //event management
     this.handlers = {};
-    this.on = function (event, handler) {
+    this.sub = function (event, handler) {
         if (typeof this.handlers[event] !== 'object') {
         this.handlers[event] = [];
         }
         this.handlers[event].push(handler);
         return this;
     }.bind(this);
-    this.trigger = function (event) {
+    this.pub = function (event) {
         var args = Array.prototype.slice.call(arguments,1)
         _.each(this.handlers[event], function (handler) {
             handler.apply(this, args);
         });
         return this;
     }.bind(this);
-    this.debounce = function (event, handler) {
-        this.on(event, _.debounce(handler, 250));
-        return this;
-    }.bind(this);
+    // this.sub = function (event, handler, delay) {
+    //     delay = delay || 0;
+    //     this.on(event, _.debounce(handler, delay));
+    //     return this;
+    // }.bind(this);
 
     
     //initalize form
     this.options = _.assignIn({legend: '', default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
 
-    if (typeof this.options.data == 'string'){
+    if (typeof this.options.data == 'string') {
         this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
     }
 
@@ -47,7 +48,7 @@ var gform = function(data, el){
     }
 
   
-    this.trigger('initialize');
+    this.pub('initialize');
 
     var create = function(){
 
@@ -57,22 +58,22 @@ var gform = function(data, el){
         document.querySelector('body').appendChild(this.el)
         gform.addClass(this.el, 'active')
 
-        this.on('cancel', function(form){
+        this.sub('cancel', function(form){
             gform.removeClass(form.el, 'active')
             form.destroy();
             document.body.removeChild(form.el);
             delete this.el;
         });
-        this.on('save', function(form){
+        this.sub('save', function(form){
             console.log(form.toJSON())
             gform.removeClass(form.el, 'active')
         });
         this.el.querySelector('.close').addEventListener('click', function(e){
-            this.trigger('cancel', this, e)}.bind(this)
+            this.pub('cancel', this, e)}.bind(this)
         )
         document.addEventListener('keyup',function(e) {
             if (e.key === "Escape") { // escape key maps to keycode `27`
-               this.trigger('cancel', this, e)
+               this.pub('cancel', this, e)
            }
        }.bind(this));
     }
@@ -86,7 +87,7 @@ var gform = function(data, el){
 
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
         _.each(this.fields, function(field) {
-            field.owner.trigger('change:' + field.name,field.owner, field);
+            field.owner.pub('change:' + field.name,field.owner, field);
         })
         gform.instances[this.options.name] = this;   
     }
@@ -104,9 +105,9 @@ var gform = function(data, el){
     this.isActive = true;
 
     this.destroy = function() {
-		this.trigger('destroy');
+		this.pub('destroy');
 
-		//Trigger the destroy methods for each field
+		//pub the destroy methods for each field
 		// _.each(function() {if(typeof this.destroy === 'function') {this.destroy();}});
 		//Clean up affected containers
 		this.el.innerHTML = "";
@@ -118,7 +119,7 @@ var gform = function(data, el){
 		//Remove the global reference to our form
 		delete gform.instances[this.options.name];
 
-		this.trigger('destroyed');
+		this.pub('destroyed');
     };
     
     
@@ -283,7 +284,7 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
                     return field.valueFunc.call(field, field.owner.toJSON());
                 };
                 field.item.value = field.item.value = field.derivedValue();
-                field.owner.on('change', function() {
+                field.owner.sub('change', function() {
                     this.set.call(this,this.derivedValue());
                 }.bind(field));
             } else {
@@ -307,7 +308,7 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
         if(this.value != value && typeof value !== 'object') {
             this.value = value;
             gform.types[this.type].set.call(this,value);
-			if(!silent){this.owner.trigger('change',this.owner,this);this.owner.trigger('change:'+this.name,this.owner,this)};
+			if(!silent){this.owner.pub('change',this.owner,this);this.owner.pub('change:'+this.name,this.owner,this)};
 		}
     }.bind(field)
 
@@ -377,7 +378,7 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
                 field.parent.reflow();
                 gform.types[newField.type].focus.call(newField);
 
-                _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], function(event){field.owner.trigger(event,field.owner,field)}.bind(field))
+                _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], function(event){field.owner.pub(event,field.owner,field)}.bind(field))
             }
         }.bind(this, field));
     }
@@ -398,7 +399,7 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
                 }else{
                     this.container.querySelector( field.target ).removeChild(field.el);
                 }
-                _.each( [ 'change', 'change:' + field.name, 'removed:' + field.name ], function( event ) { field.owner.trigger( event, field.owner, field) }.bind( field ) )
+                _.each( [ 'change', 'change:' + field.name, 'removed:' + field.name ], function( event ) { field.owner.pub( event, field.owner, field) }.bind( field ) )
             }else{
                 field.set(null);
             }
@@ -441,6 +442,35 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
         this.update();
     })
 
+
+// debugger;
+//     this.enabledConditions = gform.processConditions.call(field, field.enable,
+//         function(bool, token) {
+//             debugger;
+//             if(typeof bool == 'boolean') {
+//                 this.enabledConditions[token] = bool;
+//                 this.isEnabled = true;
+//                 this.enable();
+//                 for(var c in this.enabledConditions) {
+//                     if(!this.enabledConditions[c]) {
+//                         this.isEnabled = false;
+//                         this.disable();
+//                         break;
+//                     }
+//                 }
+//             }
+//         }
+//     );
+//     if(typeof this.enabledConditions == 'boolean'){
+//         this.isEnabled = this.enabledConditions;
+//         // this.update({}, true);
+//     }
+
+
+
+
+
+
     return field;
 }
 gform.rows = {
@@ -473,7 +503,7 @@ gform.rows = {
 
 gform.ajax = function(options){
     var request = new XMLHttpRequest();
-    request.onreadystatechange = function() {
+    request.subreadystatechange = function() {
         if(request.readyState === 4) {
             if(request.status === 200) { 
                 options.success(JSON.parse(request.responseText));

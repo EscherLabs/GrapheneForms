@@ -59,7 +59,7 @@ describe('Textarea', function () {
   // });
 
   it('should trigger events', function () {
-    mygform.on('change:test', triggerOnChange);
+    mygform.sub('change:test', triggerOnChange);
 
     mygform.find('test').set('hello');
     expect(triggerOnChange).not.toHaveBeenCalled();

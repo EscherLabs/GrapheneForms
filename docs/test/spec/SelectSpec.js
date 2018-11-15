@@ -50,7 +50,7 @@ describe('Select Input', function () {
   //   expect(triggerOnChange).toHaveBeenCalled();
   // });
   it('should trigger events', function () {
-    mygform.on('change', triggerOnChange);
+    mygform.sub('change', triggerOnChange);
     mygform.find('test').set('hello');
     expect(triggerOnChange).not.toHaveBeenCalled();
     mygform.find('test').set('test');

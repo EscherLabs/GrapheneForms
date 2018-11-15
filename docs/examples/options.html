@@ -24,12 +24,7 @@
         </div>
     </div>
     <script src="../assets/js/lodash.min.js"></script>    
-    <!--/*<script src='../assets/js/gform.min.js'></script> */-->
-     <script type='text/javascript' src='../../src/gform.js'></script>  
-    
-      <script type='text/javascript' src='../../src/gform.types.js'></script> 
-     <script type='text/javascript' src='../../src/gform.conditions.js'></script> 
-     <script type='text/javascript' src='../../src/gform.validate.js'></script>   
+    <script src='../assets/js/gform.min.js'></script>
     <script src='../assets/js/gform.theme.js'></script>
 
     <script>
@@ -53,20 +48,8 @@
         {label: 'Select Field (url string)', name: 'url', type:'select', options:'../data/days.json'}
         ]
     }
-    document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
-    var mygform = new gform(options, '#form')
-    mygform.on('change',function(d){
-        if(d.validate()){
-            document.querySelector('#result code').classList = "prettyprint"
-            document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
-            PR.prettyPrint();
-        }
-    })
-
-    mygform.trigger('change', mygform)
-
-
     </script>
+    <script src="../assets/js/example.js"></script>   
         <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
         
    </body>

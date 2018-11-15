@@ -35,20 +35,8 @@
             {label: 'Select', type: 'select', placeholder:'Choose One', options:[1,2,3]},
         ]
     }
-    
-    document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
-    var mygform = new gform(options, '#form')
-    mygform.on('change',function(d){
-        if(d.validate()){
-            document.querySelector('#result code').classList = "prettyprint"
-            document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
-            PR.prettyPrint();
-        }
-    })
-
-    mygform.trigger('change', mygform)
-
     </script>
+    <script src="../assets/js/example.js"></script>   
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
    </body>
 </html>

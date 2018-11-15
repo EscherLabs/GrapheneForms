@@ -47,7 +47,7 @@ describe('Fieldset', function () {
   // })
 
   it('should trigger events', function () {
-    mygform.on('change', triggerOnChange);
+    mygform.sub('change', triggerOnChange);
 
     mygform.fields[0].fields[0].set('hello');
     expect(triggerOnChange).not.toHaveBeenCalled();

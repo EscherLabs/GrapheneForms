@@ -8,7 +8,7 @@ text: `
 <div class="row row-wrap">
 <div class="column">
     {{>_label}}
-    <input style="width:100%"{{#maxlength}} maxlength="{{maxlength}}"{{/maxlength}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
+    <input {{#maxlength}} maxlength="{{maxlength}}"{{/maxlength}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
     {{>_error}}
     </div>
     {{>_actions}}   
@@ -66,7 +66,7 @@ radio: `
 _fieldset: `
     <fieldset name="{{name}}">
     {{#array}}<hr style="margin: 0 0 10px;">{{/array}}
-    <div class="row">
+    <div class="row row-wrap">
     {{^section}}<legend class="column" for="{{name}}"><h5>{{{label}}}</h5></legend>{{/section}}
     {{>_actions}}
     </div>   

@@ -5,7 +5,7 @@ describe('Checkbox Input', function () {
     triggerOnChange = jasmine.createSpy('onChange');
     mygform = new gform({fields:[{name:'test', type: 'checkbox'}]}, '#gform')
 
-    mygform.on('change:test', triggerOnChange);
+    mygform.sub('change:test', triggerOnChange);
 	});
 
   afterEach(function() {

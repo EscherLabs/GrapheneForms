@@ -13,7 +13,7 @@
     </head>
     <body>
       <div style="padding:20px">
-      <h4><a href="./">Examples</a> - Types</h4>
+      <h4><a href="./">Examples</a> - Enable</h4>
       <div class="container ">
           <div class="row ">
                 <div class="column" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
@@ -23,13 +23,25 @@
           </div>
       </div>
       <script src="../assets/js/lodash.min.js"></script>    
-      <script src='../assets/js/gform.min.js'></script> 
-      <script src='../assets/js/gform.theme.js'></script>
-      
+
+    <!--/*<script src='../assets/js/gform.min.js'></script> */-->
+    <script type='text/javascript' src='../../src/js/gform.js'></script>  
+    
+    <script type='text/javascript' src='../../src/js/gform.types.js'></script> 
+   <script type='text/javascript' src='../../src/js/gform.conditions.js'></script> 
+   <script type='text/javascript' src='../../src/js/gform.validate.js'></script>
+   
+   <script src='../assets/js/gform.theme.js'></script>
+   <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+
     <script>
     options = {
         fields:[
-            {label: 'Text', type: 'text'},
+            {label: 'Text', type: 'text', enable: [
+                {"matches": 
+                    {"name": "textarea", "value": ["", "tim"]}
+                }
+            ]},
             {label: 'Hidden', type: 'hidden', value:'hidden field'},
             {label: 'Number', type: 'number'},
             {label: 'Color', type: 'color'},
@@ -47,6 +59,5 @@
     }
     </script>
     <script src="../assets/js/example.js"></script>   
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
    </body>
 </html>

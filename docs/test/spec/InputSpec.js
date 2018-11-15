@@ -43,7 +43,7 @@ describe('Text Input', function () {
   });
 
   it('should trigger events', function () {
-    mygform.on('change', triggerOnChange);
+    mygform.sub('change', triggerOnChange);
     mygform.find('test').set('hello');
     expect(triggerOnChange).not.toHaveBeenCalled();
     mygform.find('test').set('test');
@@ -51,7 +51,7 @@ describe('Text Input', function () {
   });
 
   it('should trigger field events', function () {
-    mygform.on('change:test', triggerOnChange);
+    mygform.sub('change:test', triggerOnChange);
     mygform.find('test').set('hello');
     expect(triggerOnChange).not.toHaveBeenCalled();
     mygform.find('test').set('test');

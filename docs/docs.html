@@ -110,9 +110,9 @@
 					</ul> -->
 					<a href="#events"><h4>Events</h4></a>
 					<ul class>
-						<li class="list-unstyled" ><a href="#on"><i class="fa fa-chevron-right"></i> on</a></li>
-						<li class="list-unstyled" ><a href="#debounce"><i class="fa fa-chevron-right"></i> debounce</a></li>
-						<li class="list-unstyled" ><a href="#trigger"><i class="fa fa-chevron-right"></i> trigger</a></li>
+						<li class="list-unstyled" ><a href="#sub"><i class="fa fa-chevron-right"></i> sub</a></li>
+						<!-- <li class="list-unstyled" ><a href="#debounce"><i class="fa fa-chevron-right"></i> debounce</a></li> -->
+						<li class="list-unstyled" ><a href="#pub"><i class="fa fa-chevron-right"></i> pub</a></li>
 						<li class="list-unstyled" ><a href="#built_in_events"><i class="fa fa-chevron-right"></i> Built in Events</a></li>
 						<!-- <li class="list-unstyled" ><a href="#change"><i class="fa fa-chevron-right"></i> change</a></li>
 						<li class="list-unstyled" ><a href="#save"><i class="fa fa-chevron-right"></i> save</a></li>
@@ -406,7 +406,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<a name="field_placeholder" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>placeholder  <code>['string']</code><a class="pull-right" href="./examples/placeholder.html">Example</a></h4>					
-					<p class="text-muted"><span class="text-success">(text, number, email, textarea, select)</span> default = "";</p>																													
+					<p class="text-muted">default = ""; <span class="text-success">(text, number, email, textarea, select)</span></p>																													
 					<p>
 						The placeholder property sets the placeholder for some field types, for example the 'text' type.
 					</p>					
@@ -435,7 +435,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<!--field show -->
 					<a name="field_display" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>display <code>['bool', 'function' 'gform.conditions']</code></h4>
+					<h4>display <code>['bool', 'function' 'gform.conditions']</code><a class="pull-right" href="./examples/display.html">Example</a></h4>
 					<p class="text-muted">default = true; <span class="text-success">all types</span></p>																			
 					<p>
 						By defualt this is set to 'true', if the value is simply set to false the field will not be shown. If show is set to a function then the function must return a boolean. The last option is to pass an object with the structure of <a href="#conditions"><code>gform.conditions</code></a> that is used to dynamically determine if the field should be shown based on the values of other fields.
@@ -446,7 +446,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<!--field show -->
 					<a name="field_enable" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>enable <code>['bool', 'function' 'gform.conditions']</code></h4>
+					<h4>enable <code>['bool', 'function' 'gform.conditions']</code><a class="pull-right" href="./examples/enable.html">Example</a></h4>
 					<p class="text-muted">default = true; <span class="text-success">all types</span></p>																			
 					<p>
 						See as <a href="#field_display">display</a> for acceptable values here.
@@ -457,7 +457,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<!--field show -->
 					<a name="field_parse" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>parse <code>['bool', 'function' 'gform.conditions']</code></h4>
+					<h4>parse <code>['bool', 'function' 'gform.conditions']</code><a class="pull-right" href="./examples/parse.html">Example</a></h4>
 					<p class="text-muted">default = true; <span class="text-success">all types</span></p>																			
 					<p>
 							See as <a href="#field_display">display</a> for acceptable values here.
@@ -541,26 +541,26 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<h3>Events</h3>
 
 					<!--on -->
-					<a name="on" style="display:block;position:relative;top:-80px"></a>
+					<a name="sub" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>.on('event', function(event, form, [field]){})</h4>					
+					<h4>.sub('event', function(event, form, [field]){})</h4>					
 					<p>
 Bind a callback function to an object. The callback will be invoked whenever the event is fired. If you have a large number of different events on a page, the convention is to use colons to namespace them: "poll:start", or "change:selection". The event string may also be a space-delimited list of several events...
 					</p>
 					<!--delay -->
-					<a name="debounce" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="debounce" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>.debounce('event', 'function', [delay])</h4>					
+					<h4>.debounce('event', function(event, form, [field]){}, [delay])</h4>					
 					<p>
 						This works exatly like the on method except it will only be triggered after the event has not been fired again after the delay timeout. The default delay time is 250ms.
-					</p>
+					</p> -->
 
 					<!--trigger -->
-					<a name="trigger" style="display:block;position:relative;top:-80px"></a>
+					<a name="pub" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>.trigger('event')</h4>					
+					<h4>.pub('event',[args])</h4>					
 					<p>
-						Trigger callbacks for the given event, or space-delimited list of events. Subsequent arguments to trigger will be passed along to the event callbacks.
+						Trigger callbacks for the given event, or space-delimited list of events. Subsequent arguments to pub will be passed along to the event callbacks.
 					</p>
 					<!--built in events -->
 					<a name="built_in_events" style="display:block;position:relative;top:-80px"></a>
