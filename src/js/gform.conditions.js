@@ -7,7 +7,6 @@ gform.processConditions = function(conditions, func) {
 		}
 	}
 	if (typeof conditions === 'boolean') {
-		// return conditions;
 		func.call(this, conditions)
 	}
 	if (typeof conditions === 'function') {
@@ -21,6 +20,8 @@ gform.processConditions = function(conditions, func) {
 		for(var i in conditions) {
 			this.owner.sub('change:' + _.values(conditions[i])[0].name, callback)
 		}
+		// debugger;
+		// func.call(this, gform.rules.call(this, conditions));
 	}
 	
 	return true;
@@ -42,11 +43,14 @@ gform.conditions = {
 		);
 	},
 	// valid_previous: function(gform, args) {},
-	not_matches: function(gform , args, func) {
-		return gform.sub('change:' + args.name, function(args, local, topic, token) {
-				func.call(this, (args.value  !== local.value), token);
-			}.bind(this, args)
-		);
+	not_matches: function(gform, field, args) {
+		var val = args.value;
+		var localval = (field.parent.find(args.name) || {value:''}).value;
+		if(typeof val== "object" && localval !== null){
+			return (val.indexOf(localval) == -1);
+		}else{
+			return (val !== localval);
+		}
 	},
 	test: function(gform, args, func) {
 		return gform.sub('change:' + args.name, function(args, local, topic, token) {
@@ -62,8 +66,7 @@ gform.conditions = {
 	},
 	matches: function(gform, field, args) {
 		var val = args.value;
-		var localval = gform.toJSON()[args.name];
-
+		var localval = (field.parent.find(args.name) || {value:''}).value;
 		if(typeof val== "object" && localval !== null){
 			return (val.indexOf(localval) !== -1);
 		}else{

@@ -114,7 +114,13 @@ return false;
               {"label": "Favorite State", suffix:'',type:'select', "options": "../data/states.json",format:{"label":'({{value}}) {{name}}'} },
             {label: 'Candies', type:'fieldset', fields: [
 				{label: 'Candy'},{label: 'Brand'},{name: 'flavors', label: '',
-				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'text',columns:6, array: {min:2,max:3}}]}]}
+				type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color', type:'text',columns:6, array: {min:2,max:3},"display": [
+                    {"not_matches": 
+                        {"name": "flavor","value":""}
+            }
+              ]
+              
+              }]}]}
 
 		// ]}
 			,
