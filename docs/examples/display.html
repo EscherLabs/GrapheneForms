@@ -13,7 +13,7 @@
     </head>
     <body>
       <div style="padding:20px">
-      <h4><a href="./">Examples</a> - Enable</h4>
+      <h4><a href="./">Examples</a> - Display</h4>
       <div class="container ">
           <div class="row ">
                 <div class="column" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
@@ -37,21 +37,20 @@
     <script>
     options = {
         fields:[
-            {label: 'Text', type: 'text', enable:true},
-            {label: 'Number', type: 'number',enable: false},
-            {label: 'Textarea', type: 'textarea', enable: [
+            {label: 'Text', type: 'text', display:true},
+            {label: 'Number', type: 'number',display: false},
+            {label: 'Textarea', type: 'textarea', display: [
                 {"matches": 
-                    {"name": "text", "value": [""]}
+                    {"name": "text", "value": ""}
                 }
             ]},
             {label: 'Checkbox', type: 'checkbox'},
-            {label: 'Select', type: 'select', options:[1,2,3], enable: function(){return false}},
+            {label: 'Select', type: 'select', options:[1,2,3], display: function(){return false}},
             {label: 'Radio', type: 'radio', options:[1,2,3]},
             {label: 'Fieldset', type: 'fieldset', fields:[
                 {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
                 {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
             ]},
-
         ]
     }
     </script>

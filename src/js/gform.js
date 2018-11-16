@@ -503,13 +503,14 @@ gform.rows = {
 
 gform.ajax = function(options){
     var request = new XMLHttpRequest();
-    request.subreadystatechange = function() {
+    request.onreadystatechange = function() {
+
         if(request.readyState === 4) {
             if(request.status === 200) { 
                 options.success(JSON.parse(request.responseText));
             } else {
                 console.log(request.responseText);
-                // options.error(request.responseText);
+                options.error(request.responseText);
             } 
         }
     }
@@ -583,14 +584,13 @@ gform.options = function(opts, value, count) {
         newOpts.action = opts.options;
         opts.options = newOpts.action.call(this);
     }
-
 	if(typeof opts.options == 'string' || typeof newOpts.url == 'string') {
         newOpts.path = opts.options;
         newOpts.options = false;
         newOpts.url = null;
         gform.ajax({path: newOpts.path, success:function(data) {
             this.options = data;  
-            this.options = gform.options.call(this,this,this.value);
+            this.options = gform.options.call(this, this, this.value);
             this.update()
         }.bind(this)})
 		return newOpts;

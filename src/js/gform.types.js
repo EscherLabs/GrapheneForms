@@ -17,6 +17,7 @@ gform.types = {
           this.el.removeEventListener('input', this.onchangeEvent);
       },
       initialize: function(){
+        //   this.iel = this.el.querySelector('input[name="' + this.name + '"]')
           if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.onchangeEvent = function(){
               this.value = this.get();
@@ -53,7 +54,7 @@ gform.types = {
           return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '');            
       },
       enable: function(state) {
-          this.el.querySelector('input').disabled = !state;            
+          this.el.querySelector('[name="'+this.name+'"]').disabled = !state;            
       },find:function() {
           return this;
       },
@@ -66,15 +67,7 @@ gform.types = {
       }
       //display
   },
-  'textarea':{
-      defaults: {},
-      set: function(value) {
-          this.el.querySelector('textarea[name="' + this.name + '"]').innerHTML = value;
-      },
-      get: function() {
-          return this.el.querySelector('textarea[name="' + this.name + '"]').value;
-      }
-  },
+//   'textarea':,
   'bool':{
       defaults:{options:[false, true]},
       render: function() {
@@ -214,7 +207,14 @@ gform.removeClass = function(elem, classes){
 // remove the added classes
 gform.types['text']     = gform.types['number'] = gform.types['color'] = gform.types['input'];
 gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false}});
-gform.types['textarea'] = _.extend({}, gform.types['input'], gform.types['textarea']);
+gform.types['textarea'] = _.extend({}, gform.types['input'], {
+      set: function(value) {
+          this.el.querySelector('textarea[name="' + this.name + '"]').innerHTML = value;
+      },
+      get: function() {
+          return this.el.querySelector('textarea[name="' + this.name + '"]').value;
+      }
+  });
 gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection']);

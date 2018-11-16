@@ -7,32 +7,26 @@ gform.processConditions = function(conditions, func) {
 		}
 	}
 	if (typeof conditions === 'boolean') {
-		return conditions;
+		// return conditions;
+		func.call(this, conditions)
 	}
 	if (typeof conditions === 'function') {
-		return conditions(this.owner, this)
+		func.call(this, conditions.call(this))
 	}
 	if (typeof conditions === 'object') {
-		// return _.map(conditions, function(item, c){
-		// 	return gform.conditions[c].call(this, this.owner, item, (func || item.callBack))
-		// }.bind(this))
-		// debugger;
 		var callback = function(rules,func){
-			func.call(this,gform.rules.call(this, rules, func))
+			func.call(this, gform.rules.call(this, rules))
 		}.bind(this, conditions, func)
 
-
-// debugger;
 		for(var i in conditions) {
 			this.owner.sub('change:' + _.values(conditions[i])[0].name, callback)
 		}
-		
 	}
 	
 	return true;
 };
 
-gform.rules = function(rules,func){
+gform.rules = function(rules){
 return _.every(_.map(rules, function(rule, i){
 	return _.every(_.map(rule, function(args,name,rule) {
 		return gform.conditions[name](this.owner, this, args)
