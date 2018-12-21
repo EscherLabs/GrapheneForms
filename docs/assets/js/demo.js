@@ -95,11 +95,11 @@ document.addEventListener('DOMContentLoaded', function(){
       }
       var temp = new gform(
         $.extend({autoFocus: false, actions: ['save'], name: 'myForm', data: QueryStringToHash(document.location.hash.substr(1) || "") }, forms[form] ) ,'.target')
-      temp.on('change', function(){
+      temp.sub('change', function(){
         debugger;
         $('.result').html("<pre>"+JSON.stringify(this.toJSON(), undefined, "\t")+"</pre>");
       }.bind(temp))
-      temp.on('save', function(){
+      temp.sub('save', function(){
         if(this.validate()) { location.hash = '#'+$.param(this.toJSON());}}
       ).bind(this);
     } catch (e) {

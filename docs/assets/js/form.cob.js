@@ -19,15 +19,15 @@ gformEditor = function(container){
 			gform.instances[i].destroy();
 		}
 		var mygform = new gform(formConfig, $(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
-		mygform.on(events, function(){
+		mygform.sub(events, function(){
 			var temp = mygform.toJSON();
 			if(typeof temp.basics !== 'undefined'){
 				temp = $.extend({},temp.basics,temp.options_c)
 			}
 		 	container.update(temp, this);
-		 	mygform.trigger('saved');
+		 	mygform.pub('saved');
 		}.bind(this));
-		mygform.on('cancel',function(){
+		mygform.sub('cancel',function(){
 		 	container.update(this.get(), this)
 		}.bind(this));
 	}
