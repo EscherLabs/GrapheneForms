@@ -634,4 +634,440 @@ gform.VERSION = '0.0.0.3';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
+};gform.types = {
+  'input':{
+      defaults:{},
+      create: function(){
+          var tempEl = document.createElement("span");
+          tempEl.setAttribute("id", this.id);
+          tempEl.setAttribute("class", ''+gform.columnClasses[this.columns]);
+          tempEl.innerHTML = this.render();
+          return tempEl;
+      },
+      render: function(){
+          return gform.render(this.type, this);
+      },
+      destroy:function(){
+          this.el.removeEventListener('change',this.onchangeEvent );		
+          this.el.removeEventListener('change',this.onchange );		
+          this.el.removeEventListener('input', this.onchangeEvent);
+      },
+      initialize: function(){
+        //   this.iel = this.el.querySelector('input[name="' + this.name + '"]')
+          if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
+          this.onchangeEvent = function(){
+              this.value = this.get();
+              this.owner.pub('change:'+this.name, this.owner, this);
+              this.owner.pub('change', this.owner,this);
+          }.bind(this)
+          this.el.addEventListener('change',this.onchangeEvent );		
+          this.el.addEventListener('input', this.onchangeEvent);
+      },
+      update: function(item, silent) {
+          if(typeof item === 'object') {
+              _.extend(this, this.item, item);
+          }
+          
+          var oldDiv = document.getElementById(this.id);
+
+          this.destroy();
+          this.el = gform.types[this.type].create.call(this);
+          oldDiv.parentNode.replaceChild(this.el,oldDiv);
+          gform.types[this.type].initialize.call(this);
+
+          if(!silent) {
+              this.owner.pub('change:'+this.name, this.owner, this);
+              this.owner.pub('change',this.owner,this);
+          }
+      },
+      get: function() {
+          return this.el.querySelector('input[name="' + this.name + '"]').value;
+      },
+      set: function(value) {
+          this.el.querySelector('input[name="' + this.name + '"]').value = value;
+      },
+      satisfied: function(value) {
+          return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '');            
+      },
+      enable: function(state) {
+          this.el.querySelector('[name="'+this.name+'"]').disabled = !state;            
+      },find:function() {
+          return this;
+      },
+      focus:function() {
+          this.el.querySelector('[name="'+this.name+'"]').focus();
+          var temp = this.value;
+          this.set('');
+          this.set(temp);
+        //   this.el.querySelector('[name="'+this.name+'"]').select();
+      }
+      //display
+  },
+//   'textarea':,
+  'bool':{
+      defaults:{options:[false, true]},
+      render: function() {
+          this.selected = (this.value == this.options[1]);
+          return gform.render(this.type, this);
+      },
+      set: function(value) {
+          this.selected = (value == this.options[1]);
+          this.el.querySelector('input[name="' + this.name + '"]').checked = this.selected;
+      },
+      get: function() {
+          return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0]
+      }
+  },
+  'collection':{
+      render: function() {
+          this.options = gform.options.call(this,this, this.value);
+          return gform.render(this.type, this);
+      },
+      initialize: function() {
+          if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
+          this.el.addEventListener('change', function(){
+              this.value = this.get();
+              this.owner.pub('change:'+this.name,this.owner, this);
+              this.owner.pub('change',this.owner, this);
+          }.bind(this));		
+      },
+      get: function() {
+          return this.el.querySelector('select[name="' + this.name + '"]').value;
+      },
+      set: function(value) {
+          this.el.querySelector('[name="' + this.name + '"]').value = value;
+          _.each(this.options.options, function(option, index){
+              if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+          }.bind(this))
+      }
+  },
+  'section':{
+      create: function() {
+          var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
+          gform.addClass(tempEl,gform.columnClasses[this.columns])
+          return tempEl;
+      },
+      initialize: function() {
+          //handle rows
+          this.rows = {};
+      },        
+      render: function() {
+          // if(this.section){
+              return gform.render(this.owner.options.sections+'_fieldset', this);                
+          // }else{
+              // return gform.render('_fieldset', this);                
+          // }
+      },
+      get: function(name) {
+          return gform.toJSON.call(this, name)
+      },
+      find: function(name) {
+          return gform.find.call(this, name)
+      },
+      reflow: function() {
+          gform.reflow.call(this)
+      },
+      focus:function() {
+          gform.types[this.fields[0].type].focus.call(this.fields[0]);
+      }
+  },
+  'button':{
+      defaults:{parsable:false, columns:2, target:".footer"},
+      create: function() {
+          var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
+          tempEl.setAttribute("id", this.id);
+          // tempEl.setAttribute("class", tempEl.className+' '+gform.columnClasses[this.columns]);
+          return tempEl;
+      },
+      initialize: function() {
+          this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
+          this.onclickEvent = function(){
+              if(this.enabled) {
+                  this.owner.pub(this.action, this.owner, this);
+              }
+          }.bind(this)
+          this.el.addEventListener('click',this.onclickEvent );	
+      },        
+      render: function() {
+          return gform.render('button', this);
+      },
+      satisfied: function(value) {
+          return this.enabled && this.visible;
+      },
+      update: function(item, silent) {
+          if(typeof item === 'object') {
+              _.extend(this, this.item, item);
+          }
+          
+          var oldDiv = document.getElementById(this.id);
+
+          this.destroy();
+          this.el = gform.types[this.type].create.call(this);
+          oldDiv.parentNode.replaceChild(this.el, oldDiv);
+          gform.types[this.type].initialize.call(this);
+      },        
+      destroy:function() {		
+          this.el.removeEventListener('click', this.onclickEvent);
+      },
+      get: function(name) {
+          return null
+      },
+      set: function(value) {
+      },
+      enable: function(state) {
+          this.el.disabled = !state;
+      }
+  }
+};
+gform.render = function(template, options) {
+  return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))
+}
+gform.create = function(text) {
+ return document.createRange().createContextualFragment(text).firstElementChild;
+}
+gform.renderString = function(string,options) {
+  return gform.m(string || '', options || {})
+}
+
+
+// add some classes. Eg. 'nav' and 'nav header'
+gform.addClass = function(elem, classes) {
+  elem.className = _.chain(elem.className).split(/[\s]+/).union(classes.split(' ')).join(' ').value();
+  // return elem;
+};
+gform.removeClass = function(elem, classes){
+  elem.className = _.chain(elem.className).split(/[\s]+/).difference(classes.split(' ')).join(' ').value();
+  // return elem
+};
+
+// remove the added classes
+gform.types['text']     = gform.types['password'] = gform.types['number'] = gform.types['color'] = gform.types['input'];
+gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false}});
+gform.types['textarea'] = _.extend({}, gform.types['input'], {
+      set: function(value) {
+          this.el.querySelector('textarea[name="' + this.name + '"]').innerHTML = value;
+      },
+      get: function() {
+          return this.el.querySelector('textarea[name="' + this.name + '"]').value;
+      }
+  });
+gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
+gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
+gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection']);
+gform.types['radio']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+  get: function(){
+      return (this.el.querySelector('[type="radio"][name="' + this.name + '"]:checked')||{value:''}).value; 
+  },
+  set:function(value){
+      this.el.querySelector('[value="'+value+'"]').checked = 'checked'   
+  }
+});
+
+gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: { 'valid_email': true }}});gform.processConditions = function(conditions, func) {
+	if (typeof conditions === 'string') {
+		if(conditions === 'display' || conditions === 'enable'  || conditions === 'parse') {
+			conditions = this.item[conditions];
+		}else if(conditions === 'enable') {
+			conditions = this.item.enable;
+		}
+	}
+	if (typeof conditions === 'boolean') {
+		func.call(this, conditions)
+	}
+	if (typeof conditions === 'function') {
+		func.call(this, conditions.call(this))
+	}
+	if (typeof conditions === 'object') {
+		var callback = function(rules,func){
+			func.call(this, gform.rules.call(this, rules))
+		}.bind(this, conditions, func)
+
+		for(var i in conditions) {
+			this.owner.sub('change:' + _.values(conditions[i])[0].name, callback)
+		}
+		// debugger;
+		// func.call(this, gform.rules.call(this, conditions));
+	}
+	
+	return true;
+};
+
+gform.rules = function(rules){
+return _.every(_.map(rules, function(rule, i){
+	return _.every(_.map(rule, function(args,name,rule) {
+		return gform.conditions[name](this.owner, this, args)
+	}.bind(this)));
+}.bind(this)))
+}
+
+gform.conditions = {
+	requires: function(gform, args, func) {
+		return gform.sub('change:' + args.name, function(args, local, topic, token) {
+				func.call(this, local.find(args.path).satisfied(), token);
+			}.bind(this, args)
+		);
+	},
+	// valid_previous: function(gform, args) {},
+	not_matches: function(gform, field, args) {
+		var val = args.value;
+		var localval = (field.parent.find(args.name) || {value:''}).value;
+		if(typeof val== "object" && localval !== null){
+			return (val.indexOf(localval) == -1);
+		}else{
+			return (val !== localval);
+		}
+	},
+	test: function(gform, args, func) {
+		return gform.sub('change:' + args.name, function(args, local, topic, token) {
+				func.call(this, args.callback(), token);
+			}.bind( this, args)
+		);
+	},
+	contains: function(gform , args, func) {
+		return gform.sub('change:' + args.name, function(args, local, topic, token) {
+				func.call(this, (typeof local.value !== 'undefined'  && local.value.indexOf(args.value) !== -1 ), token);
+			}.bind( this, args)
+		).lastToken;
+	},
+	matches: function(gform, field, args) {
+		var val = args.value;
+		var localval = (field.parent.find(args.name) || {value:''}).value;
+		if(typeof val== "object" && localval !== null){
+			return (val.indexOf(localval) !== -1);
+		}else{
+			return (val == localval);
+		}
+	}
+}; 
+
+gform.prototype.errors = {};
+gform.prototype.validate = function(){
+	gform.clearErrors.call(this);
+    _.each(this.fields, gform.validateItem)
+	return this.valid;
+};
+gform.handleError = gform.update;
+gform.validateItem = function(item){
+	gform.performValidate(item);
+	item.owner.errors[item.name] = item.errors;
+	item.owner.valid = item.valid && item.owner.valid;
+};
+gform.performValidate = function(target, pValue){
+	var item = target;
+	var value = target.get();
+	if(typeof pValue !== 'undefined'){value = pValue;}
+	target.valid = true;
+	target.errors = '';
+
+	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.parsable){
+		for(var r in item.validate) {
+			if(item.validate[r] && !gform.validations[r].method.call(target, value, item.validate[r])){
+				if((typeof item.show === 'undefined') || target.isVisible){
+					target.valid = false;
+					var estring = gform.validations[r].message;
+					if(typeof item.validate[r] == 'string') {
+						estring = item.validate[r];
+					}													
+					target.errors = gform.renderString(estring,item);
+				}
+			}
+			gform.handleError(target);
+		}
+	}
+};
+gform.clearErrors = function() {
+	this.valid = true;
+	this.errors = {};
+	//add code for removing errors here
+};
+gform.regex = {
+	numeric: /^[0-9]+$/,
+	decimal: /^\-?[0-9]*\.?[0-9]+$/
+};
+gform.validations = 
+{
+	required:{
+		method: function(value, args) {
+			return this.satisfied(value);
+		},
+		message: '{{label}} is required.'
+	},
+	matches:{
+		method: function(value, matchName) {
+			if (el == this.gform[matchName]) {
+				return value === el.value;
+			}
+			return false;
+		},
+		message: '{{label}} does not match the %s field.'
+	},	
+	date:{
+		method: function(value, args) {
+	        return (/^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/.test(value) || value === '');
+		},
+		message: '{{label}} should be in the format MM/DD/YYYY.'
+	},
+	valid_url:{
+		method: function(value) {
+			return (/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(value) || value === '');
+		},
+		message: '{{label}} must contain a valid Url.'
+	},
+	valid_email:{
+		method: function(value) {
+			return (/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i.test(value) || value === '');
+		},
+		message: '{{label}} must contain a valid email address.'
+	},
+	min_length:{
+		method: function(value, length) {
+			if (!gform.regex.numeric.test(length)) {
+				return false;
+			}
+			return (value.length >= parseInt(length, 10));
+		},
+		message: '{{label}} must be at least %s characters in length.'
+	},
+	max_length:{
+		method: function(value, length) {
+			if (!gform.regex.numeric.test(length)) {
+				return false;
+			}
+			return (value.length <= parseInt(length, 10));
+		},
+		message: '{{label}} must not exceed %s characters in length.'
+	},
+	exact_length:{
+		method: function(value, length) {
+			if (!gform.regex.numeric.test(length)) {
+				return false;
+			}
+			return (value.length === parseInt(length, 10));
+		},
+		message: '{{label}} must be exactly %s characters in length.'
+	},
+	greater_than:{
+		method: function(value, param) {
+			if (!gform.regex.decimal.test(value)) {
+				return false;
+			}
+			return (parseFloat(value) > parseFloat(param));
+		},
+		message: '{{label}} must contain a number greater than %s.'
+	},
+	less_than:{
+		method: function(value, param) {
+			if (!gform.regex.decimal.test(value)) {
+				return false;
+			}
+			return (parseFloat(value) < parseFloat(param));
+		},
+		message: '{{label}} must contain a number less than %s.'
+	},
+	numeric:{
+		method: function(value) {
+			return (gform.regex.numeric.test(value) || value === '');
+		},
+		message: '{{label}} must contain only numbers.'
+	}
 };

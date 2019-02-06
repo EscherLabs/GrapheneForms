@@ -208,6 +208,7 @@ gform.columns = 12;
 
 gform.columnClasses = _.map(new Array(13),function(item,i){return 'col-md-'+i})
 gform.default.inline = true;
+gform.prototype.opts.suffix = "";
 
 gform.handleError = function(field){
 	if(!field.valid){

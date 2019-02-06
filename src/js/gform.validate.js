@@ -17,9 +17,9 @@ gform.performValidate = function(target, pValue){
 	target.valid = true;
 	target.errors = '';
 
-	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.isParsable){
+	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.parsable){
 		for(var r in item.validate) {
-			if(!gform.validations[r].method.call(target, value, item.validate[r])){
+			if(item.validate[r] && !gform.validations[r].method.call(target, value, item.validate[r])){
 				if((typeof item.show === 'undefined') || target.isVisible){
 					target.valid = false;
 					var estring = gform.validations[r].message;
