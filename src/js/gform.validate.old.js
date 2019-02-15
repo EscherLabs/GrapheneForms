@@ -1,7 +1,7 @@
 gform.prototype.errors = {};
 gform.prototype.validate = function(){
-	this.valid = true;
-  _.each(this.fields, gform.validateItem)
+	gform.clearErrors.call(this);
+    _.each(this.fields, gform.validateItem)
 	return this.valid;
 };
 gform.handleError = gform.update;
@@ -10,35 +10,45 @@ gform.validateItem = function(item){
 	item.owner.errors[item.name] = item.errors;
 	item.owner.valid = item.valid && item.owner.valid;
 };
-gform.performValidate = function(item){
-	var value = item.get();
-	item.valid = true;
-	item.errors = '';
+gform.performValidate = function(target, pValue){
+	var item = target;
+	var value = target.get();
+	if(typeof pValue !== 'undefined'){value = pValue;}
+	target.valid = true;
+	target.errors = '';
 
-	if(item.parsable && typeof item.validate === 'object'){
-		var errors = _.compact(_.map(item.validate, function(v, it,i,stuff){
-			if(it && v[i].call(item, value, it)){	
-					return gform.renderString(it.message || v[i].call(item, value, it), item);
+	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.parsable){
+		for(var r in item.validate) {
+			if(item.validate[r] && !gform.validations[r].method.call(target, value, item.validate[r])){
+				if((typeof item.show === 'undefined') || target.isVisible){
+					target.valid = false;
+					var estring = gform.validations[r].message;
+					if(typeof item.validate[r] == 'string') {
+						estring = item.validate[r];
+					}													
+					target.errors = gform.renderString(estring,item);
+				}
 			}
-		}.bind(null, gform.validations)))
-		if((typeof item.display === 'undefined') || item.visible) {
-
-		item.valid = !errors.length;
-		item.errors = errors.join('<br>')
-
-		gform.handleError(item);
+			gform.handleError(target);
 		}
 	}
 };
-
+gform.clearErrors = function() {
+	this.valid = true;
+	this.errors = {};
+	//add code for removing errors here
+};
 gform.regex = {
 	numeric: /^[0-9]+$/,
 	decimal: /^\-?[0-9]*\.?[0-9]+$/
 };
 gform.validations = 
 {
-	required:function(value, args) {
-			return (this.satisfied(value) ? false : '{{label}} is required.');
+	required:{
+		method: function(value, args) {
+			return this.satisfied(value);
+		},
+		message: '{{label}} is required.'
 	},
 	matches:{
 		method: function(value, matchName) {
@@ -69,8 +79,6 @@ gform.validations =
 	},
 	min_length:{
 		method: function(value, length) {
-			// return (this.satisfied(value) ? false : true)
-
 			if (!gform.regex.numeric.test(length)) {
 				return false;
 			}

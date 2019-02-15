@@ -274,7 +274,6 @@ gform.normalizeField = function(fieldIn,parent){
     }, this.opts,gform.default,this.options.default,gform.types[fieldIn.type].defaults, fieldIn)
     field.validate.required = field.validate.required|| field.required || false;
     // if(typeof field.validate.required == 'undefined'){field.validate.required = false}
-    debugger;
     if(field.name == ''){field.name = field.id;}
     field.item = fieldIn;
     return field;
