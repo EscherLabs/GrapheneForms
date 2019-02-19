@@ -1,24 +1,26 @@
 gform.prototype.errors = {};
 gform.prototype.validate = function(){
 	this.valid = true;
-  _.each(this.fields, gform.validateItem)
+	_.each(this.fields, gform.validateItem)
+	if(!this.valid){
+		this.pub('invalid');
+	}
 	return this.valid;
 };
 gform.handleError = gform.update;
 gform.validateItem = function(item){
-	gform.performValidate(item);
-	item.owner.errors[item.name] = item.errors;
+	var errors = gform.performValidate(item);
+	item.owner.errors[item.name] = errors;
 	item.owner.valid = item.valid && item.owner.valid;
 };
 gform.performValidate = function(item){
 	var value = item.get();
 	item.valid = true;
 	item.errors = '';
-
 	if(item.parsable && typeof item.validate === 'object'){
-		var errors = _.compact(_.map(item.validate, function(v, it,i,stuff){
+		var errors = _.compact(_.map(item.validate, function(v, it, i){
 			if(it && v[i].call(item, value, it)){	
-					return gform.renderString(it.message || v[i].call(item, value, it), item);
+					return gform.renderString(it.message || v[i].call(item, value, it), {label:item.label,value:value, args:it});
 			}
 		}.bind(null, gform.validations)))
 		if((typeof item.display === 'undefined') || item.visible) {
@@ -28,96 +30,87 @@ gform.performValidate = function(item){
 
 		gform.handleError(item);
 		}
+
+		//validate sub fields
+		if(typeof item.fields !== 'undefined'){
+			_.each(item.fields, gform.validateItem)
+		}
+
 	}
+	return item.errors;
+
 };
 
 gform.regex = {
 	numeric: /^[0-9]+$/,
-	decimal: /^\-?[0-9]*\.?[0-9]+$/
+	decimal: /^\-?[0-9]*\.?[0-9]+$/,
+	url: /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
+	date: /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
+	email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i
 };
+
 gform.validations = 
 {
-	required:function(value, args) {
-			return (this.satisfied(value) ? false : '{{label}} is required.');
+	required:function(value) {
+			return (this.satisfied(value) ? false : '{{label}} is required');
 	},
-	matches:{
-		method: function(value, matchName) {
-			if (el == this.gform[matchName]) {
-				return value === el.value;
-			}
-			return false;
+	matches:function(value, args) {
+		var temp = this.parent.find(args.name);
+		args.label = temp.label;
+		args.value = temp.get();
+		if(typeof temp == 'undefined'){return "Matching field not defined";}
+			return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
 		},
-		message: '{{label}} does not match the %s field.'
-	},	
-	date:{
-		method: function(value, args) {
-	        return (/^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/.test(value) || value === '');
-		},
-		message: '{{label}} should be in the format MM/DD/YYYY.'
+	date: function(value) {
+			return gform.regex.date.test(value) || value === '' ? false : '{{label}} should be in the format MM/DD/YYYY';
 	},
-	valid_url:{
-		method: function(value) {
-			return (/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(value) || value === '');
-		},
-		message: '{{label}} must contain a valid Url.'
+	valid_url: function(value) {
+		return gfrom.regex.url.test(value) || value === '' ? false : '{{label}} must contain a valid Url';
 	},
-	valid_email:{
-		method: function(value) {
-			return (/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i.test(value) || value === '');
-		},
-		message: '{{label}} must contain a valid email address.'
+	valid_email: function(value) {
+			return gform.regex.email.test(value) || value === '' ? false : '{{label}} must contain a valid email address';
 	},
-	min_length:{
-		method: function(value, length) {
-			// return (this.satisfied(value) ? false : true)
+	length:function(value, args){
+		if (!gform.regex.numeric.test(args.max) && !gform.regex.numeric.test(args.min)) {
+			return 'Invalid length requirement';
+		}
 
-			if (!gform.regex.numeric.test(length)) {
-				return false;
+		if(typeof args.max == 'number' && typeof args.min == 'number' && args.min == args.max){
+			if(args.min == value.length){
+				return false
+			}else{
+				return '{{label}} must be exactly '+args.min+' characters in length';
 			}
-			return (value.length >= parseInt(length, 10));
-		},
-		message: '{{label}} must be at least %s characters in length.'
+		}
+		if(typeof args.max == 'number' && value.length > args.max){
+			return '{{label}} must not exceed '+args.max+' characters in length'
+		}
+		if(typeof args.min == 'number' && value.length>0 && value.length < args.min){
+			return '{{label}} must be at least '+args.min+' characters in length'
+		}
+		return false
 	},
-	max_length:{
-		method: function(value, length) {
-			if (!gform.regex.numeric.test(length)) {
-				return false;
+	greater_than:function(value, args) {
+			if (gform.regex.decimal.test(value)) {
+			return 'Invalid number requirement';
 			}
-			return (value.length <= parseInt(length, 10));
-		},
-		message: '{{label}} must not exceed %s characters in length.'
+			return parseFloat(value) > parseFloat(args) ? false : '{{label}} must contain a number greater than {{args}}';
 	},
-	exact_length:{
-		method: function(value, length) {
-			if (!gform.regex.numeric.test(length)) {
-				return false;
-			}
-			return (value.length === parseInt(length, 10));
-		},
-		message: '{{label}} must be exactly %s characters in length.'
-	},
-	greater_than:{
-		method: function(value, param) {
+	less_than:function(value, args) {
 			if (!gform.regex.decimal.test(value)) {
-				return false;
+				return 'Invalid number requirement';
 			}
-			return (parseFloat(value) > parseFloat(param));
-		},
-		message: '{{label}} must contain a number greater than %s.'
+			return parseFloat(value) < parseFloat(args) ? false : '{{label}} must contain a number less than {{args}}';
 	},
-	less_than:{
-		method: function(value, param) {
-			if (!gform.regex.decimal.test(value)) {
-				return false;
-			}
-			return (parseFloat(value) < parseFloat(param));
-		},
-		message: '{{label}} must contain a number less than %s.'
+	numeric: function(value,args) {
+			return ((gform.regex.numeric.test(value) || value === '') ? false : '{{label}} must contain only numbers');
 	},
-	numeric:{
-		method: function(value) {
-			return (gform.regex.numeric.test(value) || value === '');
-		},
-		message: '{{label}} must contain only numbers.'
+	regex: function(value, args) {
+		var r = args.regex;
+		if(typeof r == 'string'){r = gform.regex[r]}
+		return r.test(value) || value === '' ? false : args.message;
+	},
+	custom: function(value, args) {
+		return args.call(this, value);
 	}
 };

@@ -36,7 +36,10 @@
     options = {
         legend: 'Basic Form',
         fields:[
-        {label: 'Field Label', name: 'label', validate:{required:true}}
+        {label: 'Field Label', name: 'label', validate:{required:true,matches:{name:"label3"}},type:"password"},
+        {label: 'Field Label', name: 'label2', validate:{length:{min:3,max:6}}},
+
+        {label: 'Field Label', name: 'label3', validate:{required:true,matches:{name:"label"}},type:"password"}
         ]
     }
 
