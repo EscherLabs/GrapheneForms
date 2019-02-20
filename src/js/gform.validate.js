@@ -90,20 +90,16 @@ gform.validations =
 		}
 		return false
 	},
-	greater_than:function(value, args) {
-			if (gform.regex.decimal.test(value)) {
-			return 'Invalid number requirement';
+	numeric: function(value, args) {
+			if(!(gform.regex.decimal.test(value) || value === '')){
+				return '{{label}} must contain only numbers';
 			}
-			return parseFloat(value) > parseFloat(args) ? false : '{{label}} must contain a number greater than {{args}}';
-	},
-	less_than:function(value, args) {
-			if (!gform.regex.decimal.test(value)) {
-				return 'Invalid number requirement';
+			if(typeof args.min == 'number' && parseFloat(value) < parseFloat(args.min)){
+				return '{{label}} must contain a number greater than {{args.min}}'
 			}
-			return parseFloat(value) < parseFloat(args) ? false : '{{label}} must contain a number less than {{args}}';
-	},
-	numeric: function(value,args) {
-			return ((gform.regex.numeric.test(value) || value === '') ? false : '{{label}} must contain only numbers');
+			if(typeof args.max == 'number' && parseFloat(value) > parseFloat(args.max)){
+				return '{{label}} must contain a number less than {{args.max}}'
+			}
 	},
 	regex: function(value, args) {
 		var r = args.regex;

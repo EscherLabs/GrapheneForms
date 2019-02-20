@@ -23,7 +23,6 @@ gform.processConditions = function(conditions, func) {
 		// debugger;
 		// func.call(this, gform.rules.call(this, conditions));
 	}
-	
 	return true;
 };
 
@@ -74,4 +73,3 @@ gform.conditions = {
 		}
 	}
 }; 
-
