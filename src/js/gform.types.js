@@ -21,8 +21,8 @@ gform.types = {
           if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.onchangeEvent = function(){
               this.value = this.get();
-              this.owner.pub('change:'+this.name, this.owner, this);
-              this.owner.pub('change', this.owner,this);
+              this.owner.pub('change:'+this.name, this);
+              this.owner.pub('change', this);
           }.bind(this)
           this.el.addEventListener('change',this.onchangeEvent );		
           this.el.addEventListener('input', this.onchangeEvent);
@@ -40,8 +40,8 @@ gform.types = {
           gform.types[this.type].initialize.call(this);
 
           if(!silent) {
-              this.owner.pub('change:'+this.name, this.owner, this);
-              this.owner.pub('change',this.owner,this);
+              this.owner.pub('change:'+this.name, this);
+              this.owner.pub('change', this);
           }
       },
       get: function() {
@@ -91,8 +91,8 @@ gform.types = {
           if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.value = this.get();
-              this.owner.pub('change:'+this.name,this.owner, this);
-              this.owner.pub('change',this.owner, this);
+              this.owner.pub('change:'+this.name, this);
+              this.owner.pub('change', this);
           }.bind(this));		
       },
       get: function() {
@@ -147,7 +147,7 @@ gform.types = {
           this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
           this.onclickEvent = function(){
               if(this.enabled) {
-                  this.owner.pub(this.action, this.owner, this);
+                  this.owner.pub(this.action, this);
               }
           }.bind(this)
           this.el.addEventListener('click',this.onclickEvent );	

@@ -12,8 +12,10 @@ var gform = function(data, el){
     }.bind(this);
     this.pub = function (event) {
         var args = Array.prototype.slice.call(arguments,1)
+        args.unshift(this)
+
         _.each(this.handlers[event], function (handler) {
-            handler.apply(this, args);
+            handler.apply(null, args);
         });
         return this;
     }.bind(this);

@@ -1,6 +1,7 @@
 document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
 var mygform = new gform(options, '#form')
 mygform.sub('change',function(d){
+    debugger;
     if(d.validate()){}
         document.querySelector('#result code').classList = "prettyprint"
         document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
@@ -8,4 +9,4 @@ mygform.sub('change',function(d){
     
 })
 
-mygform.pub('change', mygform)
+mygform.pub('change')

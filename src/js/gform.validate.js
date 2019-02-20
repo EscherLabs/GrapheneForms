@@ -10,6 +10,9 @@ gform.prototype.validate = function(){
 gform.handleError = gform.update;
 gform.validateItem = function(item){
 	var errors = gform.performValidate(item);
+	if(errors){
+		this.pub('invalid:'+item.name, errors);
+	}
 	item.owner.errors[item.name] = errors;
 	item.owner.valid = item.valid && item.owner.valid;
 };
