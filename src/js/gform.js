@@ -247,7 +247,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
             if(atts[field.name].length> count){count = atts[field.name].length}
         }
         for(var i = 1; i<count; i++) {
-            var newfield = gform.createField.call(this, field.parent, atts, field.el, i, field.item);
+            var newfield = gform.createField.call(this, field.parent, atts, field.el, i, field.item,null,null,_.extend({index:0},{index:i}).index);
             field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
             field = newfield;
         }
@@ -281,9 +281,9 @@ gform.normalizeField = function(fieldIn,parent){
     return field;
 }
 
-gform.createField = function(parent, atts, el, index, fieldIn ) {
-    var field = gform.normalizeField.call(this,fieldIn,parent) 
+gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
+    var field = gform.normalizeField.call(this,fieldIn,parent) 
     field.owner = this;
 	if(field.columns > this.options.columns) { field.columns = this.options.columns; }
 
@@ -314,7 +314,10 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
         }
 	} else {
 		field.value = 0;
-	}
+    }
+    field.instance = instance||0;
+    field.label = gform.renderString(field.item.label,field);
+    // field.index = i;
 
     field.satisfied = field.satisfied || gform.types[field.type].satisfied.bind(field);
     field.update = gform.types[field.type].update.bind(field);
@@ -387,47 +390,92 @@ gform.createField = function(parent, atts, el, index, fieldIn ) {
 
     gform.types[field.type].initialize.call(field);
 
-    var add = field.el.querySelector('.gform-add');
-    if(add !== null){
-        add.addEventListener('click', function(field){
-            if(_.countBy(field.parent.fields, {name: field.name}).true < (field.array.max || 5)){
-                var index = _.findIndex(field.parent.fields, {id: field.id});
-                var atts = {};
-                var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item);
-                field.parent.fields.splice(index+1, 0, newField)
-                field.parent.reflow();
-                gform.each.call(field,function(field) {
-                    field.owner.pub('change:' + field.name,field.owner, field);
-                })
-                gform.types[newField.type].focus.call(newField);
+    // var add = field.el.querySelector('.gform-add');
+    // if(add !== null){
+    //     add.addEventListener('click', function(field){
+    //         if(_.countBy(field.parent.fields, {name: field.name}).true < (field.array.max || 5)){
+    //             var index = _.findIndex(field.parent.fields, {id: field.id});
+    //             var atts = {};
 
-                _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], function(event){field.owner.pub(event,field.owner,field)}.bind(field))
-            }
-        }.bind(this, field));
+    //             var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null, _.countBy(field.parent.fields, {name: field.name}).true);
+    //             field.parent.fields.splice(index+1, 0, newField)
+    //             _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({instance:index})})
+    //             field.parent.reflow();
+    //             // gform.each.call(field,function(field) {
+    //                 field.owner.pub('change:' + field.name,field.owner, field);
+    //             // })
+    //             gform.types[newField.type].focus.call(newField);
+
+    //             _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], function(event){field.owner.pub(event,field.owner,field)}.bind(field))
+    //         }
+    //     }.bind(this, field));
+    // }
+    field.el.addEventListener('click', function(field,e){
+debugger;
+e.stopPropagation();
+if(e.target.classList.contains('gform-add')){
+    if(_.countBy(field.parent.fields, {name: field.name}).true < (field.array.max || 5)){
+        var index = _.findIndex(field.parent.fields, {id: field.id});
+        var atts = {};
+
+        var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null, _.countBy(field.parent.fields, {name: field.name}).true);
+        field.parent.fields.splice(index+1, 0, newField)
+        _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({instance:index})})
+        field.parent.reflow();
+        // gform.each.call(field,function(field) {
+            field.owner.pub('change:' + field.name,field.owner, field);
+        // })
+        gform.types[newField.type].focus.call(newField);
+
+        _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], function(event){field.owner.pub(event,field.owner,field)}.bind(field))
     }
-    var minus = field.el.querySelector('.gform-minus');
-    if(minus !== null){
-        minus.addEventListener('click', function(field){
-            if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)) {
-                var index = _.findIndex(field.parent.fields,{id:field.id});
-                field.parent.fields.splice(index, 1);
-                if(!field.target) {
-                    field.parent.rows[field.row].used -= (field.offset + field.columns);
-                    field.parent.rows[field.row].ref.removeChild(field.el);
-                    if(field.parent.rows[field.row].used  == 0){
-                        field.parent.container.removeChild(field.parent.rows[field.row].ref);
-                        delete field.parent.rows[field.row];
-                    }
-                    gform.types[field.parent.type].reflow.call(field.parent);
-                }else{
-                    this.container.querySelector( field.target ).removeChild(field.el);
-                }
-                _.each( [ 'change', 'change:' + field.name, 'removed:' + field.name ], function( event ) { field.owner.pub( event, field.owner, field) }.bind( field ) )
-            }else{
-                field.set(null);
+}
+if(e.target.classList.contains('gform-minus')){
+    if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)) {
+        var index = _.findIndex(field.parent.fields,{id:field.id});
+        field.parent.fields.splice(index, 1);
+        if(!field.target) {
+            field.parent.rows[field.row].used -= (field.offset + field.columns);
+            field.parent.rows[field.row].ref.removeChild(field.el);
+            if(field.parent.rows[field.row].used  == 0){
+                field.parent.container.removeChild(field.parent.rows[field.row].ref);
+                delete field.parent.rows[field.row];
             }
-        }.bind(this, field));
+            _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({instance:index})})
+            gform.types[field.parent.type].reflow.call(field.parent);
+        }else{
+            this.container.querySelector( field.target ).removeChild(field.el);
+        }
+        _.each( [ 'change', 'change:' + field.name, 'removed:' + field.name ], function( event ) { field.owner.pub( event, field.owner, field) }.bind( field ) )
+    }else{
+        field.set(null);
     }
+}
+    }.bind(this, field))
+    // var minus = field.el.querySelector('.gform-minus');
+    // if(minus !== null){
+    //     minus.addEventListener('click', function(field){
+    //         if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)) {
+    //             var index = _.findIndex(field.parent.fields,{id:field.id});
+    //             field.parent.fields.splice(index, 1);
+    //             if(!field.target) {
+    //                 field.parent.rows[field.row].used -= (field.offset + field.columns);
+    //                 field.parent.rows[field.row].ref.removeChild(field.el);
+    //                 if(field.parent.rows[field.row].used  == 0){
+    //                     field.parent.container.removeChild(field.parent.rows[field.row].ref);
+    //                     delete field.parent.rows[field.row];
+    //                 }
+    //                 _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({instance:index})})
+    //                 gform.types[field.parent.type].reflow.call(field.parent);
+    //             }else{
+    //                 this.container.querySelector( field.target ).removeChild(field.el);
+    //             }
+    //             _.each( [ 'change', 'change:' + field.name, 'removed:' + field.name ], function( event ) { field.owner.pub( event, field.owner, field) }.bind( field ) )
+    //         }else{
+    //             field.set(null);
+    //         }
+    //     }.bind(this, field));
+    // }
     if(field.fields){
         var newatts = {};
         if(field.array && typeof (atts[field.name]|| field.owner.options.data[field.name]) == 'object'){

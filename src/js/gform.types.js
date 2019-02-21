@@ -28,10 +28,12 @@ gform.types = {
           this.el.addEventListener('input', this.onchangeEvent);
       },
       update: function(item, silent) {
+
           if(typeof item === 'object') {
               _.extend(this, this.item, item);
           }
-          
+          this.label = gform.renderString(this.item.label, this);
+
           var oldDiv = document.getElementById(this.id);
 
           this.destroy();
@@ -159,10 +161,12 @@ gform.types = {
           return this.enabled && this.visible;
       },
       update: function(item, silent) {
+          
           if(typeof item === 'object') {
               _.extend(this, this.item, item);
           }
-          
+          this.label = gform.renderString(this.item.label, this);
+
           var oldDiv = document.getElementById(this.id);
 
           this.destroy();
