@@ -12,8 +12,10 @@ var gform = function(data, el){
     }.bind(this);
     this.pub = function (event) {
         var args = Array.prototype.slice.call(arguments,1)
+        args.unshift(this)
+
         _.each(this.handlers[event], function (handler) {
-            handler.apply(this, args);
+            handler.apply(null, args);
         });
         return this;
     }.bind(this);
@@ -274,7 +276,6 @@ gform.normalizeField = function(fieldIn,parent){
     }, this.opts,gform.default,this.options.default,gform.types[fieldIn.type].defaults, fieldIn)
     field.validate.required = field.validate.required|| field.required || false;
     // if(typeof field.validate.required == 'undefined'){field.validate.required = false}
-    debugger;
     if(field.name == ''){field.name = field.id;}
     field.item = fieldIn;
     return field;
@@ -657,8 +658,8 @@ gform.getUID = function() {
           if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.onchangeEvent = function(){
               this.value = this.get();
-              this.owner.pub('change:'+this.name, this.owner, this);
-              this.owner.pub('change', this.owner,this);
+              this.owner.pub('change:'+this.name, this);
+              this.owner.pub('change', this);
           }.bind(this)
           this.el.addEventListener('change',this.onchangeEvent );		
           this.el.addEventListener('input', this.onchangeEvent);
@@ -676,8 +677,8 @@ gform.getUID = function() {
           gform.types[this.type].initialize.call(this);
 
           if(!silent) {
-              this.owner.pub('change:'+this.name, this.owner, this);
-              this.owner.pub('change',this.owner,this);
+              this.owner.pub('change:'+this.name, this);
+              this.owner.pub('change', this);
           }
       },
       get: function() {
@@ -727,8 +728,8 @@ gform.getUID = function() {
           if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.value = this.get();
-              this.owner.pub('change:'+this.name,this.owner, this);
-              this.owner.pub('change',this.owner, this);
+              this.owner.pub('change:'+this.name, this);
+              this.owner.pub('change', this);
           }.bind(this));		
       },
       get: function() {
@@ -783,7 +784,7 @@ gform.getUID = function() {
           this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
           this.onclickEvent = function(){
               if(this.enabled) {
-                  this.owner.pub(this.action, this.owner, this);
+                  this.owner.pub(this.action, this);
               }
           }.bind(this)
           this.el.addEventListener('click',this.onclickEvent );	
@@ -863,7 +864,98 @@ gform.types['radio']    = _.extend({}, gform.types['input'], gform.types['collec
   }
 });
 
-gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: { 'valid_email': true }}});gform.processConditions = function(conditions, func) {
+gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: { 'valid_email': true }}});
+
+
+
+// gform.types['upload'] =       {
+// 		defaults: {autosize: true, advanced: false},
+// create: function() {
+//     var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
+//     gform.addClass(tempEl,gform.columnClasses[this.columns])
+//     return tempEl;
+// },
+// initialize: function() {
+//     //handle rows
+//     this.rows = {};
+// },        
+// render: function() {
+//     // if(this.section){
+//         return gform.render(this.owner.options.sections+'_fieldset', this);                
+//     // }else{
+//         // return gform.render('_fieldset', this);                
+//     // }
+// },
+// get: function(name) {
+//     return gform.toJSON.call(this, name)
+// },
+// find: function(name) {
+//     return gform.find.call(this, name)
+// },
+// reflow: function() {
+//     gform.reflow.call(this)
+// },
+// focus:function() {
+//     gform.types[this.fields[0].type].focus.call(this.fields[0]);
+// }
+
+// (function(b, $){
+// 	b.register({
+// 		type: 'upload',
+// 		defaults: {autosize: true, advanced: false},
+// 		setup: function() {
+// 			this.$el = this.self.find('form input');
+// 			this.$el.off();
+// 			if(this.onchange !== undefined) {
+// 				this.$el.on('input', this.onchange);
+// 			}
+// 			this.$el.on('input', $.proxy(function(){this.trigger('change');},this));
+// 			this.myDropzone = new Dropzone('#' + this.name, { method: 'post', paramName: this.name, success: $.proxy(function(message,response){
+// 				//contentManager.currentView.model.set(this.name, response[this.name]);
+// 				//myDropzone.removeAllFiles();
+
+// 				//this.setValue(response[this.name]);
+// 				this.setValue(response);
+// 				this.trigger('uploaded');
+// 			}, this)});
+// 			// myDropzone.on("complete", function(file) {
+// 			// 	myDropzone.removeFile(file);
+// 			// });
+// 		},
+// 		getValue: function() {
+// 		 return this.value; 
+// 		},
+// 		setValue: function(value){
+// 			if(typeof this.lastSaved === 'undefined'){
+// 				this.lastSaved = value;
+// 			}
+// 			this.value = value;
+// 			return this.$el;
+// 		},
+// 		update: function(item, silent) {
+// 			if(typeof item === 'object') {
+// 				$.extend(this.item, item);
+// 			}
+// 			$.extend(this, this.item);
+// 			this.setValue(this.value);
+// 			this.myDropzone.destroy();
+// 			this.render();
+// 			this.setup();
+// 			if(!silent) {
+// 				this.trigger('change');
+// 			}
+// 		},
+// 		render: function() {
+// 			if(typeof this.self === 'undefined') {
+// 				this.self = $(this.create()).attr('data-Berry', this.owner.options.name);
+// 			} else {
+// 				this.self.find('div:first').replaceWith($(this.create()).html())
+// 			}
+// 			this.display = this.getDisplay();
+// 			return this.self;
+// 		}
+// 	});
+// })(Berry,jQuery);gform.processConditions = function(conditions, func) {
 	if (typeof conditions === 'string') {
 		if(conditions === 'display' || conditions === 'enable'  || conditions === 'parse') {
 			conditions = this.item[conditions];
@@ -888,7 +980,6 @@ gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: {
 		// debugger;
 		// func.call(this, gform.rules.call(this, conditions));
 	}
-	
 	return true;
 };
 
@@ -938,136 +1029,121 @@ gform.conditions = {
 			return (val == localval);
 		}
 	}
-}; 
-
-gform.prototype.errors = {};
+}; gform.prototype.errors = {};
 gform.prototype.validate = function(){
-	gform.clearErrors.call(this);
-    _.each(this.fields, gform.validateItem)
+	this.valid = true;
+	_.each(this.fields, gform.validateItem)
+	if(!this.valid){
+		this.pub('invalid');
+	}
 	return this.valid;
 };
 gform.handleError = gform.update;
 gform.validateItem = function(item){
-	gform.performValidate(item);
-	item.owner.errors[item.name] = item.errors;
+	var errors = gform.performValidate(item);
+	if(errors) {
+		item.owner.pub('invalid:'+item.name, errors);
+	}
+	item.owner.errors[item.name] = errors;
 	item.owner.valid = item.valid && item.owner.valid;
 };
-gform.performValidate = function(target, pValue){
-	var item = target;
-	var value = target.get();
-	if(typeof pValue !== 'undefined'){value = pValue;}
-	target.valid = true;
-	target.errors = '';
-
-	if(typeof item.validate !== 'undefined' && typeof item.validate === 'object' && item.parsable){
-		for(var r in item.validate) {
-			if(item.validate[r] && !gform.validations[r].method.call(target, value, item.validate[r])){
-				if((typeof item.show === 'undefined') || target.isVisible){
-					target.valid = false;
-					var estring = gform.validations[r].message;
-					if(typeof item.validate[r] == 'string') {
-						estring = item.validate[r];
-					}													
-					target.errors = gform.renderString(estring,item);
+gform.performValidate = function(item){
+	var value = item.get();
+	item.valid = true;
+	item.errors = '';
+	if(item.parsable && typeof item.validate === 'object'){
+		var errors = _.compact(_.map(item.validate, function(v, it, i){
+			if(it){
+				var test = v[i].call(item, value, it);
+				if(test){	
+					return gform.renderString(it.message || test, {label:item.label,value:value, args:it});
 				}
 			}
-			gform.handleError(target);
+		}.bind(null, gform.validations)))
+		if((typeof item.display === 'undefined') || item.visible) {
+
+		item.valid = !errors.length;
+		item.errors = errors.join('<br>')
+
+		gform.handleError(item);
 		}
+
+		//validate sub fields
+		if(typeof item.fields !== 'undefined'){
+			_.each(item.fields, gform.validateItem)
+		}
+
 	}
+	return item.errors;
+
 };
-gform.clearErrors = function() {
-	this.valid = true;
-	this.errors = {};
-	//add code for removing errors here
-};
+
 gform.regex = {
 	numeric: /^[0-9]+$/,
-	decimal: /^\-?[0-9]*\.?[0-9]+$/
+	decimal: /^\-?[0-9]*\.?[0-9]+$/,
+	url: /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
+	date: /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
+	email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i
 };
+
 gform.validations = 
 {
-	required:{
-		method: function(value, args) {
-			return this.satisfied(value);
-		},
-		message: '{{label}} is required.'
+	required:function(value) {
+			return (this.satisfied(value) ? false : '{{label}} is required');
 	},
-	matches:{
-		method: function(value, matchName) {
-			if (el == this.gform[matchName]) {
-				return value === el.value;
+	matches:function(value, args) {
+		var temp = this.parent.find(args.name);
+		args.label = temp.label;
+		args.value = temp.get();
+		if(typeof temp == 'undefined'){return "Matching field not defined";}
+			return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
+		},
+	date: function(value) {
+			return gform.regex.date.test(value) || value === '' ? false : '{{label}} should be in the format MM/DD/YYYY';
+	},
+	valid_url: function(value) {
+		return gfrom.regex.url.test(value) || value === '' ? false : '{{label}} must contain a valid Url';
+	},
+	valid_email: function(value) {
+			return gform.regex.email.test(value) || value === '' ? false : '{{label}} must contain a valid email address';
+	},
+	length:function(value, args){
+		if (!gform.regex.numeric.test(args.max) && !gform.regex.numeric.test(args.min)) {
+			return 'Invalid length requirement';
+		}
+
+		if(typeof args.max == 'number' && typeof args.min == 'number' && args.min == args.max){
+			if(args.min == value.length){
+				return false
+			}else{
+				return '{{label}} must be exactly '+args.min+' characters in length';
 			}
-			return false;
-		},
-		message: '{{label}} does not match the %s field.'
-	},	
-	date:{
-		method: function(value, args) {
-	        return (/^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/.test(value) || value === '');
-		},
-		message: '{{label}} should be in the format MM/DD/YYYY.'
+		}
+		if(typeof args.max == 'number' && value.length > args.max){
+			return '{{label}} must not exceed '+args.max+' characters in length'
+		}
+		if(typeof args.min == 'number' && value.length>0 && value.length < args.min){
+			return '{{label}} must be at least '+args.min+' characters in length'
+		}
+		return false
 	},
-	valid_url:{
-		method: function(value) {
-			return (/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(value) || value === '');
-		},
-		message: '{{label}} must contain a valid Url.'
-	},
-	valid_email:{
-		method: function(value) {
-			return (/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i.test(value) || value === '');
-		},
-		message: '{{label}} must contain a valid email address.'
-	},
-	min_length:{
-		method: function(value, length) {
-			if (!gform.regex.numeric.test(length)) {
-				return false;
+	numeric: function(value, args) {
+			if(!(gform.regex.decimal.test(value) || value === '')){
+				return '{{label}} must contain only numbers';
 			}
-			return (value.length >= parseInt(length, 10));
-		},
-		message: '{{label}} must be at least %s characters in length.'
-	},
-	max_length:{
-		method: function(value, length) {
-			if (!gform.regex.numeric.test(length)) {
-				return false;
+			if(typeof args.min == 'number' && parseFloat(value) < parseFloat(args.min)){
+				return '{{label}} must contain a number greater than {{args.min}}'
 			}
-			return (value.length <= parseInt(length, 10));
-		},
-		message: '{{label}} must not exceed %s characters in length.'
-	},
-	exact_length:{
-		method: function(value, length) {
-			if (!gform.regex.numeric.test(length)) {
-				return false;
+			if(typeof args.max == 'number' && parseFloat(value) > parseFloat(args.max)){
+				return '{{label}} must contain a number less than {{args.max}}'
 			}
-			return (value.length === parseInt(length, 10));
-		},
-		message: '{{label}} must be exactly %s characters in length.'
 	},
-	greater_than:{
-		method: function(value, param) {
-			if (!gform.regex.decimal.test(value)) {
-				return false;
-			}
-			return (parseFloat(value) > parseFloat(param));
-		},
-		message: '{{label}} must contain a number greater than %s.'
+	regex: function(value, args) {
+		var r = args.regex;
+		if(typeof r == 'string'){r = gform.regex[r]}
+		return r.test(value) || value === '' ? false : args.message;
 	},
-	less_than:{
-		method: function(value, param) {
-			if (!gform.regex.decimal.test(value)) {
-				return false;
-			}
-			return (parseFloat(value) < parseFloat(param));
-		},
-		message: '{{label}} must contain a number less than %s.'
-	},
-	numeric:{
-		method: function(value) {
-			return (gform.regex.numeric.test(value) || value === '');
-		},
-		message: '{{label}} must contain only numbers.'
+	custom: function(value, args) {
+		return args.call(this, value);
 	}
 };

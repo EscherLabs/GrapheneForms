@@ -84,7 +84,7 @@ _actions: `
 _label: `      
 <label class="" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>           
 `,
-_error:`<small style="color:red;display:block;"></small>`,
+_error:`<small class="error" style="color:red;display:block;"></small><small class="valid" style="color:green;display:block;"></small>`,
 button:`<button type="button" role="button" class="button {{modifiers}}" style="margin:0 15px 0">{{{label}}}</button>`,
 tab_container: `
 <form id="{{name}}" novalidate {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>
@@ -136,7 +136,15 @@ gform.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80
 gform.prototype.opts.suffix = ""
 
 gform.handleError = function(field){
-    field.el.querySelector('small').innerHTML = field.errors;
+    field.el.querySelector('.error').innerHTML = field.errors;
+    if(field.valid){
+		if(field.satisfied(field.get())) {
+        field.el.querySelector('.valid').innerHTML = field.validtext||'';
+		}
+    }else{
+        field.el.querySelector('.valid').innerHTML = '';
+    }
+    
 }
 gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 				"label":"<i class=\"fa fa-times\"></i> Cancel",

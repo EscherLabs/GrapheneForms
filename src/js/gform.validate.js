@@ -10,8 +10,8 @@ gform.prototype.validate = function(){
 gform.handleError = gform.update;
 gform.validateItem = function(item){
 	var errors = gform.performValidate(item);
-	if(errors){
-		this.pub('invalid:'+item.name, errors);
+	if(errors) {
+		item.owner.pub('invalid:'+item.name, errors);
 	}
 	item.owner.errors[item.name] = errors;
 	item.owner.valid = item.valid && item.owner.valid;
@@ -22,8 +22,11 @@ gform.performValidate = function(item){
 	item.errors = '';
 	if(item.parsable && typeof item.validate === 'object'){
 		var errors = _.compact(_.map(item.validate, function(v, it, i){
-			if(it && v[i].call(item, value, it)){	
-					return gform.renderString(it.message || v[i].call(item, value, it), {label:item.label,value:value, args:it});
+			if(it){
+				var test = v[i].call(item, value, it);
+				if(test){	
+					return gform.renderString(it.message || test, {label:item.label,value:value, args:it});
+				}
 			}
 		}.bind(null, gform.validations)))
 		if((typeof item.display === 'undefined') || item.visible) {
