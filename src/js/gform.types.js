@@ -32,19 +32,21 @@ gform.types = {
           if(typeof item === 'object') {
               _.extend(this, this.item, item);
           }
-          this.label = gform.renderString(this.item.label, this);
+
+          this.label = gform.renderString(({}||item).label||this.item.label, this);
 
           var oldDiv = document.getElementById(this.id);
 
-          this.destroy();
-          this.el = gform.types[this.type].create.call(this);
-          oldDiv.parentNode.replaceChild(this.el,oldDiv);
-          gform.types[this.type].initialize.call(this);
+            this.destroy();
+            this.el = gform.types[this.type].create.call(this);
+            oldDiv.parentNode.replaceChild(this.el,oldDiv);
+            gform.types[this.type].initialize.call(this);
 
-          if(!silent) {
-              this.owner.pub('change:'+this.name, this);
-              this.owner.pub('change', this);
-          }
+            if(!silent) {
+                this.owner.pub('change:'+this.name, this);
+                this.owner.pub('change', this);
+            }
+            
       },
       get: function() {
           return this.el.querySelector('input[name="' + this.name + '"]').value;
@@ -123,7 +125,28 @@ gform.types = {
           // }else{
               // return gform.render('_fieldset', this);                
           // }
-      },
+      },      
+      update: function(item, silent) {
+
+        if(typeof item === 'object') {
+            _.extend(this.item,item);
+        }
+        this.label = gform.renderString(({}||item).label||this.item.label, this);
+
+        var oldDiv = document.getElementById(this.id);
+
+          this.destroy();
+          this.el = gform.types[this.type].create.call(this);
+          oldDiv.parentNode.replaceChild(this.el,oldDiv);
+          gform.types[this.type].initialize.call(this);
+          this.container =  this.el.querySelector('fieldset')|| this.el || null;
+          this.reflow();
+          if(!silent) {
+              this.owner.pub('change:'+this.name, this);
+              this.owner.pub('change', this);
+          }
+          
+        },
       get: function(name) {
           return gform.toJSON.call(this, name)
       },

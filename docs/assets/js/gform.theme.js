@@ -12,7 +12,8 @@ text: `
     {{>_error}}
     </div>
     {{>_actions}}   
-</div>    
+    </div>     
+    </div>    
 `,checkbox: `
     <input name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
     <label class="label-inline" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}</label>        
@@ -30,7 +31,8 @@ textarea: `
     {{>_error}}
     </div>
     {{>_actions}}   
-</div>`,
+</div>
+</div> `,
 select: `
     {{>_label}}    
     <select name="{{name}}" value="{{value}}" id="{{id}}" />
@@ -64,7 +66,8 @@ radio: `
     {{>_error}}
     {{>_actions}}`,
 _fieldset: `
-    <fieldset name="{{name}}">
+    <fieldset id="{{id}}" name="{{name}}">
+    {{>_error}}
     {{#array}}<hr style="margin: 0 0 10px;">{{/array}}
     <div class="row row-wrap">
     {{^section}}<legend class="column" for="{{name}}"><h5>{{{label}}}</h5></legend>{{/section}}
@@ -75,8 +78,8 @@ _fieldset: `
 _actions: `      
     {{#array}}
     <div class="column">
-    <input style="padding: 0 ;padding:0 1.5rem; border-color:green;color:green;float:right;margin:0 5px" class="gform-add button button-outline" type="button" value="+">
-    <input style="padding: 0 ;padding:0 1.5rem; border-color:red;color:red;float:right;margin:0 5px" class="gform-minus button button-outline" type="button" value="-">
+    <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:green;color:green;float:right;margin:0 5px" class="gform-add button button-outline" type="button" value="+">
+    <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:red;color:red;float:right;margin:0 5px" class="gform-minus button button-outline" type="button" value="-">
     </div>
     {{/array}}
     <small class="column form-help" style="position:relative;top:-15px"> {{{help}}}</small>
@@ -84,7 +87,7 @@ _actions: `
 _label: `      
 <label class="" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>           
 `,
-_error:`<small class="error" style="color:red;display:block;"></small><small class="valid" style="color:green;display:block;"></small>`,
+_error:`<small class="error" style="color:red;display:block;position:relative;top:-12px"></small><small class="valid" style="color:green;display:block;"></small>`,
 button:`<button type="button" role="button" class="button {{modifiers}}" style="margin:0 15px 0">{{{label}}}</button>`,
 tab_container: `
 <form id="{{name}}" novalidate {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>
