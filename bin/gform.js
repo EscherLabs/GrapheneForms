@@ -217,6 +217,9 @@ gform.find = function(oname){
     var temp = _.find(this.fields, {name: name.shift()})
     if(typeof temp !== 'undefined'){
         if(typeof temp.find !== 'undefined'){
+            if(temp.name == oname){
+                return temp;
+            }
             return temp.find(name.join('.'));
         }else{
             return temp;
@@ -315,7 +318,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
             if(atts[field.name].length> count){count = atts[field.name].length}
         }
         for(var i = 1; i<count; i++) {
-            var newfield = gform.createField.call(this, field.parent, atts, field.el, i, field.item,null,null,_.extend({index:0},{index:i}).index);
+            var newfield = gform.createField.call(this, field.parent, atts, field.el, i, field.item, null, null,i);
             field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
             field = newfield;
         }
@@ -457,52 +460,6 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     }
 
     gform.types[field.type].initialize.call(field);
-
-    // var add = field.el.querySelector('.gform-add');
-    // if(add !== null){
-    //     add.addEventListener('click', function(field){
-    //         if(_.countBy(field.parent.fields, {name: field.name}).true < (field.array.max || 5)){
-    //             var index = _.findIndex(field.parent.fields, {id: field.id});
-    //             var atts = {};
-
-    //             var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null, _.countBy(field.parent.fields, {name: field.name}).true);
-    //             field.parent.fields.splice(index+1, 0, newField)
-    //             _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({instance:index})})
-    //             field.parent.reflow();
-    //             // gform.each.call(field,function(field) {
-    //                 field.owner.pub('change:' + field.name,field.owner, field);
-    //             // })
-    //             gform.types[newField.type].focus.call(newField);
-
-    //             _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], function(event){field.owner.pub(event,field.owner,field)}.bind(field))
-    //         }
-    //     }.bind(this, field));
-    // }
-    
-    // var minus = field.el.querySelector('.gform-minus');
-    // if(minus !== null){
-    //     minus.addEventListener('click', function(field){
-    //         if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)) {
-    //             var index = _.findIndex(field.parent.fields,{id:field.id});
-    //             field.parent.fields.splice(index, 1);
-    //             if(!field.target) {
-    //                 field.parent.rows[field.row].used -= (field.offset + field.columns);
-    //                 field.parent.rows[field.row].ref.removeChild(field.el);
-    //                 if(field.parent.rows[field.row].used  == 0){
-    //                     field.parent.container.removeChild(field.parent.rows[field.row].ref);
-    //                     delete field.parent.rows[field.row];
-    //                 }
-    //                 _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({instance:index})})
-    //                 gform.types[field.parent.type].reflow.call(field.parent);
-    //             }else{
-    //                 this.container.querySelector( field.target ).removeChild(field.el);
-    //             }
-    //             _.each( [ 'change', 'change:' + field.name, 'removed:' + field.name ], function( event ) { field.owner.pub( event, field.owner, field) }.bind( field ) )
-    //         }else{
-    //             field.set(null);
-    //         }
-    //     }.bind(this, field));
-    // }
     if(field.fields){
         var newatts = {};
         if(field.array && typeof (atts[field.name]|| field.owner.options.data[field.name]) == 'object'){
@@ -744,7 +701,6 @@ gform.getUID = function() {
           if(typeof item === 'object') {
               _.extend(this, this.item, item);
           }
-          debugger;
 
           this.label = gform.renderString(({}||item).label||this.item.label, this);
 

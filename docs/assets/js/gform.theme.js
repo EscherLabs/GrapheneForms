@@ -22,7 +22,7 @@ text: `
     </div>
     {{>_actions}}   
 `,    
-hidden: `<input name="{{name}}" type="hidden" value="{{value}}" id="{{id}}" />`,
+hidden: `<input name="{{name}}" type="hidden" value="{{value}}" id="{{id}}" />{{>_error}}`,
 textarea: `
 <div class="row row-wrap">
 <div class="column">
@@ -139,12 +139,15 @@ gform.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80
 gform.prototype.opts.suffix = ""
 
 gform.handleError = function(field){
-    field.el.querySelector('.error').innerHTML = field.errors;
     if(field.valid){
 		if(field.satisfied(field.get())) {
-        field.el.querySelector('.valid').innerHTML = field.validtext||'';
-		}
+        // field.el.querySelector('.valid').innerHTML = field.validtext||'';
+        }
+        debugger;
+        field.el.querySelector('.error').innerHTML = '';
     }else{
+        field.el.querySelector('.error').innerHTML = field.errors;
+
         field.el.querySelector('.valid').innerHTML = '';
     }
     

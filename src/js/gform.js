@@ -217,6 +217,9 @@ gform.find = function(oname){
     var temp = _.find(this.fields, {name: name.shift()})
     if(typeof temp !== 'undefined'){
         if(typeof temp.find !== 'undefined'){
+            if(temp.name == oname){
+                return temp;
+            }
             return temp.find(name.join('.'));
         }else{
             return temp;
