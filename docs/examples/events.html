@@ -7,13 +7,14 @@
     <meta name="author" content="Adam Smallcomb">
     <link rel="icon" href="../assets/favicon.png">
 
-    <title>Example:Basic - Graphene:Forms</title>
+    <title>Example:Events - Graphene:Forms</title>
     <link rel="stylesheet" href="../assets/css/normalize.css">    
     <link rel="stylesheet" href="../assets/css/gform.css">
+    <link rel="stylesheet" href="../assets/css/toastr.min.css">
   </head>
   <body>
     <div style="padding:20px">
-    <h4><a href="./">Examples</a> - Basic Form</h4>
+    <h4><a href="./">Examples</a> - Events</h4>
 
     <div class="container ">
         <div class="row ">
@@ -31,17 +32,35 @@
      <script type='text/javascript' src='../../src/js/gform.conditions.js'></script> 
      <script type='text/javascript' src='../../src/js/gform.validate.js'></script>   
     <script src='../assets/js/gform.theme.js'></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+    <script type='text/javascript' src='../assets/vendor/js/jquery.js'></script>   
+    <script type='text/javascript' src='../assets/vendor/js/toastr.min.js'></script>   
 
     <script>
-      options = {
-          legend: 'Basic Form',
-          fields:[
-            {label: 'Field Label', name: 'label'}
-          ]
-      }
+    options = {
+        legend: 'Basic Form',
+        fields:[
+          {label: 'Field Label', name: 'label'}
+        ]
+    }
+
     </script>
-    <script src="../assets/js/example.js"></script>   
-        <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+
+    <script>
+    document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
+      var mygform = new gform(options, '#form')
+      mygform.sub('change',function(e){
+          if(e.form.validate()){}
+              document.querySelector('#result code').classList = "prettyprint"
+              document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(e.form.toJSON(),null,2);
+              PR.prettyPrint();
+      })
+      mygform.pub('change')
+      mygform.sub('*', function(e, field){
+        toastr.success(e.event)
+      })
+
+    </script>   
         
    </body>
 </html>

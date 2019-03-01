@@ -143,7 +143,6 @@ gform.handleError = function(field){
 		if(field.satisfied(field.get())) {
         // field.el.querySelector('.valid').innerHTML = field.validtext||'';
         }
-        debugger;
         field.el.querySelector('.error').innerHTML = '';
     }else{
         field.el.querySelector('.error').innerHTML = field.errors;
