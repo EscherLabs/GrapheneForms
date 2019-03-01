@@ -333,7 +333,7 @@ gform.normalizeField = function(fieldIn,parent){
     fieldIn.type = fieldIn.type || this.options.default.type;
     //work gform.default in here
     var field = _.assignIn({
-        name: (fieldIn.label||'').toLowerCase().split(' ').join('_'), 
+        name: (gform.renderString(fieldIn.label)||'').toLowerCase().split(' ').join('_'), 
         id: gform.getUID(), 
         // type: 'text', 
         label: fieldIn.legend || fieldIn.name,

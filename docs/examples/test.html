@@ -224,10 +224,10 @@
 //        {}
 //      ]}
 	options.el = '#form';
-    var mygform = new gform(options).sub('change',_.debounce(function(d){
-      if(d.validate()){
-          document.querySelector('#result').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(d.toJSON(),null,2);
-      }
+    var mygform = new gform(options).sub('change',_.debounce(function(e){
+      // if(e.form.validate()){
+          document.querySelector('#result').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(e.form.toJSON(),null,2);
+      // }
   },250)).sub('save',_.debounce(function(form){
     console.log(form.toJSON())
   },250) )
