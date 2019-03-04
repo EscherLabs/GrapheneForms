@@ -26,8 +26,11 @@
     </div>
     <script src="../assets/js/lodash.min.js"></script>    
     <script src='../assets/js/gform.min.js'></script>
-    <script src='../assets/js/gform.theme.js'></script>
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+    <!--<script src='../../src/js/gform.js'></script> 
+    <script src='../../src/js/gform.types.js'></script> 
+    <script src='../../src/js/gform.conditions.js'></script> 
+    <script src='../../src/js/gform.validate.js'></script>-->
+    <script src='../assets/js/gform.theme.js'></script>     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
     <script type='text/javascript' src='../assets/vendor/js/jquery.js'></script>   
     <script type='text/javascript' src='../assets/vendor/js/toastr.min.js'></script>   
 
@@ -35,25 +38,40 @@
     options = {
         legend: 'Basic Form',
         fields:[
-          {label: 'Field Label', name: 'label'}
+            {label: 'Text', type: 'text'},
+            {label: 'Hidden', type: 'hidden', value:'hidden field'},
+            {label: 'Number', type: 'number'},
+            {label: 'Color', type: 'color'},
+            {label: 'Email', type: 'email'},
+            {label: 'Textarea', type: 'textarea'},
+            {label: 'Checkbox', type: 'checkbox'},
+            {label: 'Select', type: 'select', options:[1,2,3]},
+            {label: 'Radio', type: 'radio', options:[1,2,3]}
         ]
     }
 
     </script>
 
     <script>
+
+toastr.options = {
+  "positionClass": "toast-bottom-right"
+}
+
     document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
-      var mygform = new gform(options, '#form')
-      mygform.sub('change',function(e){
-          if(e.form.validate()){}
+    options.events={"input": _.debounce(function(e){
+        toastr.info(e.input, e.field.label)
+    }, 250)}
+      var mygform = new gform(options, '#form').on('change', function(e, field){
+          if(typeof field !== 'undefined' && gform.validateItem(field)){}
               document.querySelector('#result code').classList = "prettyprint"
               document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(e.form.toJSON(),null,2);
               PR.prettyPrint();
       })
       mygform.pub('change')
-      mygform.sub('*', function(e, field){
-        toastr.success(e.event)
-      })
+      // mygform.sub('*', function(e, field, message){
+      //   toastr.success(message,e.event)
+      // })
 
     </script>   
         

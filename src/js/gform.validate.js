@@ -3,7 +3,9 @@ gform.prototype.validate = function(){
 	this.valid = true;
 	_.each(this.fields, gform.validateItem)
 	if(!this.valid){
-		this.pub('invalid');
+		this.pub('invalid',null, this.errors);
+	}else{
+		this.pub('valid',null);
 	}
 	return this.valid;
 };
@@ -11,7 +13,9 @@ gform.handleError = gform.update;
 gform.validateItem = function(item){
 	var errors = gform.performValidate(item);
 	if(errors) {
-		item.owner.pub('invalid:'+item.name, errors);
+		item.owner.pub('invalid:'+item.name, item, errors);
+	}else{
+		item.owner.pub('valid:'+item.name, item, errors);
 	}
 	item.owner.errors[item.name] = errors;
 	item.owner.valid = item.valid && item.owner.valid;

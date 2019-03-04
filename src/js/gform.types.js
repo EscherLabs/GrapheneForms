@@ -12,28 +12,31 @@ gform.types = {
           return gform.render(this.type, this);
       },
       destroy:function(){
-          this.el.removeEventListener('change',this.onchangeEvent );		
-          this.el.removeEventListener('change',this.onchange );		
+        //   this.el.removeEventListener('change',this.onchangeEvent );		
+        //   this.el.removeEventListener('change',this.onchange );		
           this.el.removeEventListener('input', this.onchangeEvent);
       },
       initialize: function(){
         //   this.iel = this.el.querySelector('input[name="' + this.name + '"]')
-          if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
-          this.onchangeEvent = function(){
+        //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
+          this.onchangeEvent = function(i){
               this.value = this.get();
-              this.owner.pub('change:'+this.name, this);
-              this.owner.pub('change', this);
+              this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+
+            //   this.owner.pub('change:'+this.name, this,{input:this.value});
+            //   this.owner.pub('change', this,{input:this.value});
+            //   this.owner.pub('input:'+this.name, this,{input:this.value});
+            //   this.owner.pub('input', this,{input:this.value});
           }.bind(this)
-          this.el.addEventListener('change',this.onchangeEvent );		
-          this.el.addEventListener('input', this.onchangeEvent);
+        //   this.el.addEventListener('change',this.onchangeEvent);		
+          this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
       },
       update: function(item, silent) {
-
           if(typeof item === 'object') {
               _.extend(this, this.item, item);
           }
 
-          this.label = gform.renderString(({}||item).label||this.item.label, this);
+          this.label = gform.renderString((item||{}).label||this.item.label, this);
 
           var oldDiv = document.getElementById(this.id);
 
@@ -43,8 +46,8 @@ gform.types = {
             gform.types[this.type].initialize.call(this);
 
             if(!silent) {
-                this.owner.pub('change:'+this.name, this);
-                this.owner.pub('change', this);
+                this.owner.pub(['change:'+this.name,'change'], this);
+                // this.owner.pub('change', this);
             }
             
       },
@@ -92,12 +95,16 @@ gform.types = {
           return gform.render(this.type, this);
       },
       initialize: function() {
-          if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
+        //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.value = this.get();
-              this.owner.pub('change:'+this.name, this);
-              this.owner.pub('change', this);
-          }.bind(this));		
+            //   this.owner.pub('change:'+this.name, this,{input:this.value});
+            //   this.owner.pub('change', this, {input:this.value});
+            //   this.owner.pub('input:'+this.name, this,{input:this.value});
+            //   this.owner.pub('input', this,{input:this.value});
+            this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+
+          }.bind(this));
       },
       get: function() {
           return this.el.querySelector('select[name="' + this.name + '"]').value;
@@ -137,15 +144,15 @@ gform.types = {
 
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
-          oldDiv.parentNode.replaceChild(this.el,oldDiv);
+          oldDiv.parentNode.replaceChild(this.el, oldDiv);
           gform.types[this.type].initialize.call(this);
           this.container =  this.el.querySelector('fieldset')|| this.el || null;
           this.reflow();
           if(!silent) {
-              this.owner.pub('change:'+this.name, this);
-              this.owner.pub('change', this);
+            //   this.owner.pub('change:'+this.name, this);
+            //   this.owner.pub('change', this);
+              this.owner.pub(['change:'+this.name,'change'], this);
           }
-          
         },
       get: function(name) {
           return gform.toJSON.call(this, name)

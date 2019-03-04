@@ -7,13 +7,13 @@
     <meta name="author" content="Adam Smallcomb">
     <link rel="icon" href="../assets/favicon.png">
 
-    <title>Example:Basic - Graphene:Forms</title>
+    <title>Example:Duplication - Graphene:Forms</title>
     <link rel="stylesheet" href="../assets/css/normalize.css">    
     <link rel="stylesheet" href="../assets/css/gform.css">
   </head>
   <body>
     <div style="padding:20px">
-    <h4><a href="./">Examples</a> - Options Array</h4>
+    <h4><a href="./">Examples</a> - Duplication</h4>
 
     <div class="container ">
         <div class="row ">
@@ -24,31 +24,31 @@
         </div>
     </div>
     <script src="../assets/js/lodash.min.js"></script>    
-    <script src='../assets/js/gform.min.js'></script>
+    <!--/*<script src='../assets/js/gform.min.js'></script>*/-->
+
+    <script src='../../src/js/gform.js'></script> 
+    <script src='../../src/js/gform.types.js'></script> 
+    <script src='../../src/js/gform.conditions.js'></script> 
+    <script src='../../src/js/gform.validate.js'></script>
+    
     <script src='../assets/js/gform.theme.js'></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
-    options = {
-        legend: 'Options Array',
-        fields:[
-        {label: 'Select Field Array', name: 'array', type:'select', options:[
-            {"label":"First","value":1},
-            {"label":"Second","value":2},
-            {"label":"Third","value":3}
-        ]},       
-        {label: 'Select Field Simple Array', name: 'simple', type:'select', options:[
-            '0','1','2'
-        ]},
-        {label: 'Checkbox Simple Array', name: 'checkbox', type:'checkbox', options:[
-            'no','yes'
-        ]},
-        {label: 'Select Field function', name: 'function', type:'select', options: function(){
-            return["Red","Green","Blue"];
-        }},
-        {label: 'Select Field (url string)', name: 'url', type:'select', options:'../data/days.json'}
-        ]
-    }
+      options = {
+          legend: 'Basic Form',
+          fields:[
+            {label: 'Candies', type:'fieldset', fields: [
+              {name: 'flavors', label: '', type: 'fieldset', array: true, fields: [
+                {label: 'Flavor'},
+                  { label: 'Color {{^index}}(0){{/index}}{{#index}}({{index}}){{/index}}', name:'color', type:'text',columns:6, array: {min:2,max:3}, "display": [
+                      {"not_matches": {"name": "flavor","value":""}}
+                    ]
+                  }
+              ]}
+            ]}
+          ]
+      }
     </script>
     <script src="../assets/js/example.js"></script>   
         
