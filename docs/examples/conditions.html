@@ -25,19 +25,63 @@
     </div>
     <script src="../assets/js/lodash.min.js"></script>    
     <script src='../assets/js/gform.min.js'></script>
-   
-    <script src='../assets/js/gform.theme.js'></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
+      // options = {
+      //     fields:[
+      //       {label: 'Field Label', name: 'label'}
+      //     ]
+      // }
+
       options = {
-          legend: 'Basic Form',
-          fields:[
-            {label: 'Field Label', name: 'label'}
-          ]
-      }
+        legend: 'Conditional Form',
+
+	"fields": [
+  {
+			"label": "Favorite Candy",
+      "name": "candy",
+      "type":"select",
+			"options": [
+				"Lolipops",
+				"Chocolate",
+				"Skittles",
+				"Other"
+			]
+    },
+    {
+			"label": "Favorite Thing",
+      "name": "thing",
+      "type":"select",
+			"options": [
+				"Lolipops",
+				"Chocolate",
+				"Skittles",
+				"Other"
+			]
+    },
+    {name: 'checked', label: 'Checked?',type: 'checkbox'},
+
+		{
+			"label": "Reason",
+			"type": "textarea",
+			"display": [
+        {"conditions":[
+          {"conditions":[
+            {"type":"matches","name": "candy", "value": ["Chocolate","Skittles"]},
+            {"type":"not_matches","name": "checked","value": [true]}
+          ],op:'and'},
+          {"conditions":[
+            {"type":"not_matches","name": "candy", "value": ["Chocolate","Skittles"]},
+            {"type":"matches","name": "checked","value": [true]}
+          ]}
+        ],op:'or'}
+			]
+		}
+	]
+}
     </script>
     <script src="../assets/js/example.js"></script>   
-        <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
         
    </body>
 </html>

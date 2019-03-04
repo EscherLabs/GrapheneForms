@@ -14,25 +14,54 @@ gform.processConditions = function(conditions, func) {
 	}
 	if (typeof conditions === 'object') {
 		var callback = function(rules,func){
-			func.call(this, gform.rules.call(this, rules))
+			func.call(this, gform._rules.call(this, rules))
 		}.bind(this, conditions, func)
 
-		for(var i in conditions) {
-			this.owner.sub('change:' + _.values(conditions[i])[0].name, callback)
-		}
+		// for(var i in conditions) {
+		// 	this.owner.sub('change:' + conditions[i].name, callback)
+		// }
+		gform._subscribeByName.call(this, conditions, callback)
 		// debugger;
-		// func.call(this, gform.rules.call(this, conditions));
+		// func.call(this, gform._rules.call(this, conditions));
 	}
 	return true;
 };
 
-gform.rules = function(rules){
-return _.every(_.map(rules, function(rule, i){
-	return _.every(_.map(rule, function(args,name,rule) {
-		return gform.conditions[name](this.owner, this, args)
-	}.bind(this)));
-}.bind(this)))
+// gform._rules = function(rules){
+// return _.every(_.map(rules, function(rule, i){
+// 	return _.every(_.map(rule, function(args,name,rule) {
+// 		return gform.conditions[name](this.owner, this, args)
+// 	}.bind(this)));
+// }.bind(this)))
+// }
+gform._subscribeByName = function(conditions, callback){
+	for(var i in conditions) {
+		if(typeof conditions[i].name !== 'undefined'){
+			this.owner.sub('change:' + conditions[i].name, callback)
+		}else if(typeof conditions[i].conditions == 'object'){
+			gform._subscribeByName.call(this, conditions[i].conditions, callback)
+		}
+	}
 }
+
+gform._rules = function(rules, op){
+	var op = op||'and';
+	return _.reduce(rules,function(result, rule){
+		var s;
+		if(typeof rule.conditions !== 'undefined'){
+			s = gform._rules.call(this, rule.conditions,rule.op);
+			console.log(s);
+		}else{
+			s = gform.conditions[rule.type](this.owner, this, rule);
+		}
+		if(op == 'or'){
+			return result || s;
+		}else{
+			return result && s;
+		}
+	}.bind(this),(op == 'and'))
+}
+
 
 gform.conditions = {
 	requires: function(gform, args, func) {

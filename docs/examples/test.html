@@ -21,11 +21,9 @@
    <pre style="max-width:800px;padding:0 20px;margin:50px auto" id="result"></pre>
     <script src="../assets/js/lodash.min.js"></script>    
     <script type='text/javascript' src='../assets/js/gform.min.js'></script>
- 
-    <!-- <script type='text/javascript' src='assets/hogan-3.0.1.js'></script>     -->
+
     <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.gform.js'></script>    */-->
 	<script type='text/javascript' src='../assets/js/gform.theme.js'></script>
-	 <!-- <script type='text/javascript' src='../assets/js/gform.bootstrap.js'></script>  -->
 
   <script>
 
@@ -63,7 +61,6 @@
 		{label:'First Name', name: 'f_n', array:false,type:'email',columns:6,"required":  [
                     {"matches": {"name": "checked","value": [true]}}
                 ],satisfied:function(stuff,more){
-// debugger;
                   return stuff;
                 }},
             {name: 'checked', label: 'Checked?',type: 'checkbox',required:true,columns:6,options:[false,true]},// , display: {matches:[{name:'number', value:['first','1']}]}},
@@ -240,7 +237,7 @@
 
 
 	// mygform
-  mygform.pub('change',null, 'initialize')
+  mygform.pub('change',null, {message:'initialize'})
   // mygform.debounce('save',function(form){
   //   console.log(form.toJSON())
   // })

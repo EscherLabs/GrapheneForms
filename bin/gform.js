@@ -20,7 +20,7 @@ var gform = function(data, el){
     }.bind(this);
     this.on = this.sub;
     this.pub = function (e,f,a) {
-        a = a || {};
+        var a = a || {};
         a.form = this;
         a.field = f;
 
@@ -169,7 +169,6 @@ var gform = function(data, el){
 
 
      this.el.addEventListener('click', function(e){
-        //  debugger;
          var field;
          if(e.target.dataset.id){
             field = gform.findByID.call(this,e.target.dataset.id)
@@ -190,8 +189,7 @@ var gform = function(data, el){
                 })
 
                 gform.types[newField.type].focus.call(newField);
-                field.owner.pub(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name],field)
-                // _.each(['change', 'change:'+field.name, 'create:'+field.name, 'inserted:'+field.name], function(event){field.owner.pub(event,field)}.bind(field))
+                field.owner.pub(['change', 'change:'+field.name, 'create:'+field.name,'inserted','inserted:'+field.name],field)
             }
         }
         if(e.target.classList.contains('gform-minus')){
@@ -199,31 +197,17 @@ var gform = function(data, el){
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 field.parent.fields.splice(index, 1);
                 field.parent.reflow();
-
                 if(!field.target) {
-                    field.parent.rows[field.row].used -= (field.offset + field.columns);
-                    field.parent.rows[field.row].ref.removeChild(field.el);
-                    if(field.parent.rows[field.row].used  == 0){
-                        field.parent.container.removeChild(field.parent.rows[field.row].ref);
-                        delete field.parent.rows[field.row];
-                    }
                     _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({index:index})})
-                    gform.types[field.parent.type].reflow.call(field.parent);
                 }else{
                     this.container.querySelector( field.target ).removeChild(field.el);
                 }
-                field.owner.pub(['change', 'change:'+field.name, 'create:'+field.name, 'removed:'+field.name],field)
-
-                // _.each( [ 'change', 'change:' + field.name, 'removed:' + field.name ], function( event ) { field.owner.pub( event, field.owner, field) }.bind( field ) )
+                field.owner.pub(['change', 'change:'+field.name, 'create:'+field.name,'removed','removed:'+field.name],field)
             }else{
                 field.set(null);
             }
         }
-            }.bind(this))
-
-
-
-
+    }.bind(this))
     return this;
                   
 }
@@ -1065,25 +1049,54 @@ gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: {
 	}
 	if (typeof conditions === 'object') {
 		var callback = function(rules,func){
-			func.call(this, gform.rules.call(this, rules))
+			func.call(this, gform._rules.call(this, rules))
 		}.bind(this, conditions, func)
 
-		for(var i in conditions) {
-			this.owner.sub('change:' + _.values(conditions[i])[0].name, callback)
-		}
+		// for(var i in conditions) {
+		// 	this.owner.sub('change:' + conditions[i].name, callback)
+		// }
+		gform._subscribeByName.call(this, conditions, callback)
 		// debugger;
-		// func.call(this, gform.rules.call(this, conditions));
+		// func.call(this, gform._rules.call(this, conditions));
 	}
 	return true;
 };
 
-gform.rules = function(rules){
-return _.every(_.map(rules, function(rule, i){
-	return _.every(_.map(rule, function(args,name,rule) {
-		return gform.conditions[name](this.owner, this, args)
-	}.bind(this)));
-}.bind(this)))
+// gform._rules = function(rules){
+// return _.every(_.map(rules, function(rule, i){
+// 	return _.every(_.map(rule, function(args,name,rule) {
+// 		return gform.conditions[name](this.owner, this, args)
+// 	}.bind(this)));
+// }.bind(this)))
+// }
+gform._subscribeByName = function(conditions, callback){
+	for(var i in conditions) {
+		if(typeof conditions[i].name !== 'undefined'){
+			this.owner.sub('change:' + conditions[i].name, callback)
+		}else if(typeof conditions[i].conditions == 'object'){
+			gform._subscribeByName.call(this, conditions[i].conditions, callback)
+		}
+	}
 }
+
+gform._rules = function(rules, op){
+	var op = op||'and';
+	return _.reduce(rules,function(result, rule){
+		var s;
+		if(typeof rule.conditions !== 'undefined'){
+			s = gform._rules.call(this, rule.conditions,rule.op);
+			console.log(s);
+		}else{
+			s = gform.conditions[rule.type](this.owner, this, rule);
+		}
+		if(op == 'or'){
+			return result || s;
+		}else{
+			return result && s;
+		}
+	}.bind(this),(op == 'and'))
+}
+
 
 gform.conditions = {
 	requires: function(gform, args, func) {

@@ -3,41 +3,36 @@ gform.prototype.validate = function(){
 	this.valid = true;
 	_.each(this.fields, gform.validateItem)
 	if(!this.valid){
-		this.pub('invalid',{errors:this.errors});
+		this.pub('invalid',null, this.errors);
 	}else{
-		this.pub('valid');
+		this.pub('valid',null);
 	}
-	this.pub('validation');
 	return this.valid;
 };
 gform.handleError = gform.update;
-
 gform.validateItem = function(item){
-
+	var errors = gform.performValidate(item);
+	if(errors) {
+		item.owner.pub('invalid:'+item.name, item, errors);
+	}else{
+		item.owner.pub('valid:'+item.name, item, errors);
+	}
+	item.owner.errors[item.name] = errors;
+	item.owner.valid = item.valid && item.owner.valid;
+};
+gform.performValidate = function(item){
 	var value = item.get();
 	item.valid = true;
 	item.errors = '';
 	if(item.parsable && typeof item.validate === 'object'){
-		// var errors = _.map(item.validate, function(v, it){
-		// 	if(typeof it.test == 'string'){
-		// 		if(typeof it.conditions == 'undefined' || gform._rules.call(this, it.conditions)){
-		// 				var test = v[it.test].call(item, value, it);
-		// 				if(test){	
-		// 					return gform.renderString(it.message || test, {label:item.label,value:value, args:it});
-		// 				}
-		// 		}
-		// 	}
-		// }.bind(item, gform.validations))
-
-		var errors = gform.validation.call(item,item.validate);
-
-		if(item.required){
-			var test = (item.satisfied(value) ? false : '{{label}} is required')
-			if(test) {
-				errors.push(gform.renderString(item.required.message || test, {label:item.label,value:value, args:item.required}));
+		var errors = _.compact(_.map(item.validate, function(v, it, i){
+			if(it){
+				var test = v[i].call(item, value, it);
+				if(test){	
+					return gform.renderString(it.message || test, {label:item.label,value:value, args:it});
+				}
 			}
-		}
-		errors = _.compact(errors);
+		}.bind(null, gform.validations)))
 		if((typeof item.display === 'undefined') || item.visible) {
 			item.valid = !errors.length;
 			item.errors = errors.join('<br>')
@@ -48,41 +43,11 @@ gform.validateItem = function(item){
 		if(typeof item.fields !== 'undefined'){
 			_.each(item.fields, gform.validateItem)
 		}
+
 	}
-	
-	if(item.errors) {
-		item.owner.pub('invalid:'+item.name, {errors:item.errors});
-	}else{
-		item.owner.pub('valid:'+item.name);
-	}
-	item.owner.errors[item.name] = item.errors;
-	item.owner.valid = item.valid && item.owner.valid;
+	return item.errors;
+
 };
-gform.validation = function(rules, op){
-	var op = op||'and';
-	var value = this.get();
-	var errors =  _.map(rules, function(v, it){
-		if(typeof it.test == 'string'){
-			if(typeof it.conditions == 'undefined' || gform._rules.call(this, it.conditions)){
-					var test = v[it.test].call(this, value, it);
-					if(test){	
-						return gform.renderString(it.message || test, {label:this.label,value:value, args:it});
-					}
-			}
-		}else if(typeof it.tests !== 'undefined'){
-			return gform.validation.call(this,it.tests,it.op).join('<br>');
-		}
-	}.bind(this, gform.validations))
-	debugger;
-	if(op == 'and' || _.compact(errors).length == rules.length){
-		return errors;
-	}else{
-		return [];
-	}
-
-}
-
-
 
 gform.regex = {
 	numeric: /^[0-9]+$/,
@@ -94,9 +59,9 @@ gform.regex = {
 
 gform.validations = 
 {
-	// required:function(value) {
-	// 		return (this.satisfied(value) ? false : '{{label}} is required');
-	// },
+	required:function(value) {
+			return (this.satisfied(value) ? false : '{{label}} is required');
+	},
 	regex: function(value, args) {
 		var r = args.regex;
 		if(typeof r == 'string'){r = gform.regex[r]}
@@ -116,7 +81,7 @@ gform.validations =
 			return gform.regex.date.test(value) || value === '' ? false : '{{label}} should be in the format MM/DD/YYYY';
 	},
 	valid_url: function(value) {
-		return gform.regex.url.test(value) || value === '' ? false : '{{label}} must contain a valid Url';
+		return gfrom.regex.url.test(value) || value === '' ? false : '{{label}} must contain a valid Url';
 	},
 	valid_email: function(value) {
 			return gform.regex.email.test(value) || value === '' ? false : '{{label}} must contain a valid email address';

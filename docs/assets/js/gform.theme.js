@@ -11,12 +11,11 @@ text: `
     <input {{#maxlength}} maxlength="{{maxlength}}"{{/maxlength}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
     {{>_error}}
     </div>
-    {{>_actions}}   
     </div>     
     </div>    
 `,checkbox: `
     <input name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
-    <label class="label-inline" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}</label>        
+    <label class="label-inline" for="{{name}}">{{label}}{{#required}}{{{requiredText}}}{{/required}}</label>        
     
     {{>_error}}
     </div>
@@ -77,15 +76,15 @@ _fieldset: `
 `,
 _actions: `      
     {{#array}}
-    <div class="column">
+    <div class="" style="float:right">
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:green;color:green;float:right;margin:0 5px" class="gform-add button button-outline" type="button" value="+">
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:red;color:red;float:right;margin:0 5px" class="gform-minus button button-outline" type="button" value="-">
     </div>
     {{/array}}
     <small class="column form-help" style="position:relative;top:-15px"> {{{help}}}</small>
 `,
-_label: `      
-<label class="" for="{{name}}">{{label}}{{#validate.required}}{{{requiredText}}}{{/validate.required}}{{suffix}}</label>           
+_label: `      {{>_actions}}  
+<label class="" for="{{name}}">{{label}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}</label>         
 `,
 _error:`<small class="error" style="color:red;display:block;position:relative;top:-12px"></small><small class="valid" style="color:green;display:block;"></small>`,
 button:`<button type="button" role="button" class="button {{modifiers}}" style="margin:0 15px 0">{{{label}}}</button>`,
