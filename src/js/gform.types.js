@@ -21,6 +21,9 @@ gform.types = {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.onchangeEvent = function(i){
               this.value = this.get();
+
+            //   this.update({value:this.get()},true);
+            //   gform.types[this.type].focus.call(this)
               this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 
             //   this.owner.pub('change:'+this.name, this,{input:this.value});
@@ -66,7 +69,9 @@ gform.types = {
           return this;
       },
       focus:function() {
+        //   debugger;
           this.el.querySelector('[name="'+this.name+'"]').focus();
+        //   this.el.querySelector('[name="'+this.name+'"]').focus();
           var temp = this.value;
           this.set('');
           this.set(temp);
@@ -98,6 +103,11 @@ gform.types = {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.value = this.get();
+
+            //   this.update({value:this.get()},true);
+            //   gform.types[this.type].focus.call(this)
+
+            //   this.focus();
             //   this.owner.pub('change:'+this.name, this,{input:this.value});
             //   this.owner.pub('change', this, {input:this.value});
             //   this.owner.pub('input:'+this.name, this,{input:this.value});
@@ -107,7 +117,9 @@ gform.types = {
           }.bind(this));
       },
       get: function() {
-          return this.el.querySelector('select[name="' + this.name + '"]').value;
+          var value = this.el.querySelector('select[name="' + this.name + '"]').value;
+        //   this.option = _.find()
+          return value;
       },
       set: function(value) {
           this.el.querySelector('[name="' + this.name + '"]').value = value;

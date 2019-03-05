@@ -25,7 +25,7 @@
     </div>
     <script src="../assets/js/lodash.min.js"></script>    
     <script src='../assets/js/gform.min.js'></script>
-    <script src='../assets/js/gform.theme.js'></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
     options = {
@@ -33,12 +33,16 @@
         fields:[
         {label: 'Field Label', name: 'label'},
         {name:'no_label', help: "label is genderated from name"},
-        {label: false,name:'falsy_label', help: "set label to false to hide"}
+        {label: false,name:'falsy_label', help: "set label to false to hide"},
+        {label: 'Template label ({{value}})',value:2, name:'template',type:'radio', options:[
+            {"label":"First","value":1},
+            {"label":"Second","value":2},
+            {"label":"Third","value":3}
+        ]}
         ]
     }
     </script>
     <script src="../assets/js/example.js"></script>   
-        <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
         
    </body>
 </html>

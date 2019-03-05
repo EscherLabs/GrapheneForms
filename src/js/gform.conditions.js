@@ -52,7 +52,7 @@ gform._rules = function(rules, op){
 			s = gform._rules.call(this, rule.conditions,rule.op);
 			console.log(s);
 		}else{
-			s = gform.conditions[rule.type](this.owner, this, rule);
+			s = gform.conditions[rule.type](this, rule);
 		}
 		if(op == 'or'){
 			return result || s;
@@ -71,7 +71,7 @@ gform.conditions = {
 		);
 	},
 	// valid_previous: function(gform, args) {},
-	not_matches: function(gform, field, args) {
+	not_matches: function(field, args) {
 		var val = args.value;
 		var localval = (field.parent.find(args.name) || {value:''}).value;
 		if(typeof val== "object" && localval !== null){
@@ -92,7 +92,7 @@ gform.conditions = {
 			}.bind( this, args)
 		).lastToken;
 	},
-	matches: function(gform, field, args) {
+	matches: function(field, args) {
 		var val = args.value;
 		var localval = (field.parent.find(args.name) || {value:''}).value;
 		if(typeof val== "object" && localval !== null){

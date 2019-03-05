@@ -13,7 +13,6 @@ gform.prototype.validate = function(){
 gform.handleError = gform.update;
 
 gform.validateItem = function(item){
-
 	var value = item.get();
 	item.valid = true;
 	item.errors = '';
@@ -28,13 +27,12 @@ gform.validateItem = function(item){
 		// 		}
 		// 	}
 		// }.bind(item, gform.validations))
-
 		var errors = gform.validation.call(item,item.validate);
 
 		if(item.required){
-			var test = (item.satisfied(value) ? false : '{{label}} is required')
-			if(test) {
-				errors.push(gform.renderString(item.required.message || test, {label:item.label,value:value, args:item.required}));
+			var type = (item.satisfied(value) ? false : '{{label}} is required')
+			if(type) {
+				errors.push(gform.renderString(item.required.message || type, {label:item.label,value:value, args:item.required}));
 			}
 		}
 		errors = _.compact(errors);
@@ -58,31 +56,28 @@ gform.validateItem = function(item){
 	item.owner.errors[item.name] = item.errors;
 	item.owner.valid = item.valid && item.owner.valid;
 };
+
 gform.validation = function(rules, op){
 	var op = op||'and';
 	var value = this.get();
 	var errors =  _.map(rules, function(v, it){
-		if(typeof it.test == 'string'){
+		if(typeof it.type == 'string'){
 			if(typeof it.conditions == 'undefined' || gform._rules.call(this, it.conditions)){
-					var test = v[it.test].call(this, value, it);
-					if(test){	
-						return gform.renderString(it.message || test, {label:this.label,value:value, args:it});
+					var type = v[it.type].call(this, value, it);
+					if(type){	
+						return gform.renderString(it.message || type, {label:this.label,value:value, args:it});
 					}
 			}
 		}else if(typeof it.tests !== 'undefined'){
 			return gform.validation.call(this,it.tests,it.op).join('<br>');
 		}
 	}.bind(this, gform.validations))
-	debugger;
 	if(op == 'and' || _.compact(errors).length == rules.length){
 		return errors;
 	}else{
 		return [];
 	}
-
 }
-
-
 
 gform.regex = {
 	numeric: /^[0-9]+$/,

@@ -212,17 +212,24 @@
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 					<br>
-					<p>Now that we all set up we can begin enjoying the magic of gform!</p>
-					<pre><code class="prettyprint">var config = {
+					<p>Now that we all set up we can begin enjoying the magic of Graphene:Forms!</p>
+					<!-- <pre><code class="prettyprint">var config = {
   "el":     ".myForm"
   "fields": [
     {"name": "Example"}
   ]
 };
 var myForm = new gform(config);</code></pre>
-<br>
-					<div class="well myForm"></div>
-
+<br> -->
+					<!-- <div class="well myForm"></div> -->
+					<!-- <div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = { -->
+					<div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = {
+  "el":     ".myForm"
+  "fields": [
+    {"name": "Example"}
+  ]
+};
+var myForm = new gform(config);</code></pre></div><div class="col-md-6 myForm"></div></div></div>
 					<!-- Api
 					<a name="api" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -268,7 +275,7 @@ var myForm = new gform(config);</code></pre>
   'data':   { 'first_name': 'Bob' },
   'fields': [
     { 'name': 'first_name' }
-]
+  ]
 };
 var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"></div></div></div>
 					<!--legend -->
@@ -357,7 +364,9 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 									<ul><li>hidden</li>
 										<li>number</li>
 										<li>color</li>
-										<li>email</li></ul>
+										<li>email</li>
+										<li>password</li>
+									</ul>
 								</li>
 								<li>textarea</li>
 								<li>checkbox</li>
@@ -544,10 +553,19 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<!--on -->
 					<a name="sub" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>.sub('event', function(event, form, [field]){})</h4>					
+					<h4>.sub('event', function(event){})<a class="pull-right" href="./examples/events.html">Example</a></h4>					
 					<p>
-Bind a callback function to an object. The callback will be invoked whenever the event is fired. If you have a large number of different events on a page, the convention is to use colons to namespace them: "poll:start", or "change:selection". The event string may also be a space-delimited list of several events...
-					</p>
+Bind a callback function to an object. The callback will be invoked whenever the event is fired. The event string may also be a space-delimited list of several events.
+The event object will contain the following information
+<blockquote><pre><code class="prettyprint">    event.event  // the name of the event that triggered the callback
+    event.form   // a reference to the form instance
+    event.field  // situational - if a field triggered the event then a reference will be included
+</code>
+</pre></blockquote>
+
+Specific events may have other data provided as well but they will be highly situational to that event 
+<br>i.e. The 'invalid' event will pass the errors
+</p>
 					<!--delay -->
 					<!-- <a name="debounce" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -561,7 +579,8 @@ Bind a callback function to an object. The callback will be invoked whenever the
 					<br>
 					<h4>.pub('event',[args])</h4>					
 					<p>
-						Trigger callbacks for the given event, or space-delimited list of events. Subsequent arguments to pub will be passed along to the event callbacks.
+						Trigger callbacks for the given event, or space-delimited list of events. An object with additional arguments to pub will be passed along to the event callbacks.<br><br>
+						<blockquote><pre><code class="prettyprint">myForm.pub('save');</code></pre></blockquote>
 					</p>
 					<!--built in events -->
 					<a name="built_in_events" style="display:block;position:relative;top:-80px"></a>
@@ -577,17 +596,44 @@ Bind a callback function to an object. The callback will be invoked whenever the
 							This event is fired as Graphene:Forms begins the initialization and is a good place to put set up code.
 						</p></li>
 
+						<!--input -->
+						<li><h5>input <span class="text-muted"> &nbsp;&nbsp;(input:fieldname)</span></h5>					
+						<p>
+							The input event is triggered whenever a field is changed manually by user input.
+						</p></li>
 						<!--change -->
-						<li><h5>change</h5>					
+						<li><h5>change <span class="text-muted"> &nbsp;&nbsp;(change:fieldname)</span></h5>					
 						<p>
 							The change event is triggered whenever a field is changed or any change is made to the form.
 						</p></li>
+						<!--inserted field-->
+						<li><h5>inserted <span class="text-muted"> &nbsp;&nbsp;(inserted:fieldname)</span></h5>					
+						<p>
+							The inserted event is triggered when a field that is duplicatable has had an new instance inserted
+						</p></li>
+						<li><h5>removed <span class="text-muted"> &nbsp;&nbsp;(removed:fieldname)</span></h5>					
+						<p>
+							The removed event is triggered when a field that is duplicatable has had an instance removed
+						</p></li>
 						<!--change field-->
-						<li><h5>change:fieldname</h5>					
+						<!-- <li><h5>change:fieldname</h5>					
 						<p>
 							The change event is triggered whenever a field is changed.
+						</p></li> -->
+						<li><h5>validation</h5>					
+						<p>
+							The validation event is triggered whenevere form validation is performed.
 						</p></li>
 
+						<li><h5>invalid <span class="text-muted"> &nbsp;&nbsp;(invalid:fieldname)</span></h5>					
+						<p>
+							The invalid event is triggered whenevere form validation is performed and validation fails.
+						</p></li>
+
+						<li><h5>valid <span class="text-muted"> &nbsp;&nbsp;(valid:fieldname)</span></h5>					
+						<p>
+							The validation event is triggered whenevere form validation is performed and no errors exist.
+						</p></li>
 						<!--destroy -->
 						<li><h5>destroy</h5>					
 						<p>
@@ -599,7 +645,6 @@ Bind a callback function to an object. The callback will be invoked whenever the
 						<p>
 							Fires after everything related to the form has been destroyed.
 						</p></li>
-
 					</ul>
 
 
@@ -611,21 +656,14 @@ Bind a callback function to an object. The callback will be invoked whenever the
 		<pre><code class="prettyprint">{
   "label": "Reason",
   "name": "reason",
-  "type": "text",
-  "show": {
-    "matches": {
-      "name": "candy",
-      "value": "Chocolate"
-    },				
-    "not_matches": {
-      "name": "candy",
-      "value": "Chocolate"
-    },
-    "requires": {
-      "name": "candy"
+  "display": [
+    { 
+      "type": "matches", // looks for a matching value
+      "name": "candy", // field to be compared to
+      "value": "Chocolate" // value or array of acceptable values
     }
-  }
-}</code></pre>
+  ]
+} // this field will be hidden unless a field in the same form named "candy" has a value of "Chocolate"</code></pre>
 
 					<!--requires -->
 					<a name="requires" style="display:block;position:relative;top:-80px"></a>
@@ -846,7 +884,12 @@ Bind a callback function to an object. The callback will be invoked whenever the
 		</div><!--/.container-->
 
 		<script type='text/javascript' src='./assets/js/lodash.min.js'></script>    
-		<script type='text/javascript' src='./assets/js/gform.min.js'></script>
+		<!-- <script type='text/javascript' src='./assets/js/gform.min.js'></script> -->
+		<script type='text/javascript' src='../src/js/gform.js'></script>
+		<script type='text/javascript' src='../src/js/gform.conditions.js'></script>
+		<script type='text/javascript' src='../src/js/gform.validate.js'></script>
+		<script type='text/javascript' src='../src/js/gform.types.js'></script>
+
 		<script type='text/javascript' src='./assets/js/gform.bootstrap.js'></script>
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 		<script>
@@ -888,7 +931,8 @@ Bind a callback function to an object. The callback will be invoked whenever the
     'type': 'select',
     'name': 'state',
 		'label': 'State',
-		'options': {url:'./data/states.json','format': { 'label': '{{name}}'}},
+		'options': './data/states.json',
+		'format': { 'label': '{{name}}' },
 		'help': 'Choose your state'
 		
   }

@@ -24,13 +24,7 @@
         </div>
     </div>
     <script src="../assets/js/lodash.min.js"></script>    
-    <!-- <script src='../assets/js/gform.min.js'></script> -->
-
-    <script src='../../src/js/gform.js'></script> 
-    <script src='../../src/js/gform.types.js'></script> 
-    <script src='../../src/js/gform.conditions.js'></script> 
-    <script src='../../src/js/gform.validate.js'></script>
-    
+    <script src='../assets/js/gform.min.js'></script>    
     <script src='../assets/js/gform.theme.js'></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
@@ -38,22 +32,22 @@
     options = {
         legend: 'Validation',
         fields:[
-          // {label: 'Field Label', name: 'label', validate:{required:true},type:"password"},
-          // {label: 'Field Label', name: 'label3', validate:{required:true,matches:{name:"label"}},type:"password",validtext:"Sueccessful Match"},
-          // {label: 'Field Label', name: 'label2', validate:{numeric:{}}},
+          {label: 'Field Label', name: 'label',required:true,type:"password"},
+          {label: 'Field Label', name: 'label3', required:true, validate:[{type:"matches",name:"label"}],type:"password",validtext:"Sueccessful Match"},
+          {label: 'Field Label', name: 'label2', validate:[{type:"numeric"}]},
           {name: 'checked', label: 'Checked?',type: 'checkbox'},
 
           {label: 'Validater',required:true, name: 'validater', validate:[
-              // {test:"numeric", conditions:[{"type":"matches","name": "checked","value": [true]}]},
+              {type:"numeric", conditions:[{"type":"matches","name": "checked","value": [true]}]},
               
               {tests:[
-                {test:"length", max:10, min:2, message: "Failed"},
-                {test:"valid_url"}
+                {type:"length", max:10, min:2, message: "Failed"},
+                {type:"valid_url"}
               ],op:'or'}
             ]
           },
-          // {label: 'First', name: 'first', required:[{type:"matches",name:"second",value:""}]},
-          // {label: 'Second', name: 'second', required:[{type:"matches",name:"first",value:""}]},
+          {label: 'First', name: 'first', required:[{type:"matches",name:"second",value:""}]},
+          {label: 'Second', name: 'second', required:[{type:"matches",name:"first",value:""}]},
 
         ]
     }

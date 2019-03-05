@@ -342,7 +342,7 @@ gform.normalizeField = function(fieldIn,parent){
         id: gform.getUID(), 
         // type: 'text', 
         label: fieldIn.legend || fieldIn.name,
-        validate: {},
+        validate: [],
         valid: true,
         parsable:true,
         visible:true,
@@ -352,8 +352,11 @@ gform.normalizeField = function(fieldIn,parent){
         columns: this.options.columns||gform.columns,
         offset: 0,
         ischild:!(parent instanceof gform)        
-    }, this.opts,gform.default,this.options.default,gform.types[fieldIn.type].defaults, fieldIn)
-    field.validate.required = field.validate.required|| field.required || false;
+    }, this.opts, gform.default,this.options.default,gform.types[fieldIn.type].defaults, fieldIn)
+    //keep required separate
+    // field.validate.required = field.validate.required|| field.required || false;
+
+
     // if(typeof field.validate.required == 'undefined'){field.validate.required = false}
     if(field.name == ''){field.name = field.id;}
     field.item = fieldIn;
@@ -504,10 +507,11 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     gform.processConditions.call(field, field.parse, function(result){
         this.parsable = result
     })
-    if(field.validate.required){
-        gform.processConditions.call(field, field.validate.required, function(result){
-            this.validate.required = result
-            this.update();
+    if(field.required){
+        gform.processConditions.call(field, field.required, function(result){
+            if(this.required !== result){
+                this.update({required:result});
+            }
         })
     }
 
@@ -702,6 +706,9 @@ gform.getUID = function() {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.onchangeEvent = function(i){
               this.value = this.get();
+
+            //   this.update({value:this.get()},true);
+            //   gform.types[this.type].focus.call(this)
               this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 
             //   this.owner.pub('change:'+this.name, this,{input:this.value});
@@ -747,7 +754,9 @@ gform.getUID = function() {
           return this;
       },
       focus:function() {
+        //   debugger;
           this.el.querySelector('[name="'+this.name+'"]').focus();
+        //   this.el.querySelector('[name="'+this.name+'"]').focus();
           var temp = this.value;
           this.set('');
           this.set(temp);
@@ -779,6 +788,11 @@ gform.getUID = function() {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.value = this.get();
+
+            //   this.update({value:this.get()},true);
+            //   gform.types[this.type].focus.call(this)
+
+            //   this.focus();
             //   this.owner.pub('change:'+this.name, this,{input:this.value});
             //   this.owner.pub('change', this, {input:this.value});
             //   this.owner.pub('input:'+this.name, this,{input:this.value});
@@ -788,7 +802,9 @@ gform.getUID = function() {
           }.bind(this));
       },
       get: function() {
-          return this.el.querySelector('select[name="' + this.name + '"]').value;
+          var value = this.el.querySelector('select[name="' + this.name + '"]').value;
+        //   this.option = _.find()
+          return value;
       },
       set: function(value) {
           this.el.querySelector('[name="' + this.name + '"]').value = value;
@@ -1141,53 +1157,81 @@ gform.prototype.validate = function(){
 	this.valid = true;
 	_.each(this.fields, gform.validateItem)
 	if(!this.valid){
-		this.pub('invalid',null, this.errors);
+		this.pub('invalid',{errors:this.errors});
 	}else{
-		this.pub('valid',null);
+		this.pub('valid');
 	}
+	this.pub('validation');
 	return this.valid;
 };
 gform.handleError = gform.update;
+
 gform.validateItem = function(item){
-	var errors = gform.performValidate(item);
-	if(errors) {
-		item.owner.pub('invalid:'+item.name, item, errors);
-	}else{
-		item.owner.pub('valid:'+item.name, item, errors);
-	}
-	item.owner.errors[item.name] = errors;
-	item.owner.valid = item.valid && item.owner.valid;
-};
-gform.performValidate = function(item){
 	var value = item.get();
 	item.valid = true;
 	item.errors = '';
 	if(item.parsable && typeof item.validate === 'object'){
-		var errors = _.compact(_.map(item.validate, function(v, it, i){
-			if(it){
-				var test = v[i].call(item, value, it);
-				if(test){	
-					return gform.renderString(it.message || test, {label:item.label,value:value, args:it});
-				}
+		// var errors = _.map(item.validate, function(v, it){
+		// 	if(typeof it.test == 'string'){
+		// 		if(typeof it.conditions == 'undefined' || gform._rules.call(this, it.conditions)){
+		// 				var test = v[it.test].call(item, value, it);
+		// 				if(test){	
+		// 					return gform.renderString(it.message || test, {label:item.label,value:value, args:it});
+		// 				}
+		// 		}
+		// 	}
+		// }.bind(item, gform.validations))
+		var errors = gform.validation.call(item,item.validate);
+
+		if(item.required){
+			var type = (item.satisfied(value) ? false : '{{label}} is required')
+			if(type) {
+				errors.push(gform.renderString(item.required.message || type, {label:item.label,value:value, args:item.required}));
 			}
-		}.bind(null, gform.validations)))
+		}
+		errors = _.compact(errors);
 		if((typeof item.display === 'undefined') || item.visible) {
-
-		item.valid = !errors.length;
-		item.errors = errors.join('<br>')
-
-		gform.handleError(item);
+			item.valid = !errors.length;
+			item.errors = errors.join('<br>')
+			gform.handleError(item);
 		}
 
 		//validate sub fields
 		if(typeof item.fields !== 'undefined'){
 			_.each(item.fields, gform.validateItem)
 		}
-
 	}
-	return item.errors;
-
+	
+	if(item.errors) {
+		item.owner.pub('invalid:'+item.name, {errors:item.errors});
+	}else{
+		item.owner.pub('valid:'+item.name);
+	}
+	item.owner.errors[item.name] = item.errors;
+	item.owner.valid = item.valid && item.owner.valid;
 };
+
+gform.validation = function(rules, op){
+	var op = op||'and';
+	var value = this.get();
+	var errors =  _.map(rules, function(v, it){
+		if(typeof it.type == 'string'){
+			if(typeof it.conditions == 'undefined' || gform._rules.call(this, it.conditions)){
+					var type = v[it.type].call(this, value, it);
+					if(type){	
+						return gform.renderString(it.message || type, {label:this.label,value:value, args:it});
+					}
+			}
+		}else if(typeof it.tests !== 'undefined'){
+			return gform.validation.call(this,it.tests,it.op).join('<br>');
+		}
+	}.bind(this, gform.validations))
+	if(op == 'and' || _.compact(errors).length == rules.length){
+		return errors;
+	}else{
+		return [];
+	}
+}
 
 gform.regex = {
 	numeric: /^[0-9]+$/,
@@ -1199,8 +1243,16 @@ gform.regex = {
 
 gform.validations = 
 {
-	required:function(value) {
-			return (this.satisfied(value) ? false : '{{label}} is required');
+	// required:function(value) {
+	// 		return (this.satisfied(value) ? false : '{{label}} is required');
+	// },
+	regex: function(value, args) {
+		var r = args.regex;
+		if(typeof r == 'string'){r = gform.regex[r]}
+		return r.test(value) || value === '' ? false : args.message;
+	},
+	custom: function(value, args) {
+		return args.call(this, value);
 	},
 	matches:function(value, args) {
 		var temp = this.parent.find(args.name);
@@ -1213,7 +1265,7 @@ gform.validations =
 			return gform.regex.date.test(value) || value === '' ? false : '{{label}} should be in the format MM/DD/YYYY';
 	},
 	valid_url: function(value) {
-		return gfrom.regex.url.test(value) || value === '' ? false : '{{label}} must contain a valid Url';
+		return gform.regex.url.test(value) || value === '' ? false : '{{label}} must contain a valid Url';
 	},
 	valid_email: function(value) {
 			return gform.regex.email.test(value) || value === '' ? false : '{{label}} must contain a valid email address';
@@ -1248,13 +1300,5 @@ gform.validations =
 			if(typeof args.max == 'number' && parseFloat(value) > parseFloat(args.max)){
 				return '{{label}} must contain a number less than {{args.max}}'
 			}
-	},
-	regex: function(value, args) {
-		var r = args.regex;
-		if(typeof r == 'string'){r = gform.regex[r]}
-		return r.test(value) || value === '' ? false : args.message;
-	},
-	custom: function(value, args) {
-		return args.call(this, value);
 	}
 };

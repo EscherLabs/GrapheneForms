@@ -189,7 +189,7 @@ var gform = function(data, el){
                 })
 
                 gform.types[newField.type].focus.call(newField);
-                field.owner.pub(['change', 'change:'+field.name, 'create:'+field.name,'inserted','inserted:'+field.name],field)
+                field.owner.pub(['change', 'change:'+field.name,'create', 'create:'+field.name,'inserted','inserted:'+field.name],field)
             }
         }
         if(e.target.classList.contains('gform-minus')){
@@ -202,7 +202,7 @@ var gform = function(data, el){
                 }else{
                     this.container.querySelector( field.target ).removeChild(field.el);
                 }
-                field.owner.pub(['change', 'change:'+field.name, 'create:'+field.name,'removed','removed:'+field.name],field)
+                field.owner.pub(['change', 'change:'+field.name,'removed','removed:'+field.name],field)
             }else{
                 field.set(null);
             }
@@ -342,7 +342,7 @@ gform.normalizeField = function(fieldIn,parent){
         id: gform.getUID(), 
         // type: 'text', 
         label: fieldIn.legend || fieldIn.name,
-        validate: {},
+        validate: [],
         valid: true,
         parsable:true,
         visible:true,
