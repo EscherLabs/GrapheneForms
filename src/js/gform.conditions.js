@@ -86,12 +86,12 @@ gform.conditions = {
 			}.bind( this, args)
 		);
 	},
-	contains: function(gform , args, func) {
-		return gform.sub('change:' + args.name, function(args, local, topic, token) {
-				func.call(this, (typeof local.value !== 'undefined'  && local.value.indexOf(args.value) !== -1 ), token);
-			}.bind( this, args)
-		).lastToken;
-	},
+	// contains: function(gform , args, func) {
+	// 	return gform.sub('change:' + args.name, function(args, local, topic, token) {
+	// 			func.call(this, (typeof local.value !== 'undefined'  && local.value.indexOf(args.value) !== -1 ), token);
+	// 		}.bind( this, args)
+	// 	).lastToken;
+	// },
 	matches: function(field, args) {
 		var val = args.value;
 		var localval = (field.parent.find(args.name) || {value:''}).value;

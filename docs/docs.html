@@ -75,9 +75,9 @@
 						<li class="list-unstyled" ><a href="#legend"><i class="fa fa-chevron-right"></i> legend</a></li>
 						<li class="list-unstyled" ><a href="#name"><i class="fa fa-chevron-right"></i> name</a></li>
 						<li class="list-unstyled" ><a href="#data"><i class="fa fa-chevron-right"></i> data</a></li>
-						<li class="list-unstyled" ><a href="#schema"><i class="fa fa-chevron-right"></i> fields</a></li>
+						<li class="list-unstyled" ><a href="#fields"><i class="fa fa-chevron-right"></i> fields</a></li>
 						<li class="list-unstyled" ><a href="#default"><i class="fa fa-chevron-right"></i> default</a></li>
-						<li class="list-unstyled" ><a href="#actions"><i class="fa fa-chevron-right"></i> actions</a></li>
+						<!-- <li class="list-unstyled" ><a href="#actions"><i class="fa fa-chevron-right"></i> actions</a></li> -->
 					</ul>
 					<a href="#fields"><h4>Fields</h4></a>
 					<ul class>
@@ -135,18 +135,24 @@
 						<li class="list-unstyled" ><a href="#requires"><i class="fa fa-chevron-right"></i> requires</a></li>
 						<li class="list-unstyled" ><a href="#matches"><i class="fa fa-chevron-right"></i> matches</a></li>
 						<li class="list-unstyled" ><a href="#requires"><i class="fa fa-chevron-right"></i> not_matches</a></li>
+						<li class="list-unstyled" ><a href="#test"><i class="fa fa-chevron-right"></i> test</a></li>
+						<li class="list-unstyled" ><a href="#condition_nesting"><i class="fa fa-chevron-right"></i> nesting</a></li>
 					</ul>
 					<a href="#validation"><h4>Validation</h4></a>
 					<ul class>
 						<li class="list-unstyled" ><a href="#required"><i class="fa fa-chevron-right"></i> required</a></li>
 						<li class="list-unstyled" ><a href="#matches"><i class="fa fa-chevron-right"></i> matches</a></li>
 						<li class="list-unstyled" ><a href="#valid_email"><i class="fa fa-chevron-right"></i> valid_email</a></li>
+						<li class="list-unstyled" ><a href="#valid_url"><i class="fa fa-chevron-right"></i> valid_url</a></li>
+
 						<!-- <li class="list-unstyled" ><a href="#valid_emails"><i class="fa fa-chevron-right"></i> valid_emails</a></li> -->
-						<li class="list-unstyled" ><a href="#min_length"><i class="fa fa-chevron-right"></i> min_length</a></li>
-						<li class="list-unstyled" ><a href="#max_length"><i class="fa fa-chevron-right"></i> max_length</a></li>
-						<li class="list-unstyled" ><a href="#exact_length"><i class="fa fa-chevron-right"></i> exact_length</a></li>
-						<li class="list-unstyled" ><a href="#greater_than"><i class="fa fa-chevron-right"></i> greater_than</a></li>
-						<li class="list-unstyled" ><a href="#less_than"><i class="fa fa-chevron-right"></i> less_than</a></li>
+						<li class="list-unstyled" ><a href="#length"><i class="fa fa-chevron-right"></i> length</a></li>
+						<!-- <li class="list-unstyled" ><a href="#max_length"><i class="fa fa-chevron-right"></i> max_length</a></li>
+						<li class="list-unstyled" ><a href="#exact_length"><i class="fa fa-chevron-right"></i> exact_length</a></li> -->
+						<li class="list-unstyled" ><a href="#numeric"><i class="fa fa-chevron-right"></i> numeric</a></li>
+						<li class="list-unstyled" ><a href="#custom"><i class="fa fa-chevron-right"></i> custom</a></li>
+						<li class="list-unstyled" ><a href="#regex"><i class="fa fa-chevron-right"></i> regex</a></li>
+						<!-- <li class="list-unstyled" ><a href="#less_than"><i class="fa fa-chevron-right"></i> less_than</a></li> -->
 						<!-- <li class="list-unstyled" ><a href="#alpha"><i class="fa fa-chevron-right"></i> alpha</a></li>
 						<li class="list-unstyled" ><a href="#alpha_numeric"><i class="fa fa-chevron-right"></i> alpha_numeric</a></li>
 						<li class="list-unstyled" ><a href="#alpha_dash"><i class="fa fa-chevron-right"></i> alpha_dash</a></li>
@@ -156,23 +162,22 @@
 						<li class="list-unstyled" ><a href="#is_natural"><i class="fa fa-chevron-right"></i> is_natural</a></li>
 						<li class="list-unstyled" ><a href="#is_natural_no_zero"><i class="fa fa-chevron-right"></i> is_natural_no_zero</a></li> -->
 						<!-- <li class="list-unstyled" ><a href="#valid_ip"><i class="fa fa-chevron-right"></i> valid_ip</a></li> -->
-						<li class="list-unstyled" ><a href="#valid_url"><i class="fa fa-chevron-right"></i> valid_url</a></li>
 						<!-- <li class="list-unstyled" ><a href="#valid_base64"><i class="fa fa-chevron-right"></i> valid_base64</a></li> -->
 					</ul>
-					<a href="#themes"><h4>Themes</h4></a>
+					<!-- <a href="#themes"><h4>Themes</h4></a>
 					<ul class>
 							<li class="list-unstyled" ><a href="#default-theme"><i class="fa fa-chevron-right"></i> Default</a></li>
-							<li class="list-unstyled" ><a href="#bootstrap"><i class="fa fa-chevron-right"></i> Bootstrap</a></li>
+							<li class="list-unstyled" ><a href="#bootstrap"><i class="fa fa-chevron-right"></i> Bootstrap</a></li> -->
 							<!-- <li class="list-unstyled" ><a href="#milligram"><i class="fa fa-chevron-right"></i> Milligram</a></li>						
 						<li class="list-unstyled" ><a href="#skeleton"><i class="fa fa-chevron-right"></i> Skeleton</a></li>
 						<li class="list-unstyled" ><a href="#bulma"><i class="fa fa-chevron-right"></i> Bulma</a></li>
 						<li class="list-unstyled" ><a href="#uikit"><i class="fa fa-chevron-right"></i> UIKit</a></li>
 						<li class="list-unstyled" ><a href="#foundation"><i class="fa fa-chevron-right"></i> Foundation</a></li> -->
-					</ul>
-					<a href="#plugins"><h4>Plugins</h4></a>
+					<!-- </ul> -->
+					<!-- <a href="#plugins"><h4>Plugins</h4></a>
 					<ul class>
 						<li class="list-unstyled" ><a href="#modal"><i class="fa fa-chevron-right"></i> modal</a></li>
-					</ul>
+					</ul> -->
 					<a href="./test/tests.html?random=false"><h4>Tests</h4></a>
 	<!-- 				<ul class>
 						<li class="list-unstyled" ><a href="#color"><i class="fa fa-chevron-right"></i> Tests</a></li>
@@ -299,7 +304,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 						If data is set to <code>hash</code> the form is populated with data from the url hash.<br>
 						Lastly the data can be set to a url and the data will be fetched and populated from the response.
 					</p>
-					<a name="schema" style="display:block;position:relative;top:-80px"></a>
+					<a name="fields" style="display:block;position:relative;top:-80px"></a>
 					<br>					
 					<h4>fields</h4>					
 					<p>
@@ -312,13 +317,13 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 						This is an object that defines what a default field that is created looks for any undefined property. For example by default if the type is not defined a text field is created, if you would preer that a textarea is default you could define default to be <code>{"type":"textarea"}</code>
 					</p>
 					<blockquote><pre><code class="prettyprint">config.default = {"type": "textarea"} // this would set the default type to textearea</code></pre></blockquote>
-					<a name="actions" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="actions" style="display:block;position:relative;top:-80px"></a>
 					<br>					
 					<h4>actions</h4>					
 					<p>
 						The actions to be included in the form. By default the <code>cancel</code> and <code>save</code> actions are included. For a full list and instructions on creating new actions go <a href="#actions">here</a>.
 					</p>
-					<blockquote>config.actions = ['save']</blockquote>
+					<blockquote>config.actions = ['save']</blockquote> -->
 					<hr>
 
 
@@ -331,7 +336,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 <!-- <div class="well fieldForm"></div> -->
 <div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = {
   'el': '.myForm',
-  'schema': [
+  'fields': [
     {
       'label':    'First Name',
       'value':    'John'
@@ -653,18 +658,28 @@ Specific events may have other data provided as well but they will be highly sit
 					<a name="conditions" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h3>Conditions</h3>					
-		<pre><code class="prettyprint">{
-  "label": "Reason",
-  "name": "reason",
-  "display": [
-    { 
-      "type": "matches", // looks for a matching value
-      "name": "candy", // field to be compared to
-      "value": "Chocolate" // value or array of acceptable values
-    }
-  ]
-} // this field will be hidden unless a field in the same form named "candy" has a value of "Chocolate"</code></pre>
 
+<div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = {
+  'el': '.myForm',
+  'fields': [
+  {
+    "label":"Candy"
+  },
+  {
+    "label": "Reason",
+    "name": "reason",
+    "display": [
+      { 
+        // looks for a matching value
+        "type": "matches",
+        // field to be compared to
+        "name": "candy",
+       // value or array of acceptable values
+        "value": "chocolate"
+      }
+    ]
+  }] // this field will be hidden unless the field named "candy" has a value of "Chocolate"
+}</code></pre></div><div class="col-md-6 conditionForm"></div></div></div>
 					<!--requires -->
 					<a name="requires" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -689,31 +704,55 @@ Specific events may have other data provided as well but they will be highly sit
 						The 'matches' condition requires that the value of the field indicated with the 'name' property does not match the value that is set in the 'value' property.
 					</p>
 
+					<!--test -->
+					<a name="test" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>test</h4>					
+					<p>
+							This 'test' condition requires callback property to be set as well which should return a boolean indicating if it passes the test. The callback will recieve a reference to the field as well as the condition definition.
+					</p>
+
+					<!--test -->
+					<a name="condition_nesting" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>nesting</h4>					
+					<p>
+						Complex conditions can be created by nesting.
+					</p>
+
 					<!--validation -->
 					<a name="validation" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h3>Validation</h3>
-					<a name="required" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="required" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>required</h5>
 					<p>
 						fails validation if the field value is empty.	
 					</p>
-					<code>{validate: {required: true}</code>
+					<code>{validate: {required: true}</code> -->
 					<a name="matches" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>matches</h5>
 					<p>
 						fails validation if the field value does not match the value of the field indicated.	
 					</p>
-					<code>{validate: {matches: 'password_1'}</code>
+					<code>{type:'matches': name:'password_1'}</code>
 					<a name="valid_email" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>valid_email</h5>
 					<p>
 						fails validation if the field value is not a valid email address.	
 					</p>
-					<code>{validate: {valid_email: true}</code>
+					<code>{type:'valid_email'}</code>
+
+					<a name="valid_url" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>valid_url</h5>
+					<p>
+						fails validation if the value of the field is not a valid url.
+					</p>
+					<code>{type: 'valid_url'}</code>
 					<!-- <a name="valid_emails" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>valid_emails</h5>
@@ -721,41 +760,63 @@ Specific events may have other data provided as well but they will be highly sit
 						fails validation if any value in a comma separated list is not a valid email	
 					</p>
 					<code>{validate: {valid_emails: true}</code> -->
-					<a name="min_length" style="display:block;position:relative;top:-80px"></a>
+					<a name="length" style="display:block;position:relative;top:-80px"></a>
 					<hr>
-					<h5>min_length</h5>
+					<h5>length</h5>
 					<p>
-						fails validation if the length of the fields value is shorter then the indicated value	
+						fails validation if the length of the field is not between the 'min' and 'max' parameters
 					</p>
-					<code>{validate: {min_length: '8'}</code>
-					<a name="max_length" style="display:block;position:relative;top:-80px"></a>
+					<pre>
+					<code class="prettyprint">
+{'type': 'length', 'min': 3, 'max': 10} // requires a length between 3 and 10 (inclusive) characters
+{'type': 'length', 'min': 10} // requires a minimum of 10 characters
+{'type': 'length', 'max': 10} // requires a maximum of 10 characters
+{'type': 'length', 'min': 4, 'max': 4} // requires exactly 4 characters
+</code></pre>
+
+
+					<a name="numeric" style="display:block;position:relative;top:-80px"></a>
 					<hr>
-					<h5>max_length</h5>
+					<h5>numeric</h5>
 					<p>
-						fails validation if the length of the fields value is longer then the indicated value	
+						fails validation if the value of the field is not numeric or is not between the min and max (inclusive) parameters.
 					</p>
-					<code>{validate: {max_length: '10'}</code>
+					<pre>
+					<code class="prettyprint">
+{'type': 'numeric'} // requires a number be entered
+{'type': 'numeric', 'min': 2, 'max': 5} // requires a number between 2 and 5 be entered
+{'type': 'numeric', 'min': 2} // requires a number greater than 2 be entered
+{'type': 'numeric', 'max': 5} // requires a number less than 5 be entered
+{'type': 'numeric', 'min': 3, 'max': 3} // requires 3 be entered
+					</code></pre>
+
+
+					<a name="custom" style="display:block;position:relative;top:-80px"></a>
+					<hr>
+					<h5>custom</h5>
+					<p>
+							A custom fuction can be passed for validation and should return a false if there is no error or the error if there is one.
+					</p>
+					<code>{'type': 'custom', 'test': function}</code>
 					<a name="exact_length" style="display:block;position:relative;top:-80px"></a>
 					<hr>
-					<h5>exact_length</h5>
+					<h5>regex</h5>
 					<p>
-						fails validation if the length of the fields value is not exactly the same as the indicated value	
+						A custom regex can be passed for validation a failing test will respond with the message
 					</p>
-					<code>{validate: {exact_length: '8'}</code>
-					<a name="greater_than" style="display:block;position:relative;top:-80px"></a>
-					<hr>
-					<h5>greater_than</h5>
-					<p>
-						fails validation if the value of the field is less than the indicated value after using parseFloat.
-					</p>
-					<code>{validate: {greater_than: '16'}</code>
-					<a name="less_than" style="display:block;position:relative;top:-80px"></a>
+					<code>{'type': 'regex', 'test': regex, 'message': '{{name}} failed to meet expectations'}</code>
+
+
+					<!-- <code>{type:'numeric', 2, max:5} // requires a number greater than 2 be entered</code>
+					<code>{type:'numeric', max:5} // requires a number less than 5 be entered</code>
+					<code>{type:'numeric', min:3, max:3} // requires 3 be entered</code> -->
+					<!-- <a name="less_than" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>less_than</h5>
 					<p>
 						fails validation if the value of the field is greater than the indicated value after using parseFloat.
 					</p>
-					<code>{validate: {less_than: '100'}</code>
+					<code>{validate: {less_than: '100'}</code> -->
 					<!-- <a name="alpha" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>alpha</h5>
@@ -819,13 +880,6 @@ Specific events may have other data provided as well but they will be highly sit
 						fails validation if the value of the field is not a valid IP address.
 					</p>
 					<code>{validate: {valid_ip: true}</code>-->
-					<a name="valid_url" style="display:block;position:relative;top:-80px"></a>
-					<hr>
-					<h5>valid_url</h5>
-					<p>
-						fails validation if the value of the field is not a valid url.
-					</p>
-					<code>{validate: {valid_url: true}</code>
 					<!-- <a name="valid_base64" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>valid_base64</h5>
@@ -838,44 +892,44 @@ Specific events may have other data provided as well but they will be highly sit
 
 
 					<!--themes -->
-					<a name="themes" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="themes" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h3>Themes</h3>
-					Themes help gform to fit seemlessly into your current site.
+					Themes help gform to fit seemlessly into your current site. -->
 					<!--bootstrap -->
-					<a name="default-theme" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="default-theme" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>Default Theme</h4>					
 					<p>
 						This is a minimialist default theme that can be used on its own or as a good starting point.
-					</p>
+					</p> -->
 					<!--bootstrap -->
-					<a name="bootstrap" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="bootstrap" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>Bootstrap 3</h4>					
 					<p>
 						The bootstrap theme is the default theme and is the one that is tested most thoroughly. It impliments all of the basic elements and uses the 12 column grid. The pre and post pieces of form groups are also impilmented 
-					</p>
+					</p> -->
 
 
 					<!--plugins -->
-					<a name="plugins" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="plugins" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h3>Plugins</h3>
-						Plugins are used to extend the functionality of gform as well as to impliment new features that may only make sense for a subset of people.
+						Plugins are used to extend the functionality of gform as well as to impliment new features that may only make sense for a subset of people. -->
 					<!--modal -->
-					<a name="modal" style="display:block;position:relative;top:-80px"></a>
+					<!-- <a name="modal" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>Modal</h4>					
 					<p>
 						This plugin will automatically create a modal popup of a form if the target is not selected or the target element is not found. In practice this would look like this: 
 						<pre><code class="prettyprint">var myForm = $().gform(options);</code></pre>
 						To make use of this plugin the plugin just needs to be included and no target selected.
-					</p>
+					</p> -->
 
 					<hr>
 					<footer>
-						<p>&copy; Adam Smallcomb  2018</p>
+						<p>&copy; Adam Smallcomb  2019</p>
 					</footer>
 				</div><!--/span-->
 
@@ -938,6 +992,26 @@ Specific events may have other data provided as well but they will be highly sit
   }
 ]};
 var fieldForm = new gform(config)
+
+
+
+config = {
+  'el': '.conditionForm',
+  'fields': [{
+		"label":"Candy"
+  },{
+    "label": "Reason",
+    "name": "reason",
+    "display": [
+      { 
+        "type": "matches",
+        "name": "candy",
+        "value": "chocolate"
+      }
+    ]
+  }]
+};
+var conditionForm = new gform(config)
 
 		</script>
 	</body>
