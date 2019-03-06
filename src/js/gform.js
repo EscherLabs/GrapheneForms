@@ -169,17 +169,21 @@ var gform = function(data, el){
 
 
      this.el.addEventListener('click', function(e){
+        debugger;
+
          var field;
          if(e.target.dataset.id){
             field = gform.findByID.call(this,e.target.dataset.id)
          }
-        e.stopPropagation();
         if(e.target.classList.contains('gform-add')){
-            if(_.countBy(field.parent.fields, {name: field.name}).true < (field.array.max || 5)){
+            e.stopPropagation();
+            var fieldCount =  _.countBy(field.parent.fields, {name: field.name}).true;
+
+            if(fieldCount < (field.array.max || 5)){
                 var index = _.findIndex(field.parent.fields, {id: field.id});
                 var atts = {};
         
-                var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null, _.countBy(field.parent.fields, {name: field.name}).true);
+                var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null,fieldCount);
                 field.parent.fields.splice(index+1, 0, newField)
                 field.parent.reflow();
                 _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({index:index})})
@@ -193,6 +197,8 @@ var gform = function(data, el){
             }
         }
         if(e.target.classList.contains('gform-minus')){
+            e.stopPropagation();
+
             if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)) {
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 field.parent.fields.splice(index, 1);

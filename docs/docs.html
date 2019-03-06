@@ -625,7 +625,7 @@ Specific events may have other data provided as well but they will be highly sit
 						<p>
 							The change event is triggered whenever a field is changed.
 						</p></li> -->
-						<li><h5>validation</h5>					
+						<li><h5>validation</h5>			
 						<p>
 							The validation event is triggered whenevere form validation is performed.
 						</p></li>
@@ -724,6 +724,28 @@ Specific events may have other data provided as well but they will be highly sit
 					<a name="validation" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h3>Validation</h3>
+												<div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = {
+  'el': '.myForm',
+  'fields': [
+    {
+      'label':    'First Name',
+      'value':    'John'
+    },  
+    {
+      'label':          'Last Name',
+      'placeholder':    'doe'
+    },  
+    {
+      'type':     'select',
+      'label':    'State',
+      'required': true,
+      'options':  './data/states.json', 
+      //[{"value":"AL", "name":"Alabama"}...
+      'format':   { 'label': '{{name}}'},
+      'help': 'Choose your state'
+    }
+  ]
+};</code></pre></div><div class="col-md-6 validateForm"></div></div></div>		
 					<!-- <a name="required" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>required</h5>
@@ -938,13 +960,13 @@ Specific events may have other data provided as well but they will be highly sit
 		</div><!--/.container-->
 
 		<script type='text/javascript' src='./assets/js/lodash.min.js'></script>    
-		 <script type='text/javascript' src='./assets/js/gform.min.js'></script> 
+		 <script type='text/javascript' src='./assets/js/gform_bootstrap.min.js'></script> 
 		<!--/*<script type='text/javascript' src='../src/js/gform.js'></script>
 		<script type='text/javascript' src='../src/js/gform.conditions.js'></script>
 		<script type='text/javascript' src='../src/js/gform.validate.js'></script>
 		<script type='text/javascript' src='../src/js/gform.types.js'></script>*/-->
 
-		<script type='text/javascript' src='./assets/js/gform.bootstrap.js'></script>
+		<!-- <script type='text/javascript' src='./assets/js/gform.bootstrap.js'></script> -->
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 		<script>
 		var config = {
@@ -1012,6 +1034,23 @@ config = {
   }]
 };
 var conditionForm = new gform(config)
+config = {
+  'el': '.validateForm',
+  'fields': [{
+		"label":"Candy"
+  },{
+    "label": "Reason",
+    "name": "reason",
+    "display": [
+      { 
+        "type": "matches",
+        "name": "candy",
+        "value": "chocolate"
+      }
+    ]
+  }]
+};
+var validateForm = new gform(config)
 
 		</script>
 	</body>

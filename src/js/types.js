@@ -19,7 +19,7 @@ gform.types = {
       initialize: function(){
         //   this.iel = this.el.querySelector('input[name="' + this.name + '"]')
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
-          this.onchangeEvent = function(i){
+          this.onchangeEvent = function(){
               this.value = this.get();
 
             //   this.update({value:this.get()},true);
@@ -38,7 +38,6 @@ gform.types = {
           if(typeof item === 'object') {
               _.extend(this, this.item, item);
           }
-debugger;
           this.label = gform.renderString((item||{}).label||this.item.label, this);
 
           var oldDiv = document.getElementById(this.id);
@@ -117,12 +116,12 @@ debugger;
           }.bind(this));
       },
       get: function() {
-          var value = this.el.querySelector('select[name="' + this.name + '"]').value;
+          var value = this.el.querySelector('select').value;
         //   this.option = _.find()
           return value;
       },
       set: function(value) {
-          this.el.querySelector('[name="' + this.name + '"]').value = value;
+          this.el.querySelector('select').value = value;
           _.each(this.options.options, function(option, index){
               if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
           }.bind(this))
@@ -264,8 +263,16 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
 gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection']);
+gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collection'],{
+    get: function(){
+      return (this.el.querySelector('range')||{value:''}).value; 
+  },
+  set:function(value){
+      this.el.querySelector('range').value = value;   
+  }
+});
 gform.types['radio']    = _.extend({}, gform.types['input'], gform.types['collection'], {
-  get: function(){
+    get: function(){
       return (this.el.querySelector('[type="radio"][name="' + this.name + '"]:checked')||{value:''}).value; 
   },
   set:function(value){

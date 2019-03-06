@@ -19,7 +19,7 @@ gform.stencils = {
 		{{>_actions}}
 	</div>
 </div>`,
-hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />`,
+hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
     textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
@@ -105,7 +105,7 @@ select_options:`
     _fieldset: `<div class="row"><fieldset data-type="fieldset" name="{{name}}" id="{{id}}" class="{{modifiers}} col-md-12" >
 {{#array}}
 <div class="btn-group actions">
-	<div class="gform-add btn btn-white"><i class="fa fa-plus text-success"></i></div><div class="btn btn-white gform-minus"><i class="fa fa-minus text-danger"></i></div>
+	<div data-id="{{id}}" class="gform-add btn btn-white"><i class="fa fa-plus text-success"></i></div><div data-id="{{id}}" class="btn btn-white gform-minus"><i class="fa fa-minus text-danger"></i></div>
 </div>
 {{/array}}
 {{^hideLabel}}
@@ -118,8 +118,8 @@ select_options:`
 </fieldset></div>`,
 	_actions: `{{#array}}
 	<div class="btn-group actions pull-right">
-	<div class="gform-add btn btn-white"><i class="fa fa-plus text-success"></i></div>
-	<div class="btn btn-white gform-minus"><i class="fa fa-minus text-danger"></i></div>
+	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}" class="gform-add fa fa-plus text-success"></i></div>
+	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}" class="gform-minus fa fa-minus text-danger"></i></div>
 	</div>
 	{{/array}}`,
     _label: `
@@ -213,6 +213,57 @@ gform.prototype.opts.suffix = "";
 gform.handleError = function(field){
 	if(!field.valid){
 		field.el.classList.add('has-error')		
+		field.el.querySelector('.font-xs.text-danger').innerHTML = field.errors;
+	}else{
+		field.el.querySelector('.font-xs.text-danger').innerHTML = '';
 	}
-    field.el.querySelector('.font-xs.text-danger').innerHTML = field.errors;
 }
+
+gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+    initialize: function() {
+         $('select[name="' + this.name + '"]').combobox({appendId:this.id});
+         
+         this.onchangeEvent = function(){
+            this.value = this.get();
+            this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+        }.bind(this)
+      $(this.el).find('select').on('change',this.onchangeEvent)
+    },
+    destroy:function(){	
+      $(this.el).find('select').off('change',this.onchangeEvent)
+    },
+	update: function(item, silent) {
+		debugger;
+		if(typeof item === 'object') {
+			_.extend(this, this.item, item);
+		}
+		this.label = gform.renderString((item||{}).label||this.item.label, this);
+
+		var oldDiv = document.getElementById(this.id);
+
+		  this.destroy();
+		  this.el = gform.types[this.type].create.call(this);
+		  oldDiv.parentNode.replaceChild(this.el,oldDiv);
+		  gform.types[this.type].initialize.call(this);
+
+		  if(!silent) {
+			  this.owner.pub(['change:'+this.name,'change'], this);
+			  // this.owner.pub('change', this);
+		  }
+		  
+	},
+  render: function() {
+    this.options = gform.options.call(this,this, this.value);
+    return gform.render('select', this);
+  },
+  set: function(value) {
+      this.el.querySelector('select').value = value;
+      _.each(this.options.options, function(option, index){
+          if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+      }.bind(this))
+      this.el.querySelector('input[type=text]').value = (_.find(this.options,{value:value})||{label:""} ).label
+
+  }
+});
+
+
