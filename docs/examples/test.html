@@ -59,7 +59,7 @@
         fields:[
 		// {type: 'fieldset', name:'basics', legend: 'General', hideLabel: true, inline: true, fields:[
 		{label:'First Name', name: 'f_n', array:false,type:'email',columns:6,"required":  [
-                    {"matches": {"name": "checked","value": [true]}}
+                    {type:"matches", "name": "checked","value": [true]}
                 ],satisfied:function(stuff,more){
                   return stuff;
                 }},
@@ -67,22 +67,21 @@
             {name: 'last_name', label: '0Last Name', validate: {required:false},columns:6,
 
             "display": [
-                    {"matches": {"name": "f_n","value":["adam"]}},
-                    {"matches": {"name": "checked","value": [false]}}
+                    {type:"matches", "name": "f_n","value":["adam"]},
+                    {type:"matches", "name": "checked","value": [false]}
                 ],
                 "parse":"display"
               },            
               {name: 'last_name', label: '1Last Name', validate: {required:false},columns:6, 
                 "display": [
-                    {"matches": {"name": "f_n","value":["adam"]}},
-                    {"matches": {"name": "checked","value": [true]}}
+                    {type:"matches", "name": "f_n","value":["adam"]},
+                    {type:"matches",  "name": "checked","value": [true]}
                 ],
                 "parse":"display"
               },
             {name: 'last_name', label: '2Last Name', validate: {required:false},columns:6, "display": [
-                    {"matches": 
-                        {"name": "f_n","value":["", "tim"]}
-            }
+                    {type:"matches", "name": "f_n","value":["", "tim"]}
+            
               ],
                 "parse":"display"
               },

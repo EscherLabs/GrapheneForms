@@ -5,7 +5,6 @@ mygform.sub('change',function(e){
         document.querySelector('#result code').classList = "prettyprint"
         document.querySelector('#result code').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(e.form.toJSON(),null,2);
         PR.prettyPrint();
-    
 })
 
 mygform.pub('change')

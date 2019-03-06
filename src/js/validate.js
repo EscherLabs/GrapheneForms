@@ -17,16 +17,6 @@ gform.validateItem = function(item){
 	item.valid = true;
 	item.errors = '';
 	if(item.parsable && typeof item.validate === 'object'){
-		// var errors = _.map(item.validate, function(v, it){
-		// 	if(typeof it.test == 'string'){
-		// 		if(typeof it.conditions == 'undefined' || gform._rules.call(this, it.conditions)){
-		// 				var test = v[it.test].call(item, value, it);
-		// 				if(test){	
-		// 					return gform.renderString(it.message || test, {label:item.label,value:value, args:it});
-		// 				}
-		// 		}
-		// 	}
-		// }.bind(item, gform.validations))
 		var errors = gform.validation.call(item,item.validate);
 
 		if(item.required){

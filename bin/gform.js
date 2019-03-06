@@ -189,7 +189,7 @@ var gform = function(data, el){
                 })
 
                 gform.types[newField.type].focus.call(newField);
-                field.owner.pub(['change', 'change:'+field.name, 'create:'+field.name,'inserted','inserted:'+field.name],field)
+                field.owner.pub(['change', 'change:'+field.name,'create', 'create:'+field.name,'inserted','inserted:'+field.name],field)
             }
         }
         if(e.target.classList.contains('gform-minus')){
@@ -202,7 +202,7 @@ var gform = function(data, el){
                 }else{
                     this.container.querySelector( field.target ).removeChild(field.el);
                 }
-                field.owner.pub(['change', 'change:'+field.name, 'create:'+field.name,'removed','removed:'+field.name],field)
+                field.owner.pub(['change', 'change:'+field.name,'removed','removed:'+field.name],field)
             }else{
                 field.set(null);
             }
@@ -723,7 +723,7 @@ gform.getUID = function() {
           if(typeof item === 'object') {
               _.extend(this, this.item, item);
           }
-
+debugger;
           this.label = gform.renderString((item||{}).label||this.item.label, this);
 
           var oldDiv = document.getElementById(this.id);
@@ -1103,7 +1103,7 @@ gform._rules = function(rules, op){
 			s = gform._rules.call(this, rule.conditions,rule.op);
 			console.log(s);
 		}else{
-			s = gform.conditions[rule.type](this.owner, this, rule);
+			s = gform.conditions[rule.type](this, rule);
 		}
 		if(op == 'or'){
 			return result || s;
@@ -1122,7 +1122,7 @@ gform.conditions = {
 		);
 	},
 	// valid_previous: function(gform, args) {},
-	not_matches: function(gform, field, args) {
+	not_matches: function(field, args) {
 		var val = args.value;
 		var localval = (field.parent.find(args.name) || {value:''}).value;
 		if(typeof val== "object" && localval !== null){
@@ -1137,13 +1137,13 @@ gform.conditions = {
 			}.bind( this, args)
 		);
 	},
-	contains: function(gform , args, func) {
-		return gform.sub('change:' + args.name, function(args, local, topic, token) {
-				func.call(this, (typeof local.value !== 'undefined'  && local.value.indexOf(args.value) !== -1 ), token);
-			}.bind( this, args)
-		).lastToken;
-	},
-	matches: function(gform, field, args) {
+	// contains: function(gform , args, func) {
+	// 	return gform.sub('change:' + args.name, function(args, local, topic, token) {
+	// 			func.call(this, (typeof local.value !== 'undefined'  && local.value.indexOf(args.value) !== -1 ), token);
+	// 		}.bind( this, args)
+	// 	).lastToken;
+	// },
+	matches: function(field, args) {
 		var val = args.value;
 		var localval = (field.parent.find(args.name) || {value:''}).value;
 		if(typeof val== "object" && localval !== null){
@@ -1171,16 +1171,6 @@ gform.validateItem = function(item){
 	item.valid = true;
 	item.errors = '';
 	if(item.parsable && typeof item.validate === 'object'){
-		// var errors = _.map(item.validate, function(v, it){
-		// 	if(typeof it.test == 'string'){
-		// 		if(typeof it.conditions == 'undefined' || gform._rules.call(this, it.conditions)){
-		// 				var test = v[it.test].call(item, value, it);
-		// 				if(test){	
-		// 					return gform.renderString(it.message || test, {label:item.label,value:value, args:it});
-		// 				}
-		// 		}
-		// 	}
-		// }.bind(item, gform.validations))
 		var errors = gform.validation.call(item,item.validate);
 
 		if(item.required){

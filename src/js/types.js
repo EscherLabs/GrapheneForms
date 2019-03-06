@@ -38,7 +38,7 @@ gform.types = {
           if(typeof item === 'object') {
               _.extend(this, this.item, item);
           }
-
+debugger;
           this.label = gform.renderString((item||{}).label||this.item.label, this);
 
           var oldDiv = document.getElementById(this.id);
