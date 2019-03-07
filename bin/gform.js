@@ -1062,7 +1062,35 @@ gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: {
 // 			return this.self;
 // 		}
 // 	});
-// })(Berry,jQuery);gform.processConditions = function(conditions, func) {
+// })(Berry,jQuery);
+
+gform.types['color'] = 
+_.extend({}, gform.types['input'], {
+defaults: {
+			pre: '<i style="display: block;width:20px;height:20px;margin: 0 -5px;"></i>' ,
+			type: 'text'
+		},
+      initialize: function(){
+		this.onchangeEvent = function(){
+			this.value = this.get();
+			this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+		}.bind(this)
+		this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+
+		$(this.el.querySelector('input[name="' + this.name + '"]')).attr('type','text');
+			this.el.querySelector('i').style.backgroundColor = this.get()
+
+		$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex'}).on('changeColor', function(ev){
+			this.el.querySelector('i').style.backgroundColor = this.get()
+			this.owner.pub('change',this);
+		}.bind(this));
+
+      },
+  set:function(value){
+      this.el.querySelector('range').value = value;   
+  },
+});
+gform.processConditions = function(conditions, func) {
 	if (typeof conditions === 'string') {
 		if(conditions === 'display' || conditions === 'enable'  || conditions === 'parse') {
 			conditions = this.item[conditions];

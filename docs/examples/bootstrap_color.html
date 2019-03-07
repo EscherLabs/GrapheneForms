@@ -10,8 +10,7 @@
     <title>Example:Combobox - Graphene:Forms</title>
 	  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
     <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
-    <link rel="stylesheet" type='text/css' href="../assets/vendor/css/combobox.css">
-    		<!--<link rel='stylesheet' type='text/css' href='assets/css/bootstrap.min.css'>-->
+    <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
 
   </head>
   <body>
@@ -29,26 +28,22 @@
     <script src='../assets/vendor/js/jquery.js'></script>
 
     <script src="../assets/js/lodash.min.js"></script>    
-    <!-- <script src='../assets/js/gform.min.js'></script> -->
+     <!--/*<script src='../assets/js/gform_bootstrap.min.js'></script> */-->
+     <script src='../assets/vendor/js/colorpicker.min.js'></script> 
     <script src='../../src/js/gform.js'></script>
     <script src='../../src/js/conditions.js'></script>
     <script src='../../src/js/validate.js'></script>
     <script src='../../src/js/types.js'></script>
 
-    <script src='../assets/js/gform.bootstrap.js'></script>
-
-    <script src='../assets/vendor/js/combobox.js'></script>
-
-    <script src='../../src/js/bootstrap.js'></script>
+    <script src='../../src/js/themes/bootstrap.js'></script>
 
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
       options = {
-          legend: 'Bootstrap - Combobox',
-          data:{label:"AZ"},
+          legend: 'Bootstrap - Color',
           fields:[
-            {item:"",label: 'Field Label', name: 'label', type: 'combo',format:{label:'{{name}}'}, options:'../data/states.json'}
+            {item:"",label: 'Color', name: 'color', type: 'color'}
           ]
       }
     </script>

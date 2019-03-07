@@ -265,5 +265,3 @@ gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collec
 
   }
 });
-
-
