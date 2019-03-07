@@ -233,7 +233,6 @@ gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collec
       $(this.el).find('select').off('change',this.onchangeEvent)
     },
 	update: function(item, silent) {
-		debugger;
 		if(typeof item === 'object') {
 			_.extend(this, this.item, item);
 		}
@@ -265,3 +264,119 @@ gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collec
 
   }
 });
+
+gform.types['color'] = _.extend({}, gform.types['input'], {
+	defaults: {
+		pre: '<i style="display: block;width:20px;height:20px;margin: 0 -5px;"></i>' ,
+		type: 'text'
+	},
+  initialize: function(){
+	this.onchangeEvent = function(){
+		this.value = this.get();
+		this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+	}.bind(this)
+	this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+
+	$(this.el.querySelector('input[name="' + this.name + '"]')).attr('type','text');
+		this.el.querySelector('i').style.backgroundColor = this.get()
+
+	$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex'}).on('changeColor', function(ev){
+		this.el.querySelector('i').style.backgroundColor = this.get()
+		this.owner.pub('change',this);
+	}.bind(this));
+
+  }
+});
+
+gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section'],{
+    defaults:{fields:[
+        {type:"text",name:'street',label:"Street Address", validate:[{type:"length",max:"255"}]},
+        {type:"text",name:'line2',label:"Address line 2", validate:[{type:"length",max:"150"}]},
+        {type:"text",name:'city',label:"City", validate:[{type:"length",max:"255"}],columns:6},
+        {type:"text",name:'state',label:"State/Province/Region", validate:[{type:"length",max:"255"}],columns:6},//,display:[{type:"not_matches",name:"country",value:"US"}]},
+        // {type:"combo",name:'state',options:'../data/states.json',format:{label:'{{name}}'},label:"State/Province/Region",columns:6},
+        {type:"text",name:'zip',label:"Postal/Zip Code", validate:[{type:"length",max:"15"}],columns:6},
+        {type:"select",name:'country',options:'../data/countries.json',format:{label:'{{name}}',value:'{{code}}'},label:"Country", validate:[{type:"length",max:"15"}],columns:6}
+    ]
+}});
+
+
+gform.types['datetime'] = _.extend({}, gform.types['input'], {
+  defaults:{
+	format:{input: "MM/DD/YYYY h:mm A"}
+
+  },
+  initialize: function(){
+	this.onchangeEvent = function(){
+		this.value = this.get();
+		this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+	}.bind(this)
+	
+	// this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+	// this.el.addEventListener('change', this.onchangeEvent.bind(null));
+	var $el = $(this.el.querySelector('input[name="' + this.name + '"]'));
+
+	  $el.attr('type','text');
+	  $el.datetimepicker({format: this.format.input})
+	  $el.on("dp.change", this.onchangeEvent.bind(null,true));
+  },
+});
+gform.types['date'] = _.extend({},gform.types['datetime'], {
+	defaults:{
+	  format:{input: "MM/DD/YYYY"}
+	},
+})
+gform.types['time']= _.extend({}, gform.types['datetime'], {
+	defaults:{
+		format:{input: "h:mm A"}
+	}
+})
+// 	,
+// 	initialize: function(){
+// 	  this.onchangeEvent = function(){
+// 		  this.value = this.get();
+// 		  this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+// 	  }.bind(this)
+	  
+// 	//   this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+// 	  var $el = $(this.el.querySelector('input[name="' + this.name + '"]'));
+// 	  // this.el.addEventListener('change', this.onchangeEvent.bind(null));
+// 	  $el.attr('type','text');
+// 	  $el.datetimepicker({format: this.format.input})
+// 	  $el.on("dp.change", this.onchangeEvent.bind(null,true));
+// 	},
+//   });
+// (function(b, $){
+	// b.register({ type: 'date',
+	// 	defaults: { elType: 'text' },
+	// 	setup: function() {
+	// 		this.$el = this.self.find('input');
+	// 		this.$el.off();
+	// 		if(this.onchange !== undefined){ this.$el.on('input',this.onchange);}
+	// 		this.$el.on('input', $.proxy(function(){this.trigger('change');}, this));
+	//     	this.$el.datetimepicker($.extend({},{format: "MM/DD/YYYY"}, this.item.datepicker))
+	// 	},
+	// 	satisfied: function(){
+	// 		this.value = this.$el.val();
+	// 		return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '');
+
+	// 	}
+	// });
+
+// 	b.register({ type: 'time',
+// 		defaults: { elType: 'text' },
+// 		setup: function() {
+// 			this.$el = this.self.find('input');
+// 			this.$el.off();
+// 			if(this.onchange !== undefined){ this.$el.on('input',this.onchange);}
+// 			this.$el.on('input', $.proxy(function(){this.trigger('change');}, this));
+
+// 			// this.$el.timepicker(this.item.timepicker || {});
+
+//       this.$el.datetimepicker($.extend({},{format: "h:m A"},this.item.timepicker));
+
+// 			// this.$el.datetimepicker(this.item.timepicker || {format: "h:m A"});
+
+// 		}
+// 	});
+// })(Berry, jQuery);

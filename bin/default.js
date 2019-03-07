@@ -13,7 +13,21 @@ text: `
     </div>
     </div>     
     </div>    
-`,checkbox: `
+`,
+switch: `
+<label class="label-inline" for="{{name}}">{{label}}{{#required}}{{{requiredText}}}{{/required}}</label>        
+
+<label class="switch">
+<input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+<span class="slider round"></span>
+</label>
+    
+    {{>_error}}
+    </div>
+    {{>_actions}}   
+`,  
+
+checkbox: `
     <input name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
     <label class="label-inline" for="{{name}}">{{label}}{{#required}}{{{requiredText}}}{{/required}}</label>        
     

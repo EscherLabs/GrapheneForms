@@ -10,13 +10,12 @@
     <title>Example:Combobox - Graphene:Forms</title>
 	  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
     <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
-    <link rel="stylesheet" type='text/css' href="../assets/vendor/css/combobox.css">
-    		<!--<link rel='stylesheet' type='text/css' href='assets/css/bootstrap.min.css'>-->
+    <link rel="stylesheet" type='text/css' href="../assets/vendor/css/bootstrap-datepicker.min.css">
 
   </head>
   <body>
     <div style="padding:20px">
-    <h4><a href="./">Examples</a> - Combobox</h4>
+    <h4><a href="./">Examples</a> - Date</h4>
       <div class="container ">
           <div class="row ">
                 <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
@@ -29,25 +28,29 @@
     <script src='../assets/vendor/js/jquery.js'></script>
 
     <script src="../assets/js/lodash.min.js"></script>    
-    <script src='../assets/js/gform.min.js'></script>
-    <!--/*<script src='../../src/js/gform.js'></script>
+    <!-- <script src='../assets/js/gform_bootstrap.min.js'></script> -->
+    <script src='../../src/js/gform.js'></script>
     <script src='../../src/js/conditions.js'></script>
     <script src='../../src/js/validate.js'></script>
-    <script src='../../src/js/types.js'></script>*/-->
+    <script src='../../src/js/types.js'></script>
+    <script src='../assets/js/bootstrap.js'></script>
+    <script src='../assets/vendor/js/moment.js'></script>
 
-    <script src='../assets/js/gform.bootstrap.js'></script>
+    <script src='../assets/vendor/js/bootstrap-datetime.js'></script>
 
-    <script src='../assets/vendor/js/combobox.js'></script>
+    <script src='../../src/js/themes/bootstrap.js'></script>
 
-    <script src='../../src/js/advanced.js'></script>
 
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
       options = {
-          legend: 'Advanced - Combobox',
+          legend: 'Advanced - Date',
           fields:[
-            {item:"",label: 'Field Label', name: 'label', type: 'combo',format:{label:'{{name}}'}, options:'../data/states.json'}
+          {label: 'Date', type: 'date'},
+          {label: 'Time', type: 'time'},
+          {label: 'Both', type: 'datetime'},
+          {label: 'Custom', type: 'datetime',format:{input:'h'},help:'<a target="_blank" href="http://momentjs.com/docs/#/displaying/format/">Formats</a>'}
           ]
       }
     </script>

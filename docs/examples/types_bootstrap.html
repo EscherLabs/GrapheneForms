@@ -3,6 +3,9 @@
   <head>
 		<link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
         <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+        <link rel="stylesheet" type='text/css' href="../assets/vendor/css/combobox.css">
+        <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
+
     </head>
     <body>
       <div style="padding:20px">
@@ -10,13 +13,18 @@
       <div class="container ">
           <div class="row ">
                 <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
-                <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>                
+                <div class="col-md-4" style=""><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>                
                 <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
               </div>
           </div>
       </div>
+      <script src='../assets/vendor/js/jquery.js'></script>
+
       <script src="../assets/js/lodash.min.js"></script>    
       <script src='../assets/js/gform_bootstrap.min.js'></script> 
+      <script src='../assets/vendor/js/combobox.js'></script>
+      <script src='../assets/vendor/js/colorpicker.min.js'></script> 
+
       <!-- <script src='../assets/js/gform.bootstrap.js'></script> -->
       <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
@@ -32,10 +40,12 @@
             {label: 'Checkbox', type: 'checkbox'},
             {label: 'Select', type: 'select', options:[1,2,3]},
             {label: 'Radio', type: 'radio', options:[1,2,3]},
+            {label: 'Combobox', type: 'combo', options:[1,2,3]},
             {label: 'Fieldset', type: 'fieldset', fields:[
                 {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
                 {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
             ]},
+            {label: 'Home Address', type: 'address'},
 
         ]
     }

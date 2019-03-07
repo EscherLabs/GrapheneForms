@@ -10,8 +10,6 @@
     <title>Example:Types - Graphene:Forms</title>
     <link rel="stylesheet" href="../assets/css/normalize.css">    
     <link rel="stylesheet" href="../assets/css/gform.css">
-        <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
-
     </head>
     <body>
       <div style="padding:20px">
@@ -27,18 +25,8 @@
       <script src="../assets/js/lodash.min.js"></script>    
       <script src='../assets/js/gform.min.js'></script> 
       <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
-     <script src='../assets/vendor/js/colorpicker.min.js'></script> 
 
     <script>
-gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collection'],{
-    get: function(){
-      debugger;
-      return (this.el.querySelector('[type=range]')||{value:''}).value; 
-  },
-  set:function(value){
-      this.el.querySelector('[type=range]').value = value;   
-  }
-});
     options = {
         fields:[
             {label: 'Text', type: 'text'},
@@ -49,6 +37,7 @@ gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collect
             {label: 'Password', type: 'password'},
             {label: 'Textarea', type: 'textarea'},
             {label: 'Checkbox', type: 'checkbox'},
+            {label: 'Switch', type: 'switch'},
             {label: 'Select', type: 'select', options:[1,2,3]},
             {label: 'Radio', type: 'radio', options:[1,2,3]},
             {label: 'Range', type: 'range', min:20,max:60},

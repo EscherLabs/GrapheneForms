@@ -169,8 +169,6 @@ var gform = function(data, el){
 
 
      this.el.addEventListener('click', function(e){
-        debugger;
-
          var field;
          if(e.target.dataset.id){
             field = gform.findByID.call(this,e.target.dataset.id)
@@ -468,7 +466,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         }
     }else{
         if(!field.target){
-            field.target = '[name="'+field.name+'"]';
+            field.target = '[name="'+field.name+'"],[data-inline="'+field.name+'"]';
         }
         var temp = this.el.querySelector(field.target)
         if(typeof temp !== 'undefined' && temp !== null    ){
