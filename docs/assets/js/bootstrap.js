@@ -221,6 +221,18 @@ gform.handleError = function(field){
 		field.el.querySelector('.font-xs.text-danger').innerHTML = '';
 	}
 }
+gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+	"label":"<i class=\"fa fa-times\"></i> Cancel",
+	"action":"cancel",
+	"modifiers": "btn btn-danger",
+	"type":"button"			}});
+gform.types['save']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+	"label":"<i class=\"fa fa-check\"></i> Save",
+	"action":"save",
+	"modifiers": "btn btn-success",
+	"type":"button"			}});
+
+
 
 gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collection'], {
     initialize: function() {

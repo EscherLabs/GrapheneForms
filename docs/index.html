@@ -89,16 +89,15 @@
 &lt;html&gt;
   &lt;head&gt;
     &lt;style src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'&gt;&lt;/style&gt;
-    &lt;script type='text/javascript' src='gform.min.js'&gt;&lt;/script&gt;
-    &lt;script type='text/javascript' src='gform.bootstrap.js'&gt;&lt;/script&gt;
+    &lt;script type='text/javascript' src='gform_bootstrap.min.js'&gt;&lt;/script&gt;
     &lt;script type="text/javascript"&gt;
       var myForm = new gform({
-        attributes: {first_name: 'John', last_name: 'Doe'},//optional
+        data: {first_name: 'John', last_name: 'Doe'},//optional
         fields: [
           {label: 'First Name'}, 
-          {label: 'Last Name'}
-        ], 
-        actions: false
+          {label: 'Last Name'},
+          {type:'save'}
+        ]
       }, '.myForm');
     &lt;/script&gt;
   &lt;/head&gt;
@@ -117,17 +116,17 @@
 		</div><!--/.container-->
 
 
-		<script type='text/javascript' src='assets/jquery.min.js'></script>
+		<script type='text/javascript' src='./assets/js/jquery.min.js'></script>
 		<script type='text/javascript' src='./assets/js/lodash.min.js'></script>    
 
 		<!-- // <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3//jquery-ui.min.js'></script> -->
 		<script type='text/javascript' src='assets/js/bootstrap.min.js'></script>
 
-		<script type='text/javascript' src='assets/js/gform.min.js'></script>
-		<script type='text/javascript' src='assets/js/gform.bootstrap.js'></script>
+		<script type='text/javascript' src='assets/js/gform_bootstrap.min.js'></script>
+		<!-- <script type='text/javascript' src='assets/js/gform.bootstrap.js'></script> -->
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
-		<script>new gform({      attributes: {first_name: 'John', last_name: 'Doe'},
-fields:[{label:'First Name'}, {label: 'Last Name'}], actions: false},'.myForm');</script>
+		<script>new gform({      data: {first_name: 'John', last_name: 'Doe'},
+fields:[{label:'First Name'}, {label: 'Last Name'},{type:'save'}]},'.myForm');</script>
 	</body>
 </html>
