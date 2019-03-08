@@ -269,6 +269,22 @@ input[type=radio] {
   margin-left: 0.5rem;
 }
 
+input + label .falseLabel {
+  display: inline;
+}
+
+input + label .trueLabel {
+  display: none;
+}
+
+input:checked + label .trueLabel {
+  display: inline;
+}
+
+input:checked + label .falseLabel {
+  display: none;
+}
+
 /* The switch - the box around the slider */
 .switch {
   position: relative;
@@ -314,7 +330,7 @@ input:checked + .slider {
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #d1d1d1;
+  box-shadow: 0 0 1px #1690d8;
 }
 
 input:checked + .slider:before {
@@ -330,6 +346,10 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+.error {
+  border-color: #d84455;
 }
 
 ul.tabs {

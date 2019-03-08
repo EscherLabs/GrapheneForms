@@ -184,7 +184,14 @@ var gform = function(data, el){
                 var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null,fieldCount);
                 field.parent.fields.splice(index+1, 0, newField)
                 field.parent.reflow();
-                _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({index:index})})
+                _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){
+                    // item.update({index:index})
+                    item.index = index;
+
+                    item.label = gform.renderString(this.item.label, this);
+                    item.el.querySelector('label').innerHTML = this.label
+                })
+                
 
                 gform.each.call(field.owner, function(field) {
                     field.owner.pub('change:' + field.name, field);
@@ -202,7 +209,13 @@ var gform = function(data, el){
                 field.parent.fields.splice(index, 1);
                 field.parent.reflow();
                 if(!field.target) {
-                    _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({index:index})})
+                    _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){
+                        // item.update({index:index})
+                        item.index = index;
+    
+                        item.label = gform.renderString(this.item.label, this);
+                        item.el.querySelector('label').innerHTML = this.label
+                    })
                 }else{
                     this.container.querySelector( field.target ).removeChild(field.el);
                 }
@@ -339,7 +352,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
 }
 gform.normalizeField = function(fieldIn,parent){
     var parent = parent || null;
-    fieldIn.type = fieldIn.type || this.options.default.type;
+    fieldIn.type = fieldIn.type || this.options.default.type || 'text';
     //work gform.default in here
     var field = _.assignIn({
         name: (gform.renderString(fieldIn.label)||'').toLowerCase().split(' ').join('_'), 
@@ -356,7 +369,7 @@ gform.normalizeField = function(fieldIn,parent){
         columns: this.options.columns||gform.columns,
         offset: 0,
         ischild:!(parent instanceof gform)        
-    }, this.opts, gform.default,this.options.default,gform.types[fieldIn.type].defaults, fieldIn)
+    }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
     //keep required separate
     // field.validate.required = field.validate.required|| field.required || false;
 
@@ -595,7 +608,7 @@ gform.ajax = function(options){
     request.send();
 }
 
-gform.default ={type:'text',format:{label: '{{label}}', value: '{{value}}'}} 
+gform.default ={}; 
 gform.prototype.opts = {
     clear:true,
     sections:'',
@@ -635,11 +648,20 @@ gform.optionsObj = function(opts, value, count){
 
             return {section:item};
         }else{
-            if(typeof item === 'string' || typeof item === 'number') {
+            if(typeof item === 'string' || typeof item === 'number' || typeof item == 'boolean') {
                 item = {label: item, value:item};
             }
             item.index = item.index || ""+count;
-            _.assignIn(item,{label: gform.renderString(opts.format.label,item), value: gform.renderString(opts.format.value,item) });
+            if(typeof opts.format !== 'undefined'){
+
+                if(typeof opts.format.label !== 'undefined' ){
+                    item.label = gform.renderString(opts.format.label,item);
+                }
+                if(typeof opts.format.value !== 'undefined' ){
+                    item.value = gform.renderString(opts.format.value,item);
+                }
+            }
+            // _.assignIn(item,{label: gform.renderString(opts.format.label,item), value: gform.renderString(opts.format.value,item) });
             if(item.value == value) { item.selected = true;}
             count+=1;
             return item;

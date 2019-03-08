@@ -35,23 +35,23 @@ gform.types = {
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
       },
       update: function(item, silent) {
-          if(typeof item === 'object') {
-              _.extend(this, this.item, item);
-          }
-          this.label = gform.renderString((item||{}).label||this.item.label, this);
+        if(typeof item === 'object') {
+            _.extend(this, this.item, item);
+        }
+        this.label = gform.renderString((item||{}).label||this.item.label, this);
 
-          var oldDiv = document.getElementById(this.id);
+        var oldDiv = document.getElementById(this.id);
 
-            this.destroy();
-            this.el = gform.types[this.type].create.call(this);
-            oldDiv.parentNode.replaceChild(this.el,oldDiv);
-            gform.types[this.type].initialize.call(this);
+        this.destroy();
+        this.el = gform.types[this.type].create.call(this);
+        oldDiv.parentNode.replaceChild(this.el,oldDiv);
+        gform.types[this.type].initialize.call(this);
 
-            if(!silent) {
-                this.owner.pub(['change:'+this.name,'change'], this);
-                // this.owner.pub('change', this);
-            }
-            
+        if(!silent) {
+            this.owner.pub(['change:'+this.name,'change'], this);
+            // this.owner.pub('change', this);
+        }
+        
       },
       get: function() {
           return this.el.querySelector('input[name="' + this.name + '"]').value;
@@ -80,20 +80,22 @@ gform.types = {
   },
 //   'textarea':,
   'bool':{
-      defaults:{options:[false, true]},
+      defaults:{options:[false, true],format:{label:''}},
       render: function() {
-          this.selected = (this.value == this.options[1]);
+          this.options = gform.options.call(this,this, this.value);
+          this.selected = (this.value == this.options[1].value);
           return gform.render(this.type, this);
       },
       set: function(value) {
-          this.selected = (value == this.options[1]);
+          this.selected = (value == this.options[1].value);
           this.el.querySelector('input[name="' + this.name + '"]').checked = this.selected;
       },
       get: function() {
-          return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0]
+          return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0].value
       }
   },
   'collection':{
+      defaults:{format:{label: '{{label}}', value: '{{value}}'}},
       render: function() {
           this.options = gform.options.call(this,this, this.value);
           return gform.render(this.type, this);
@@ -102,7 +104,10 @@ gform.types = {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.value = this.get();
+              this.label = gform.renderString(this.item.label, this);
+              this.el.querySelector('label').innerHTML = this.label
 
+            //   debugger;
             //   this.update({value:this.get()},true);
             //   gform.types[this.type].focus.call(this)
 
@@ -125,6 +130,15 @@ gform.types = {
           _.each(this.options.options, function(option, index){
               if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
           }.bind(this))
+      },
+      focus:function() {
+        //   debugger;
+          this.el.querySelector('[name="'+this.name+'"]').focus();
+        //   this.el.querySelector('[name="'+this.name+'"]').focus();
+        //   var temp = this.value;
+        //   this.set('');
+        //   this.set(temp);
+        //   this.el.querySelector('[name="'+this.name+'"]').select();
       }
   },
   'section':{
@@ -260,15 +274,15 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
           return this.el.querySelector('textarea[name="' + this.name + '"]').value;
       }
   });
-  gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool'],{default:{format:{text:""}}});
+gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool'],{default:{format:{label:""}}});
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection']);
 gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     get: function(){
-      return (this.el.querySelector('range')||{value:''}).value; 
+      return (this.el.querySelector('[type=range]')||{value:''}).value; 
   },
   set:function(value){
-      this.el.querySelector('range').value = value;   
+      this.el.querySelector('[type=range]').value = value;   
   }
 });
 gform.types['radio']    = _.extend({}, gform.types['input'], gform.types['collection'], {
@@ -280,6 +294,19 @@ gform.types['radio']    = _.extend({}, gform.types['input'], gform.types['collec
   }
 });
 
+
+// gform.types['scale']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+
+// });
+// gform.types['checkboxes']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+//    multiple on radio
+// });
+// gform.types['checkbox_grid']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+// grid multiple
+// });
+// gform.types['radio_grid']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+//  grid
+// });
 gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: { 'valid_email': true }}});
 
 // b.register({type: 'date' ,

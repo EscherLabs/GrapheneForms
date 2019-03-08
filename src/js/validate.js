@@ -1,7 +1,7 @@
 gform.prototype.errors = {};
-gform.prototype.validate = function(){
+gform.prototype.validate = function(force){
 	this.valid = true;
-	_.each(this.fields, gform.validateItem)
+	_.each(this.fields, gform.validateItem.bind(null, force))
 	if(!this.valid){
 		this.pub('invalid',{errors:this.errors});
 	}else{
@@ -12,39 +12,41 @@ gform.prototype.validate = function(){
 };
 gform.handleError = gform.update;
 
-gform.validateItem = function(item){
-	var value = item.get();
-	item.valid = true;
-	item.errors = '';
-	if(item.parsable && typeof item.validate === 'object'){
-		var errors = gform.validation.call(item,item.validate);
+gform.validateItem = function(force,item){
+	if(force || !item.valid || item.satisfied()){
+		var value = item.get();
+		item.valid = true;
+		item.errors = '';
+		if(item.parsable && typeof item.validate === 'object'){
+			var errors = gform.validation.call(item,item.validate);
 
-		if(item.required){
-			var type = (item.satisfied(value) ? false : '{{label}} is required')
-			if(type) {
-				errors.push(gform.renderString(item.required.message || type, {label:item.label,value:value, args:item.required}));
+			if(item.required){
+				var type = (item.satisfied(value) ? false : '{{label}} is required')
+				if(type) {
+					errors.push(gform.renderString(item.required.message || type, {label:item.label,value:value, args:item.required}));
+				}
+			}
+			errors = _.compact(errors);
+			if((typeof item.display === 'undefined') || item.visible) {
+				item.valid = !errors.length;
+				item.errors = errors.join('<br>')
+				gform.handleError(item);
+			}
+
+			//validate sub fields
+			if(typeof item.fields !== 'undefined'){
+				_.each(item.fields, gform.validateItem)
 			}
 		}
-		errors = _.compact(errors);
-		if((typeof item.display === 'undefined') || item.visible) {
-			item.valid = !errors.length;
-			item.errors = errors.join('<br>')
-			gform.handleError(item);
+		
+		if(item.errors) {
+			item.owner.pub('invalid:'+item.name, {errors:item.errors});
+		}else{
+			item.owner.pub('valid:'+item.name);
 		}
-
-		//validate sub fields
-		if(typeof item.fields !== 'undefined'){
-			_.each(item.fields, gform.validateItem)
-		}
+		item.owner.errors[item.name] = item.errors;
+		item.owner.valid = item.valid && item.owner.valid;
 	}
-	
-	if(item.errors) {
-		item.owner.pub('invalid:'+item.name, {errors:item.errors});
-	}else{
-		item.owner.pub('valid:'+item.name);
-	}
-	item.owner.errors[item.name] = item.errors;
-	item.owner.valid = item.valid && item.owner.valid;
 };
 
 gform.validation = function(rules, op){
@@ -88,7 +90,7 @@ gform.validations =
 		return r.test(value) || value === '' ? false : args.message;
 	},
 	custom: function(value, args) {
-		return args.call(this, value);
+		return args.test.call(this, value, args);
 	},
 	matches:function(value, args) {
 		var temp = this.parent.find(args.name);

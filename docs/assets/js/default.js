@@ -29,7 +29,7 @@ switch: `
 checkbox: `
     {{>_label}}
     <input name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
-    <label class="label-inline" for="{{name}}">{{{format.text}}}</label>
+    <label class="label-inline" for="{{name}}"><span class="falseLabel">{{options.0.label}}</span><span class="trueLabel">{{options.1.label}}</span></label>
     {{>_error}}
     </div>
     {{>_actions}}   
@@ -97,7 +97,7 @@ _actions: `
     <small class="column form-help" style="position:relative;top:-15px"> {{{help}}}</small>
 `,
 _label: `      
-<label class="" for="{{name}}">{{label}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}</label>           
+<label class="" for="{{name}}">{{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}</label>           
 `,
 _error:`<small class="error" style="color:red;display:block;position:relative;top:-12px"></small><small class="valid" style="color:green;display:block;"></small>`,
 button:`<button type="button" role="button" class="button {{modifiers}}" style="margin:0 15px 0">{{{label}}}</button>`,
@@ -155,13 +155,15 @@ gform.handleError = function(field){
 		if(field.satisfied(field.get())) {
         // field.el.querySelector('.valid').innerHTML = field.validtext||'';
         }
+        debugger;
+        field.el.classList.add('error');
+
         field.el.querySelector('.error').innerHTML = '';
     }else{
         field.el.querySelector('.error').innerHTML = field.errors;
 
         field.el.querySelector('.valid').innerHTML = '';
     }
-    
 }
 gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 				"label":"<i class=\"fa fa-times\"></i> Cancel",

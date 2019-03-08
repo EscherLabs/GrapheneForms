@@ -184,7 +184,14 @@ var gform = function(data, el){
                 var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null,fieldCount);
                 field.parent.fields.splice(index+1, 0, newField)
                 field.parent.reflow();
-                _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({index:index})})
+                _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){
+                    // item.update({index:index})
+                    item.index = index;
+
+                    item.label = gform.renderString(this.item.label, this);
+                    item.el.querySelector('label').innerHTML = this.label
+                })
+                
 
                 gform.each.call(field.owner, function(field) {
                     field.owner.pub('change:' + field.name, field);
@@ -202,7 +209,13 @@ var gform = function(data, el){
                 field.parent.fields.splice(index, 1);
                 field.parent.reflow();
                 if(!field.target) {
-                    _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){item.update({index:index})})
+                    _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){
+                        // item.update({index:index})
+                        item.index = index;
+    
+                        item.label = gform.renderString(this.item.label, this);
+                        item.el.querySelector('label').innerHTML = this.label
+                    })
                 }else{
                     this.container.querySelector( field.target ).removeChild(field.el);
                 }
@@ -339,7 +352,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
 }
 gform.normalizeField = function(fieldIn,parent){
     var parent = parent || null;
-    fieldIn.type = fieldIn.type || this.options.default.type;
+    fieldIn.type = fieldIn.type || this.options.default.type || 'text';
     //work gform.default in here
     var field = _.assignIn({
         name: (gform.renderString(fieldIn.label)||'').toLowerCase().split(' ').join('_'), 
@@ -356,7 +369,7 @@ gform.normalizeField = function(fieldIn,parent){
         columns: this.options.columns||gform.columns,
         offset: 0,
         ischild:!(parent instanceof gform)        
-    }, this.opts, gform.default,this.options.default,gform.types[fieldIn.type].defaults, fieldIn)
+    }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
     //keep required separate
     // field.validate.required = field.validate.required|| field.required || false;
 
@@ -595,7 +608,7 @@ gform.ajax = function(options){
     request.send();
 }
 
-gform.default ={type:'text',format:{label: '{{label}}', value: '{{value}}'}} 
+gform.default ={}; 
 gform.prototype.opts = {
     clear:true,
     sections:'',
@@ -635,11 +648,20 @@ gform.optionsObj = function(opts, value, count){
 
             return {section:item};
         }else{
-            if(typeof item === 'string' || typeof item === 'number') {
+            if(typeof item === 'string' || typeof item === 'number' || typeof item == 'boolean') {
                 item = {label: item, value:item};
             }
             item.index = item.index || ""+count;
-            _.assignIn(item,{label: gform.renderString(opts.format.label,item), value: gform.renderString(opts.format.value,item) });
+            if(typeof opts.format !== 'undefined'){
+
+                if(typeof opts.format.label !== 'undefined' ){
+                    item.label = gform.renderString(opts.format.label,item);
+                }
+                if(typeof opts.format.value !== 'undefined' ){
+                    item.value = gform.renderString(opts.format.value,item);
+                }
+            }
+            // _.assignIn(item,{label: gform.renderString(opts.format.label,item), value: gform.renderString(opts.format.value,item) });
             if(item.value == value) { item.selected = true;}
             count+=1;
             return item;
@@ -724,23 +746,23 @@ gform.getUID = function() {
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
       },
       update: function(item, silent) {
-          if(typeof item === 'object') {
-              _.extend(this, this.item, item);
-          }
-          this.label = gform.renderString((item||{}).label||this.item.label, this);
+        if(typeof item === 'object') {
+            _.extend(this, this.item, item);
+        }
+        this.label = gform.renderString((item||{}).label||this.item.label, this);
 
-          var oldDiv = document.getElementById(this.id);
+        var oldDiv = document.getElementById(this.id);
 
-            this.destroy();
-            this.el = gform.types[this.type].create.call(this);
-            oldDiv.parentNode.replaceChild(this.el,oldDiv);
-            gform.types[this.type].initialize.call(this);
+        this.destroy();
+        this.el = gform.types[this.type].create.call(this);
+        oldDiv.parentNode.replaceChild(this.el,oldDiv);
+        gform.types[this.type].initialize.call(this);
 
-            if(!silent) {
-                this.owner.pub(['change:'+this.name,'change'], this);
-                // this.owner.pub('change', this);
-            }
-            
+        if(!silent) {
+            this.owner.pub(['change:'+this.name,'change'], this);
+            // this.owner.pub('change', this);
+        }
+        
       },
       get: function() {
           return this.el.querySelector('input[name="' + this.name + '"]').value;
@@ -769,20 +791,22 @@ gform.getUID = function() {
   },
 //   'textarea':,
   'bool':{
-      defaults:{options:[false, true]},
+      defaults:{options:[false, true],format:{label:''}},
       render: function() {
-          this.selected = (this.value == this.options[1]);
+          this.options = gform.options.call(this,this, this.value);
+          this.selected = (this.value == this.options[1].value);
           return gform.render(this.type, this);
       },
       set: function(value) {
-          this.selected = (value == this.options[1]);
+          this.selected = (value == this.options[1].value);
           this.el.querySelector('input[name="' + this.name + '"]').checked = this.selected;
       },
       get: function() {
-          return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0]
+          return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0].value
       }
   },
   'collection':{
+      defaults:{format:{label: '{{label}}', value: '{{value}}'}},
       render: function() {
           this.options = gform.options.call(this,this, this.value);
           return gform.render(this.type, this);
@@ -791,7 +815,10 @@ gform.getUID = function() {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.value = this.get();
+              this.label = gform.renderString(this.item.label, this);
+              this.el.querySelector('label').innerHTML = this.label
 
+            //   debugger;
             //   this.update({value:this.get()},true);
             //   gform.types[this.type].focus.call(this)
 
@@ -814,6 +841,15 @@ gform.getUID = function() {
           _.each(this.options.options, function(option, index){
               if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
           }.bind(this))
+      },
+      focus:function() {
+        //   debugger;
+          this.el.querySelector('[name="'+this.name+'"]').focus();
+        //   this.el.querySelector('[name="'+this.name+'"]').focus();
+        //   var temp = this.value;
+        //   this.set('');
+        //   this.set(temp);
+        //   this.el.querySelector('[name="'+this.name+'"]').select();
       }
   },
   'section':{
@@ -949,15 +985,15 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
           return this.el.querySelector('textarea[name="' + this.name + '"]').value;
       }
   });
-  gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool'],{default:{format:{text:""}}});
+gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool'],{default:{format:{label:""}}});
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection']);
 gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     get: function(){
-      return (this.el.querySelector('range')||{value:''}).value; 
+      return (this.el.querySelector('[type=range]')||{value:''}).value; 
   },
   set:function(value){
-      this.el.querySelector('range').value = value;   
+      this.el.querySelector('[type=range]').value = value;   
   }
 });
 gform.types['radio']    = _.extend({}, gform.types['input'], gform.types['collection'], {
@@ -969,6 +1005,19 @@ gform.types['radio']    = _.extend({}, gform.types['input'], gform.types['collec
   }
 });
 
+
+// gform.types['scale']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+
+// });
+// gform.types['checkboxes']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+//    multiple on radio
+// });
+// gform.types['checkbox_grid']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+// grid multiple
+// });
+// gform.types['radio_grid']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+//  grid
+// });
 gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: { 'valid_email': true }}});
 
 // b.register({type: 'date' ,
@@ -1179,9 +1228,9 @@ gform.conditions = {
 		}
 	}
 }; gform.prototype.errors = {};
-gform.prototype.validate = function(){
+gform.prototype.validate = function(force){
 	this.valid = true;
-	_.each(this.fields, gform.validateItem)
+	_.each(this.fields, gform.validateItem.bind(null, force))
 	if(!this.valid){
 		this.pub('invalid',{errors:this.errors});
 	}else{
@@ -1192,39 +1241,41 @@ gform.prototype.validate = function(){
 };
 gform.handleError = gform.update;
 
-gform.validateItem = function(item){
-	var value = item.get();
-	item.valid = true;
-	item.errors = '';
-	if(item.parsable && typeof item.validate === 'object'){
-		var errors = gform.validation.call(item,item.validate);
+gform.validateItem = function(force,item){
+	if(force || !item.valid || item.satisfied()){
+		var value = item.get();
+		item.valid = true;
+		item.errors = '';
+		if(item.parsable && typeof item.validate === 'object'){
+			var errors = gform.validation.call(item,item.validate);
 
-		if(item.required){
-			var type = (item.satisfied(value) ? false : '{{label}} is required')
-			if(type) {
-				errors.push(gform.renderString(item.required.message || type, {label:item.label,value:value, args:item.required}));
+			if(item.required){
+				var type = (item.satisfied(value) ? false : '{{label}} is required')
+				if(type) {
+					errors.push(gform.renderString(item.required.message || type, {label:item.label,value:value, args:item.required}));
+				}
+			}
+			errors = _.compact(errors);
+			if((typeof item.display === 'undefined') || item.visible) {
+				item.valid = !errors.length;
+				item.errors = errors.join('<br>')
+				gform.handleError(item);
+			}
+
+			//validate sub fields
+			if(typeof item.fields !== 'undefined'){
+				_.each(item.fields, gform.validateItem)
 			}
 		}
-		errors = _.compact(errors);
-		if((typeof item.display === 'undefined') || item.visible) {
-			item.valid = !errors.length;
-			item.errors = errors.join('<br>')
-			gform.handleError(item);
+		
+		if(item.errors) {
+			item.owner.pub('invalid:'+item.name, {errors:item.errors});
+		}else{
+			item.owner.pub('valid:'+item.name);
 		}
-
-		//validate sub fields
-		if(typeof item.fields !== 'undefined'){
-			_.each(item.fields, gform.validateItem)
-		}
+		item.owner.errors[item.name] = item.errors;
+		item.owner.valid = item.valid && item.owner.valid;
 	}
-	
-	if(item.errors) {
-		item.owner.pub('invalid:'+item.name, {errors:item.errors});
-	}else{
-		item.owner.pub('valid:'+item.name);
-	}
-	item.owner.errors[item.name] = item.errors;
-	item.owner.valid = item.valid && item.owner.valid;
 };
 
 gform.validation = function(rules, op){
@@ -1268,7 +1319,7 @@ gform.validations =
 		return r.test(value) || value === '' ? false : args.message;
 	},
 	custom: function(value, args) {
-		return args.call(this, value);
+		return args.test.call(this, value, args);
 	},
 	matches:function(value, args) {
 		var temp = this.parent.find(args.name);

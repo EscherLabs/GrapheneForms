@@ -78,6 +78,19 @@ input[type='radio'] {
 
 
 
+input + label .falseLabel{
+	display:inline;
+}
+
+input + label .trueLabel{
+	display:none;
+}
+input:checked + label .trueLabel{ 
+	display:inline;
+}
+input:checked + label .falseLabel{
+	display:none;
+}
 
 
 /* The switch - the box around the slider */
@@ -125,7 +138,7 @@ input:checked + .slider {
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px $color-quaternary;
+  box-shadow: 0 0 1px $color-primary;
 }
 
 input:checked + .slider:before {
@@ -141,4 +154,10 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+
+
+.error{
+	border-color:$color-error;
 }

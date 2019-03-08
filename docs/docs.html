@@ -108,17 +108,6 @@
 						<li class="list-unstyled" ><a href="#fieldset_duplicate"><i class="fa fa-chevron-right"></i> duplicate</a></li>
 						<li class="list-unstyled" ><a href="#fieldset_max"><i class="fa fa-chevron-right"></i> multiple.max</a></li>
 					</ul> -->
-					<a href="#events"><h4>Events</h4></a>
-					<ul class>
-						<li class="list-unstyled" ><a href="#sub"><i class="fa fa-chevron-right"></i> sub</a></li>
-						<!-- <li class="list-unstyled" ><a href="#debounce"><i class="fa fa-chevron-right"></i> debounce</a></li> -->
-						<li class="list-unstyled" ><a href="#pub"><i class="fa fa-chevron-right"></i> pub</a></li>
-						<li class="list-unstyled" ><a href="#built_in_events"><i class="fa fa-chevron-right"></i> Built in Events</a></li>
-						<!-- <li class="list-unstyled" ><a href="#change"><i class="fa fa-chevron-right"></i> change</a></li>
-						<li class="list-unstyled" ><a href="#save"><i class="fa fa-chevron-right"></i> save</a></li>
-						<li class="list-unstyled" ><a href="#destroy"><i class="fa fa-chevron-right"></i> destroy</a></li>
-						<li class="list-unstyled" ><a href="#destroyed"><i class="fa fa-chevron-right"></i> destroyed</a></li> -->
-					</ul>
 					<!-- <a href="#renderers"><h4>Renderers</h4></a>
 					<ul class>
 						<li class="list-unstyled" ><a href="#renderer_basic"><i class="fa fa-chevron-right"></i> basic</a></li>
@@ -140,7 +129,7 @@
 					</ul>
 					<a href="#validation"><h4>Validation</h4></a>
 					<ul class>
-						<li class="list-unstyled" ><a href="#required"><i class="fa fa-chevron-right"></i> required</a></li>
+						<!-- <li class="list-unstyled" ><a href="#valid_requires"><i class="fa fa-chevron-right"></i> requires</a></li> -->
 						<li class="list-unstyled" ><a href="#matches"><i class="fa fa-chevron-right"></i> matches</a></li>
 						<li class="list-unstyled" ><a href="#valid_email"><i class="fa fa-chevron-right"></i> valid_email</a></li>
 						<li class="list-unstyled" ><a href="#valid_url"><i class="fa fa-chevron-right"></i> valid_url</a></li>
@@ -178,6 +167,17 @@
 					<ul class>
 						<li class="list-unstyled" ><a href="#modal"><i class="fa fa-chevron-right"></i> modal</a></li>
 					</ul> -->
+					<a href="#events"><h4>Events</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#sub"><i class="fa fa-chevron-right"></i> sub</a></li>
+						<!-- <li class="list-unstyled" ><a href="#debounce"><i class="fa fa-chevron-right"></i> debounce</a></li> -->
+						<li class="list-unstyled" ><a href="#pub"><i class="fa fa-chevron-right"></i> pub</a></li>
+						<li class="list-unstyled" ><a href="#built_in_events"><i class="fa fa-chevron-right"></i> Built in Events</a></li>
+						<!-- <li class="list-unstyled" ><a href="#change"><i class="fa fa-chevron-right"></i> change</a></li>
+						<li class="list-unstyled" ><a href="#save"><i class="fa fa-chevron-right"></i> save</a></li>
+						<li class="list-unstyled" ><a href="#destroy"><i class="fa fa-chevron-right"></i> destroy</a></li>
+						<li class="list-unstyled" ><a href="#destroyed"><i class="fa fa-chevron-right"></i> destroyed</a></li> -->
+					</ul>
 					<a href="./test/tests.html?random=false"><h4>Tests</h4></a>
 	<!-- 				<ul class>
 						<li class="list-unstyled" ><a href="#color"><i class="fa fa-chevron-right"></i> Tests</a></li>
@@ -202,7 +202,7 @@
 					<a name="getting_started" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>Getting Started</h4>
-					<p><b>Dependencies</b> - Graphene:Forms has only dependency: <a href="https://lodash.com/">lodash.js</a></p>
+					<p><b>Dependencies</b> - Graphene:Forms has only one dependency: <a href="https://lodash.com/">lodash.js</a></p>
 
 					<p>A minimum setup would look something like this</p>
 					<pre><code class="prettyprint">&lt;!DOCTYPE html&gt;
@@ -228,13 +228,13 @@ var myForm = new gform(config);</code></pre>
 <br> -->
 					<!-- <div class="well myForm"></div> -->
 					<!-- <div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = { -->
-					<div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = {
+					<div class="well "><div class="row"><div class="col-md-7"><pre><code class="prettyprint">var config = {
   "el":     ".myForm"
   "fields": [
     {"name": "Example"}
   ]
 };
-var myForm = new gform(config);</code></pre></div><div class="col-md-6 myForm"></div></div></div>
+var myForm = new gform(config);</code></pre></div><div class="col-md-5 myForm"></div></div></div>
 					<!-- Api
 					<a name="api" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -273,7 +273,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 myForm"><
 					<h3>Configuration</h3>
 					
 						<br>
-												<div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = {
+												<div class="well "><div class="row"><div class="col-md-7"><pre><code class="prettyprint">var config = {
   'el':     '.myForm',		
   'legend': 'My Form',
   'name':   'myForm',
@@ -282,7 +282,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 myForm"><
     { 'name': 'first_name' }
   ]
 };
-var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"></div></div></div>
+var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"></div></div></div>
 					<!--legend -->
 					<a name="legend" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -334,7 +334,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 
 <br>
 <!-- <div class="well fieldForm"></div> -->
-<div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = {
+<div class="well "><div class="row"><div class="col-md-7"><pre><code class="prettyprint">var config = {
   'el': '.myForm',
   'fields': [
     {
@@ -355,7 +355,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
       'help': 'Choose your state'
     }
   ]
-};</code></pre></div><div class="col-md-6 fieldForm"></div></div></div>
+};</code></pre></div><div class="col-md-5 fieldForm"></div></div></div>
 					<!--type -->
 					<a name="field_type" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -446,6 +446,20 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>																			
 					<p>
 						Fields default to the full width but based on the grid that the theme uses fields can be set to be smaller (1-12).
+					</p>
+
+					<!--field columns -->
+					<a name="field_array" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>array <code>['object']</code><a class="pull-right" href="./examples/array.html">Example</a></h4>
+					<p class="text-muted">default = false; <span class="text-success">all types</span></p>																			
+					<p>
+					 Array is used to allow for multiple instances of a field or fieldset to be created. If no options are set then you will have buttons for inserting and removeing instances.
+					 options on this are max and min.
+					 By default max is set to 5 and min is set to 1, this means that you will be able to insert new instances up to 5 and remove instances down to 1.
+
+					 If max is set higher then more instances will automatically be created on form instantiation and the number will not be allowed to drop below that number.
+					
 					</p>
 					<!--field show -->
 					<a name="field_display" style="display:block;position:relative;top:-80px"></a>
@@ -550,81 +564,6 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-6 dataForm"
 						<br>note: 'index' is a calculated value that is available to generate labels and values. 
 					</p>					
 
-					<!--events -->
-					<a name="events" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h3>Events</h3>
-
-					<!--on -->
-					<a name="sub" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>.sub('event', function(event){})<a class="pull-right" href="./examples/events.html">Example</a></h4>					
-					<p>
-Bind a callback function to an object. The callback will be invoked whenever the event is fired. The event string may also be a space-delimited list of several events.
-The event object will contain the following information
-<blockquote><pre><code class="prettyprint">    event.event  // the name of the event that triggered the callback
-    event.form   // a reference to the form instance
-    event.field  // situational - if a field triggered the event then a reference will be included
-</code>
-</pre></blockquote>
-
-Specific events may have other data provided as well but they will be highly situational to that event 
-<br>i.e. The 'invalid' event will pass the errors
-</p>
-					<!--delay -->
-					<!-- <a name="debounce" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>.debounce('event', function(event, form, [field]){}, [delay])</h4>					
-					<p>
-						This works exatly like the on method except it will only be triggered after the event has not been fired again after the delay timeout. The default delay time is 250ms.
-					</p> -->
-
-					<!--trigger -->
-					<a name="pub" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>.pub('event',[args])</h4>					
-					<p>
-						Trigger callbacks for the given event, or space-delimited list of events. An object with additional arguments to pub will be passed along to the event callbacks.<br><br>
-						<blockquote><pre><code class="prettyprint">myForm.pub('save');</code></pre></blockquote>
-					</p>
-					<!--built in events -->
-					<a name="built_in_events" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Built-in Events</h4>					
-					<p>
-						The list of built-in events. You're also free to trigger your own events as you see fit. The context is always set to that of the form instance triggering the event.
-					</p>
-					<ul>
-						<!--initialize -->
-						<li><h5>initialize</h5>					
-						<p>
-							This event is fired as Graphene:Forms begins the initialization and is a good place to put set up code.
-						</p></li>
-
-						<!--input -->
-						<li><h5>input <span class="text-muted"> &nbsp;&nbsp;(input:fieldname)</span></h5>					
-						<p>
-							The input event is triggered whenever a field is changed manually by user input.
-						</p></li>
-						<!--change -->
-						<li><h5>change <span class="text-muted"> &nbsp;&nbsp;(change:fieldname)</span></h5>					
-						<p>
-							The change event is triggered whenever a field is changed or any change is made to the form.
-						</p></li>
-						<!--inserted field-->
-						<li><h5>inserted <span class="text-muted"> &nbsp;&nbsp;(inserted:fieldname)</span></h5>					
-						<p>
-							The inserted event is triggered when a field that is duplicatable has had an new instance inserted
-						</p></li>
-						<li><h5>removed <span class="text-muted"> &nbsp;&nbsp;(removed:fieldname)</span></h5>					
-						<p>
-							The removed event is triggered when a field that is duplicatable has had an instance removed
-						</p></li>
-						<!--change field-->
-						<!-- <li><h5>change:fieldname</h5>					
-						<p>
-							The change event is triggered whenever a field is changed.
-						</p></li> -->
 						<li><h5>validation</h5>			
 						<p>
 							The validation event is triggered whenevere form validation is performed.
@@ -659,7 +598,7 @@ Specific events may have other data provided as well but they will be highly sit
 					<br>
 					<h3>Conditions</h3>					
 
-<div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = {
+<div class="well "><div class="row"><div class="col-md-7"><pre><code class="prettyprint">var config = {
   'el': '.myForm',
   'fields': [
   {
@@ -678,8 +617,8 @@ Specific events may have other data provided as well but they will be highly sit
         "value": "chocolate"
       }
     ]
-  }] // this field will be hidden unless the field named "candy" has a value of "Chocolate"
-}</code></pre></div><div class="col-md-6 conditionForm"></div></div></div>
+  }] // this field will be hidden unless the field named "candy" has a value of "chocolate"
+}</code></pre></div><div class="col-md-5 conditionForm"></div></div></div>
 					<!--requires -->
 					<a name="requires" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -724,28 +663,31 @@ Specific events may have other data provided as well but they will be highly sit
 					<a name="validation" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h3>Validation</h3>
-												<div class="well "><div class="row"><div class="col-md-6"><pre><code class="prettyprint">var config = {
-  'el': '.myForm',
-  'fields': [
-    {
-      'label':    'First Name',
-      'value':    'John'
-    },  
-    {
-      'label':          'Last Name',
-      'placeholder':    'doe'
-    },  
-    {
-      'type':     'select',
-      'label':    'State',
-      'required': true,
-      'options':  './data/states.json', 
-      //[{"value":"AL", "name":"Alabama"}...
-      'format':   { 'label': '{{name}}'},
-      'help': 'Choose your state'
-    }
-  ]
-};</code></pre></div><div class="col-md-6 validateForm"></div></div></div>		
+												<div class="well "><div class="row"><div class="col-md-7"><pre><code class="prettyprint">var config = {
+  "el": ".validateForm",
+  "fields": [{
+    "label": "Answer",
+    "name": "answer",
+    "validate": [
+      { 
+        "type": "length",
+        "min": 3,
+        "max": 10,
+      },
+      {
+        "type": "custom",
+        "test": function(value){
+          if(~["reserved", "word"].indexOf(value)){
+            return "Must not be a reserved word";
+          }
+        }
+      }
+    ]
+  }],
+  "events": {"input": function(e){
+    e.form.validate();
+  }}
+};</code></pre></div><div class="col-md-5 validateForm"></div></div></div>		
 					<!-- <a name="required" style="display:block;position:relative;top:-80px"></a>
 					<hr>
 					<h5>required</h5>
@@ -909,6 +851,84 @@ Specific events may have other data provided as well but they will be highly sit
 						fails validation if the value of the field contains anything other than valid Base64 characters.
 					</p>
 					<code>{validate: {valid_base64: true}</code> -->
+
+
+					<!--events -->
+					<a name="events" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Events</h3>
+
+					<!--on -->
+					<a name="sub" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>.sub('event', function(event){})<a class="pull-right" href="./examples/events.html">Example</a></h4>					
+					<p>
+Bind a callback function to an object. The callback will be invoked whenever the event is fired. The event string may also be a space-delimited list of several events.
+The event object will contain the following information
+<blockquote><pre><code class="prettyprint">    event.event  // the name of the event that triggered the callback
+    event.form   // a reference to the form instance
+    event.field  // situational - if a field triggered the event then a reference will be included
+</code>
+</pre></blockquote>
+
+Specific events may have other data provided as well but they will be highly situational to that event 
+<br>i.e. The 'invalid' event will pass the errors
+</p>
+					<!--delay -->
+					<!-- <a name="debounce" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>.debounce('event', function(event, form, [field]){}, [delay])</h4>					
+					<p>
+						This works exatly like the on method except it will only be triggered after the event has not been fired again after the delay timeout. The default delay time is 250ms.
+					</p> -->
+
+					<!--trigger -->
+					<a name="pub" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>.pub('event',[args])</h4>					
+					<p>
+						Trigger callbacks for the given event, or space-delimited list of events. An object with additional arguments to pub will be passed along to the event callbacks.<br><br>
+						<blockquote><pre><code class="prettyprint">myForm.pub('save');</code></pre></blockquote>
+					</p>
+					<!--built in events -->
+					<a name="built_in_events" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Built-in Events</h4>					
+					<p>
+						The list of built-in events. You're also free to trigger your own events as you see fit. The context is always set to that of the form instance triggering the event.
+					</p>
+					<ul>
+						<!--initialize -->
+						<li><h5>initialize</h5>					
+						<p>
+							This event is fired as Graphene:Forms begins the initialization and is a good place to put set up code.
+						</p></li>
+
+						<!--input -->
+						<li><h5>input <span class="text-muted"> &nbsp;&nbsp;(input:fieldname)</span></h5>					
+						<p>
+							The input event is triggered whenever a field is changed manually by user input.
+						</p></li>
+						<!--change -->
+						<li><h5>change <span class="text-muted"> &nbsp;&nbsp;(change:fieldname)</span></h5>					
+						<p>
+							The change event is triggered whenever a field is changed or any change is made to the form.
+						</p></li>
+						<!--inserted field-->
+						<li><h5>inserted <span class="text-muted"> &nbsp;&nbsp;(inserted:fieldname)</span></h5>					
+						<p>
+							The inserted event is triggered when a field that is duplicatable has had an new instance inserted
+						</p></li>
+						<li><h5>removed <span class="text-muted"> &nbsp;&nbsp;(removed:fieldname)</span></h5>					
+						<p>
+							The removed event is triggered when a field that is duplicatable has had an instance removed
+						</p></li>
+						<!--change field-->
+						<!-- <li><h5>change:fieldname</h5>					
+						<p>
+							The change event is triggered whenever a field is changed.
+						</p></li> -->
+
 					<br>
 
 
@@ -1035,20 +1055,33 @@ config = {
 };
 var conditionForm = new gform(config)
 config = {
-  'el': '.validateForm',
-  'fields': [{
-		"label":"Candy"
-  },{
-    "label": "Reason",
-    "name": "reason",
-    "display": [
+  "el": ".validateForm",
+  "fields": [
+	
+	{label: "Password", name: "password",required:true,type:"password"},
+  {label: "Repeat Password", name: 'password2', validate:[{type:"matches",name:"password"}],type:"password",validtext:"Sueccessful Match"},	
+	{
+    "label": "Answer",
+    "name": "anwer",
+    "validate": [
       { 
-        "type": "matches",
-        "name": "candy",
-        "value": "chocolate"
-      }
+        "type": "length",
+        "min": 3,
+        "max": 10,
+			},
+			{
+				"type": "custom",
+				"test": function(){
+					if(~['reserved', 'word'].indexOf(this.value)){
+					return "Must not be a reserved word"
+					}
+				}
+			}
     ]
-  }]
+	}],
+	"events":{"input":function(e){
+		e.form.validate();
+	}}
 };
 var validateForm = new gform(config)
 

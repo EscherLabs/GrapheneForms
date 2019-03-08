@@ -215,6 +215,9 @@ gform.handleError = function(field){
 		field.el.classList.add('has-error')		
 		field.el.querySelector('.font-xs.text-danger').innerHTML = field.errors;
 	}else{
+		field.el.classList.remove('has-error')		
+		// field.el.classList.add('has-success')		
+
 		field.el.querySelector('.font-xs.text-danger').innerHTML = '';
 	}
 }
