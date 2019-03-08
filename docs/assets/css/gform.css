@@ -293,8 +293,8 @@ input[type=radio] {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
 }
 
 .slider:before {
@@ -305,8 +305,8 @@ input[type=radio] {
   left: 0.1rem;
   bottom: 0.1rem;
   background-color: white;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
 }
 
 input:checked + .slider {

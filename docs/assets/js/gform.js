@@ -949,7 +949,7 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
           return this.el.querySelector('textarea[name="' + this.name + '"]').value;
       }
   });
-  gform.types['switch'] =gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
+  gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool'],{default:{format:{text:""}}});
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection']);
 gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collection'],{
