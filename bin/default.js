@@ -47,7 +47,7 @@ textarea: `
 </div> `,
 select: `
     {{>_label}}    
-    <select name="{{name}}" value="{{value}}" id="{{id}}" />
+    <select {{#multiple}}multiple=multiple{{/multiple}} name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
         {{#options}}
             {{^section}}
             <option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
@@ -77,6 +77,47 @@ radio: `
     </span>
     {{>_error}}
     {{>_actions}}`,
+
+scale: `
+    {{>_label}}
+    <span class="">
+    <table class="table table-striped">
+    <thead>
+    <tr>
+    {{#format.low}}<th></th>{{/format.low}}
+        {{#options}}
+        <th>{{label}}</th>
+        {{/options}}
+    {{#format.high}}<th></th>{{/format.high}}
+    </tr>
+
+    </thead>
+    <tbody>
+    <tr>
+    {{#format.low}}
+        <td>
+            {{{format.low}}}
+        </td>
+    {{/format.low}}
+        {{#options}}
+        <td>
+            <input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
+        </td>
+        {{/options}}
+    {{#format.high}}
+        <td>
+            {{{format.high}}}
+        </td>
+    {{/format.high}}
+    </tr>
+
+</tbody>
+</table>
+
+    </span>
+    {{>_error}}
+    {{>_actions}}`,
+
 _fieldset: `
     <fieldset id="{{id}}" name="{{name}}">
     {{>_error}}
@@ -155,7 +196,6 @@ gform.handleError = function(field){
 		if(field.satisfied(field.get())) {
         // field.el.querySelector('.valid').innerHTML = field.validtext||'';
         }
-        debugger;
         field.el.classList.add('error');
 
         field.el.querySelector('.error').innerHTML = '';

@@ -122,14 +122,22 @@ gform.types = {
       },
       get: function() {
           var value = this.el.querySelector('select').value;
+          if(this.multiple){
+            value = _.transform(this.el.querySelector('select').options,function(orig,opt){if(opt.selected){orig.push(opt.value)}},[])
+          }
         //   this.option = _.find()
           return value;
       },
       set: function(value) {
           this.el.querySelector('select').value = value;
-          _.each(this.options.options, function(option, index){
-              if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+        //   _.each(this.options.options, function(option, index){
+        //       if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+        //   }.bind(this))
+        if(this.multiple && _.isArray(this.value)){
+          _.each(this.el.querySelector('select').options, function(option, index){
+             option.selected = (this.value.indexOf(option.value)>=0)
           }.bind(this))
+        }
       },
       focus:function() {
         //   debugger;
@@ -181,6 +189,15 @@ gform.types = {
         },
       get: function(name) {
           return gform.toJSON.call(this, name)
+      },
+      set: function(value){
+        _.each(value,function(item,index){
+            var temp = this.find(index);
+            if(typeof temp !== 'undefined'){
+                temp.set(item);
+            }
+        }.bind(this))
+        
       },
       find: function(name) {
           return gform.find.call(this, name)
@@ -266,6 +283,8 @@ gform.removeClass = function(elem, classes){
 // remove the added classes
 gform.types['text']     = gform.types['password'] = gform.types['number'] = gform.types['color'] = gform.types['input'];
 gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false}});
+gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: { 'valid_email': true }}});
+
 gform.types['textarea'] = _.extend({}, gform.types['input'], {
       set: function(value) {
           this.el.querySelector('textarea[name="' + this.name + '"]').innerHTML = value;
@@ -285,19 +304,27 @@ gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collect
       this.el.querySelector('[type=range]').value = value;   
   }
 });
-gform.types['radio']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collection'], {
     get: function(){
       return (this.el.querySelector('[type="radio"][name="' + this.name + '"]:checked')||{value:''}).value; 
   },
   set:function(value){
-      this.el.querySelector('[value="'+value+'"]').checked = 'checked'   
+      var el = this.el.querySelector('[value="'+value+'"]');
+      if(el !== null){
+          el.checked = 'checked';
+      }
+  },
+  enable: function(state) {
+      _.each(this.el.querySelectorAll('[name="'+this.name+'"]'),function(item){
+          item.disabled = !state;            
+      })
   }
 });
 
 
-// gform.types['scale']    = _.extend({}, gform.types['input'], gform.types['collection'], {
+gform.types['scale']    = _.extend({}, gform.types['radio'], {
 
-// });
+});
 // gform.types['checkboxes']    = _.extend({}, gform.types['input'], gform.types['collection'], {
 //    multiple on radio
 // });
@@ -307,7 +334,61 @@ gform.types['radio']    = _.extend({}, gform.types['input'], gform.types['collec
 // gform.types['radio_grid']    = _.extend({}, gform.types['input'], gform.types['collection'], {
 //  grid
 // });
-gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: { 'valid_email': true }}});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Berry.register({ type: 'scale',
+// 	create: function() {
+// 	   // this.options = [];
+// 	    this.item.choices = [];
+// 		this.options = Berry.processOpts.call(this.owner, this.item, this).options;
+// 		debugger;
+// 		return Berry.render('berry_' + (this.elType || this.type), this);
+// 	},
+// 	setup: function() {
+// 		this.$el = this.self.find('[type=radio]');
+// 		this.$el.off();
+// 		if(this.onchange !== undefined) {
+// 			this.on('change', this.onchange);
+// 		}
+// 		this.$el.change($.proxy(function(){this.trigger('change');}, this));
+// 	},
+// 	getValue: function() {
+// 		var selected = this.self.find('[type="radio"]:checked').data('label');
+// 		for(var i in this.item.options) {
+// 			if(this.item.options[i].label == selected) {
+// 				return this.item.options[i].value;
+// 			}
+// 		}
+// 	},
+// 	setValue: function(value) {
+// 		this.value = value;
+// 		this.self.find('[value="' + this.value + '"]').prop('checked', true);
+// 	},
+// 	displayAs: function() {
+// 		for(var i in this.item.options) {
+// 			if(this.item.options[i].value == this.lastSaved) {
+// 				return this.item.options[i].label;
+// 			}
+// 		}
+// 	},
+// 	focus: function(){
+// 		this.self.find('[type="radio"]:checked').focus();
+// 	}
+// });
+
+
 
 // b.register({type: 'date' ,
 // setValue: function(value) {		
@@ -413,3 +494,126 @@ gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: {
 // 		}
 // 	});
 // })(Berry,jQuery);
+
+
+
+
+// Berry.register({ type: 'radio_collection',
+// 	acceptObject: true,
+// 	create: function() {
+// 		this.options = Berry.processOpts.call(this.owner, this.item, this).options;
+// 		return Berry.render('berry_' + (this.elType || this.type), this);
+// 	},
+// 	setup: function() {
+// 		this.$el = this.self.find('[type=radio]');
+// 		this.$el.off();
+// 		if(this.onchange !== undefined) {
+// 			this.on('change', this.onchange);
+// 		}
+// 		this.$el.change($.proxy(function(){this.trigger('change');}, this));
+// 	},
+// 	getValue: function() {
+// 		var values = {}
+// 		for(var label in this.labels){
+// 			var selected = this.self.find('[name="'+this.name+this.labels[label].name+'"][type="radio"]:checked').data('label');
+// 			for(var i in this.item.options) {
+// 				if(this.item.options[i].label == selected) {
+// 					values[this.labels[label].name] = this.item.options[i].value;
+// 					// return this.item.options[i].value;
+// 				}
+// 			}
+// 		}
+// 		return values;
+// 	},
+// 	setValue: function(value) {
+// 		this.value = value;
+// 		for(var i in this.labels){
+// 			this.self.find('[name="'+this.name+this.labels[i].name+'"][value="' + this.value[this.labels[i].name] + '"]').prop('checked', true);
+// 		}
+// 	},
+// 	// set: function(value){
+// 	// 	if(this.value != value) {
+// 	// 		//this.value = value;
+// 	// 		this.setValue(value);
+// 	// 		this.trigger('change');
+// 	// 	}
+// 	// },
+// 	displayAs: function() {
+// 		for(var i in this.item.options) {
+// 			if(this.item.options[i].value == this.lastSaved) {
+// 				return this.item.options[i].label;
+// 			}
+// 		}
+// 	},
+// 	focus: function(){
+// 		this.self.find('[name='+this.labels[0].name+'][type="radio"]:checked').focus();
+// 	}
+// });
+
+// Berry.register({ type: 'check_collection',
+// 	defaults: {container: 'span', acceptObject: true},
+// 	create: function() {
+// 		this.options = Berry.processOpts.call(this.owner, this.item, this).options;
+
+// 		this.checkStatus(this.value);
+// 		return Berry.render('berry_check_collection', this);
+// 	},
+// 	checkStatus: function(value){
+// 		if(value === true || value === "true" || value === 1 || value === "1" || value === "on" || value == this.truestate){
+// 			this.value = true;
+// 		}else{
+// 			this.value = false;
+// 		}
+// 	},
+// 	setup: function() {
+// 		this.$el = this.self.find('[type=checkbox]');
+// 		this.$el.off();
+// 		if(this.onchange !== undefined) {
+// 			this.on('change', this.onchange);
+// 		}
+// 		this.$el.change($.proxy(function(){this.trigger('change');},this));
+// 	},
+// 	getValue: function() {
+
+// 		var values = [];
+// 		for(var opt in this.options){
+// 			if(this.self.find('[name="'+this.options[opt].value+'"][type="checkbox"]').is(':checked')){
+// 				// values[this.options[opt].value] = (this.truestate || true);
+// 				values.push(this.options[opt].value);
+// 			}else{
+// 				if(typeof this.falsestate !== 'undefined') {
+// 					// values[this.options[opt].value] = this.falsestate;
+// 				}else{
+// 					// values[this.options[opt].value] = false;
+// 				}
+// 			}
+			
+// 		}
+// 		return values;
+// 	},
+// 	setValue: function(value) {
+// 		// this.checkStatus(value);
+// 		// this.$el.prop('checked', this.value);
+// 		// this.value = value;
+// 		// debugger;
+// 		this.value = value;
+// 			this.self.find('[type="checkbox"]').prop('checked', false);
+// 		for(var i in this.value){
+// 			this.self.find('[name="'+this.value[i]+'"][type="checkbox"]').prop('checked', true);
+// 		}
+// 	},
+// 	displayAs: function() {
+// 		for(var i in this.item.options) {
+// 			if(this.item.options[i].value == this.lastSaved) {
+// 				return this.item.options[i].name;
+// 			}
+// 		}
+// 	},
+// 	focus: function(){
+// 		//this.$el.focus();
+// 		this.self.find('[type=checkbox]:first').focus();
+// 	},
+// 	satisfied: function(){
+// 		return this.$el.is(':checked');
+// 	},
+// });

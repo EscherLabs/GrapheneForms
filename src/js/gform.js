@@ -117,13 +117,30 @@ var gform = function(data, el){
     }
 
     this.restore = create.bind(this);
-    this.toJSON = gform.toJSON.bind(this);
-    this.reflow = gform.reflow.bind(this)
+    this.get = this.toJSON = gform.toJSON.bind(this);
 
-    this.set = function(name,value) {
-        _.find(this.fields, {name: name}).set(value);
-    }.bind(this),
+    this.reflow = gform.reflow.bind(this)
     this.find = gform.find.bind(this)
+
+    this.set = function(name, value) {
+        if(typeof name == 'string'){
+            this.find(name).set(value)
+        }
+        if(typeof name == 'object'){
+            _.each(name,function(item,index){
+                var temp = this.find(index);
+                if(typeof temp !== 'undefined'){
+                    temp.set(item);
+                }
+            }.bind(this))
+        }
+        if(typeof name == 'undefined'){
+            gform.each.call(this, function(field) {
+                field.set(null);
+            })
+        }
+        // _.find(this.fields, {name: name}).set(value);
+    }.bind(this),
 
     this.isActive = true;
 
@@ -427,7 +444,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 	}
     field.set = function(value, silent){
         //not sure we should be excluding objects - test how to allow objects
-        if(this.value != value && typeof value !== 'object') {
+        if(this.value != value){// && typeof value !== 'object') {
             this.value = value;
             gform.types[this.type].set.call(this,value);
 			if(!silent){
@@ -662,7 +679,10 @@ gform.optionsObj = function(opts, value, count){
                 }
             }
             // _.assignIn(item,{label: gform.renderString(opts.format.label,item), value: gform.renderString(opts.format.value,item) });
-            if(item.value == value) { item.selected = true;}
+            // debugger;
+            if(item.value == value || (this.multiple && (value.indexOf(item.value)>=0) )) { item.selected = true;}
+            
+            // if(item.value == value) { item.selected = true;}
             count+=1;
             return item;
         }

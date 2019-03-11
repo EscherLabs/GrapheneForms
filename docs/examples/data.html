@@ -30,6 +30,7 @@
 
     <script>
     options = {
+        data:{multi_select:['1','2'],select:"3"},
         fields:[
             {label: 'Text', type: 'text'},
             {label: 'Hidden', type: 'hidden', value:'hidden field'},
@@ -43,7 +44,6 @@
             {label: 'Select', type: 'select', options:[1,2,3]},
             {label: 'Multi Select', multiple:true, type: 'select', options:[1,2,3]},
             {label: 'Radio', type: 'radio', options:[1,2,3]},
-            {label: 'scale', type: 'scale', min:1,max:5,format:{low:"Worst",high:"Best"}},
             {label: 'Range', type: 'range', min:20,max:60},
             {label: 'Fieldset', type: 'fieldset', fields:[
                 {label: 'Fieldset Text 1', name: 'text1', type: 'text'},

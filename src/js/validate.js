@@ -35,7 +35,7 @@ gform.validateItem = function(force,item){
 
 			//validate sub fields
 			if(typeof item.fields !== 'undefined'){
-				_.each(item.fields, gform.validateItem)
+				_.each(item.fields, gform.validateItem.bind(null,force))
 			}
 		}
 		

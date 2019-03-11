@@ -38,7 +38,9 @@
             {label: 'Checkbox', type: 'checkbox'},
             {label: 'Select', type: 'select', options:[1,2,3], enable: function(){return false}},
             {label: 'Radio', type: 'radio', options:[1,2,3], enable: [
-                    {type:"not_matches", "name": "checkbox", "value": true}
+                {type:"test",name:"checkbox",test:function(f){
+                    return f.parent.find('checkbox').get();
+                }}
             ]},
 
 

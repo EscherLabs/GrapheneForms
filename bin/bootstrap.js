@@ -20,7 +20,7 @@ gform.stencils = {
 	</div>
 </div>`,
 hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
-    textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+    textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{#inline}}<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/inline}}
@@ -34,7 +34,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 			{{>_actions}}
 	</div>
 </div>`,
-    select: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+    select: `<div class="row clearfix form-group {{modifiers}} {{#array}}dupable" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{#inline}}<div class="col-md-12">{{/inline}}
@@ -45,7 +45,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/label}}
 		{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
 		{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
-			<select class="form-control"  name="{{name}}" {{^enabled}}readonly disabled="true"{{/enabled}}  {{#multiple_enable}}multiple{{/multiple_enable}} >
+			<select class="form-control" {{^enabled}}readonly disabled="true"{{/enabled}} {{#multiple}}multiple=multiple{{/multiple}} name="{{name}}{{#multiple}}[]{{/multiple}} >
 			{{#options}}
 
 				{{^section}}
