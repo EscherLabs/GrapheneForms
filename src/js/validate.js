@@ -81,9 +81,9 @@ gform.regex = {
 
 gform.validations = 
 {
-	// required:function(value) {
-	// 		return (this.satisfied(value) ? false : '{{label}} is required');
-	// },
+	required:function(value) {
+			return (this.satisfied(value) ? false : '{{label}} is required');
+	},
 	regex: function(value, args) {
 		var r = args.regex;
 		if(typeof r == 'string'){r = gform.regex[r]}

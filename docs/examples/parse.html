@@ -29,20 +29,18 @@
     <script>
     options = {
         fields:[
-            {label: 'Text', type: 'text', parse:true},
+            {label: 'Text', type: 'text', parse:[
+                    {type:"requires", "name": "text"}
+            ]},
             {label: 'Number', type: 'number',parse: false},
-            {label: 'Textarea', type: 'textarea', parse: [
-                {"matches": 
-                    {"name": "text", "value": [""]}
-                }
+            {label: 'Textarea', type: 'textarea', display: [
+                    {type:"matches", "name": "text", "value": [""]}
             ]},
             {label: 'Checkbox', type: 'checkbox'},
             {label: 'Select', type: 'select', options:[1,2,3], parse: function(){return false}},
-            {label: 'Radio', type: 'radio', options:[1,2,3]},
-            {label: 'Fieldset', type: 'fieldset', fields:[
-                {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
-                {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
-            ]},
+            {label: 'Radio', type: 'radio', options:[1,2,3], parse: [
+                    {type:"not_matches", "name": "checkbox", "value": true}
+            ]}
         ]
     }
     </script>

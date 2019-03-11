@@ -33,17 +33,14 @@
             {label: 'Text', type: 'text', enable:true},
             {label: 'Number', type: 'number',enable: false},
             {label: 'Textarea', type: 'textarea', enable: [
-                {"matches": 
-                    {"name": "text", "value": [""]}
-                }
+                    {type:"matches", "name": "text", "value": [""]}
             ]},
             {label: 'Checkbox', type: 'checkbox'},
             {label: 'Select', type: 'select', options:[1,2,3], enable: function(){return false}},
-            {label: 'Radio', type: 'radio', options:[1,2,3]},
-            {label: 'Fieldset', type: 'fieldset', fields:[
-                {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
-                {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
+            {label: 'Radio', type: 'radio', options:[1,2,3], enable: [
+                    {type:"not_matches", "name": "checkbox", "value": true}
             ]},
+
 
         ]
     }

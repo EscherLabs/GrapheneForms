@@ -521,7 +521,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         this.enabled = result;        
         gform.types[this.type].enable.call(this,this.enabled);
     })
-    gform.processConditions.call(field, field.parse, function(result){
+    gform.processConditions.call(field, field.parse||field.display, function(result){
         this.parsable = result
     })
     if(field.required){
@@ -1128,8 +1128,6 @@ gform.processConditions = function(conditions, func) {
 	if (typeof conditions === 'string') {
 		if(conditions === 'display' || conditions === 'enable'  || conditions === 'parse') {
 			conditions = this.item[conditions];
-		}else if(conditions === 'enable') {
-			conditions = this.item.enable;
 		}
 	}
 	if (typeof conditions === 'boolean') {
@@ -1190,11 +1188,12 @@ gform._rules = function(rules, op){
 
 
 gform.conditions = {
-	requires: function(gform, args, func) {
-		return gform.sub('change:' + args.name, function(args, local, topic, token) {
-				func.call(this, local.find(args.path).satisfied(), token);
-			}.bind(this, args)
-		);
+	requires: function(field, args) {
+		// return gform.sub('change:' + args.name, function(args, local, topic, token) {
+		// 		func.call(this, local.find(args.path).satisfied(), token);
+		// 	}.bind(this, args)
+		// );
+		return field.parent.find(args.name).satisfied();
 	},
 	// valid_previous: function(gform, args) {},
 	not_matches: function(field, args) {
@@ -1206,12 +1205,15 @@ gform.conditions = {
 			return (val !== localval);
 		}
 	},
-	test: function(gform, args, func) {
-		return gform.sub('change:' + args.name, function(args, local, topic, token) {
-				func.call(this, args.callback(), token);
-			}.bind( this, args)
-		);
+	test: function(field, args, ) {
+		// return gform.sub('change:' + args.name, function(args, local, topic, token) {
+		// 		func.call(this, args.callback(), token);
+		// 	}.bind( this, args)
+		// );
+		return args.test.call(this, field, args);
 	},
+
+	
 	// contains: function(gform , args, func) {
 	// 	return gform.sub('change:' + args.name, function(args, local, topic, token) {
 	// 			func.call(this, (typeof local.value !== 'undefined'  && local.value.indexOf(args.value) !== -1 ), token);

@@ -521,7 +521,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         this.enabled = result;        
         gform.types[this.type].enable.call(this,this.enabled);
     })
-    gform.processConditions.call(field, field.parse, function(result){
+    gform.processConditions.call(field, field.parse||field.display, function(result){
         this.parsable = result
     })
     if(field.required){
