@@ -8,7 +8,7 @@ text: `
 <div class="row row-wrap">
 <div class="column">
     {{>_label}}
-    <input {{#maxlength}} maxlength="{{maxlength}}"{{/maxlength}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
+    <input{{#length}} maxlength="{{length}}"{{/length}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
     {{>_error}}
     </div>
     </div>     
@@ -39,7 +39,7 @@ textarea: `
 <div class="row row-wrap">
 <div class="column">
     {{>_label}}
-    <textarea placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
+    <textarea{{#length}} maxlength="{{length}}"{{/length}} placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
     {{>_error}}
     </div>
     {{>_actions}}   
@@ -47,7 +47,8 @@ textarea: `
 </div> `,
 select: `
     {{>_label}}    
-    <select {{#multiple}}multiple=multiple{{/multiple}} name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
+    {{#length}}<small class="column form-help" {{#maxSelected}}style="color:red"{{/maxSelected}} > Choose {{length}}</small>{{/length}}
+    <select {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
         {{#options}}
             {{^section}}
             <option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
@@ -64,7 +65,15 @@ select: `
             {{/section.label}}
             {{/section}}
         {{/options}}
+            {{#other}}
+                        <option {{#other_value}}selected='selected'{{/other_value}} value="other">Other</option>
+
+    {{/other}}
+
     </select>
+    {{#other}}
+     <input{{#length}} maxlength="{{length}}"{{/length}} name="other_{{name}}" value="{{other_value}}" type="text" id="other_{{id}}" />
+    {{/other}}
     {{>_error}}
     {{>_actions}}       
 `,

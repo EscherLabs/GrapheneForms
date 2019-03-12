@@ -134,7 +134,8 @@ var gform = function(data, el){
                 }
             }.bind(this))
         }
-        if(typeof name == 'undefined'){
+        // if(typeof name == 'undefined'){
+        if(name == null){
             gform.each.call(this, function(field) {
                 field.set(null);
             })
@@ -205,8 +206,8 @@ var gform = function(data, el){
                     // item.update({index:index})
                     item.index = index;
 
-                    item.label = gform.renderString(this.item.label, this);
-                    item.el.querySelector('label').innerHTML = this.label
+                    item.label = gform.renderString(item.item.label, item);
+                    item.el.querySelector('label').innerHTML = item.label
                 })
                 
 
@@ -230,8 +231,8 @@ var gform = function(data, el){
                         // item.update({index:index})
                         item.index = index;
     
-                        item.label = gform.renderString(this.item.label, this);
-                        item.el.querySelector('label').innerHTML = this.label
+                        item.label = gform.renderString(item.item.label, item);
+                        item.el.querySelector('label').innerHTML = item.label
                     })
                 }else{
                     this.container.querySelector( field.target ).removeChild(field.el);
@@ -444,12 +445,14 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 	}
     field.set = function(value, silent){
         //not sure we should be excluding objects - test how to allow objects
-        if(this.value != value){// && typeof value !== 'object') {
-            this.value = value;
-            gform.types[this.type].set.call(this,value);
-			if(!silent){
-                this.owner.pub(['change:'+this.name,'change'],this);
-                // this.owner.pub('change',this);this.owner.pub('change:'+this.name,this)
+        if(this.value != value || value == null){// && typeof value !== 'object') {
+            if(!gform.types[this.type].set.call(this,value)){
+                this.value = value;
+
+                if(!silent){
+                    this.owner.pub(['change:'+this.name,'change'],this);
+                    // this.owner.pub('change',this);this.owner.pub('change:'+this.name,this)
+                };
             };
 		}
     }.bind(field)

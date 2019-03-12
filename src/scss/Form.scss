@@ -97,6 +97,7 @@ input:checked + label .falseLabel{
 }
 
 
+
 /* The switch - the box around the slider */
 .switch {
   position: relative;
@@ -160,7 +161,9 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-
+option:disabled {
+    color: #ffc1c1;
+}
 
 .error{
 	border-color:$color-error;

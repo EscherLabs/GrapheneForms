@@ -103,20 +103,30 @@ gform.types = {
       initialize: function() {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
-              this.value = this.get();
-              this.label = gform.renderString(this.item.label, this);
-              this.el.querySelector('label').innerHTML = this.label
+              this.value =  this.get();
+              if(this.multiple && typeof this.length !== 'undefinded'){
+                //   this.set(oldValue,true);
+                if(this.value.length >= this.length){
+                    this.maxSelected = true;
+                    _.each(this.el.querySelector('select').options,function(item){
+                        item.disabled = !item.selected;
+                    })
+                }else if (this.maxSelected) {
+                    this.maxSelected = false;
+                    _.each(this.el.querySelector('select').options,function(item){
+                        item.disabled = false;
+                    })  
+                }
 
-            //   debugger;
-            //   this.update({value:this.get()},true);
-            //   gform.types[this.type].focus.call(this)
-
-            //   this.focus();
-            //   this.owner.pub('change:'+this.name, this,{input:this.value});
-            //   this.owner.pub('change', this, {input:this.value});
-            //   this.owner.pub('input:'+this.name, this,{input:this.value});
-            //   this.owner.pub('input', this,{input:this.value});
-            this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+              }
+              debugger;
+              if(this.other){
+                  this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
+                //   if(this.value == 'other')/
+              }
+                  this.label = gform.renderString(this.item.label, this);
+                  this.el.querySelector('label').innerHTML = this.label
+                  this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 
           }.bind(this));
       },
@@ -133,9 +143,10 @@ gform.types = {
         //   _.each(this.options.options, function(option, index){
         //       if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
         //   }.bind(this))
-        if(this.multiple && _.isArray(this.value)){
+        if(this.multiple && _.isArray(value)){
+          if(typeof this.length !== 'undefinded' && (value.length > this.length)){return true}
           _.each(this.el.querySelector('select').options, function(option, index){
-             option.selected = (this.value.indexOf(option.value)>=0)
+             option.selected = (value.indexOf(option.value)>=0)
           }.bind(this))
         }
       },
@@ -191,13 +202,18 @@ gform.types = {
           return gform.toJSON.call(this, name)
       },
       set: function(value){
-        _.each(value,function(item,index){
-            var temp = this.find(index);
-            if(typeof temp !== 'undefined'){
-                temp.set(item);
-            }
-        }.bind(this))
-        
+        if(value == null){
+            gform.each.call(this, function(field) {
+                field.set(null);
+            })
+        }else{
+            _.each(value,function(item,index){
+                var temp = this.find(index);
+                if(typeof temp !== 'undefined'){
+                    temp.set(item);
+                }
+            }.bind(this))
+        }
       },
       find: function(name) {
           return gform.find.call(this, name)
