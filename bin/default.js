@@ -8,7 +8,7 @@ text: `
 <div class="row row-wrap">
 <div class="column">
     {{>_label}}
-    <input{{#length}} maxlength="{{length}}"{{/length}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
+    <input{{#limit}} maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
     {{>_error}}
     </div>
     </div>     
@@ -39,7 +39,8 @@ textarea: `
 <div class="row row-wrap">
 <div class="column">
     {{>_label}}
-    <textarea{{#length}} maxlength="{{length}}"{{/length}} placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
+    {{#limit}}<small class="column count" style="text-align:right">0/{{limit}}</small>{{/limit}}
+    <textarea{{#limit}} maxlength="{{limit}}"{{/limit}} placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
     {{>_error}}
     </div>
     {{>_actions}}   
@@ -47,7 +48,6 @@ textarea: `
 </div> `,
 select: `
     {{>_label}}    
-    {{#length}}<small class="column form-help" {{#maxSelected}}style="color:red"{{/maxSelected}} > Choose {{length}}</small>{{/length}}
     <select {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
         {{#options}}
             {{^section}}
@@ -65,15 +65,8 @@ select: `
             {{/section.label}}
             {{/section}}
         {{/options}}
-            {{#other}}
-                        <option {{#other_value}}selected='selected'{{/other_value}} value="other">Other</option>
-
-    {{/other}}
 
     </select>
-    {{#other}}
-     <input{{#length}} maxlength="{{length}}"{{/length}} name="other_{{name}}" value="{{other_value}}" type="text" id="other_{{id}}" />
-    {{/other}}
     {{>_error}}
     {{>_actions}}       
 `,
@@ -81,7 +74,14 @@ radio: `
     {{>_label}}
     <span class="">
     {{#options}}
-    <label ><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
+
+    {{#multiple}}
+        <div><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/>
+        <label class="label-inline" for="{{name}}_{{value}}">{{label}}</label></div>
+    {{/multiple}}
+    {{^multiple}}
+        <label><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
+    {{/multiple}}
     {{/options}}
     </span>
     {{>_error}}
@@ -89,45 +89,32 @@ radio: `
 
 scale: `
     {{>_label}}
-    <span class="">
     <table class="table table-striped">
     <thead>
-    <tr>
-    {{#format.low}}<th></th>{{/format.low}}
-        {{#options}}
-        <th>{{label}}</th>
-        {{/options}}
-    {{#format.high}}<th></th>{{/format.high}}
-    </tr>
-
+        <tr>
+            {{#format.low}}<th></th>{{/format.low}}
+            {{#options}}
+            <th><label for="{{name}}_{{i}}">{{label}}</label></th>
+            {{/options}}
+            {{#format.high}}<th></th>{{/format.high}}
+        </tr>
     </thead>
     <tbody>
-    <tr>
-    {{#format.low}}
-        <td>
-            {{{format.low}}}
-        </td>
-    {{/format.low}}
-        {{#options}}
-        <td>
-            <input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
-        </td>
-        {{/options}}
-    {{#format.high}}
-        <td>
-            {{{format.high}}}
-        </td>
-    {{/format.high}}
-    </tr>
+        <tr>
+            {{#format.low}}<td><label style="font-weight: 500;" for="{{name}}_1">{{{format.low}}}</label></td>{{/format.low}}
+            {{#options}}
+            <td>
+                <input id="{{name}}_{{i}}" style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
+            </td>
+            {{/options}}
+            {{#format.high}}<td><label style="font-weight: 500;" for="{{name}}_{{options.length}}">{{{format.high}}}</label></td>{{/format.high}}
+        </tr>
+    </tbody>
+    </table>
 
-</tbody>
-</table>
-
-    </span>
     {{>_error}}
     {{>_actions}}`,
-
-_fieldset: `
+    _fieldset: `
     <fieldset id="{{id}}" name="{{name}}">
     {{>_error}}
     {{#array}}<hr style="margin: 0 0 10px;">{{/array}}
@@ -136,6 +123,40 @@ _fieldset: `
     {{>_actions}}
     </div>   
     </fieldset>
+`,
+grid: `
+    {{>_label}}
+    {{>_error}}
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th></th>
+            {{#options}}
+            <th><label>{{label}}</label></th>
+            {{/options}}
+            
+        </tr>
+    </thead>
+    <tbody>
+    {{#stuff}}
+        <tr>
+            <td><label style="font-weight: 500;" for="{{id}}">{{{label}}}</label></td>
+            {{#options}}
+            <td>
+            {{#multiple}}
+                <div><input name="{{id}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/>
+            {{/multiple}}
+            {{^multiple}}
+                <input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
+            {{/multiple}}
+            </td>
+            {{/options}}
+        </tr>
+        {{/stuff}}
+    </tbody>
+    </table>
+
+    {{>_actions}}
 `,
 _actions: `      
     {{#array}}

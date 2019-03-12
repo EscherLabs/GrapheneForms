@@ -672,6 +672,7 @@ gform.optionsObj = function(opts, value, count){
                 item = {label: item, value:item};
             }
             item.index = item.index || ""+count;
+            
             if(typeof opts.format !== 'undefined'){
 
                 if(typeof opts.format.label !== 'undefined' ){
@@ -687,6 +688,7 @@ gform.optionsObj = function(opts, value, count){
             
             // if(item.value == value) { item.selected = true;}
             count+=1;
+            item.i = count;
             return item;
         }
 

@@ -32,6 +32,7 @@
     options = {
         fields:[
             {label: 'Text', type: 'text'},
+
             {label: 'Hidden', type: 'hidden', value:'hidden field'},
             {label: 'Number', type: 'number'},
             {label: 'Color', type: 'color'},
@@ -40,10 +41,17 @@
             {label: 'Textarea', type: 'textarea'},
             {label: 'Checkbox', type: 'checkbox',text:"you must select this one"},
             {label: 'Switch', type: 'switch'},
-            {label: 'Select',other:true, type: 'select', options:[1,2,3]},
-            {label: 'Multi Select', multiple:true,size:3, type: 'select', options:[1,2,3]},
+            {label: 'Select', type: 'select', options:[1,2,3]},
+            {label: 'Multi Select', multiple:true, size:3, type: 'select', options:[1,2,3]},
             {label: 'Radio', type: 'radio', options:[1,2,3]},
+            {label: 'Multi Radio', multiple:true, type: 'radio', options:[1,2,3]},
             {label: 'scale', type: 'scale', min:1,max:5,format:{low:"Worst",high:"Best"}},
+            {label: 'Grid', type: 'grid',
+            options:[1,2,3],
+            fields:[
+                {label: 'Fieldset Text 1', name: 'text1'},
+                {label: 'Fieldset Text 2', name: 'text2'}
+            ]},
             {label: 'Range', type: 'range', min:20,max:60},
             {label: 'Fieldset', type: 'fieldset', fields:[
                 {label: 'Fieldset Text 1', name: 'text1', type: 'text'},

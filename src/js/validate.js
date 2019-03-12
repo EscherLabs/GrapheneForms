@@ -84,10 +84,10 @@ gform.validations =
 	required:function(value) {
 			return (this.satisfied(value) ? false : '{{label}} is required');
 	},
-	regex: function(value, args) {
+	pattern: function(value, args) {
 		var r = args.regex;
 		if(typeof r == 'string'){r = gform.regex[r]}
-		return r.test(value) || value === '' ? false : args.message;
+		return r.pattern(value) || value === '' ? false : args.message;
 	},
 	custom: function(value, args) {
 		return args.test.call(this, value, args);

@@ -49,8 +49,8 @@ gform.types = {
 
         if(!silent) {
             this.owner.pub(['change:'+this.name,'change'], this);
-            // this.owner.pub('change', this);
         }
+        if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
         
       },
       get: function() {
@@ -100,35 +100,35 @@ gform.types = {
           this.options = gform.options.call(this,this, this.value);
           return gform.render(this.type, this);
       },
+      setup:function(){
+        if(this.multiple && typeof this.limit !== 'undefinded'){
+            if(this.value.length >= this.limit){
+                this.maxSelected = true;
+                _.each(this.el.querySelector('select').options,function(item){
+                    item.disabled = !item.selected;
+                })
+            }else if (this.maxSelected) {
+                this.maxSelected = false;
+                _.each(this.el.querySelector('select').options,function(item){
+                    item.disabled = false;
+                })  
+            }
+          }
+        //   if(this.other){
+        //       this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
+        //   }
+          this.label = gform.renderString(this.item.label, this);
+          this.el.querySelector('label').innerHTML = this.label
+      },
       initialize: function() {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.value =  this.get();
-              if(this.multiple && typeof this.length !== 'undefinded'){
-                //   this.set(oldValue,true);
-                if(this.value.length >= this.length){
-                    this.maxSelected = true;
-                    _.each(this.el.querySelector('select').options,function(item){
-                        item.disabled = !item.selected;
-                    })
-                }else if (this.maxSelected) {
-                    this.maxSelected = false;
-                    _.each(this.el.querySelector('select').options,function(item){
-                        item.disabled = false;
-                    })  
-                }
-
-              }
-              debugger;
-              if(this.other){
-                  this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
-                //   if(this.value == 'other')/
-              }
-                  this.label = gform.renderString(this.item.label, this);
-                  this.el.querySelector('label').innerHTML = this.label
-                  this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+              gform.types[this.type].setup.call(this);
+              this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 
           }.bind(this));
+          gform.types[this.type].setup.call(this);
       },
       get: function() {
           var value = this.el.querySelector('select').value;
@@ -144,20 +144,15 @@ gform.types = {
         //       if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
         //   }.bind(this))
         if(this.multiple && _.isArray(value)){
-          if(typeof this.length !== 'undefinded' && (value.length > this.length)){return true}
-          _.each(this.el.querySelector('select').options, function(option, index){
+          if(typeof this.limit !== 'undefinded' && (value.length > this.limit)){return true}
+          _.each(this.el.querySelector('select').options, function(option){
              option.selected = (value.indexOf(option.value)>=0)
           }.bind(this))
         }
+        if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
       },
       focus:function() {
-        //   debugger;
           this.el.querySelector('[name="'+this.name+'"]').focus();
-        //   this.el.querySelector('[name="'+this.name+'"]').focus();
-        //   var temp = this.value;
-        //   this.set('');
-        //   this.set(temp);
-        //   this.el.querySelector('[name="'+this.name+'"]').select();
       }
   },
   'section':{
@@ -302,6 +297,20 @@ gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:
 gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: { 'valid_email': true }}});
 
 gform.types['textarea'] = _.extend({}, gform.types['input'], {
+
+    initialize: function(){
+          this.onchangeEvent = function(){
+              this.value = this.get();
+              debugger;
+              if(this.el.querySelector('.count') != null){
+                  var text = this.value.length;
+                  if(this.limit){text+='/'+this.limit;}
+                this.el.querySelector('.count').innerHTML = text;
+              }
+              this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+          }.bind(this)
+          this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+      },
       set: function(value) {
           this.el.querySelector('textarea[name="' + this.name + '"]').innerHTML = value;
       },
@@ -320,36 +329,126 @@ gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collect
       this.el.querySelector('[type=range]').value = value;   
   }
 });
+
 gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collection'], {
-    get: function(){
-      return (this.el.querySelector('[type="radio"][name="' + this.name + '"]:checked')||{value:''}).value; 
-  },
-  set:function(value){
-      var el = this.el.querySelector('[value="'+value+'"]');
-      if(el !== null){
-          el.checked = 'checked';
+  setup: function(){
+    if(this.multiple && typeof this.limit !== 'undefinded'){
+        if(this.value.length >= this.limit){
+            this.maxSelected = true;
+            _.each(this.el.querySelectorAll('[type=checkbox]'),function(item){
+                item.disabled = !item.checked;
+            })
+        }else if (this.maxSelected) {
+            this.maxSelected = false;
+            _.each(this.el.querySelectorAll('[type=checkbox]'),function(item){
+                item.disabled = false;
+            })  
+        }
+        }
+        // if(this.other){
+        //     this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
+        // }
+        this.label = gform.renderString(this.item.label, this);
+        this.el.querySelector('label').innerHTML = this.label
+    },
+  get: function(){
+      if(this.multiple){
+          return _.transform(this.el.querySelectorAll('[type="checkbox"]:checked'),function(value,item){value.push(item.value)},[])
+      }else{
+        return (this.el.querySelector('[type="radio"][name="' + this.name + '"]:checked')||{value:''}).value; 
       }
   },
+  set:function(value){
+    if(this.multiple && _.isArray(value)){
+        if(typeof this.limit !== 'undefinded' && (value.length > this.limit)){return true}
+        _.each(this.el.querySelectorAll('[type=checkbox]'), function(option){
+           option.checked = (value.indexOf(option.value)>=0)
+        }.bind(this))
+      }else{
+        var el = this.el.querySelector('[value="'+value+'"]');
+        if(el !== null){
+            el.checked = 'checked';
+        }
+      }
+      if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
+  },
   enable: function(state) {
-      _.each(this.el.querySelectorAll('[name="'+this.name+'"]'),function(item){
+      _.each(this.el.querySelectorAll('input'),function(item){
           item.disabled = !state;            
       })
   }
 });
 
+gform.types['scale']    = _.extend({}, gform.types['radio']);
+gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection'],{
+    render: function() {
+        this.options = gform.options.call(this,this, this.value);
+        this.stuff = _.map(this.stuff, function(field){
+            return _.assignIn({
+                name: (gform.renderString(field.label)||'').toLowerCase().split(' ').join('_'), 
+                id: gform.getUID(), 
+                label: field.name,     
+            }, field)
+    
+        })
 
-gform.types['scale']    = _.extend({}, gform.types['radio'], {
+        return gform.render(this.type, this);
+    },
+    setup: function(){
+        if(this.multiple && typeof this.limit !== 'undefinded'){
+            _.each(this.stuff,function(field){
+                var value = this.value[field.name]||[];
+                if(value.length >= this.limit){
+                    field.maxSelected = true;
+                    _.each(this.el.querySelectorAll('[type=checkbox][name="' + field.id + '"]'),function(item){
+                        item.disabled = !item.checked;
+                    })
+                }else if (field.maxSelected) {
+                    field.maxSelected = false;
+                    _.each(this.el.querySelectorAll('[type=checkbox][name="' + field.id + '"]'),function(item){
+                        item.disabled = false;
+                    })  
+                }
+            }.bind(this))
+        }
+        this.label = gform.renderString(this.item.label, this);
+        this.el.querySelector('label').innerHTML = this.label
+    },
+    get: function(){
+        if(this.multiple){
+            return _.transform(this.stuff,function(result,field){
+                result[field.name]= _.transform(this.el.querySelectorAll('[type="checkbox"][name="' + field.id + '"]:checked'),function(value,item){value.push(item.value)},[])
+            }.bind(this),{})
 
+        }else{
+            return _.transform(this.stuff,function(result,field){result[field.name]=(this.el.querySelector('[type="radio"][name="' + field.id + '"]:checked')||{value:''}).value}.bind(this),{})
+        }
+    },
+    set:function(value){
+        if(this.multiple){
+            _.each(this.stuff,function(value,field){
+                if(typeof this.limit !== 'undefinded' && value != null && (value.length > this.limit)){return true}
+                _.each(this.el.querySelectorAll('[name="' + field.id + '"][type=checkbox]'), function(value,option){
+                option.checked = (value.indexOf(option.value)>=0)
+                }.bind(this,value[field.name]))
+
+            }.bind(this,value))
+        }else{
+            _.each(this.stuff,function(field){
+                var el = this.querySelector('[name="' + field.id + '"][value="'+value[field.name]+'"]');
+                if(el !== null) {
+                    el.checked = 'checked';
+                }
+            }.bind(this))
+        }
+        this.value = value;
+        gform.types['grid'].setup.call(this)
+    },
+    focus:function() {
+        // this.stuff[0].name
+        this.el.querySelector('[name="'+this.stuff[0].id+'"]').focus();
+    }
 });
-// gform.types['checkboxes']    = _.extend({}, gform.types['input'], gform.types['collection'], {
-//    multiple on radio
-// });
-// gform.types['checkbox_grid']    = _.extend({}, gform.types['input'], gform.types['collection'], {
-// grid multiple
-// });
-// gform.types['radio_grid']    = _.extend({}, gform.types['input'], gform.types['collection'], {
-//  grid
-// });
 
 
 
@@ -360,65 +459,6 @@ gform.types['scale']    = _.extend({}, gform.types['radio'], {
 
 
 
-
-
-
-
-// Berry.register({ type: 'scale',
-// 	create: function() {
-// 	   // this.options = [];
-// 	    this.item.choices = [];
-// 		this.options = Berry.processOpts.call(this.owner, this.item, this).options;
-// 		debugger;
-// 		return Berry.render('berry_' + (this.elType || this.type), this);
-// 	},
-// 	setup: function() {
-// 		this.$el = this.self.find('[type=radio]');
-// 		this.$el.off();
-// 		if(this.onchange !== undefined) {
-// 			this.on('change', this.onchange);
-// 		}
-// 		this.$el.change($.proxy(function(){this.trigger('change');}, this));
-// 	},
-// 	getValue: function() {
-// 		var selected = this.self.find('[type="radio"]:checked').data('label');
-// 		for(var i in this.item.options) {
-// 			if(this.item.options[i].label == selected) {
-// 				return this.item.options[i].value;
-// 			}
-// 		}
-// 	},
-// 	setValue: function(value) {
-// 		this.value = value;
-// 		this.self.find('[value="' + this.value + '"]').prop('checked', true);
-// 	},
-// 	displayAs: function() {
-// 		for(var i in this.item.options) {
-// 			if(this.item.options[i].value == this.lastSaved) {
-// 				return this.item.options[i].label;
-// 			}
-// 		}
-// 	},
-// 	focus: function(){
-// 		this.self.find('[type="radio"]:checked').focus();
-// 	}
-// });
-
-
-
-// b.register({type: 'date' ,
-// setValue: function(value) {		
-//     if(typeof value !== 'object'){
-//         if(typeof moment !== 'undefined'){value = moment.utc(value).format('YYYY-MM-DD');}
-//         if(typeof this.lastSaved === 'undefined'){
-//             this.lastSaved = value;
-//         }
-//         this.value = value;
-//         return this.$el.val(value);
-//     }
-//     return this.value;
-// }
-// });
 
 
 

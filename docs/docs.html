@@ -140,7 +140,7 @@
 						<li class="list-unstyled" ><a href="#exact_length"><i class="fa fa-chevron-right"></i> exact_length</a></li> -->
 						<li class="list-unstyled" ><a href="#numeric"><i class="fa fa-chevron-right"></i> numeric</a></li>
 						<li class="list-unstyled" ><a href="#custom"><i class="fa fa-chevron-right"></i> custom</a></li>
-						<li class="list-unstyled" ><a href="#regex"><i class="fa fa-chevron-right"></i> regex</a></li>
+						<li class="list-unstyled" ><a href="#pattern"><i class="fa fa-chevron-right"></i> pattern</a></li>
 						<!-- <li class="list-unstyled" ><a href="#less_than"><i class="fa fa-chevron-right"></i> less_than</a></li> -->
 						<!-- <li class="list-unstyled" ><a href="#alpha"><i class="fa fa-chevron-right"></i> alpha</a></li>
 						<li class="list-unstyled" ><a href="#alpha_numeric"><i class="fa fa-chevron-right"></i> alpha_numeric</a></li>
@@ -762,13 +762,13 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
 							A custom fuction can be passed for validation and should return a false if there is no error or the error if there is one.
 					</p>
 					<code>{'type': 'custom', 'test': function}</code>
-					<a name="exact_length" style="display:block;position:relative;top:-80px"></a>
+					<a name="pattern" style="display:block;position:relative;top:-80px"></a>
 					<hr>
-					<h5>regex</h5>
+					<h5>pattern</h5>
 					<p>
-						A custom regex can be passed for validation a failing test will respond with the message
+						A custom regex pattern can be passed for validation a failing test will respond with the message
 					</p>
-					<code>{'type': 'regex', 'test': regex, 'message': '{{name}} failed to meet expectations'}</code>
+					<code>{'type': 'pattern', 'pattern': regex, 'message': '{{name}} failed to meet expectations'}</code>
 
 
 					<!-- <code>{type:'numeric', 2, max:5} // requires a number greater than 2 be entered</code>
