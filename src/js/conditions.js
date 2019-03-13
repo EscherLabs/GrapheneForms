@@ -76,6 +76,7 @@ gform.conditions = {
 		}
 	},
 	test: function(field, args, ) {
+		debugger;
 		return args.test.call(this, field, args);
 	},
 

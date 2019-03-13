@@ -125,9 +125,12 @@ scale: `
     </fieldset>
 `,
 grid: `
+<fieldset id="{{id}}" name="{{name}}">
+
     {{>_label}}
     {{>_error}}
-    <table class="table table-striped">
+
+    <table class="table table-striped" style="margin-bottom:0">
     <thead>
         <tr>
             <th></th>
@@ -138,7 +141,7 @@ grid: `
         </tr>
     </thead>
     <tbody>
-    {{#stuff}}
+    {{#fields}}
         <tr>
             <td><label style="font-weight: 500;" for="{{id}}">{{{label}}}</label></td>
             {{#options}}
@@ -152,11 +155,13 @@ grid: `
             </td>
             {{/options}}
         </tr>
-        {{/stuff}}
+        {{/fields}}
     </tbody>
     </table>
 
     {{>_actions}}
+
+    </fieldset>
 `,
 _actions: `      
     {{#array}}
@@ -165,10 +170,11 @@ _actions: `
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:red;color:red;float:right;margin:0 5px" class="gform-minus button button-outline" type="button" value="-">
     </div>
     {{/array}}
-    <small class="column form-help" style="position:relative;top:-15px"> {{{help}}}</small>
 `,
 _label: `      
-<label class="" for="{{name}}">{{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}</label>           
+<label class="" for="{{name}}">{{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}</label>     
+<small class="column form-help" style="position:relative;left:-10px"> {{{help}}}</small>
+
 `,
 _error:`<small class="error-text" style="color:red;display:block;position:relative;top:-12px"></small><small class="valid" style="color:green;display:block;"></small>`,
 button:`<button type="button" role="button" class="button {{modifiers}}" style="margin:0 15px 0">{{{label}}}</button>`,
@@ -237,14 +243,14 @@ gform.handleError = function(field){
     }
 }
 gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
-				"label":"<i class=\"fa fa-times\"></i> Cancel",
-				"action":"cancel",
-				"modifiers": "button-outline",
-				"type":"button"			}});
+	label:"<i class=\"fa fa-times\"></i> Cancel",
+	action:"cancel",
+	modifiers: "button-outline",
+	type:"button"}});
 gform.types['save']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
-				"label":"<i class=\"fa fa-check\"></i> Save",
-				"action":"save",
-				"modifiers": "float-right",
-				"type":"button"			}});
+	label:"<i class=\"fa fa-check\"></i> Save",
+	action:"save",
+	modifiers: "float-right",
+	type:"button"}});
 
 

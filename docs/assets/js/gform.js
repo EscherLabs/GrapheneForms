@@ -1118,7 +1118,7 @@ gform.types['scale']    = _.extend({}, gform.types['radio']);
 gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         this.options = gform.options.call(this,this, this.value);
-        this.stuff = _.map(this.stuff, function(field){
+        this.fields = _.map(this.fields, function(field){
             return _.assignIn({
                 name: (gform.renderString(field.label)||'').toLowerCase().split(' ').join('_'), 
                 id: gform.getUID(), 
@@ -1131,7 +1131,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
     },
     setup: function(){
         if(this.multiple && typeof this.limit !== 'undefinded'){
-            _.each(this.stuff,function(field){
+            _.each(this.fields,function(field){
                 var value = this.value[field.name]||[];
                 if(value.length >= this.limit){
                     field.maxSelected = true;
@@ -1149,19 +1149,31 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
         this.label = gform.renderString(this.item.label, this);
         this.el.querySelector('label').innerHTML = this.label
     },
+    initialize: function() {
+        //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
+          this.el.addEventListener('change', function(){
+              this.value =  this.get();
+              gform.types[this.type].setup.call(this);
+              this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+
+          }.bind(this));
+          gform.types[this.type].setup.call(this);
+          this.rows = {};
+          this.fields = _.map(this.fields,function(item){item.type='hidden';return item;})
+      },
     get: function(){
         if(this.multiple){
-            return _.transform(this.stuff,function(result,field){
+            return _.transform(this.fields,function(result,field){
                 result[field.name]= _.transform(this.el.querySelectorAll('[type="checkbox"][name="' + field.id + '"]:checked'),function(value,item){value.push(item.value)},[])
             }.bind(this),{})
 
         }else{
-            return _.transform(this.stuff,function(result,field){result[field.name]=(this.el.querySelector('[type="radio"][name="' + field.id + '"]:checked')||{value:''}).value}.bind(this),{})
+            return _.transform(this.fields,function(result,field){result[field.name]=(this.el.querySelector('[type="radio"][name="' + field.id + '"]:checked')||{value:''}).value}.bind(this),{})
         }
     },
     set:function(value){
         if(this.multiple){
-            _.each(this.stuff,function(value,field){
+            _.each(this.fields,function(value,field){
                 if(typeof this.limit !== 'undefinded' && value != null && (value.length > this.limit)){return true}
                 _.each(this.el.querySelectorAll('[name="' + field.id + '"][type=checkbox]'), function(value,option){
                 option.checked = (value.indexOf(option.value)>=0)
@@ -1169,7 +1181,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
 
             }.bind(this,value))
         }else{
-            _.each(this.stuff,function(field){
+            _.each(this.fields,function(field){
                 var el = this.querySelector('[name="' + field.id + '"][value="'+value[field.name]+'"]');
                 if(el !== null) {
                     el.checked = 'checked';
@@ -1180,8 +1192,8 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
         gform.types['grid'].setup.call(this)
     },
     focus:function() {
-        // this.stuff[0].name
-        this.el.querySelector('[name="'+this.stuff[0].id+'"]').focus();
+        // this.fields[0].name
+        this.el.querySelector('[name="'+this.fields[0].id+'"]').focus();
     }
 });
 
@@ -1486,6 +1498,7 @@ gform.conditions = {
 		}
 	},
 	test: function(field, args, ) {
+		debugger;
 		return args.test.call(this, field, args);
 	},
 

@@ -16,9 +16,6 @@
 		<!-- Custom styles for this template -->
 		<link rel='stylesheet' type='text/css' href='assets/css/demo.css'>
 
-		<!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-		<!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -79,7 +76,18 @@
 						<li class="list-unstyled" ><a href="#default"><i class="fa fa-chevron-right"></i> default</a></li>
 						<!-- <li class="list-unstyled" ><a href="#actions"><i class="fa fa-chevron-right"></i> actions</a></li> -->
 					</ul>
-					<a href="#fields"><h4>Fields</h4></a>
+							
+          <a href="#methods"><h4>Public Methods</h4></a>
+					<ul class>
+						<li class="list-unstyled" ><a href="#get"><i class="fa fa-chevron-right"></i> get</a></li>
+						<li class="list-unstyled" ><a href="#set"><i class="fa fa-chevron-right"></i> set</a></li>
+						<li class="list-unstyled" ><a href="#find"><i class="fa fa-chevron-right"></i> find</a></li>
+						<li class="list-unstyled" ><a href="#validate"><i class="fa fa-chevron-right"></i> validate</a></li>
+						<li class="list-unstyled" ><a href="#destroy"><i class="fa fa-chevron-right"></i> destroy</a></li>
+
+					</ul>
+
+					<a href="#field_options"><h4>Field Options</h4></a>
 					<ul class>
 						<li class="list-unstyled" ><a href="#field_type"><i class="fa fa-chevron-right"></i> type</a></li>
 						<li class="list-unstyled" ><a href="#field_name"><i class="fa fa-chevron-right"></i> name</a></li>
@@ -87,6 +95,7 @@
 						<li class="list-unstyled" ><a href="#field_value"><i class="fa fa-chevron-right"></i> value</a></li>
 						<li class="list-unstyled" ><a href="#field_help"><i class="fa fa-chevron-right"></i> help</a></li>
 						<li class="list-unstyled" ><a href="#field_placeholder"><i class="fa fa-chevron-right"></i> placeholder</a></li>
+						<li class="list-unstyled" ><a href="#field_limit"><i class="fa fa-chevron-right"></i> limit</a></li>
 						<li class="list-unstyled" ><a href="#field_target"><i class="fa fa-chevron-right"></i> target</a></li>
 						<li class="list-unstyled" ><a href="#field_columns"><i class="fa fa-chevron-right"></i> columns</a></li>
 						<li class="list-unstyled" ><a href="#field_array"><i class="fa fa-chevron-right"></i> array</a></li>
@@ -98,7 +107,7 @@
 						<li class="list-unstyled" ><a href="#field_max"><i class="fa fa-chevron-right"></i> max</a></li>
 						<li class="list-unstyled" ><a href="#field_min"><i class="fa fa-chevron-right"></i> min</a></li>
 						<li class="list-unstyled" ><a href="#field_step"><i class="fa fa-chevron-right"></i> step</a></li>
-						<li class="list-unstyled" ><a href="#field_options"><i class="fa fa-chevron-right"></i> options</a></li>						
+						<li class="list-unstyled" ><a href="#field_opts"><i class="fa fa-chevron-right"></i> options</a></li>						
 						<li class="list-unstyled" ><a href="#field_format"><i class="fa fa-chevron-right"></i> format</a></li>						
 					</ul>
 					<!-- <a href="#fieldsets"><h4>Fieldsets</h4></a>
@@ -190,7 +199,7 @@
 					<!--Introduction -->
 					<a name="intro" style="display:block;position:relative;top:-80px"></a>
 					<h2>Graphene:Forms Documentation</h2>
-					<div class="alert alert-warning">NOTE: This is a apha version, possibly still containing bugs and some parts of api may 
+					<div class="alert alert-warning">NOTE: This is a apha version, possibly still containing bugs and some parts of the api may 
 					still change slightly.</div>
 					<!-- <a name="intro" style="display:block;position:relative;top:-80px"></a> -->
 					<h4>What is it?</h4>
@@ -235,36 +244,7 @@ var myForm = new gform(config);</code></pre>
   ]
 };
 var myForm = new gform(config);</code></pre></div><div class="col-md-5 myForm"></div></div></div>
-					<!-- Api
-					<a name="api" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>API</h4>
-					<h5>toJSON <code>myForm.toJSON([name]);</code></h5>
-					<p>
-						an object will be returned containing a serialized list of all fields maintained in the gform tree. If the optional 'name' parameter is supplied then only the value of the field with that name is returned.
-					</p>
-					<br>
-					<h5>destroy <code>myForm.destroy();</code></h5>
-					<p>
-						this will remove the form and clean up any residuals and remove all events
-					</p>
-					<br>
-					<h5>find <code>myForm.find(path || name);</code></h5>
-					<p>
-						the gform field that the path leads to is returned, for first level fields the path is just the name if it is contained within a fieldset the path would be <code>'fieldset_name.field_name'</code>
-					</p>
-					<br>
-					<h5>validate <code>myForm.validate();</code></h5>
-					<p>
-						all of the fields are validated and the status of the validation is returned. If a field fails validation the error message is added to that field if the theme supports it. The flag <code>myForm.valid</code> is also set to this status and an array of errors is containted in the <code>myForm.errors</code> property;
 
-					</p>
-					<br>
-					<h5>clearErrors <code>myForm.clearErrors();</code></h5>
-					<p>
-						this clears the 'valid' flag to true and empties the array of errors
-					</p>
-					<hr> -->
 
 
 					<!--options -->
@@ -326,11 +306,53 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
 					<blockquote>config.actions = ['save']</blockquote> -->
 					<hr>
 
-
-					<!--field options -->
-					<a name="fields" style="display:block;position:relative;top:-80px"></a>
+					<!-- Public Methods-->
+					<a name="methods" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h3>Fields</h3>
+					<h4>Public Methods</h4>
+					<a name="get" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h5>get <code>myForm.get([name]);</code></h5>
+					<p>
+						an object will be returned containing a serializable object with all of the values. If the optional 'name' parameter is supplied then only the value of the field with that name is returned.
+<br>
+						an alias for toJSON exists so 
+<pre><code>JSON.stringify(myForm)</code></pre>
+						is valid as well
+					</p>
+					<br>
+					<a name="find" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h5>find <code>myForm.find(path || name);</code></h5>
+					<p>
+						the gform field that the path leads to is returned, for first level fields the path is just the name if it is contained within a fieldset the path would be <code>'fieldset_name.field_name'</code>
+					</p>
+					<br>
+
+					<a name="validate" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h5>validate <code>myForm.validate();</code></h5>
+					<p>
+						all of the fields are validated and the status of the validation is returned. If a field fails validation the error message is added to that field if the theme supports it. The flag <code>myForm.valid</code> is also set to this status and an array of errors is containted in the <code>myForm.errors</code> property;
+
+					</p>
+					<!-- <br>
+					<h5>clearErrors <code>myForm.clearErrors();</code></h5>
+					<p>
+						this clears the 'valid' flag to true and empties the array of errors
+					</p> -->
+					<br>
+					<a name="destroy" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h5>destroy <code>myForm.destroy();</code></h5>
+					<p>
+						this will remove the form and clean up any residuals and remove all events
+					</p>
+					<hr> 
+					<!--field options -->
+					<a name="field_options" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h3>Field Options</h3>
 
 <br>
 <!-- <div class="well fieldForm"></div> -->
@@ -359,7 +381,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
 					<!--type -->
 					<a name="field_type" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>type <code>['string', null]</code> <a class="pull-right" href="./examples/types.html">Example</a></h4>	
+					<h4>type <code>['string']</code> <a class="pull-right" href="./examples/types.html">Example</a></h4>	
 					<p class="text-muted">default = 'text' </p>				
 					<p>
 						This defines the type of form element to render. The default type is a simple text input.<br>
@@ -371,13 +393,38 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
 										<li>color</li>
 										<li>email</li>
 										<li>password</li>
+										<!-- 
+											
+date
+datetime-local
+month
+search
+tel
+time
+url
+week
+										-->
 									</ul>
 								</li>
 								<li>textarea</li>
 								<li>checkbox</li>
+								<li>range</li>
 								<li>select</li>
 								<li>radio</li>
 								<li>fieldset</li>
+
+								<li>switch</li>
+								<li>scale</li>
+								<li>grid</li>
+
+
+								<li>button <span class="text-muted">(and its variations)</span></li>
+								<ul><li>submit</li>
+									<li>reset</li>
+									<li>clear</li>
+									<li>save</li>
+									<li>etc</li>
+								</ul>
 							</ul>
 							
 							<br>
@@ -387,7 +434,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
 					<!--field name -->
 					<a name="field_name" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>name <code>['string', null]</code><a class="pull-right" href="./examples/name.html">Example</a></h4>
+					<h4>name <code>['string']</code><a class="pull-right" href="./examples/name.html">Example</a></h4>
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>														
 					
 					<p>
@@ -396,7 +443,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
 					<!--field label -->
 					<a name="field_label" style="display:block;position:relative;top:-80px"></a>
 					<br>					
-					<h4>label <code>['string', 'bool', null]</code><a class="pull-right" href="./examples/label.html">Example</a></h4>
+					<h4>label <code>['string', 'bool']</code><a class="pull-right" href="./examples/label.html">Example</a></h4>
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>														
 					<p>
 						If a string is set this will be used as the label on the current field. To hide the label then this can be set to 'false'. The default label that will apply if no label is set will be the index of the field i.e. the first field will have a label of '0'.
@@ -428,7 +475,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
 					<!--field target -->
 					<a name="field_target" style="display:block;position:relative;top:-80px"></a>
 					<br>					
-					<h4>target <code>['string', null]</code></h4>
+					<h4>target <code>['selecor', 'node']</code></h4>
 					<p class="text-muted">default = ''; <span class="text-success">all types</span></p>																			
 					<p>
 						The target by default is the form or fieldset that contains the field however you can declare a selector string for the field and it will be appended to the element found by the selector if it exists.
@@ -518,15 +565,15 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
 					<!--field max -->
 					<a name="field_max" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>max <code>['integer', null]</code><a class="pull-right" href="./examples/generate.html">Example</a></h4>
-					<p class="text-muted">default = null; <span class="text-success">select, radio, number</span></p>																			
+					<h4>max <code>['integer']</code><a class="pull-right" href="./examples/generate.html">Example</a></h4>
+					<p class="text-muted">default = empty; <span class="text-success">select, radio, number</span></p>																			
 					<p>
 						This field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a maximum number that the fields value can be. If the max is set on any field that would normally have its options passed in then the max is used to generate a set of options for that field.
 					</p>
 					<!--field min -->
 					<a name="field_min" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>min <code>['integer', null]</code><a class="pull-right" href="./examples/generate.html">Example</a></h4>
+					<h4>min <code>['integer']</code><a class="pull-right" href="./examples/generate.html">Example</a></h4>
 					<p class="text-muted">default = 0; <span class="text-success">select, radio, number</span></p>																								
 					<p>
 						Similar to the max field this field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a minimum number that the fields value can be. If the max is set on any field that would normally have its options passed in then the min is used with the max to generate a set of options for that field. If max is set but min is not then min is assumed to be 0 when generating config.
@@ -534,13 +581,13 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
 					<!--field step -->
 					<a name="field_step" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>step <code>['integer', null]</code><a class="pull-right" href="./examples/generate.html">Example</a></h4>					
+					<h4>step <code>['integer']</code><a class="pull-right" href="./examples/generate.html">Example</a></h4>					
 					<p class="text-muted">default = 1; <span class="text-success">select, radio, number</span></p>					
 					<p>
 						Similar to the max field this field has a different meaning based on the field type and has no effect on many field types. For a field type of 'number' this will set a step number that the fields value will increase/decreases by when using the arrows. If the max is set on any field that would normally have its options passed in then the min is used with the max to generate a set of options for that field. If max is set but step is not then step is assumed to be 1 when generating config.
 					</p>
 					<!--field options -->
-					<a name="field_options" style="display:block;position:relative;top:-80px"></a>
+					<a name="field_opts" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>options  <code>['array', 'string', 'function']</code><a class="pull-right" href="./examples/options.html">Example</a></h4>
 					<p class="text-muted"><span class="text-success">(select, radio)</span> default = [];</p>																								
@@ -648,7 +695,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
 					<br>
 					<h4>test</h4>					
 					<p>
-							This 'test' condition requires callback property to be set as well which should return a boolean indicating if it passes the test. The callback will recieve a reference to the field as well as the condition definition.
+							This 'test' condition requires a callback method to be set as well which should return a boolean indicating if it passes the test. The callback will recieve a reference to the field as well as the condition definition.
 					</p>
 
 					<!--test -->

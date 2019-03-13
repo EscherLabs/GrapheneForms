@@ -23,7 +23,8 @@
           </div>
       </div>
     <script src="../assets/js/lodash.min.js"></script>
-    <script src='../assets/js/gform.min.js'></script>
+    <script src='../assets/js/gform.js'></script> 
+    <script src='../assets/js/default.js'></script> 
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
@@ -33,10 +34,12 @@
                     {type:"requires", "name": "text"}
             ]},
             {label: 'Number', type: 'number',parse: false},
-            {label: 'Textarea', type: 'textarea', display: [
+            {label: 'Textarea', type: 'textarea', parse: [
                     {type:"matches", "name": "text", "value": [""]}
             ]},
-            {label: 'Checkbox', type: 'checkbox'},
+            {label: 'Checkbox', type: 'checkbox', parse:[{name:'checkbox',type:'test',test:function(e){
+                return e.value;
+            }}]},
             {label: 'Select', type: 'select', options:[1,2,3], parse: function(){return false}},
             {label: 'Radio', type: 'radio', options:[1,2,3], parse: [
                     {type:"not_matches", "name": "checkbox", "value": true}
