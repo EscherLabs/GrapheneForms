@@ -170,7 +170,7 @@ _actions: `
 _label: `      
 <label class="" for="{{name}}">{{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}</label>           
 `,
-_error:`<small class="error" style="color:red;display:block;position:relative;top:-12px"></small><small class="valid" style="color:green;display:block;"></small>`,
+_error:`<small class="error-text" style="color:red;display:block;position:relative;top:-12px"></small><small class="valid" style="color:green;display:block;"></small>`,
 button:`<button type="button" role="button" class="button {{modifiers}}" style="margin:0 15px 0">{{{label}}}</button>`,
 tab_container: `
 <form id="{{name}}" novalidate {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>
@@ -226,11 +226,12 @@ gform.handleError = function(field){
 		if(field.satisfied(field.get())) {
         // field.el.querySelector('.valid').innerHTML = field.validtext||'';
         }
-        field.el.classList.add('error');
+		field.el.classList.remove('error')		
 
-        field.el.querySelector('.error').innerHTML = '';
+        field.el.querySelector('.error-text').innerHTML = '';
     }else{
-        field.el.querySelector('.error').innerHTML = field.errors;
+        field.el.querySelector('.error-text').innerHTML = field.errors;
+        field.el.classList.add('error');
 
         field.el.querySelector('.valid').innerHTML = '';
     }

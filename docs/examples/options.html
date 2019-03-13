@@ -42,7 +42,7 @@
         {label: 'Checkbox Simple Array', name: 'checkbox', type:'checkbox', options:[
             'no','yes'
         ]},
-        {label: 'Select Field function', name: 'function', type:'select', options: function(){
+        {label: '<span style="color:{{value}}">Select Field function</span>',placeholder:'Choose a color', name: 'function', type:'select', options: function(){
             return["Red","Green","Blue"];
         }},
         {label: 'Select Field (url string)', name: 'url', type:'select', options:'../data/days.json'}

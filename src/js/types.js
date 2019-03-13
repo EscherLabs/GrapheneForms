@@ -301,7 +301,6 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
     initialize: function(){
           this.onchangeEvent = function(){
               this.value = this.get();
-              debugger;
               if(this.el.querySelector('.count') != null){
                   var text = this.value.length;
                   if(this.limit){text+='/'+this.limit;}
