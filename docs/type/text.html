@@ -90,11 +90,11 @@
 							<table class="table table-bordered table-striped"> 
 								<thead> <tr> <th>Name</th> <th>types</th> <th>default</th> <th>description</th> </tr> </thead> 
 								<tbody> 
-										<tr><td><a href="#basic">name</a></td><td>string</td><td>label exists -> field.label.toLowerCase().split('&nbsp;').join('_')<br>no label -> name is generated i.e. 'g1'</td><td>This value is is the variable name used</td></tr>
-										<tr><td><a href="#basic">label</a></td><td>string | bool</td><td>field.name</td><td>This is the label displayed for the field, if you want to hide the label then set this to <code>false</code><br><br>The string can also contain mustache i.e.<br>'My choice {{value}}'</td></tr>
+										<tr><td><a href="#name">name</a></td><td>string</td><td>label exists -> field.label.toLowerCase().split('&nbsp;').join('_')<br>no label -> name is generated i.e. 'g1'</td><td>This value is is the variable name used</td></tr>
+										<tr><td><a href="#label">label</a></td><td>string | bool</td><td>field.name</td><td>This is the label displayed for the field, if you want to hide the label then set this to <code>false</code><br><br>The string can also contain mustache i.e.<br>'My choice {{value}}'</td></tr>
 										<tr><td><a href="#value">value</a></td><td>string | function</td><td>''</td><td>Function will run once at instantiation</td></tr>
-										<tr><td>help</td><td>string</td><td>''</td><td>This text is used to provide context or help in filling out the field</td></tr>
-										<tr><td>placeholder</td><td>string</td><td>''</td><td>This text will be visible in the text box until you focus on the field</td></tr>
+										<tr><td><a href="#help">help</a></td><td>string</td><td>''</td><td>This text is used to provide context or help in filling out the field</td></tr>
+										<tr><td><a href="#placeholder">placeholder</a></td><td>string</td><td>''</td><td>This text will be visible in the text box until text is entered into the field</td></tr>
 										<tr><td>limit</td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
 										<tr><td>target</td><td>selector | node</td><td></td><td>If the target is not set then the field is appended to the parent element which is usually the main form but may be a fieldset</td></tr>
 										<tr><td>columns</td><td>integer</td><td>12</td><td>The form is divided into a grid 12 columns wide, this is setting how many of those columns to display this element at, using this you can make split column forms</td></tr>
@@ -122,14 +122,24 @@
 					<p>
 					</p>
 
-					<!--basic -->
-					<a name="basic" style="display:block;position:relative;top:-80px"></a>
+					<!--name -->
+					<a name="name" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>Basic</h4>
+					<h4>Name</h4>
 					<p>Any field needs either a label or a name to be defined. <br><br>If only a label is defined then the name is derived from the label by replacing all spaces with underscores and lowercased, in the following example the name would be "label_example". <br><br>If just the name is provided then the name is also used for the label.</p>
-					<div class="well basic"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+					<div class="well name"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {name: 'name_example',
   {label: 'Label Example'},	
-  {name: 'Name Example'}
+  {}
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+					<!--label -->
+					<a name="label" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Label</h4>
+					<p></p>
+					<div class="well labelfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {label: 'Label Example'},
 ]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
 
@@ -142,8 +152,32 @@
 					<div class="well value"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
   {
     label: 'Value Example',
-    name: 'value_example',
     value: 'This is a test'
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+					<!--help -->
+					<a name="help" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Help</h4>
+					<p></p>
+					<div class="well help"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {
+    label: 'Help Example',
+    help: 'This is some help text'
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+
+					<!--placeholder -->
+					<a name="placeholder" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Placeholder</h4>
+					<p></p>
+					<div class="well placeholder"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {
+    label: 'Placeholder Example',
+    placeholder: 'Placeholder text'
   }
 ]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
@@ -159,7 +193,7 @@
 
 					<hr>
 					<footer>
-						<p>&copy; Adam Smallcomb  2019</p>
+						<p>&copy; Escher Labs 2019</p>
 					</footer>
 				</div><!--/span-->
 
@@ -172,22 +206,59 @@
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 		<script>
 		new gform({
-			"el":".basic .form",
+			"el":".name .form",
 			"fields":[     
+				{name: "name_example"},
 				{label: "Label Example"},
-				{name: "Name Example"}
+				{}
 			   ] 
 			}).sub('change', function(e){
-        document.querySelector('.basic .result').innerHTML = JSON.stringify(e.form,null,2);
+        document.querySelector('.name .result').innerHTML = JSON.stringify(e.form,null,2);
 			}
 		).pub('change')
+
+		new gform({
+			"el":".labelfield .form",
+			"fields":[     
+				{label: "Label Example"},
+			   ] 
+			}).sub('change', function(e){
+        document.querySelector('.labelfield .result').innerHTML = JSON.stringify(e.form,null,2);
+			}
+		).pub('change')
+
 		new gform({
 			"el":".value .form",
 			"fields":[     
-				{label: "Value Example",name:'value_example', value:'This is a test'}
+				{label: "Value Example", value:'This is a test'}
 			   ] 
 			}).sub('change', function(e){
         document.querySelector('.value .result').innerHTML = JSON.stringify(e.form,null,2);
+			}
+		).pub('change')
+
+		new gform({
+			"el":".help .form",
+			"fields":[     
+				{    
+					label: 'Help Example',
+   					help: 'This is some help text'
+				}
+			] 
+			}).sub('change', function(e){
+        document.querySelector('.help .result').innerHTML = JSON.stringify(e.form,null,2);
+			}
+		).pub('change')		
+		new gform({
+			"el":".placeholder .form",
+			"fields":[     
+				{        
+					label: 'Placeholder Example',
+					placeholder: 'Placeholder text'
+				}
+			] 
+			}).sub('change', function(e){
+        document.querySelector('.placeholder .result').innerHTML = JSON.stringify(e.form,null,2);
 			}
 		).pub('change')
 		</script>
