@@ -1,0 +1,16 @@
+{
+	"rows": {
+    "name":{
+      "name":"name",
+      "type":"string",
+      "default":"lowercase label and replace spaces with '_'<br><br>no label -> name is generated i.e. 'f1'",
+      "description":"This value is is the variable name used"
+		},
+		"label":{
+      "name":"label",
+      "type":"string",
+      "default":"",
+      "description":""
+    }
+	}
+}

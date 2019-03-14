@@ -1,0 +1,7 @@
+{
+  "field":{"type":"color"},
+  "rows":{
+    "name":{"value":"name"},
+    "label":{"value":"label"}
+  }
+}

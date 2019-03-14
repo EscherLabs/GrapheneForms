@@ -372,8 +372,7 @@ var myForm = new gform(config);</code></pre></div><div class="col-md-5 dataForm"
       'label':    'State',
       'required': true,
       'options':  './data/states.json', 
-      //[{"value":"AL", "name":"Alabama"}...
-      'format':   { 'label': '{{name}}'},
+      'format':   {'label': '{{name}}'},
       'help': 'Choose your state'
     }
   ]
@@ -1074,6 +1073,7 @@ Specific events may have other data provided as well but they will be highly sit
     'type': 'select',
     'name': 'state',
 		'label': 'State',
+		'required':true,
 		'options': './data/states.json',
 		'format': { 'label': '{{name}}' },
 		'help': 'Choose your state'

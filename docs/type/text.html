@@ -95,7 +95,7 @@
 					<p>
 						All options are optional and can be left empty
 							<table class="table table-bordered table-striped"> 
-								<thead> <tr> <th>Name</th> <th>types</th> <th style="width:205px">default</th> <th>description</th> </tr> </thead> 
+								<thead> <tr> <th>Name</th> <th>type</th> <th style="width:205px">default</th> <th>description</th> </tr> </thead> 
 								<tbody> 
 										<tr><td><a href="#name">name</a></td><td>string</td><td>lowercase label and replace spaces with '_'<br><br>no label -> name is generated i.e. 'f1'</td><td>This value is is the variable name used</td></tr>
 										<tr><td><a href="#label">label</a></td><td>string | bool</td><td>field.name</td><td>This is the label displayed for the field, if you want to hide the label then set this to <code>false</code><br><br>The string can also contain mustache i.e.<br>'My choice {{value}}'</td></tr>
@@ -133,11 +133,11 @@
 					<a name="name" style="display:block;position:relative;top:-80px"></a>
 					<br>
 					<h4>Name</h4>
-					<p>Any field needs either a label or a name to be defined. <br><br>If only a label is defined then the name is derived from the label by replacing all spaces with underscores and lowercased, in the following example the name would be "label_example". <br><br>If just the name is provided then the name is also used for the label.</p>
+					<p></p>
 					<div class="well name"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
-  {name: 'name_example',
-  {label: 'Label Example'},	
-  {}
+  {type: 'text', name: 'name_example',
+  {type: 'text', label: 'Label Example'},	
+  {type: 'text'}
 ]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
 					<!--label -->
@@ -146,10 +146,11 @@
 					<h4>Label</h4>
 					<p></p>
 					<div class="well labelfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
-  {label: 'Label Example'},
+	{
+    type: 'text', 
+    label: 'Label Example'
+  }
 ]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-
-
 
 					<!--value -->
 					<a name="value" style="display:block;position:relative;top:-80px"></a>
@@ -158,6 +159,7 @@
 					<p></p>
 					<div class="well value"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
   {
+    type: 'text',
     label: 'Value Example',
     value: 'This is a test'
   }
@@ -170,6 +172,7 @@
 					<p></p>
 					<div class="well help"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
   {
+    type: 'text',
     label: 'Help Example',
     help: 'This is some help text'
   }
@@ -183,6 +186,7 @@
 					<p></p>
 					<div class="well placeholder"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
   {
+    type: 'text',
     label: 'Placeholder Example',
     placeholder: 'Placeholder text'
   }
@@ -196,6 +200,7 @@
 					<p></p>
 					<div class="well limit"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
   {
+    type: 'text',
     label: 'Limit Example',
     limit: 5
   }
@@ -211,13 +216,15 @@
 					<h4>Columns</h4>
 					<p></p>
 					<div class="well columns"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
-  {        
-  label: 'Column 1',
-  columns: 4
+  {
+    type: 'text',
+    label: 'Column 1',
+    columns: 4
   },
-  {        
-  label: 'Column 2',
-  columns: 8
+  {
+    type: 'text',
+    label: 'Column 2',
+    columns: 8
   }
 ]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
@@ -245,9 +252,10 @@
 					<h4>Array</h4>
 					<p></p>
 					<div class="well array"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
-  {        
+  {
+    type: 'text',
     label: 'Array Example',
-    array: {min: 2,max: 4}
+    array: {min: 2, max: 4}
   }
 ]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
@@ -259,12 +267,14 @@
 					<h4>Display</h4>
 					<p></p>
 					<div class="well display"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
-  {        
+  {
+		
     label: 'Display Text Field',
     name:'display',
     type: 'checkbox'
   },
-  {        
+  {
+    type: 'text',
     label: 'Text Field',
     display:[{
       type: 'matches',
@@ -280,12 +290,13 @@
 					<h4>Enable</h4>
 					<p></p>
 					<div class="well enable"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
-  {        
+  {
     label: 'Enable Text Field',
     name:'enable',
     type: 'checkbox'
   },
-  {        
+  {
+    type: 'text',
     label: 'Text Field',
     display:[{
       type: 'matches',
@@ -301,12 +312,13 @@
 					<h4>Parse</h4>
 					<p></p>
 					<div class="well parse"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
-  {        
+  {
     label: 'Parse Text Field',
     name:'parse',
     type: 'checkbox'
   },
-  {        
+  {
+    type: 'text',
     label: 'Text Field',
     display:[{
       type: 'matches',
@@ -322,9 +334,10 @@
 					<h4>Validate</h4>
 					<p></p>
 					<div class="well validate"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
-  {        
+  {
+    type: 'text',
     label: 'Validate Field',
-    validate:[{type:'length', min: 2,max: 5}]
+    validate:[{type:'length', min: 2, max: 5}]
   }
 ]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
@@ -334,15 +347,12 @@
 					<h4>Required</h4>
 					<p></p>
 					<div class="well required"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
-  {        
+  {
+    type: 'text',
     label: 'Required Field',
     required: true
   }
 ]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-
-
-
-
 
 					<hr>
 					<footer>
@@ -359,7 +369,6 @@
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 		<script>
 		gform.options.autoFocus = false;
-
 		new gform({
 			"el":".name .form",
 			"fields":[     

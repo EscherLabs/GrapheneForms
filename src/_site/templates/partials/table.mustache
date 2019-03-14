@@ -1,0 +1,17 @@
+<table class="table table-bordered table-striped"> 
+	<thead> <tr> <th>Name</th> <th>type</th> <th style="width:205px">default</th> <th>description</th> </tr> </thead> 
+	<tbody> 
+		{{#page.rows.name}}
+		{{#rows.name}}
+		{{>row}}
+		{{/rows.name}}
+		{{/page.rows.name}}
+
+		{{#page.rows.label}}
+		{{#rows.label}}
+		{{>row}}
+		{{/rows.label}}
+		{{/page.rows.label}}
+
+	</tbody> 
+</table>

@@ -1,0 +1,5 @@
+{
+	"target_dir": "../Graphene-Forms/docs/type",
+	"template_dir": "../Graphene-Forms/src/_site/templates",
+	"data_dir": "../Graphene-Forms/src/_site/data"
+}

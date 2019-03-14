@@ -1,0 +1,7 @@
+{
+  "field":{"type":"number"},
+  "rows":{
+    "name":{"value":"name"},
+    "label":{"value":"label"}
+  }
+}

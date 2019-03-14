@@ -1,0 +1,11 @@
+{
+	"fields": {
+		"itemscontainer":{"label":"Menu Items", "fields":{
+			"Items": {"label":false, "multiple": {"duplicate": true}, "fields": {
+				"Name": {},
+				"Link": {},
+				"Hide": {"type": "checkbox"}
+			}}
+		}}
+	}
+}

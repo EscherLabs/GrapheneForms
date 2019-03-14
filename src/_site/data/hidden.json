@@ -1,0 +1,7 @@
+{
+  "field":{"type":"hidden"},
+  "rows":{
+    "name":{"value":"name"},
+    "label":{"value":"label"}
+  }
+}

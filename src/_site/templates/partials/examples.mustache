@@ -1,0 +1,15 @@
+		{{#page.rows.name}}
+		{{#rows.name}}
+					<!--{{name}} -->
+					<a name="{{name}}" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Name</h4>
+					<p></p>
+					<div class="well {{name}}"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {type: '{{page.field.type}}', name: 'name_example'},
+  {type: '{{page.field.type}}', label: 'Label Example'},	
+  {type: '{{page.field.type}}'}
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+		{{/rows.name}}
+		{{/page.rows.name}}
