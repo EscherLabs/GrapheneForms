@@ -66,15 +66,22 @@
 					</ul>
 					<a href="#examples"><h4>Examples</h4></a>
 					<ul class>
-						<li class="list-unstyled" ><a href="#basic"><i class="fa fa-chevron-right"></i> basic</a></li>
-						<li class="list-unstyled" ><a href="#legend"><i class="fa fa-chevron-right"></i> legend</a></li>
 						<li class="list-unstyled" ><a href="#name"><i class="fa fa-chevron-right"></i> name</a></li>
-						<li class="list-unstyled" ><a href="#data"><i class="fa fa-chevron-right"></i> data</a></li>
-						<li class="list-unstyled" ><a href="#fields"><i class="fa fa-chevron-right"></i> fields</a></li>
-						<li class="list-unstyled" ><a href="#default"><i class="fa fa-chevron-right"></i> default</a></li>
-						<!-- <li class="list-unstyled" ><a href="#actions"><i class="fa fa-chevron-right"></i> actions</a></li> -->
+						<li class="list-unstyled" ><a href="#label"><i class="fa fa-chevron-right"></i> label</a></li>
+						<li class="list-unstyled" ><a href="#value"><i class="fa fa-chevron-right"></i> value</a></li>
+						<li class="list-unstyled" ><a href="#help"><i class="fa fa-chevron-right"></i> help</a></li>
+						<li class="list-unstyled" ><a href="#placeholder"><i class="fa fa-chevron-right"></i> placeholder</a></li>
+						<li class="list-unstyled" ><a href="#limit"><i class="fa fa-chevron-right"></i> limit</a></li>
+						<li class="list-unstyled" ><a href="#target"><i class="fa fa-chevron-right"></i> target</a></li>
+						<li class="list-unstyled" ><a href="#columns"><i class="fa fa-chevron-right"></i> columns</a></li>
+						<!-- <li class="list-unstyled" ><a href="#offset"><i class="fa fa-chevron-right"></i> offset</a></li> -->
+						<li class="list-unstyled" ><a href="#array"><i class="fa fa-chevron-right"></i> array</a></li>
+						<li class="list-unstyled" ><a href="#display"><i class="fa fa-chevron-right"></i> display</a></li>
+						<li class="list-unstyled" ><a href="#enable"><i class="fa fa-chevron-right"></i> enable</a></li>
+						<li class="list-unstyled" ><a href="#parse"><i class="fa fa-chevron-right"></i> parse</a></li>
+						<li class="list-unstyled" ><a href="#validate"><i class="fa fa-chevron-right"></i> validate</a></li>
+						<li class="list-unstyled" ><a href="#required"><i class="fa fa-chevron-right"></i> required</a></li>
 					</ul>
-
 				</div><!--/span-->
 				<div class="col-xs-12 col-sm-9">
 
@@ -88,23 +95,23 @@
 					<p>
 						All options are optional and can be left empty
 							<table class="table table-bordered table-striped"> 
-								<thead> <tr> <th>Name</th> <th>types</th> <th>default</th> <th>description</th> </tr> </thead> 
+								<thead> <tr> <th>Name</th> <th>types</th> <th style="width:205px">default</th> <th>description</th> </tr> </thead> 
 								<tbody> 
-										<tr><td><a href="#name">name</a></td><td>string</td><td>label exists -> field.label.toLowerCase().split('&nbsp;').join('_')<br>no label -> name is generated i.e. 'g1'</td><td>This value is is the variable name used</td></tr>
+										<tr><td><a href="#name">name</a></td><td>string</td><td>lowercase label and replace spaces with '_'<br><br>no label -> name is generated i.e. 'f1'</td><td>This value is is the variable name used</td></tr>
 										<tr><td><a href="#label">label</a></td><td>string | bool</td><td>field.name</td><td>This is the label displayed for the field, if you want to hide the label then set this to <code>false</code><br><br>The string can also contain mustache i.e.<br>'My choice {{value}}'</td></tr>
 										<tr><td><a href="#value">value</a></td><td>string | function</td><td>''</td><td>Function will run once at instantiation</td></tr>
 										<tr><td><a href="#help">help</a></td><td>string</td><td>''</td><td>This text is used to provide context or help in filling out the field</td></tr>
 										<tr><td><a href="#placeholder">placeholder</a></td><td>string</td><td>''</td><td>This text will be visible in the text box until text is entered into the field</td></tr>
-										<tr><td>limit</td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
+										<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
 										<tr><td>target</td><td>selector | node</td><td></td><td>If the target is not set then the field is appended to the parent element which is usually the main form but may be a fieldset</td></tr>
-										<tr><td>columns</td><td>integer</td><td>12</td><td>The form is divided into a grid 12 columns wide, this is setting how many of those columns to display this element at, using this you can make split column forms</td></tr>
-										<tr><td>offset</td><td>integer</td><td>0</td><td>This is the offset to the left to place this field</td></tr>
-										<tr><td>array</td><td>boolean | object</td><td>false</td><td>if set to true or and object then this field will have buttons for adding and removing instances of the item. Additionally the value will become an array of all instances of this field. Further information on this can be found <a href="../docs.html#field_array">here</a>.</td></tr>
-										<tr><td>display</td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met</td></tr>
-										<tr><td>enable</td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>Similar to display but this option controls whether the field is enabled for interaction</td></tr>
-										<tr><td>parse</td><td><a href="../docs.html#conditions">condition</a></td><td>'display'</td><td>This option determins if the field value will be in the data result from <code>myform.get()</code></td></tr>
-										<tr><td>validate</td><td>array</td><td>[]</td><td>This is a set of validations to perform on this field when <code>validate()</code> is called</td></tr>
-										<tr><td>required</td><td><a href="../docs.html#conditions">condition</a></td><td>false</td><td>This is a special case for validation that is calculated live and updates the label to indicate the required status. Validation of this happens when <code>validate()</code> is called</td></tr>
+										<tr><td><a href="#columns">columns</a></td><td>integer</td><td>12</td><td>The form is divided into a grid 12 columns wide, this is setting how many of those columns to display this element at, using this you can make split column forms</td></tr>
+										<!-- <tr><td><a href="#offset">offset</a></td><td>integer</td><td>0</td><td>This is the offset to the left to place this field. Total of offset and columns should not be greater than 12</td></tr> -->
+										<tr><td><a href="#array">array</a></td><td>boolean | object</td><td>false</td><td>if set to true or and object then this field will have buttons for adding and removing instances of the item. Additionally the value will become an array of all instances of this field. Further information on this can be found <a href="../docs.html#field_array">here</a>.</td></tr>
+										<tr><td><a href="#display">display</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met</td></tr>
+										<tr><td><a href="#enable">enable</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>Similar to display but this option controls whether the field is enabled for interaction</td></tr>
+										<tr><td><a href="#parse">parse</a></td><td><a href="../docs.html#conditions">condition</a></td><td>'display'</td><td>This option determins if the field will be in the data result from <code>myform.get()</code></td></tr>
+										<tr><td><a href="#validate">validate</a></td><td>array</td><td>[]</td><td>This is a set of validations to perform on this field when <code>validate()</code> is called</td></tr>
+										<tr><td><a href="#required">required</a></td><td><a href="../docs.html#conditions">condition</a></td><td>false</td><td>This is a special case for validation that is calculated live and updates the label to indicate the required status. Validation of this happens when <code>validate()</code> is called</td></tr>
 									</tbody> 
 							</table>
 					</p>
@@ -182,10 +189,156 @@
 ]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
 
+					<!--limit -->
+					<a name="limit" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Limit</h4>
+					<p></p>
+					<div class="well limit"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {
+    label: 'Limit Example',
+    limit: 5
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
 
 
 
+
+					<!--columns -->
+					<a name="columns" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Columns</h4>
+					<p></p>
+					<div class="well columns"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {        
+  label: 'Column 1',
+  columns: 4
+  },
+  {        
+  label: 'Column 2',
+  columns: 8
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+					<!--offset -->
+					<!-- <a name="offset" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Offset</h4>
+					<p></p>
+					<div class="well offset"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {        
+  label: 'Normal',
+  columns: 8
+  },
+  {        
+  label: 'Offset',
+	columns: 8,
+	offset: 4
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+ -->
+
+					<!--array -->
+					<a name="array" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Array</h4>
+					<p></p>
+					<div class="well array"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {        
+    label: 'Array Example',
+    array: {min: 2,max: 4}
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+
+
+					<!--display -->
+					<a name="display" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Display</h4>
+					<p></p>
+					<div class="well display"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {        
+    label: 'Display Text Field',
+    name:'display',
+    type: 'checkbox'
+  },
+  {        
+    label: 'Text Field',
+    display:[{
+      type: 'matches',
+      name: 'display',
+      value: true
+    }]
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+					<!--enable -->
+					<a name="enable" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Enable</h4>
+					<p></p>
+					<div class="well enable"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {        
+    label: 'Enable Text Field',
+    name:'enable',
+    type: 'checkbox'
+  },
+  {        
+    label: 'Text Field',
+    display:[{
+      type: 'matches',
+      name: 'enable',
+      value: true
+    }]
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+					<!--parse -->
+					<a name="parse" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Parse</h4>
+					<p></p>
+					<div class="well parse"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {        
+    label: 'Parse Text Field',
+    name:'parse',
+    type: 'checkbox'
+  },
+  {        
+    label: 'Text Field',
+    display:[{
+      type: 'matches',
+      name: 'parse',
+      value: true
+    }]
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+					<!--validate -->
+					<a name="validate" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Validate</h4>
+					<p></p>
+					<div class="well validate"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {        
+    label: 'Validate Field',
+    validate:[{type:'length', min: 2,max: 5}]
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+					<!--required -->
+					<a name="required" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Required</h4>
+					<p></p>
+					<div class="well required"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
+  {        
+    label: 'Required Field',
+    required: true
+  }
+]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
 
 
@@ -205,6 +358,8 @@
 		 <script type='text/javascript' src='../assets/js/gform_bootstrap.min.js'></script> 
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 		<script>
+		gform.options.autoFocus = false;
+
 		new gform({
 			"el":".name .form",
 			"fields":[     
@@ -248,7 +403,8 @@
 			}).sub('change', function(e){
         document.querySelector('.help .result').innerHTML = JSON.stringify(e.form,null,2);
 			}
-		).pub('change')		
+		).pub('change')
+
 		new gform({
 			"el":".placeholder .form",
 			"fields":[     
@@ -261,6 +417,156 @@
         document.querySelector('.placeholder .result').innerHTML = JSON.stringify(e.form,null,2);
 			}
 		).pub('change')
-		</script>
+
+		new gform({
+			"el":".limit .form",
+			"fields":[     
+				{        
+					label: 'Limit Example',
+					limit: 5
+				}
+			] 
+			}).sub('change', function(e){
+        document.querySelector('.limit .result').innerHTML = JSON.stringify(e.form,null,2);
+			}
+		).pub('change')
+
+new gform({
+	"el":".columns .form",
+	"fields":[     
+	{        
+			label: 'Column 1',
+			columns: 4
+		},
+		{        
+			label: 'Column 2',
+			columns: 8
+		}
+	] 
+	}).sub('change', function(e){
+		document.querySelector('.columns .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+
+// new gform({
+// 	"el":".offset .form",
+// 	"fields":[     
+// 	{        
+// 			label: 'Normal',
+// 			columns: 8
+// 		},
+// 		{        
+// 			label: 'Offset',
+// 			columns: 8,
+// 			offset:4
+// 		}
+// 	] 
+// 	}).sub('change', function(e){
+// 		document.querySelector('.offeset .result').innerHTML = JSON.stringify(e.form,null,2);
+// 	}
+// ).pub('change')
+
+
+new gform({
+	"el":".array .form",
+	"fields":[     
+		{        
+			label: 'Array Example',
+			array:{min:2,max:4}
+		}
+	] 
+	}).sub('change', function(e){
+		document.querySelector('.array .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+
+new gform({
+	"el":".display .form",
+	"fields":[     
+	{        
+			label: 'Display Text Field',
+			name:'display',
+			type: 'checkbox'
+		},
+		{        
+			label: 'Text Field',
+			display:[{type:'matches', name:'display',value:true}]
+		}
+	] 
+	}).sub('change', function(e){
+		document.querySelector('.display .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+
+new gform({
+	"el":".enable .form",
+	"fields":[     
+	{        
+			label: 'Enable Text Field',
+			name:'enable',
+			type: 'checkbox'
+		},
+		{        
+			label: 'Text Field',
+			enable:[{type:'matches', name:'enable',value:true}]
+		}
+	] 
+	}).sub('change', function(e){
+		document.querySelector('.enable .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+
+new gform({
+	"el":".parse .form",
+	"fields":[     
+	{        
+			label: 'Parse Text Field',
+			name:'parse',
+			type: 'checkbox'
+		},
+		{        
+			label: 'Text Field',
+			parse:[{type:'matches', name:'parse',value:true}]
+		}
+	] 
+	}).sub('change', function(e){
+		document.querySelector('.parse .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+
+
+new gform({
+	"el":".validate .form",
+	"fields":[            
+		{        
+			label: 'Validate Field',
+			validate:[{type:'length', min: 2,max: 5}]
+		},
+		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
+	] 
+	}).sub('change', function(e){
+		document.querySelector('.validate .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).sub('validate',function(e){
+		e.form.validate()
+}).pub('change')
+
+
+new gform({
+	"el":".required .form",
+	"fields":[            
+		{        
+			label: 'Required Field',
+			required: true
+		},
+		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
+	] 
+	}).sub('change', function(e){
+		document.querySelector('.required .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).sub('validate',function(e){
+		e.form.validate()
+}).pub('change')
+</script>
 	</body>
 </html>

@@ -177,8 +177,9 @@ var gform = function(data, el){
             }
         }.bind(this))
     }
+    if(this.options.autoFocus || gform.options.autoFocus){
      gform.types[this.fields[0].type].focus.call(this.fields[0])
-
+    }
 
 
 
@@ -629,6 +630,7 @@ gform.ajax = function(options){
 }
 
 gform.default ={}; 
+gform.options = {autoFocus:true};
 gform.prototype.opts = {
     clear:true,
     sections:'',
