@@ -1,0 +1,6 @@
+{
+  "field":{"type":"email"},
+  "rows":{
+    "limit":{}
+  }
+}

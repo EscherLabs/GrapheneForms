@@ -1,17 +1,16 @@
 <table class="table table-bordered table-striped"> 
-	<thead> <tr> <th>Name</th> <th>type</th> <th style="width:205px">default</th> <th>description</th> </tr> </thead> 
+	<thead> <tr> <th>Name</th> <th>Type</th> <th style="width:205px">Default</th> <th>Description</th> </tr> </thead> 
 	<tbody> 
-		{{#page.rows.name}}
-		{{#rows.name}}
-		{{>row}}
-		{{/rows.name}}
-		{{/page.rows.name}}
 
-		{{#page.rows.label}}
-		{{#rows.label}}
+		{{#common}}
 		{{>row}}
-		{{/rows.label}}
-		{{/page.rows.label}}
+		{{/common}}
+
+		{{#rows.limit}}
+		{{#page.rows.limit}}
+		{{>row}}
+		{{/page.rows.limit}}
+		{{/rows.limit}}
 
 	</tbody> 
 </table>

@@ -1,0 +1,14 @@
+  {
+    label: 'Enable {{page.field.type}} Field',
+    name:'enable',
+    type: 'checkbox'
+  },
+  {
+    type: '{{page.field.type}}',
+    label: '{{page.field.type}} Field',
+    enable:[{
+      type: 'matches',
+      name: 'enable',
+      value: true
+    }]
+  }

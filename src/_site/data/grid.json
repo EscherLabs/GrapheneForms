@@ -1,0 +1,6 @@
+{
+  "field":{"type":"grid","addon":",options:[1,2,3],fields:[{label:'First'}]"},
+  "rows":{
+    "limit":{}
+  }
+}

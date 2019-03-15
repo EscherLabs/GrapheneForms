@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="Adam Smallcomb">
+		<link rel="icon" href="../assets/favicon.png">
+
+		<title>Documentation - Graphene:Forms</title>
+
+		<!-- Bootstrap core CSS -->
+		<link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+		<link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
+
+		<!-- Custom styles for this template -->
+		<link rel='stylesheet' type='text/css' href='../assets/css/demo.css'>
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+		<div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="../" >
+										<img style="height:30px;margin-top:5px" src="../assets/img/graphene_forms_white.png">
+
+						<!--<span style="color: #5D99D4;float:left ">
+							<div style="line-height: 10px;height: 0px;margin-top: 5px;"><i class="fa-white fa fa-circle-o"></i> <i class="fa-white fa fa-circle-o" style="color: #5D99D4;"></i></div>
+							<div style="line-height: 10px; height: 0px; margin-top: 10px;margin-left: -6px;"><i class="fa fa-circle-o" style="color: #5D99D4;"></i> <i class="fa fa-circle-o" style="color: #2866A4;"></i> <i class="fa fa-circle-o" style="color: #2866A4;"></i></div>
+							<div style="margin-top: -5px;height: 0px;"><i class="fa fa-circle-o" style="color: #5D99D4;"></i> <i class="fa fa-circle-o"></i></div>
+						</span> <span style="line-height: 40px;margin-left:10px;font-size: 20px;font-weight: 200;color: #cccccf;">gform.js</span>-->
+					</a>
+				</div>
+				<div class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="../docs.html"><i class="fa fa-life-ring"></i> Documentation</a></li>
+						<li><a href="../examples/"><i class="fa fa-list"></i> Examples</a></li>
+						<li><a href="../demo.html"><i class="fa fa-flask"></i> Demo</a></li>
+						<!-- <li><a href="./editor.html"><i class="fa fa-check-square-o"></i> Editor</a></li> -->
+						<!-- <li><a href="./api.html"><i class="fa fa-code"></i> Docs</a></li> -->
+					</ul>
+				</div><!-- /.nav-collapse -->
+			</div><!-- /.container -->
+		</div><!-- /.navbar -->
+
+		<div class="container">
+
+			<div class="row">
+
+				<div class="col-sm-3" ></div>
+				<div class="hidden-xs" style="position:fixed;overflow:auto;top:100px;bottom:0;width:200px" id="sidebar" role="navigation">
+					<a href="#options"><h4>Text Field Options</h4></a>
+					<ul class>
+						<!-- <li class="list-unstyled" ><a href="#opts"><i class="fa fa-chevron-right"></i> Options</a></li> -->
+					</ul>
+					<a href="#examples"><h4>Examples</h4></a>
+		
+<ul class>
+      <li class="list-unstyled" ><a href="#name"><i class="fa fa-chevron-right"></i> name</a></li>
+      <li class="list-unstyled" ><a href="#label"><i class="fa fa-chevron-right"></i> label</a></li>
+      <li class="list-unstyled" ><a href="#value"><i class="fa fa-chevron-right"></i> value</a></li>
+      <li class="list-unstyled" ><a href="#help"><i class="fa fa-chevron-right"></i> help</a></li>
+      <li class="list-unstyled" ><a href="#placeholder"><i class="fa fa-chevron-right"></i> placeholder</a></li>
+      <li class="list-unstyled" ><a href="#columns"><i class="fa fa-chevron-right"></i> columns</a></li>
+      <li class="list-unstyled" ><a href="#target"><i class="fa fa-chevron-right"></i> target</a></li>
+      <li class="list-unstyled" ><a href="#array"><i class="fa fa-chevron-right"></i> array</a></li>
+      <li class="list-unstyled" ><a href="#display"><i class="fa fa-chevron-right"></i> display</a></li>
+      <li class="list-unstyled" ><a href="#enable"><i class="fa fa-chevron-right"></i> enable</a></li>
+      <li class="list-unstyled" ><a href="#parse"><i class="fa fa-chevron-right"></i> parse</a></li>
+      <li class="list-unstyled" ><a href="#validate"><i class="fa fa-chevron-right"></i> validate</a></li>
+      <li class="list-unstyled" ><a href="#required"><i class="fa fa-chevron-right"></i> required</a></li>
+
+      <li class="list-unstyled" ><a href="#limit"><i class="fa fa-chevron-right"></i> limit</a></li>
+</ul>					<a href="#examples"><h4>Other Fields</h4></a>
+<ul class>
+      <li class="list-unstyled" ><a href="./text.html"><i class="fa fa-chevron-right"></i> text</a></li>
+      <li class="list-unstyled" ><a href="./hidden.html"><i class="fa fa-chevron-right"></i> hidden</a></li>
+      <li class="list-unstyled" ><a href="./number.html"><i class="fa fa-chevron-right"></i> number</a></li>
+      <li class="list-unstyled" ><a href="./color.html"><i class="fa fa-chevron-right"></i> color</a></li>
+      <li class="list-unstyled" ><a href="./email.html"><i class="fa fa-chevron-right"></i> email</a></li>
+      <li class="list-unstyled" ><a href="./password.html"><i class="fa fa-chevron-right"></i> password</a></li>
+      <li class="list-unstyled" ><a href="./url.html"><i class="fa fa-chevron-right"></i> url</a></li>
+      <li class="list-unstyled" ><a href="./tel.html"><i class="fa fa-chevron-right"></i> tel</a></li>
+      <li class="list-unstyled" ><a href="./textarea.html"><i class="fa fa-chevron-right"></i> textarea</a></li>
+      <li class="list-unstyled" ><a href="./checkbox.html"><i class="fa fa-chevron-right"></i> checkbox</a></li>
+      <li class="list-unstyled" ><a href="./range.html"><i class="fa fa-chevron-right"></i> range</a></li>
+      <li class="list-unstyled" ><a href="./select.html"><i class="fa fa-chevron-right"></i> select</a></li>
+      <li class="list-unstyled" ><a href="./radio.html"><i class="fa fa-chevron-right"></i> radio</a></li>
+      <li class="list-unstyled" ><a href="./fieldset.html"><i class="fa fa-chevron-right"></i> fieldset</a></li>
+      <li class="list-unstyled" ><a href="./switch.html"><i class="fa fa-chevron-right"></i> switch</a></li>
+      <li class="list-unstyled" ><a href="./scale.html"><i class="fa fa-chevron-right"></i> scale</a></li>
+      <li class="list-unstyled" ><a href="./grid.html"><i class="fa fa-chevron-right"></i> grid</a></li>
+      <li class="list-unstyled" ><a href="./button.html"><i class="fa fa-chevron-right"></i> button</a></li>
+		</ul>
+				</div><!--/span-->
+				<div class="col-xs-12 col-sm-9">
+
+					<!--Introduction -->
+					<a name="options" style="display:block;position:relative;top:-80px"></a>
+					<h2>Text field Options</h2>
+					<!-- <a name="opts" style="display:block;position:relative;top:-80px"></a> -->
+					<!-- <h4>options</h4> -->
+					<p>
+						All options are optional and can be left empty
+<table class="table table-bordered table-striped"> 
+	<thead> <tr> <th>Name</th> <th>Type</th> <th style="width:205px">Default</th> <th>Description</th> </tr> </thead> 
+	<tbody> 
+
+		<tr><td><a href="#name">name</a></td><td>string</td><td>lowercase label and replace spaces with '_'<br><br>no label -> name is generated i.e. 'f1'</td><td>This value is is the variable name used</td></tr>
+		<tr><td><a href="#label">label</a></td><td>string | bool</td><td>field.name</td><td>This is the label displayed for the field, if you want to hide the label then set this to <code>false</code><br><br>The string can also contain mustache i.e.<br>'My choice {{value}}'</td></tr>
+		<tr><td><a href="#value">value</a></td><td>string | function</td><td>''</td><td>Function will run once at instantiation</td></tr>
+		<tr><td><a href="#help">help</a></td><td>string</td><td>''</td><td>This text is used to provide context or help in filling out the field</td></tr>
+		<tr><td><a href="#placeholder">placeholder</a></td><td>string</td><td>''</td><td>This text will be visible in the text box until text is entered into the field</td></tr>
+		<tr><td><a href="#columns">columns</a></td><td>integer</td><td>12</td><td>The form is divided into a grid 12 columns wide, this is setting how many of those columns to display this element at, using this you can make split column forms</td></tr>
+		<tr><td><a href="#target">target</a></td><td>selector | node</td><td></td><td>If the target is not set then the field is appended to the parent element which is usually the main form but may be a fieldset</td></tr>
+		<tr><td><a href="#array">array</a></td><td>boolean | object</td><td>false</td><td>if set to true or and object then this field will have buttons for adding and removing instances of the item. Additionally the value will become an array of all instances of this field. Further information on this can be found <a href="../docs.html#field_array">here</a>.</td></tr>
+		<tr><td><a href="#display">display</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met</td></tr>
+		<tr><td><a href="#enable">enable</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>Similar to display but this option controls whether the field is enabled for interaction</td></tr>
+		<tr><td><a href="#parse">parse</a></td><td><a href="../docs.html#conditions">condition</a></td><td>'display'</td><td>This option determins if the field will be in the data result from <code>myform.get()</code></td></tr>
+		<tr><td><a href="#validate">validate</a></td><td>array</td><td>'[]'</td><td>This is a set of validations to perform on this field when <code>validate()</code> is called</td></tr>
+		<tr><td><a href="#required">required</a></td><td><a href="../docs.html#conditions">condition</a></td><td>false</td><td>This is a special case for validation that is calculated live and updates the label to indicate the required status. Validation of this happens when <code>validate()</code> is called</code></td></tr>
+
+		<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
+
+	</tbody> 
+</table>					</p>
+
+					<!--examples -->
+					<a name="examples" style="display:block;position:relative;top:-80px"></a>
+					<h2>examples</h2>
+					<!-- <a name="opts" style="display:block;position:relative;top:-80px"></a> -->
+					<!-- <h4>options</h4> -->
+					<p>
+					</p>
+					<!--name -->
+					<a name="name" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Name</h4>
+					<p></p>
+					<div class="well namefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+    {type: 'url', name: 'name_example'},
+    {type: 'url', label: 'Label Example'},	
+    {type: 'url'}
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--label -->
+					<a name="label" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Label</h4>
+					<p></p>
+					<div class="well labelfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+{
+    type: 'url', 
+    label: 'Label Example'
+}
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--value -->
+					<a name="value" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Value</h4>
+					<p></p>
+					<div class="well valuefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+{
+  type: 'url',
+  label: 'Value Example',
+  value: 'This is a test'
+}
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--help -->
+					<a name="help" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Help</h4>
+					<p></p>
+					<div class="well helpfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+  {
+    type: 'url',
+    label: 'Help Example',
+    help: 'This is some help text'
+  }
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--placeholder -->
+					<a name="placeholder" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Placeholder</h4>
+					<p></p>
+					<div class="well placeholderfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+  {
+    type: 'url',
+    label: 'Placeholder Example',
+    placeholder: 'Placeholder text'
+  }
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--columns -->
+					<a name="columns" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Columns</h4>
+					<p></p>
+					<div class="well columnsfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+  {
+    type: 'url',
+    label: 'Column 1',
+    columns: 4
+  },
+  {
+    type: 'url',
+    label: 'Column 2',
+    columns: 8
+  }
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--target -->
+					<a name="target" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Target</h4>
+					<p></p>
+					<div class="well targetfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+    {type: 'url', name: 'name_example'},
+    {type: 'url', label: 'Label Example'},	
+    {type: 'url'}
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--array -->
+					<a name="array" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Array</h4>
+					<p></p>
+					<div class="well arrayfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+		{        
+			type: 'url',
+			label: 'Array Example',
+			array: {min: 2, max: 4}
+		}
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--display -->
+					<a name="display" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Display</h4>
+					<p></p>
+					<div class="well displayfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+  {
+		
+    label: 'Display url Field',
+    name:'display',
+    type: 'checkbox'
+  },
+  {
+    type: 'url',
+    label: 'url Field',
+    display:[{
+      type: 'matches',
+      name: 'display',
+      value: true
+    }]
+  }
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--enable -->
+					<a name="enable" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Enable</h4>
+					<p></p>
+					<div class="well enablefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+  {
+    label: 'Enable url Field',
+    name:'enable',
+    type: 'checkbox'
+  },
+  {
+    type: 'url',
+    label: 'url Field',
+    enable:[{
+      type: 'matches',
+      name: 'enable',
+      value: true
+    }]
+  }
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--parse -->
+					<a name="parse" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Parse</h4>
+					<p></p>
+					<div class="well parsefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+  {
+    label: 'Parse url Field',
+    name:'parse',
+    type: 'checkbox'
+  },
+  {
+    type: 'url',
+    label: 'url Field',
+    parse:[{
+      type: 'matches',
+      name: 'parse',
+      value: true
+    }]
+  }
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--validate -->
+					<a name="validate" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Validate</h4>
+					<p></p>
+					<div class="well validatefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+  {
+    type: 'url',
+    label: 'Validate Field',
+    validate:[{type:'length', min: 2, max: 5}]
+  }
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--required -->
+					<a name="required" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Required</h4>
+					<p></p>
+					<div class="well requiredfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+  {
+    type: 'url',
+    label: 'Required Field',
+    required: true
+  }
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+					<!--limit -->
+					<a name="limit" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Limit</h4>
+					<p></p>
+					<div class="well limitfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+{
+    type: 'url',
+    label: 'Limit Example',
+    limit: 5
+  }
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<hr>
+					<footer>
+						<p>&copy; Escher Labs 2019</p>
+					</footer>
+				</div><!--/span-->
+
+			</div><!--/row-->
+
+		</div><!--/.container-->
+
+		<script type='text/javascript' src='../assets/vendor/js/jquery.js'></script>    
+		<script type='text/javascript' src='../assets/js/lodash.min.js'></script>    
+		<script type='text/javascript' src='../assets/vendor/js/colorpicker.min.js'></script>    
+
+		 <script type='text/javascript' src='../assets/js/gform_bootstrap.min.js'></script> 
+		<script>
+				gform.options.autoFocus = false;
+new gform({
+  "el":".namefield .form",
+  "fields":[     {type: 'url', name: 'name_example'},
+    {type: 'url', label: 'Label Example'},	
+    {type: 'url'}		] 
+	}).sub('change', function(e){
+document.querySelector('.namefield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".labelfield .form",
+  "fields":[ {
+    type: 'url', 
+    label: 'Label Example'
+}		] 
+	}).sub('change', function(e){
+document.querySelector('.labelfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".valuefield .form",
+  "fields":[ {
+  type: 'url',
+  label: 'Value Example',
+  value: 'This is a test'
+}		] 
+	}).sub('change', function(e){
+document.querySelector('.valuefield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')	
+new gform({
+  "el":".helpfield .form",
+  "fields":[   {
+    type: 'url',
+    label: 'Help Example',
+    help: 'This is some help text'
+  }		] 
+	}).sub('change', function(e){
+document.querySelector('.helpfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".placeholderfield .form",
+  "fields":[   {
+    type: 'url',
+    label: 'Placeholder Example',
+    placeholder: 'Placeholder text'
+  }		] 
+	}).sub('change', function(e){
+document.querySelector('.placeholderfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".columnsfield .form",
+  "fields":[   {
+    type: 'url',
+    label: 'Column 1',
+    columns: 4
+  },
+  {
+    type: 'url',
+    label: 'Column 2',
+    columns: 8
+  }		] 
+	}).sub('change', function(e){
+document.querySelector('.columnsfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".targetfield .form",
+  "fields":[     {type: 'url', name: 'name_example'},
+    {type: 'url', label: 'Label Example'},	
+    {type: 'url'}		] 
+	}).sub('change', function(e){
+document.querySelector('.targetfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".arrayfield .form",
+  "fields":[ 		{        
+			type: 'url',
+			label: 'Array Example',
+			array: {min: 2, max: 4}
+		}		] 
+	}).sub('change', function(e){
+document.querySelector('.arrayfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".displayfield .form",
+  "fields":[   {
+		
+    label: 'Display url Field',
+    name:'display',
+    type: 'checkbox'
+  },
+  {
+    type: 'url',
+    label: 'url Field',
+    display:[{
+      type: 'matches',
+      name: 'display',
+      value: true
+    }]
+  }		] 
+	}).sub('change', function(e){
+document.querySelector('.displayfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".enablefield .form",
+  "fields":[   {
+    label: 'Enable url Field',
+    name:'enable',
+    type: 'checkbox'
+  },
+  {
+    type: 'url',
+    label: 'url Field',
+    enable:[{
+      type: 'matches',
+      name: 'enable',
+      value: true
+    }]
+  }		] 
+	}).sub('change', function(e){
+document.querySelector('.enablefield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".parsefield .form",
+  "fields":[   {
+    label: 'Parse url Field',
+    name:'parse',
+    type: 'checkbox'
+  },
+  {
+    type: 'url',
+    label: 'url Field',
+    parse:[{
+      type: 'matches',
+      name: 'parse',
+      value: true
+    }]
+  }		] 
+	}).sub('change', function(e){
+document.querySelector('.parsefield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".validatefield .form",
+  "fields":[ 	  {
+    type: 'url',
+    label: 'Validate Field',
+    validate:[{type:'length', min: 2, max: 5}]
+  },
+		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
+			] 
+	}).sub('change', function(e){
+document.querySelector('.validatefield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change').sub('validate',function(e){
+		e.form.validate()
+})
+
+new gform({
+  "el":".requiredfield .form",
+  "fields":[ 	  {
+    type: 'url',
+    label: 'Required Field',
+    required: true
+  },
+		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
+			] 
+	}).sub('change', function(e){
+document.querySelector('.requiredfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change').sub('validate',function(e){
+		e.form.validate()
+})
+
+new gform({
+  "el":".limitfield .form",
+  "fields":[ {
+    type: 'url',
+    label: 'Limit Example',
+    limit: 5
+  }		] 
+	}).sub('change', function(e){
+document.querySelector('.limitfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')</script>
+		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+	</body>
+</html>

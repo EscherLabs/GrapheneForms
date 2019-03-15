@@ -1,8 +1,11 @@
 <ul class>
-		{{#page.rows.name}}
-		{{#rows.name}}
+		{{#common}}
+      <li class="list-unstyled" ><a href="#{{name}}"><i class="fa fa-chevron-right"></i> {{name}}</a></li>
+		{{/common}}
+
+		{{#page.rows.limit}}
+		{{#rows.limit}}
     {{>menuItem}}
-		{{/rows.name}}
-		{{/page.rows.name}}
-    
+		{{/rows.limit}}
+		{{/page.rows.limit}}
 </ul>

@@ -1,15 +1,86 @@
-		{{#page.rows.name}}
-		{{#rows.name}}
-					<!--{{name}} -->
-					<a name="{{name}}" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Name</h4>
-					<p></p>
-					<div class="well {{name}}"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform(fields: [
-  {type: '{{page.field.type}}', name: 'name_example'},
-  {type: '{{page.field.type}}', label: 'Label Example'},	
-  {type: '{{page.field.type}}'}
-]);</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+{{#common.0}}
+	{{>exTop}}
+	{{>_nameForm}}
+	{{>exBottom}}
+{{/common.0}}
 
-		{{/rows.name}}
-		{{/page.rows.name}}
+{{#common.1}}
+	{{>exTop}}
+	{{>_labelForm}}
+	{{>exBottom}}
+{{/common.1}}
+
+{{#common.2}}
+	{{>exTop}}
+	{{>_valueForm}}
+	{{>exBottom}}
+{{/common.2}}
+
+{{#common.3}}
+	{{>exTop}}
+	{{>_helpForm}}
+	{{>exBottom}}
+{{/common.3}}
+
+{{#common.4}}
+	{{>exTop}}
+	{{>_placeholderForm}}
+	{{>exBottom}}
+{{/common.4}}
+
+{{#common.5}}
+	{{>exTop}}
+	{{>_columnsForm}}
+	{{>exBottom}}
+{{/common.5}}
+
+{{#common.6}}
+	{{>exTop}}
+	{{>_targetForm}}
+	{{>exBottom}}
+{{/common.6}}
+
+{{#common.7}}
+	{{>exTop}}
+	{{>_arrayForm}}
+	{{>exBottom}}
+{{/common.7}}
+
+{{#common.8}}
+	{{>exTop}}
+	{{>_displayForm}}
+	{{>exBottom}}
+{{/common.8}}
+
+{{#common.9}}
+	{{>exTop}}
+	{{>_enableForm}}
+	{{>exBottom}}
+{{/common.9}}
+
+{{#common.10}}
+	{{>exTop}}
+	{{>_parseForm}}
+	{{>exBottom}}
+{{/common.10}}
+
+{{#common.11}}
+	{{>exTop}}
+	{{>_validateForm}}
+	{{>exBottom}}
+{{/common.11}}
+
+{{#common.12}}
+	{{>exTop}}
+	{{>_requiredForm}}
+	{{>exBottom}}
+{{/common.12}}
+
+
+{{#page.rows.limit}}
+{{#rows.limit}}
+	{{>exTop}}
+	{{>_limitForm}}
+	{{>exBottom}}
+{{/rows.limit}}
+{{/page.rows.limit}}

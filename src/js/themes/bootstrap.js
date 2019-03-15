@@ -120,9 +120,9 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/array}}`,
     _label: `
     {{^hideLabel}}
-	{{#label}}<label for="{{guid}}" {{#inline}}style="text-align:left"{{/inline}} class="control-label col-md-{{#inline}}12{{/inline}}{{^inline}}4{{/inline}}">
+	<label for="{{guid}}" {{#inline}}style="text-align:left"{{/inline}} class="control-label col-md-{{#inline}}12{{/inline}}{{^inline}}4{{/inline}}">
   {{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}
-</label>{{/label}}
+</label>{{#label}}{{/label}}
 {{/hideLabel}}
     `,
     _addons:`<span class="help-inline"> {{{help}}}</span>
@@ -298,6 +298,12 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 
   }
 });
+gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-envelope"></i>' ,
+			validate: [{ type:'valid_email' }]}});
+gform.types['url'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-link"></i>' ,
+			validate: [{ type:'valid_url' }]}});
+gform.types['tel'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-phone"></i>' ,
+			placeholder: '+1'}});
 
 gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section'],{
     defaults:{fields:[

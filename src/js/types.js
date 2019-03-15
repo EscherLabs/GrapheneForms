@@ -294,7 +294,7 @@ gform.removeClass = function(elem, classes){
 // remove the added classes
 gform.types['text']     = gform.types['password'] = gform.types['number'] = gform.types['color'] = gform.types['input'];
 gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false}});
-gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: { 'valid_email': true }}});
+gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: [{ type:'valid_email' }]}});
 
 gform.types['textarea'] = _.extend({}, gform.types['input'], {
 
