@@ -395,6 +395,7 @@ gform.normalizeField = function(fieldIn,parent){
 
     // if(typeof field.validate.required == 'undefined'){field.validate.required = false}
     if(field.name == ''){field.name = field.id;}
+    // if((typeof fieldIn.label == 'undefined' || fieldIn.label == '') && (field.label == '' || typeof field.label == 'undefined') ){fieldIn.label = field.name;}
     field.item = fieldIn;
     return field;
 }
@@ -726,9 +727,6 @@ gform.options = function(opts, value, count) {
 
     newOpts.options =  gform.optionsObj.call(this,opts,value,count);
 
-    if(typeof opts.placeholder == 'string'){
-        newOpts.options.unshift({label:opts.placeholder, value:'',enabled:false,visible:false,selected:true})
-    }
     return newOpts.options;
 }
 

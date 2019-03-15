@@ -1,0 +1,6 @@
+{
+  "field":{"type":"checkbox","label":"Checkbox"},
+  "rows":{
+    "limit":false
+  }
+}

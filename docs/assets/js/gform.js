@@ -395,6 +395,7 @@ gform.normalizeField = function(fieldIn,parent){
 
     // if(typeof field.validate.required == 'undefined'){field.validate.required = false}
     if(field.name == ''){field.name = field.id;}
+    // if((typeof fieldIn.label == 'undefined' || fieldIn.label == '') && (field.label == '' || typeof field.label == 'undefined') ){fieldIn.label = field.name;}
     field.item = fieldIn;
     return field;
 }
@@ -726,9 +727,6 @@ gform.options = function(opts, value, count) {
 
     newOpts.options =  gform.optionsObj.call(this,opts,value,count);
 
-    if(typeof opts.placeholder == 'string'){
-        newOpts.options.unshift({label:opts.placeholder, value:'',enabled:false,visible:false,selected:true})
-    }
     return newOpts.options;
 }
 
@@ -855,7 +853,7 @@ gform.getUID = function() {
         //   if(this.other){
         //       this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
         //   }
-          this.label = gform.renderString(this.item.label, this);
+          this.label = gform.renderString(this.item.label||this.label, this);
           this.el.querySelector('label').innerHTML = this.label
       },
       initialize: function() {
@@ -1057,7 +1055,16 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool'],{default:{format:{label:""}}});
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
-gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection']);
+gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
+    render: function() {
+        this.options = gform.options.call(this,this, this.value);
+
+  if(typeof this.placeholder == 'string'){
+      this.options.unshift({label:this.placeholder, value:'',enabled:false,visible:false,selected:true})
+  }
+        return gform.render(this.type, this);
+    },
+});
 gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     get: function(){
       return (this.el.querySelector('[type=range]')||{value:''}).value; 
@@ -1092,7 +1099,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       if(this.multiple){
           return _.transform(this.el.querySelectorAll('[type="checkbox"]:checked'),function(value,item){value.push(item.value)},[])
       }else{
-        return (this.el.querySelector('[type="radio"][name="' + this.name + '"]:checked')||{value:''}).value; 
+        return (this.el.querySelector('[type="radio"]:checked')||{value:''}).value; 
       }
   },
   set:function(value){

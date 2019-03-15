@@ -1,0 +1,6 @@
+{
+  "field":{"type":"textarea","label":"Textarea"},
+  "rows":{
+    "limit":{"limit":100}
+  }
+}

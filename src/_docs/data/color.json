@@ -1,0 +1,6 @@
+{
+  "field":{"type":"color","label":"Color"},
+  "rows":{
+    "limit":false
+  }
+}

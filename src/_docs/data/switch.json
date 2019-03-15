@@ -1,0 +1,6 @@
+{
+  "field":{"type":"switch","label":"Switch"},
+  "rows":{
+    "limit":false
+  }
+}

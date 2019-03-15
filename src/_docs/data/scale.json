@@ -1,0 +1,6 @@
+{
+  "field":{"type":"scale","label":"Scale","collection":true,"addon":",format: {low: 'Bad', high:'Good'}"},
+  "rows":{
+    "limit":false
+  }
+}

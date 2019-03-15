@@ -1,6 +1,0 @@
-{
-  "field":{"type":"range"},
-  "rows":{
-    "limit":false
-  }
-}

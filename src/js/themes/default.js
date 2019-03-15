@@ -80,7 +80,7 @@ radio: `
         <label class="label-inline" for="{{name}}_{{value}}">{{label}}</label></div>
     {{/multiple}}
     {{^multiple}}
-        <label><input style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
+        <label><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
     {{/multiple}}
     {{/options}}
     </span>
@@ -94,7 +94,7 @@ scale: `
         <tr>
             {{#format.low}}<th></th>{{/format.low}}
             {{#options}}
-            <th><label for="{{name}}_{{i}}">{{label}}</label></th>
+            <th><label for="{{name}}_{{i}}">{{{label}}}</label></th>
             {{/options}}
             {{#format.high}}<th></th>{{/format.high}}
         </tr>
@@ -104,7 +104,7 @@ scale: `
             {{#format.low}}<td><label style="font-weight: 500;" for="{{name}}_1">{{{format.low}}}</label></td>{{/format.low}}
             {{#options}}
             <td>
-                <input id="{{name}}_{{i}}" style="margin-right: 5px;" name="{{name}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
+                <input id="{{name}}_{{i}}" style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
             </td>
             {{/options}}
             {{#format.high}}<td><label style="font-weight: 500;" for="{{name}}_{{options.length}}">{{{format.high}}}</label></td>{{/format.high}}
@@ -242,15 +242,13 @@ gform.handleError = function(field){
         field.el.querySelector('.valid').innerHTML = '';
     }
 }
-gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+gform.types['cancel']   = _.extend({}, gform.types['button'], {defaults:{
 	label:"<i class=\"fa fa-times\"></i> Cancel",
 	action:"cancel",
-	modifiers: "button-outline",
-	type:"button"}});
-gform.types['save']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+	modifiers: "button-outline"}});
+gform.types['save']   = _.extend({}, gform.types['button'], {defaults:{
 	label:"<i class=\"fa fa-check\"></i> Save",
 	action:"save",
-	modifiers: "float-right",
-	type:"button"}});
+	modifiers: "float-right"}});
 
 

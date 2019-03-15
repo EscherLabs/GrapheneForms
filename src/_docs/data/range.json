@@ -1,0 +1,6 @@
+{
+  "field":{"type":"range","label":"Range","collection":true},
+  "rows":{
+    "limit":false
+  }
+}

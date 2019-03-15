@@ -1,0 +1,16 @@
+  {
+    label: 'Enable {{page.field.type}} Field',
+    name: 'enable',
+    type: 'checkbox'
+  },
+  {
+    type: '{{page.field.type}}',
+    label: '{{page.field.type}} Field',
+    enable:[{
+      type: 'matches',
+      name: 'enable',
+      value: true
+    }]{{#page.field.collection}},
+    options:[1, 2, 3, 4, 5]
+    {{/page.field.collection}}{{{page.field.addon}}}
+  }

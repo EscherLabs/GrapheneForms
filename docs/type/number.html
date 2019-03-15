@@ -13,9 +13,10 @@
 		<link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
 		<link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
     <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
+		<link rel='stylesheet' type='text/css' href='../assets/css/demo.css'>
+
 
 		<!-- Custom styles for this template -->
-		<link rel='stylesheet' type='text/css' href='../assets/css/demo.css'>
 
 		<!--[if lt IE 9]>
 			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -61,7 +62,7 @@
 
 				<div class="col-sm-3" ></div>
 				<div class="hidden-xs" style="position:fixed;overflow:auto;top:100px;bottom:0;width:200px" id="sidebar" role="navigation">
-					<a href="#options"><h4>Text Field Options</h4></a>
+					<a href="#options"><h4>Number Field Options</h4></a>
 					<ul class>
 						<!-- <li class="list-unstyled" ><a href="#opts"><i class="fa fa-chevron-right"></i> Options</a></li> -->
 					</ul>
@@ -109,7 +110,7 @@
 
 					<!--Introduction -->
 					<a name="options" style="display:block;position:relative;top:-80px"></a>
-					<h2>Text field Options</h2>
+					<h2>Number field Options</h2>
 					<!-- <a name="opts" style="display:block;position:relative;top:-80px"></a> -->
 					<!-- <h4>options</h4> -->
 					<p>
@@ -117,6 +118,15 @@
 <table class="table table-bordered table-striped"> 
 	<thead> <tr> <th>Name</th> <th>Type</th> <th style="width:205px">Default</th> <th>Description</th> </tr> </thead> 
 	<tbody> 
+
+
+
+		<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
+
+		<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
+
+
+
 
 		<tr><td><a href="#name">name</a></td><td>string</td><td>lowercase label and replace spaces with '_'<br><br>no label -> name is generated i.e. 'f1'</td><td>This value is is the variable name used</td></tr>
 		<tr><td><a href="#label">label</a></td><td>string | bool</td><td>field.name</td><td>This is the label displayed for the field, if you want to hide the label then set this to <code>false</code><br><br>The string can also contain mustache i.e.<br>'My choice {{value}}'</td></tr>
@@ -129,7 +139,7 @@
 		<tr><td><a href="#display">display</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met</td></tr>
 		<tr><td><a href="#enable">enable</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>Similar to display but this option controls whether the field is enabled for interaction</td></tr>
 		<tr><td><a href="#parse">parse</a></td><td><a href="../docs.html#conditions">condition</a></td><td>'display'</td><td>This option determins if the field will be in the data result from <code>myform.get()</code></td></tr>
-		<tr><td><a href="#validate">validate</a></td><td>array</td><td>'[]'</td><td>This is a set of validations to perform on this field when <code>validate()</code> is called</td></tr>
+		<tr><td><a href="#validate">validate</a></td><td>array</td><td>'[]'</td><td>This is a set of validations to perform on this field when <code>validate()</code> is called. Note: fields that are empty are not validated, if you require something to be filled in use the required attribute</td></tr>
 		<tr><td><a href="#required">required</a></td><td><a href="../docs.html#conditions">condition</a></td><td>false</td><td>This is a special case for validation that is calculated live and updates the label to indicate the required status. Validation of this happens when <code>validate()</code> is called</code></td></tr>
 
 		<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
@@ -234,11 +244,11 @@
 					<h4>Array</h4>
 					<p></p>
 					<div class="well arrayfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-		{        
-			type: 'number',
-			label: 'Array Example',
-			array: {min: 2, max: 4}
-		}
+  {
+    type: 'number',
+    label: 'Array Example',
+    array: {min: 2, max: 4}
+  }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--display -->
 					<a name="display" style="display:block;position:relative;top:-80px"></a>
@@ -247,9 +257,8 @@
 					<p></p>
 					<div class="well displayfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-		
     label: 'Display number Field',
-    name:'display',
+    name: 'display',
     type: 'checkbox'
   },
   {
@@ -270,7 +279,7 @@
 					<div class="well enablefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
     label: 'Enable number Field',
-    name:'enable',
+    name: 'enable',
     type: 'checkbox'
   },
   {
@@ -291,7 +300,7 @@
 					<div class="well parsefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
     label: 'Parse number Field',
-    name:'parse',
+    name: 'parse',
     type: 'checkbox'
   },
   {
@@ -338,7 +347,7 @@
 {
     type: 'number',
     label: 'Limit Example',
-    limit: 5
+    limit: 3
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<hr>
@@ -354,7 +363,7 @@
 		<script type='text/javascript' src='../assets/vendor/js/jquery.js'></script>    
 		<script type='text/javascript' src='../assets/js/lodash.min.js'></script>    
 		<script type='text/javascript' src='../assets/vendor/js/colorpicker.min.js'></script>    
-
+ 
 		 <script type='text/javascript' src='../assets/js/gform_bootstrap.min.js'></script> 
 		<script>
 				gform.options.autoFocus = false;
@@ -437,11 +446,11 @@ document.querySelector('.targetfield .result').innerHTML = JSON.stringify(e.form
 ).pub('change')
 new gform({
   "el":".arrayfield .form",
-  "fields":[ 		{        
-			type: 'number',
-			label: 'Array Example',
-			array: {min: 2, max: 4}
-		}		] 
+  "fields":[   {
+    type: 'number',
+    label: 'Array Example',
+    array: {min: 2, max: 4}
+  }		] 
 	}).sub('change', function(e){
 document.querySelector('.arrayfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
@@ -449,9 +458,8 @@ document.querySelector('.arrayfield .result').innerHTML = JSON.stringify(e.form,
 new gform({
   "el":".displayfield .form",
   "fields":[   {
-		
     label: 'Display number Field',
-    name:'display',
+    name: 'display',
     type: 'checkbox'
   },
   {
@@ -471,7 +479,7 @@ new gform({
   "el":".enablefield .form",
   "fields":[   {
     label: 'Enable number Field',
-    name:'enable',
+    name: 'enable',
     type: 'checkbox'
   },
   {
@@ -491,7 +499,7 @@ new gform({
   "el":".parsefield .form",
   "fields":[   {
     label: 'Parse number Field',
-    name:'parse',
+    name: 'parse',
     type: 'checkbox'
   },
   {
@@ -539,17 +547,19 @@ document.querySelector('.requiredfield .result').innerHTML = JSON.stringify(e.fo
 		e.form.validate()
 })
 
+
 new gform({
   "el":".limitfield .form",
   "fields":[ {
     type: 'number',
     label: 'Limit Example',
-    limit: 5
+    limit: 3
   }		] 
 	}).sub('change', function(e){
 document.querySelector('.limitfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')</script>
+).pub('change')
+</script>
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
 	</body>

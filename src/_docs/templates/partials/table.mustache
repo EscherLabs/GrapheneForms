@@ -1,0 +1,43 @@
+<table class="table table-bordered table-striped"> 
+	<thead> <tr> <th>Name</th> <th>Type</th> <th style="width:205px">Default</th> <th>Description</th> </tr> </thead> 
+	<tbody> 
+
+		{{#rows.name}}
+		{{#page.rows.name}}
+		{{>row}}
+		{{/page.rows.name}}
+		{{/rows.name}}
+
+		{{#rows.label}}
+		{{#page.rows.label}}
+		{{>row}}
+		{{/page.rows.label}}
+		{{/rows.label}}
+
+		{{#rows.limit}}
+		{{#page.rows.limit}}
+		{{>row}}
+		{{/page.rows.limit}}
+		{{/rows.limit}}
+
+		{{#rows.limit}}
+		{{#page.rows.limit}}
+		{{>row}}
+		{{/page.rows.limit}}
+		{{/rows.limit}}
+
+
+
+
+		{{#common}}
+		{{>row}}
+		{{/common}}
+
+		{{#rows.limit}}
+		{{#page.rows.limit}}
+		{{>row}}
+		{{/page.rows.limit}}
+		{{/rows.limit}}
+
+	</tbody> 
+</table>

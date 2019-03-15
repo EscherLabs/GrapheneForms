@@ -1,0 +1,6 @@
+{
+  "field":{"type":"url","label":"Url"},
+  "rows":{
+    "limit":{}
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "field":{"type":"fieldset","label":"Fieldset"},
+  "rows":{
+    "limit":false
+  }
+}

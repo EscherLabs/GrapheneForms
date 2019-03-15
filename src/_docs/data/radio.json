@@ -1,0 +1,6 @@
+{
+  "field":{"type":"radio","label":"Radio","collection":true},
+  "rows":{
+    "limit":{}
+  }
+}

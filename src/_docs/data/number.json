@@ -1,0 +1,6 @@
+{
+  "field":{"type":"number","label":"Number"},
+  "rows":{
+    "limit":{}
+  }
+}

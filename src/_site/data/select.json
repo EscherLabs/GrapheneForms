@@ -1,6 +1,0 @@
-{
-  "field":{"type":"select","addon":",options:[1,2,3]"},
-  "rows":{
-    "limit":{}
-  }
-}

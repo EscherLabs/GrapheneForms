@@ -1,0 +1,14 @@
+  {
+    type: '{{page.field.type}}',
+    label: 'Column 1',
+    columns: 4{{#page.field.collection}},
+    options:[1, 2, 3]
+    {{/page.field.collection}}{{{page.field.addon}}}
+  },
+  {
+    type: '{{page.field.type}}',
+    label: 'Column 2',
+    columns: 8{{#page.field.collection}},
+    options:[1, 2, 3, 4]
+    {{/page.field.collection}}{{{page.field.addon}}}
+  }

@@ -1,0 +1,6 @@
+{
+  "field":{"type":"button","label":"Button"},
+  "rows":{
+    "limit":false
+  }
+}

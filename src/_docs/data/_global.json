@@ -1,0 +1,115 @@
+{
+  "common":[
+    {
+      "name":"name",
+      "label":"Name",
+      "type":"string",
+      "default":"lowercase label and replace spaces with '_'<br><br>no label -> name is generated i.e. 'f1'",
+      "description":"This value is is the variable name used"
+		},
+    {
+      "name":"label",
+      "label":"Label",
+      "type":"string | bool",
+      "default":"field.name",
+      "description":"This is the label displayed for the field, if you want to hide the label then set this to <code>false</code><br><br>The string can also contain mustache i.e.<br>'My choice {{value}}'"
+    },{
+      "name":"value",
+      "label":"Value",
+      "type":"string | function",
+      "default":"''",
+      "description":"Function will run once at instantiation"
+    },{
+      "name":"help",
+      "label":"Help",
+      "type":"string",
+      "default":"''",
+      "description":"This text is used to provide context or help in filling out the field"
+    },{
+      "name":"placeholder",
+      "label":"Placeholder",
+      "type":"string",
+      "default":"''",
+      "description":"This text will be visible in the text box until text is entered into the field"
+    },{
+      "name":"columns",
+      "label":"Columns",
+      "type":"integer",
+      "default":"12",
+      "description":"The form is divided into a grid 12 columns wide, this is setting how many of those columns to display this element at, using this you can make split column forms"
+    },{
+      "name":"target",
+      "label":"Target",
+      "type":"selector | node",
+      "default":"",
+      "description":"If the target is not set then the field is appended to the parent element which is usually the main form but may be a fieldset"
+    },{
+      "name":"array",
+      "label":"Array",
+      "type":"boolean | object",
+      "default":"false",
+      "description":"if set to true or and object then this field will have buttons for adding and removing instances of the item. Additionally the value will become an array of all instances of this field. Further information on this can be found <a href=\"../docs.html#field_array\">here</a>."
+    },{
+      "name":"display",
+      "label":"Display",
+      "type":"<a href=\"../docs.html#conditions\">condition</a>",
+      "default":"true",
+      "description":"This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met"
+    },{
+      "name":"enable",
+      "label":"Enable",
+      "type":"<a href=\"../docs.html#conditions\">condition</a>",
+      "default":"true",
+      "description":"Similar to display but this option controls whether the field is enabled for interaction"
+    },{
+      "name":"parse",
+      "label":"Parse",
+      "type":"<a href=\"../docs.html#conditions\">condition</a>",
+      "default":"'display'",
+      "description":"This option determins if the field will be in the data result from <code>myform.get()</code>"
+    },{
+      "name":"validate",
+      "label":"Validate",
+      "type":"array",
+      "default":"'[]'",
+      "description":"This is a set of validations to perform on this field when <code>validate()</code> is called. Note: fields that are empty are not validated, if you require something to be filled in use the required attribute"
+    },{
+      "name":"required",
+      "label":"Required",
+      "type":"<a href=\"../docs.html#conditions\">condition</a>",
+      "default":"false",
+      "description":"This is a special case for validation that is calculated live and updates the label to indicate the required status. Validation of this happens when <code>validate()</code> is called</code>"
+    }
+
+  ],
+	"rows": {
+    "limit":{
+      "name":"limit",
+      "label":"Limit",
+      "type":"integer",
+      "default":"0 (no limit)",
+      "limit":3,
+      "description":"This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered."
+		}
+	},
+  "fields":[
+    "text",
+    "hidden",
+    "number",
+    "color",
+    "email",
+    "password",
+    "url",
+    "tel",
+    "textarea",
+    "checkbox",
+    "range",
+    "select",
+    "radio",
+    "fieldset",
+    "switch",
+    "scale",
+    "grid",
+    "button"
+  ]
+}

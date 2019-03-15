@@ -1,0 +1,6 @@
+{
+  "field":{"type":"select","label":"Select","collection":true},
+  "rows":{
+    "limit":{}
+  }
+}

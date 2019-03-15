@@ -30,7 +30,8 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>
 	{{/label}}
 		<textarea class="form-control"  {{^enabled}}readonly{{/enabled}} {{#limit}}maxlength="{{limit}}"{{/limit}} style="width:100%;height:auto;min-height:20px" rows="{{rows}}{{^rows}}3{{/rows}}" name="{{name}}" id="{{guid}}" placeholder="{{placeholder}}">{{content}}{{value}}</textarea>
-			{{>_addons}}
+		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
+		{{>_addons}}
 			{{>_actions}}
 	</div>
 </div>`,
@@ -45,27 +46,32 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/label}}
 		{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
 		{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
-			<select class="form-control" {{^enabled}}readonly disabled="true"{{/enabled}} {{#multiple}}multiple=multiple{{/multiple}} name="{{name}}{{#multiple}}[]{{/multiple}} >
+			<select class="form-control test" {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
+
+
+
 			{{#options}}
-
-				{{^section}}
-				<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
-				{{/section}}
-
-				
-				{{#section}}
-				{{#section.label}}
-				<optgroup label="{{label}}" data-id="{{section.id}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}">
-				{{/section.label}}
+			{{^section}}
+			<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+			{{/section}}
+			{{#section}}
+			{{#section.label}}
+			<optgroup label="{{label}}" data-id="{{section.id}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}">
+			{{/section.label}}
 					{{#options}}
 					<option data-id="{{section.id}}" {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
 					{{/options}}
 					{{#section.label}}
-				</optgroup>
-				{{/section.label}}
-				{{/section}}
-
+			</optgroup>
+			{{/section.label}}
+			{{/section}}
 			{{/options}}
+
+
+
+
+
+
 			</select>
 		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
 		{{^post}}{{#pre}}</div>{{/pre}}{{/post}}
@@ -82,18 +88,21 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{^label}}
 	<div class="col-md-12">
 	{{/label}}
-		{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
-		{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
+
+
 			{{#options}}
-			<div class="radio">
-				<label {{#inline}}class="radio-inline"{{/inline}}>
-					<input data-label="{{label}}" name="{{name}}" value="{{value}}" {{^enabled}}readonly{{/enabled}} type="radio" {{#selected}}checked=checked{{/selected}} >
-					{{{label}}}{{^label}}&nbsp;{{/label}}
-				</label>
+			{{#multiple}}
+			<div class="checkbox">
+					<label><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/> {{label}}</label>
 			</div>
+			{{/multiple}}
+			{{^multiple}}
+			<div class="radio">
+					<label {{#inline}}class="radio-inline"{{/inline}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
+			</div>
+			{{/multiple}}
 			{{/options}}
-		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
-		{{^post}}{{#pre}}</div>{{/pre}}{{/post}}
+
 		{{>_addons}}
 		{{>_actions}}
 	</div>
@@ -120,7 +129,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/array}}`,
     _label: `
     {{^hideLabel}}
-	<label for="{{guid}}" {{#inline}}style="text-align:left"{{/inline}} class="control-label col-md-{{#inline}}12{{/inline}}{{^inline}}4{{/inline}}">
+	<label for="{{name}}" {{#inline}}style="text-align:left"{{/inline}} class="control-label col-md-{{#inline}}12{{/inline}}{{^inline}}4{{/inline}}">
   {{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}
 </label>{{#label}}{{/label}}
 {{/hideLabel}}
@@ -145,6 +154,47 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
 		{{>_addons}}
 		{{>_actions}}
+	</div>
+</div>`,
+scale:`
+<div class="row clearfix form-group {{modifiers}} {{#multiple.duplicate}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/multiple.duplicate}}" name="{{name}}" data-type="{{type}}">
+	{{>_label}}
+	{{>_actions}}
+	{{#label}}
+	{{#inline}}<div class="col-md-12">{{/inline}}
+	{{^inline}}<div class="col-md-8">{{/inline}}
+	{{/label}}
+	{{^label}}
+	<div class="col-md-12">
+	{{/label}}
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					{{#format.low}}<th></th>{{/format.low}}
+					{{#options}}
+					<th><label for="{{name}}_{{i}}">{{{label}}}</label></th>
+					{{/options}}
+					{{#format.high}}<th></th>{{/format.high}}
+				</tr>
+
+				</thead>
+				<tbody>
+				<tr>
+					{{#format.low}}<td><label style="font-weight: 500;" for="{{name}}_1">{{{format.low}}}</label></td>{{/format.low}}
+
+
+					{{#options}}
+					<td>
+						<input data-label="{{label}}" id="{{name}}_{{i}}" name="{{id}}" value="{{value}}" {{^isEnabled}}readonly{{/isEnabled}} type="radio" {{#selected}}checked=checked{{/selected}} >
+					</td>
+					{{/options}}
+					{{#format.high}}<td><label style="font-weight: 500;" for="{{name}}_{{options.length}}">{{{format.high}}}</label></td>{{/format.high}}
+
+				</tr>
+
+		</tbody>
+			</table>
+		{{>_addons}}
 	</div>
 </div>`,
 button:`<div class="btn btn-default {{modifiers}}" style="margin:0 15px">{{{label}}}</div>`,
@@ -217,16 +267,14 @@ gform.handleError = function(field){
 		field.el.querySelector('.font-xs.text-danger').innerHTML = '';
 	}
 }
-gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+gform.types['cancel']   = _.extend({}, gform.types['button'], {defaults:{
 	"label":"<i class=\"fa fa-times\"></i> Cancel",
 	"action":"cancel",
-	"modifiers": "btn btn-danger",
-	"type":"button"			}});
-gform.types['save']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+	"modifiers": "btn btn-danger"}});
+gform.types['save']   = _.extend({}, gform.types['button'], {defaults:{
 	"label":"<i class=\"fa fa-check\"></i> Save",
 	"action":"save",
-	"modifiers": "btn btn-success",
-	"type":"button"			}});
+	"modifiers": "btn btn-success"}});
 
 
 
@@ -348,52 +396,3 @@ gform.types['time']= _.extend({}, gform.types['datetime'], {
 		format:{input: "h:mm A"}
 	}
 })
-// 	,
-// 	initialize: function(){
-// 	  this.onchangeEvent = function(){
-// 		  this.value = this.get();
-// 		  this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
-// 	  }.bind(this)
-	  
-// 	//   this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
-// 	  var $el = $(this.el.querySelector('input[name="' + this.name + '"]'));
-// 	  // this.el.addEventListener('change', this.onchangeEvent.bind(null));
-// 	  $el.attr('type','text');
-// 	  $el.datetimepicker({format: this.format.input})
-// 	  $el.on("dp.change", this.onchangeEvent.bind(null,true));
-// 	},
-//   });
-// (function(b, $){
-	// b.register({ type: 'date',
-	// 	defaults: { elType: 'text' },
-	// 	setup: function() {
-	// 		this.$el = this.self.find('input');
-	// 		this.$el.off();
-	// 		if(this.onchange !== undefined){ this.$el.on('input',this.onchange);}
-	// 		this.$el.on('input', $.proxy(function(){this.trigger('change');}, this));
-	//     	this.$el.datetimepicker($.extend({},{format: "MM/DD/YYYY"}, this.item.datepicker))
-	// 	},
-	// 	satisfied: function(){
-	// 		this.value = this.$el.val();
-	// 		return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '');
-
-	// 	}
-	// });
-
-// 	b.register({ type: 'time',
-// 		defaults: { elType: 'text' },
-// 		setup: function() {
-// 			this.$el = this.self.find('input');
-// 			this.$el.off();
-// 			if(this.onchange !== undefined){ this.$el.on('input',this.onchange);}
-// 			this.$el.on('input', $.proxy(function(){this.trigger('change');}, this));
-
-// 			// this.$el.timepicker(this.item.timepicker || {});
-
-//       this.$el.datetimepicker($.extend({},{format: "h:m A"},this.item.timepicker));
-
-// 			// this.$el.datetimepicker(this.item.timepicker || {format: "h:m A"});
-
-// 		}
-// 	});
-// })(Berry, jQuery);

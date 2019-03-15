@@ -1,0 +1,6 @@
+{
+  "field":{"type":"tel","label":"Tel"},
+  "rows":{
+    "limit":{}
+  }
+}

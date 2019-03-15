@@ -1,6 +1,0 @@
-{
-  "field":{"type":"text"},
-  "rows":{
-    "limit":{"description":"mystuff"}
-  }
-}
