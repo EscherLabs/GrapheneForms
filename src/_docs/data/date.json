@@ -1,5 +1,5 @@
 {
-  "field":{"type":"scale","label":"Scale","collection":true,"addon":",format: {low: 'Bad', high:'Good'}"},
+  "field":{"type":"date","label":"Date"},
   "rows":{
     "name":{},
     "label":{},
@@ -14,8 +14,6 @@
     "parse":{},
     "validate":{},
     "required":{},
-    "min":{},
-    "max":{},
-    "step":{}
+    "limit":false
   }
 }

@@ -1,6 +1,8 @@
 {
   "field":{"type":"hidden","label":"Hidden"},
   "rows":{
-    "limit":false
+    "name":{},
+    "value":{},
+    "parse":{}
   }
 }

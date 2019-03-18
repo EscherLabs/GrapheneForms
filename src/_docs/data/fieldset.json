@@ -1,6 +1,18 @@
 {
   "field":{"type":"fieldset","label":"Fieldset"},
   "rows":{
+    "name":{},
+    "label":{},
+    "value":{},
+    "help":{},
+    "columns":{},
+    "target":{},
+    "array":{},
+    "display":{},
+    "enable":{},
+    "parse":{},
+    "validate":{},
+    "required":{},
     "limit":false
   }
 }

@@ -1,6 +1,23 @@
 {
   "field":{"type":"radio","label":"Radio","collection":true},
   "rows":{
-    "limit":{}
+    "name":{},
+    "label":{},
+    "value":{},
+    "help":{},
+    "placeholder":{},
+    "columns":{},
+    "target":{},
+    "array":{},
+    "display":{},
+    "enable":{},
+    "parse":{},
+    "validate":{},
+    "required":{},
+    "limit":{},
+    "min":{},
+    "max":{},
+    "step":{},
+    "multiple":{}
   }
 }

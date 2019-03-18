@@ -1,6 +1,6 @@
 gform.stencils = {
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
-    _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="footer row"></div>`,
+    _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer row"></div>`,
     text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
@@ -13,8 +13,30 @@ gform.stencils = {
 		{{#pre}}<div class="input-group col-xs-12"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
     {{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
 		<input {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^enabled}}readonly{{/enabled}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" />
-    {{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
+		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
     {{^post}}{{#pre}}</div>{{/pre}}{{/post}}
+		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
+
+		{{>_addons}}
+		{{>_actions}}
+	</div>
+</div>`,
+switch:`
+<div class="row clearfix {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+	{{>_label}}
+	{{#label}}
+	{{#inline}}<div class="col-md-12" style="margin:0 0 5px">{{/inline}}
+	{{^inline}}<div class="col-md-8" style="margin:0 0 15px">{{/inline}}
+	{{/label}}
+	{{^label}}
+	{{#inline}}<div class="col-md-12" style="margin: -10px 0 5px;"">{{/inline}}
+	{{^inline}}<div class="col-md-8" style="margin: -5px 0 10px">{{/inline}}
+	{{/label}}
+		<label class="switch">
+		<input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+		<span class="slider round"></span>
+		</label>
+	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
 		{{>_addons}}
 		{{>_actions}}
 	</div>
@@ -47,12 +69,9 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 		{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
 		{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
 			<select class="form-control test" {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
-
-
-
 			{{#options}}
 			{{^section}}
-			<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+			<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}} value="{{value}}">{{{label}}}</option>
 			{{/section}}
 			{{#section}}
 			{{#section.label}}
@@ -352,7 +371,7 @@ gform.types['url'] = _.extend({}, gform.types['input'], {defaults:{post: '<i cla
 			validate: [{ type:'valid_url' }]}});
 gform.types['tel'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-phone"></i>' ,
 			placeholder: '+1'}});
-
+gform.types['password'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-lock"></i>'}});
 gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section'],{
     defaults:{fields:[
         {type:"text",name:'street',label:"Street Address", validate:[{type:"length",max:"255"}]},

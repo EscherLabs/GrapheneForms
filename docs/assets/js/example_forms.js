@@ -76,6 +76,14 @@ var forms = {
             {label: 'Custom value', name: 'value', type: 'select', max: 12, min: 1, format: { value:'option-{{value}}' }},
             {label: 'Both', name: 'both', type: 'select', max: 12, min: 1, format: { label: '{{value}} Column(s)', value: 'col-md-{{value}}'}, help: 'Select a bootstrap column class'}
         ]
+    },
+    "format_select": {
+        fields:[
+            {label: 'Custom label', name: 'label', type: 'select', max: 10, format: { label: 'Option {{index}}' }},
+            {label: 'Custom value', name: 'value', type: 'select', max: 12, min: 1, format: { value:'option-{{value}}' }},
+            {label: 'Both', name: 'both', type: 'select', max: 12, min: 1, format: { label: '{{value}} Column(s)', value: 'col-md-{{value}}'}, help: 'Select a bootstrap column class'},
+            {label: 'Both', name: 'both', type: 'select', max: 12, min: 1, format: { label: '{{label}}-{{index}}', value: '{{index}}'}, help: 'Select a bootstrap column class'}
+        ]
     }
 
 }

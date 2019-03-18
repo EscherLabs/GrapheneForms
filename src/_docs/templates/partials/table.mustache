@@ -14,30 +14,120 @@
 		{{/page.rows.label}}
 		{{/rows.label}}
 
+		{{#rows.value}}
+		{{#page.rows.value}}
+		{{>row}}
+		{{/page.rows.value}}
+		{{/rows.value}}
+
+		{{#rows.help}}
+		{{#page.rows.help}}
+		{{>row}}
+		{{/page.rows.help}}
+		{{/rows.help}}
+
+		{{#rows.placeholder}}
+		{{#page.rows.placeholder}}
+		{{>row}}
+		{{/page.rows.placeholder}}
+		{{/rows.placeholder}}
+
+		{{#rows.multiple}}
+		{{#page.rows.multiple}}
+		{{>row}}
+		{{/page.rows.multiple}}
+		{{/rows.multiple}}
+
 		{{#rows.limit}}
 		{{#page.rows.limit}}
 		{{>row}}
 		{{/page.rows.limit}}
 		{{/rows.limit}}
 
-		{{#rows.limit}}
-		{{#page.rows.limit}}
+		{{#rows.size}}
+		{{#page.rows.size}}
 		{{>row}}
-		{{/page.rows.limit}}
-		{{/rows.limit}}
+		{{/page.rows.size}}
+		{{/rows.size}}
 
-
-
-
-		{{#common}}
+		{{#rows.min}}
+		{{#page.rows.min}}
 		{{>row}}
-		{{/common}}
+		{{/page.rows.min}}
+		{{/rows.min}}
 
-		{{#rows.limit}}
-		{{#page.rows.limit}}
+		{{#rows.max}}
+		{{#page.rows.max}}
 		{{>row}}
-		{{/page.rows.limit}}
-		{{/rows.limit}}
+		{{/page.rows.max}}
+		{{/rows.max}}
+
+		{{#rows.step}}
+		{{#page.rows.step}}
+		{{>row}}
+		{{/page.rows.step}}
+		{{/rows.step}}
+
+		{{#rows.options}}
+		{{#page.rows.options}}
+		{{>row}}
+		{{/page.rows.options}}
+		{{/rows.options}}
+
+		{{#rows.format}}
+		{{#page.rows.format}}
+		{{>row}}
+		{{/page.rows.format}}
+		{{/rows.format}}
+
+		{{#rows.columns}}
+		{{#page.rows.columns}}
+		{{>row}}
+		{{/page.rows.columns}}
+		{{/rows.columns}}
+
+		{{#rows.target}}
+		{{#page.rows.target}}
+		{{>row}}
+		{{/page.rows.target}}
+		{{/rows.target}}
+
+		{{#rows.array}}
+		{{#page.rows.array}}
+		{{>row}}
+		{{/page.rows.array}}
+		{{/rows.array}}
+
+		{{#rows.display}}
+		{{#page.rows.display}}
+		{{>row}}
+		{{/page.rows.display}}
+		{{/rows.display}}
+
+		{{#rows.enable}}
+		{{#page.rows.enable}}
+		{{>row}}
+		{{/page.rows.enable}}
+		{{/rows.enable}}
+
+		{{#rows.parse}}
+		{{#page.rows.parse}}
+		{{>row}}
+		{{/page.rows.parse}}
+		{{/rows.parse}}
+
+		{{#rows.validate}}
+		{{#page.rows.validate}}
+		{{>row}}
+		{{/page.rows.validate}}
+		{{/rows.validate}}
+
+		{{#rows.required}}
+		{{#page.rows.required}}
+		{{>row}}
+		{{/page.rows.required}}
+		{{/rows.required}}
+
 
 	</tbody> 
 </table>

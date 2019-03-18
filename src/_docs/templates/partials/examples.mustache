@@ -1,81 +1,50 @@
-{{#common.0}}
+{{#rows.name}}
+{{#page.rows.name}}
 	{{>exTop}}
 	{{>_nameForm}}
 	{{>exBottom}}
-{{/common.0}}
+{{/page.rows.name}}
+{{/rows.name}}
 
-{{#common.1}}
+{{#rows.label}}
+{{#page.rows.label}}
 	{{>exTop}}
 	{{>_labelForm}}
 	{{>exBottom}}
-{{/common.1}}
+{{/page.rows.label}}
+{{/rows.label}}
 
-{{#common.2}}
+{{#rows.value}}
+{{#page.rows.value}}
 	{{>exTop}}
 	{{>_valueForm}}
 	{{>exBottom}}
-{{/common.2}}
+{{/page.rows.value}}
+{{/rows.value}}
 
-{{#common.3}}
+{{#rows.help}}
+{{#page.rows.help}}
 	{{>exTop}}
 	{{>_helpForm}}
 	{{>exBottom}}
-{{/common.3}}
+{{/page.rows.help}}
+{{/rows.help}}
 
-{{#common.4}}
+{{#rows.placeholder}}
+{{#page.rows.placeholder}}
 	{{>exTop}}
 	{{>_placeholderForm}}
 	{{>exBottom}}
-{{/common.4}}
+{{/page.rows.placeholder}}
+{{/rows.placeholder}}
 
-{{#common.5}}
+{{#rows.multiple}}
+{{#page.rows.multiple}}
 	{{>exTop}}
-	{{>_columnsForm}}
+	{{>_multipleForm}}
 	{{>exBottom}}
-{{/common.5}}
-
-{{#common.6}}
-	{{>exTop}}
-	{{>_targetForm}}
-	{{>exBottom}}
-{{/common.6}}
-
-{{#common.7}}
-	{{>exTop}}
-	{{>_arrayForm}}
-	{{>exBottom}}
-{{/common.7}}
-
-{{#common.8}}
-	{{>exTop}}
-	{{>_displayForm}}
-	{{>exBottom}}
-{{/common.8}}
-
-{{#common.9}}
-	{{>exTop}}
-	{{>_enableForm}}
-	{{>exBottom}}
-{{/common.9}}
-
-{{#common.10}}
-	{{>exTop}}
-	{{>_parseForm}}
-	{{>exBottom}}
-{{/common.10}}
-
-{{#common.11}}
-	{{>exTop}}
-	{{>_validateForm}}
-	{{>exBottom}}
-{{/common.11}}
-
-{{#common.12}}
-	{{>exTop}}
-	{{>_requiredForm}}
-	{{>exBottom}}
-{{/common.12}}
-
+{{/page.rows.multiple}}
+{{/rows.multiple}}
 
 {{#rows.limit}}
 {{#page.rows.limit}}
@@ -84,3 +53,115 @@
 	{{>exBottom}}
 {{/page.rows.limit}}
 {{/rows.limit}}
+
+{{#rows.size}}
+{{#page.rows.size}}
+	{{>exTop}}
+	{{>_sizeForm}}
+	{{>exBottom}}
+{{/page.rows.size}}
+{{/rows.size}}
+
+{{#rows.min}}
+{{#page.rows.min}}
+	{{>exTop}}
+	{{>_minForm}}
+	{{>exBottom}}
+{{/page.rows.min}}
+{{/rows.min}}
+
+{{#rows.max}}
+{{#page.rows.max}}
+	{{>exTop}}
+	{{>_maxForm}}
+	{{>exBottom}}
+{{/page.rows.max}}
+{{/rows.max}}
+
+{{#rows.step}}
+{{#page.rows.step}}
+	{{>exTop}}
+	{{>_stepForm}}
+	{{>exBottom}}
+{{/page.rows.step}}
+{{/rows.step}}
+
+{{#rows.options}}
+{{#page.rows.options}}
+	{{>exTop}}
+	{{>_optionsForm}}
+	{{>exBottom}}
+{{/page.rows.options}}
+{{/rows.options}}
+
+{{#rows.format}}
+{{#page.rows.format}}
+  {{>exTop}}
+  {{>_formatForm}}
+	
+        format:{{{format}}}
+  }
+	{{>exBottom}}
+{{/page.rows.format}}
+{{/rows.format}}
+
+{{#rows.columns}}
+{{#page.rows.columns}}
+	{{>exTop}}
+	{{>_columnsForm}}
+	{{>exBottom}}
+{{/page.rows.columns}}
+{{/rows.columns}}
+
+{{#rows.target}}
+{{#page.rows.target}}
+	{{>exTop}}
+	{{>_targetForm}}
+	{{>exBottom}}
+{{/page.rows.target}}
+{{/rows.target}}
+
+{{#rows.array}}
+{{#page.rows.array}}
+	{{>exTop}}
+	{{>_arrayForm}}
+	{{>exBottom}}
+{{/page.rows.array}}
+{{/rows.array}}
+
+{{#rows.display}}
+{{#page.rows.display}}
+	{{>exTop}}
+	{{>_displayForm}}
+	{{>exBottom}}{{/page.rows.display}}
+{{/rows.display}}
+
+{{#rows.enable}}
+{{#page.rows.enable}}
+	{{>exTop}}
+	{{>_enableForm}}
+	{{>exBottom}}{{/page.rows.enable}}
+{{/rows.enable}}
+
+{{#rows.parse}}
+{{#page.rows.parse}}
+	{{>exTop}}
+	{{>_parseForm}}
+	{{>exBottom}}{{/page.rows.parse}}
+{{/rows.parse}}
+
+{{#rows.validate}}
+{{#page.rows.validate}}
+	{{>exTop}}
+	{{>_validateForm}}
+	{{>exBottom}}
+{{/page.rows.validate}}
+{{/rows.validate}}
+
+{{#rows.required}}
+{{#page.rows.required}}
+	{{>exTop}}
+	{{>_requiredForm}}
+	{{>exBottom}}
+{{/page.rows.required}}
+{{/rows.required}}

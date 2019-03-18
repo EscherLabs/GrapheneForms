@@ -13,6 +13,8 @@
 		<link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
 		<link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
     <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/vendor/css/bootstrap-switch.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/vendor/css/bootstrap-datepicker.min.css'>
 		<link rel='stylesheet' type='text/css' href='../assets/css/demo.css'>
 
     {{! <link rel="stylesheet" href="../assets/css/normalize.css">    
@@ -64,7 +66,7 @@
 
 				<div class="col-sm-3" ></div>
 				<div class="hidden-xs" style="position:fixed;overflow:auto;top:100px;bottom:0;width:200px" id="sidebar" role="navigation">
-					<a href="#options"><h4>{{page.field.label}} Field Options</h4></a>
+					<a href="#field_options"><h4>{{page.field.label}} Field Options</h4></a>
 					<ul class>
 						<!-- <li class="list-unstyled" ><a href="#opts"><i class="fa fa-chevron-right"></i> Options</a></li> -->
 					</ul>
@@ -81,7 +83,7 @@
 				<div class="col-xs-12 col-sm-9">
 
 					<!--Introduction -->
-					<a name="options" style="display:block;position:relative;top:-80px"></a>
+					<a name="field_options" style="display:block;position:relative;top:-80px"></a>
 					<h2>{{page.field.label}} field Options</h2>
 					<!-- <a name="opts" style="display:block;position:relative;top:-80px"></a> -->
 					<!-- <h4>options</h4> -->
@@ -109,11 +111,15 @@
 
 		</div><!--/.container-->
 
-		<script type='text/javascript' src='../assets/vendor/js/jquery.js'></script>    
+		<script type='text/javascript' src='../assets/vendor/js/jquery.js'></script>  
+		<script type='text/javascript' src='../assets/js/example_forms.js'></script>    
 		<script type='text/javascript' src='../assets/js/lodash.min.js'></script>    
 		<script type='text/javascript' src='../assets/vendor/js/colorpicker.min.js'></script>    
+		<script type='text/javascript' src='../assets/vendor/js/moment.js'></script>    
+		<script type='text/javascript' src='../assets/vendor/js/bootstrap-datepicker.js'></script>    
  
     {{! <script src='../assets/js/gform.min.js'></script> }}
+		
 		 <script type='text/javascript' src='../assets/js/gform_bootstrap.min.js'></script> 
 		<script>
 				gform.options.autoFocus = false;

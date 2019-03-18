@@ -1,93 +1,170 @@
-{{#common.0}}
+{{#rows.name}}
+{{#page.rows.name}}
 	{{>formTop}}
 	{{>_nameForm}}
 	{{>formBottom}}
-{{/common.0}}
+{{/page.rows.name}}
+{{/rows.name}}
 
-{{#common.1}}
+{{#rows.label}}
+{{#page.rows.label}}
 	{{>formTop}}
 	{{>_labelForm}}
 	{{>formBottom}}
-{{/common.1}}
+{{/page.rows.label}}
+{{/rows.label}}
 
-{{#common.2}}
+{{#rows.value}}
+{{#page.rows.value}}
 	{{>formTop}}
 	{{>_valueForm}}
 	{{>formBottom}}
-{{/common.2}}
-	
-{{#common.3}}
+{{/page.rows.value}}
+{{/rows.value}}
+
+{{#rows.help}}
+{{#page.rows.help}}
 	{{>formTop}}
 	{{>_helpForm}}
 	{{>formBottom}}
-{{/common.3}}
+{{/page.rows.help}}
+{{/rows.help}}
 
-{{#common.4}}
+{{#rows.placeholder}}
+{{#page.rows.placeholder}}
 	{{>formTop}}
 	{{>_placeholderForm}}
 	{{>formBottom}}
-{{/common.4}}
+{{/page.rows.placeholder}}
+{{/rows.placeholder}}
 
-{{#common.5}}
+{{#rows.multiple}}
+{{#page.rows.multiple}}
+	{{>formTop}}
+	{{>_multipleForm}}
+	{{>formBottom}}
+{{/page.rows.multiple}}
+{{/rows.multiple}}
+
+{{#rows.limit}}
+{{#page.rows.limit}}
+	{{>formTop}}
+	{{>_limitForm}}
+	{{>formBottom}}
+{{/page.rows.limit}}
+{{/rows.limit}}
+
+{{#rows.size}}
+{{#page.rows.size}}
+	{{>formTop}}
+	{{>_sizeForm}}
+	{{>formBottom}}
+{{/page.rows.size}}
+{{/rows.size}}
+
+{{#rows.min}}
+{{#page.rows.min}}
+	{{>formTop}}
+	{{>_minForm}}
+	{{>formBottom}}
+{{/page.rows.min}}
+{{/rows.min}}
+
+{{#rows.max}}
+{{#page.rows.max}}
+	{{>formTop}}
+	{{>_maxForm}}
+	{{>formBottom}}
+{{/page.rows.max}}
+{{/rows.max}}
+
+{{#rows.step}}
+{{#page.rows.step}}
+	{{>formTop}}
+	{{>_stepForm}}
+	{{>formBottom}}
+{{/page.rows.step}}
+{{/rows.step}}
+
+{{#rows.options}}
+{{#page.rows.options}}
+	{{>formTop}}
+	{{>_optionsForm}}
+	{{>formBottom}}
+{{/page.rows.options}}
+{{/rows.options}}
+
+{{#rows.format}}
+{{#page.rows.format}}
+	{{>formTop}}
+	{{>_formatForm}}        format: forms.format_select.fields[3].format
+    }
+	{{>formBottom}}
+{{/page.rows.format}}
+{{/rows.format}}
+
+{{#rows.columns}}
+{{#page.rows.columns}}
 	{{>formTop}}
 	{{>_columnsForm}}
 	{{>formBottom}}
-{{/common.5}}
+{{/page.rows.columns}}
+{{/rows.columns}}
 
-{{#common.6}}
+{{#rows.target}}
+{{#page.rows.target}}
 	{{>formTop}}
 	{{>_targetForm}}
 	{{>formBottom}}
-{{/common.6}}
+{{/page.rows.target}}
+{{/rows.target}}
 
-{{#common.7}}
+{{#rows.array}}
+{{#page.rows.array}}
 	{{>formTop}}
 	{{>_arrayForm}}
 	{{>formBottom}}
-{{/common.7}}
+{{/page.rows.array}}
+{{/rows.array}}
 
-{{#common.8}}
+{{#rows.display}}
+{{#page.rows.display}}
 	{{>formTop}}
 	{{>_displayForm}}
-	{{>formBottom}}
-{{/common.8}}
+	{{>formBottom}}{{/page.rows.display}}
+{{/rows.display}}
 
-{{#common.9}}
+{{#rows.enable}}
+{{#page.rows.enable}}
 	{{>formTop}}
 	{{>_enableForm}}
-	{{>formBottom}}
-{{/common.9}}
+	{{>formBottom}}{{/page.rows.enable}}
+{{/rows.enable}}
 
-{{#common.10}}
+{{#rows.parse}}
+{{#page.rows.parse}}
 	{{>formTop}}
 	{{>_parseForm}}
-	{{>formBottom}}
-{{/common.10}}
+	{{>formBottom}}{{/page.rows.parse}}
+{{/rows.parse}}
 
-{{#common.11}}
+{{#rows.validate}}
+{{#page.rows.validate}}
 	{{>formTop}}
 	{{>_validateForm}},
 		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
 	{{>formBottom}}.sub('validate',function(e){
 		e.form.validate()
-})
-{{/common.11}}
+}){{/page.rows.validate}}
+{{/rows.validate}}
 
-{{#common.12}}
+{{#rows.required}}
+{{#page.rows.required}}
 	{{>formTop}}
 	{{>_requiredForm}},
 		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
 	{{>formBottom}}.sub('validate',function(e){
 		e.form.validate()
 })
-{{/common.12}}
-
-{{#rows.limit}}
-
-{{#page.rows.limit}}
-	{{>formTop}}
-	{{>_limitForm}}
-	{{>formBottom}}
-
-{{/page.rows.limit}}
-{{/rows.limit}}
+{{/page.rows.required}}
+{{/rows.required}}

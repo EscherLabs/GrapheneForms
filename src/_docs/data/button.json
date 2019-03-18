@@ -1,6 +1,13 @@
 {
   "field":{"type":"button","label":"Button"},
   "rows":{
-    "limit":false
+    "name":{},
+    "label":{},
+    "value":{},
+    "help":{},
+    "columns":{},
+    "target":{},
+    "display":{},
+    "enable":{}
   }
 }

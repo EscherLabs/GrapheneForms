@@ -1,11 +1,128 @@
 <ul class>
-		{{#common}}
-      <li class="list-unstyled" ><a href="#{{name}}"><i class="fa fa-chevron-right"></i> {{name}}</a></li>
-		{{/common}}
+		{{#rows.name}}
+		{{#page.rows.name}}
+		{{>menuItem}}
+		{{/page.rows.name}}
+		{{/rows.name}}
 
-		{{#page.rows.limit}}
+		{{#rows.label}}
+		{{#page.rows.label}}
+		{{>menuItem}}
+		{{/page.rows.label}}
+		{{/rows.label}}
+
+		{{#rows.value}}
+		{{#page.rows.value}}
+		{{>menuItem}}
+		{{/page.rows.value}}
+		{{/rows.value}}
+
+		{{#rows.help}}
+		{{#page.rows.help}}
+		{{>menuItem}}
+		{{/page.rows.help}}
+		{{/rows.help}}
+
+		{{#rows.placeholder}}
+		{{#page.rows.placeholder}}
+		{{>menuItem}}
+		{{/page.rows.placeholder}}
+		{{/rows.placeholder}}
+
+		{{#rows.multiple}}
+		{{#page.rows.multiple}}
+		{{>menuItem}}
+		{{/page.rows.multiple}}
+		{{/rows.multiple}}
+
 		{{#rows.limit}}
-    {{>menuItem}}
-		{{/rows.limit}}
+		{{#page.rows.limit}}
+		{{>menuItem}}
 		{{/page.rows.limit}}
+		{{/rows.limit}}
+
+		{{#rows.size}}
+		{{#page.rows.size}}
+		{{>menuItem}}
+		{{/page.rows.size}}
+		{{/rows.size}}
+
+		{{#rows.min}}
+		{{#page.rows.min}}
+		{{>menuItem}}
+		{{/page.rows.min}}
+		{{/rows.min}}
+
+		{{#rows.max}}
+		{{#page.rows.max}}
+		{{>menuItem}}
+		{{/page.rows.max}}
+		{{/rows.max}}
+
+		{{#rows.step}}
+		{{#page.rows.step}}
+		{{>menuItem}}
+		{{/page.rows.step}}
+		{{/rows.step}}
+
+		{{#rows.options}}
+		{{#page.rows.options}}
+		{{>menuItem}}
+		{{/page.rows.options}}
+		{{/rows.options}}
+
+		{{#rows.format}}
+		{{#page.rows.format}}
+		{{>menuItem}}
+		{{/page.rows.format}}
+		{{/rows.format}}
+
+		{{#rows.columns}}
+		{{#page.rows.columns}}
+		{{>menuItem}}
+		{{/page.rows.columns}}
+		{{/rows.columns}}
+
+		{{#rows.target}}
+		{{#page.rows.target}}
+		{{>menuItem}}
+		{{/page.rows.target}}
+		{{/rows.target}}
+
+		{{#rows.array}}
+		{{#page.rows.array}}
+		{{>menuItem}}
+		{{/page.rows.array}}
+		{{/rows.array}}
+
+		{{#rows.display}}
+		{{#page.rows.display}}
+		{{>menuItem}}
+		{{/page.rows.display}}
+		{{/rows.display}}
+
+		{{#rows.enable}}
+		{{#page.rows.enable}}
+		{{>menuItem}}
+		{{/page.rows.enable}}
+		{{/rows.enable}}
+
+		{{#rows.parse}}
+		{{#page.rows.parse}}
+		{{>menuItem}}
+		{{/page.rows.parse}}
+		{{/rows.parse}}
+
+		{{#rows.validate}}
+		{{#page.rows.validate}}
+		{{>menuItem}}
+		{{/page.rows.validate}}
+		{{/rows.validate}}
+
+		{{#rows.required}}
+		{{#page.rows.required}}
+		{{>menuItem}}
+		{{/page.rows.required}}
+		{{/rows.required}}
+
 </ul>

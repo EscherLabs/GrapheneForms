@@ -21,7 +21,11 @@ gform.types = {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.onchangeEvent = function(){
               this.value = this.get();
-
+              if(this.el.querySelector('.count') != null){
+                var text = this.value.length;
+                if(this.limit){text+='/'+this.limit;}
+              this.el.querySelector('.count').innerHTML = text;
+            }
             //   this.update({value:this.get()},true);
             //   gform.types[this.type].focus.call(this)
               this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
@@ -221,7 +225,7 @@ gform.types = {
       }
   },
   'button':{
-      defaults:{parsable:false, columns:2, target:".footer"},
+      defaults:{parsable:false, columns:2, target:".gform-footer"},
       create: function() {
           var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
           tempEl.setAttribute("id", this.id);
@@ -298,18 +302,18 @@ gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: [
 
 gform.types['textarea'] = _.extend({}, gform.types['input'], {
 
-    initialize: function(){
-          this.onchangeEvent = function(){
-              this.value = this.get();
-              if(this.el.querySelector('.count') != null){
-                  var text = this.value.length;
-                  if(this.limit){text+='/'+this.limit;}
-                this.el.querySelector('.count').innerHTML = text;
-              }
-              this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
-          }.bind(this)
-          this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
-      },
+    // initialize: function(){
+    //       this.onchangeEvent = function(){
+    //           this.value = this.get();
+    //           if(this.el.querySelector('.count') != null){
+    //               var text = this.value.length;
+    //               if(this.limit){text+='/'+this.limit;}
+    //             this.el.querySelector('.count').innerHTML = text;
+    //           }
+    //           this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+    //       }.bind(this)
+    //       this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+    //   },
       set: function(value) {
           this.el.querySelector('textarea[name="' + this.name + '"]').innerHTML = value;
       },
@@ -388,6 +392,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
 });
 
 gform.types['scale']    = _.extend({}, gform.types['radio']);
+gform.types['checkboxes']    = _.extend({}, gform.types['radio'],{multiple:true});
 gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         this.options = gform.options.call(this,this, this.value);

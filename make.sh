@@ -12,5 +12,6 @@ cp src/js/themes/* bin/
 
 cp bin/* docs/assets/js/
 sass src/scss/gform.scss > docs/assets/css/gform.css 
+minify docs/assets/css/gform.css > docs/assets/css/gform.min.css 
 
 node ~/Projects/charge/charge.js src/_docs/

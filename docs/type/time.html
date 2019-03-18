@@ -64,7 +64,7 @@
 
 				<div class="col-sm-3" ></div>
 				<div class="hidden-xs" style="position:fixed;overflow:auto;top:100px;bottom:0;width:200px" id="sidebar" role="navigation">
-					<a href="#field_options"><h4>Text Field Options</h4></a>
+					<a href="#field_options"><h4>Time Field Options</h4></a>
 					<ul class>
 						<!-- <li class="list-unstyled" ><a href="#opts"><i class="fa fa-chevron-right"></i> Options</a></li> -->
 					</ul>
@@ -82,7 +82,6 @@
       <li class="list-unstyled" ><a href="#placeholder"><i class="fa fa-chevron-right"></i> placeholder</a></li>
 
 
-      <li class="list-unstyled" ><a href="#limit"><i class="fa fa-chevron-right"></i> limit</a></li>
 
 
 
@@ -134,7 +133,7 @@
 
 					<!--Introduction -->
 					<a name="field_options" style="display:block;position:relative;top:-80px"></a>
-					<h2>Text field Options</h2>
+					<h2>Time field Options</h2>
 					<!-- <a name="opts" style="display:block;position:relative;top:-80px"></a> -->
 					<!-- <h4>options</h4> -->
 					<p>
@@ -154,7 +153,6 @@
 		<tr><td><a href="#placeholder">placeholder</a></td><td>string</td><td>''</td><td>This text will be visible in the text box until text is entered into the field</td></tr>
 
 
-		<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>mystuff</td></tr>
 
 
 
@@ -195,9 +193,9 @@
 					<h4>Name</h4>
 					<p></p>
 					<div class="well namefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-    {type: 'text', name: 'name_example'},
-    {type: 'text', label: 'Label Example'},	
-    {type: 'text'}
+    {type: 'time', name: 'name_example'},
+    {type: 'time', label: 'Label Example'},	
+    {type: 'time'}
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--label -->
 					<a name="label" style="display:block;position:relative;top:-80px"></a>
@@ -206,7 +204,7 @@
 					<p></p>
 					<div class="well labelfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
 {
-    type: 'text', 
+    type: 'time', 
     label: 'Label Example'
 }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
@@ -217,7 +215,7 @@
 					<p></p>
 					<div class="well valuefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
 {
-  type: 'text',
+  type: 'time',
   label: 'Value Example',
   value: 'This is a test'
 }
@@ -229,7 +227,7 @@
 					<p></p>
 					<div class="well helpfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    type: 'text',
+    type: 'time',
     label: 'Help Example',
     help: 'This is some help text'
   }
@@ -241,24 +239,13 @@
 					<p></p>
 					<div class="well placeholderfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    type: 'text',
+    type: 'time',
     label: 'Placeholder Example',
     placeholder: 'Placeholder text'
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
-					<!--limit -->
-					<a name="limit" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Limit</h4>
-					<p></p>
-					<div class="well limitfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-{
-    type: 'text',
-    label: 'Limit Example',
-    limit: 3
-  }
-]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
 
 
 
@@ -272,12 +259,12 @@
 					<p></p>
 					<div class="well columnsfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    type: 'text',
+    type: 'time',
     label: 'Column 1',
     columns: 4
   },
   {
-    type: 'text',
+    type: 'time',
     label: 'Column 2',
     columns: 8
   }
@@ -288,9 +275,9 @@
 					<h4>Target</h4>
 					<p></p>
 					<div class="well targetfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-    {type: 'text', name: 'name_example'},
-    {type: 'text', label: 'Label Example'},	
-    {type: 'text'}
+    {type: 'time', name: 'name_example'},
+    {type: 'time', label: 'Label Example'},	
+    {type: 'time'}
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--array -->
 					<a name="array" style="display:block;position:relative;top:-80px"></a>
@@ -299,7 +286,7 @@
 					<p></p>
 					<div class="well arrayfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    type: 'text',
+    type: 'time',
     label: 'Array Example',
     array: {min: 2, max: 4}
   }
@@ -311,13 +298,13 @@
 					<p></p>
 					<div class="well displayfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    label: 'Display text Field',
+    label: 'Display time Field',
     name: 'display',
     type: 'checkbox'
   },
   {
-    type: 'text',
-    label: 'text Field',
+    type: 'time',
+    label: 'time Field',
     display:[{
       type: 'matches',
       name: 'display',
@@ -332,13 +319,13 @@
 					<p></p>
 					<div class="well enablefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    label: 'Enable text Field',
+    label: 'Enable time Field',
     name: 'enable',
     type: 'checkbox'
   },
   {
-    type: 'text',
-    label: 'text Field',
+    type: 'time',
+    label: 'time Field',
     enable:[{
       type: 'matches',
       name: 'enable',
@@ -353,13 +340,13 @@
 					<p></p>
 					<div class="well parsefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    label: 'Parse text Field',
+    label: 'Parse time Field',
     name: 'parse',
     type: 'checkbox'
   },
   {
-    type: 'text',
-    label: 'text Field',
+    type: 'time',
+    label: 'time Field',
     parse:[{
       type: 'matches',
       name: 'parse',
@@ -374,7 +361,7 @@
 					<p></p>
 					<div class="well validatefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    type: 'text',
+    type: 'time',
     label: 'Validate Field',
     validate:[{type:'length', min: 2, max: 5}]
   }
@@ -386,7 +373,7 @@
 					<p></p>
 					<div class="well requiredfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    type: 'text',
+    type: 'time',
     label: 'Required Field',
     required: true
   }
@@ -414,9 +401,9 @@
 				gform.options.autoFocus = false;
 new gform({
   "el":".namefield .form",
-  "fields":[     {type: 'text', name: 'name_example'},
-    {type: 'text', label: 'Label Example'},	
-    {type: 'text'}		] 
+  "fields":[     {type: 'time', name: 'name_example'},
+    {type: 'time', label: 'Label Example'},	
+    {type: 'time'}		] 
 	}).sub('change', function(e){
 document.querySelector('.namefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
@@ -424,7 +411,7 @@ document.querySelector('.namefield .result').innerHTML = JSON.stringify(e.form,n
 new gform({
   "el":".labelfield .form",
   "fields":[ {
-    type: 'text', 
+    type: 'time', 
     label: 'Label Example'
 }		] 
 	}).sub('change', function(e){
@@ -434,7 +421,7 @@ document.querySelector('.labelfield .result').innerHTML = JSON.stringify(e.form,
 new gform({
   "el":".valuefield .form",
   "fields":[ {
-  type: 'text',
+  type: 'time',
   label: 'Value Example',
   value: 'This is a test'
 }		] 
@@ -445,7 +432,7 @@ document.querySelector('.valuefield .result').innerHTML = JSON.stringify(e.form,
 new gform({
   "el":".helpfield .form",
   "fields":[   {
-    type: 'text',
+    type: 'time',
     label: 'Help Example',
     help: 'This is some help text'
   }		] 
@@ -456,7 +443,7 @@ document.querySelector('.helpfield .result').innerHTML = JSON.stringify(e.form,n
 new gform({
   "el":".placeholderfield .form",
   "fields":[   {
-    type: 'text',
+    type: 'time',
     label: 'Placeholder Example',
     placeholder: 'Placeholder text'
   }		] 
@@ -465,17 +452,7 @@ document.querySelector('.placeholderfield .result').innerHTML = JSON.stringify(e
 	}
 ).pub('change')
 
-new gform({
-  "el":".limitfield .form",
-  "fields":[ {
-    type: 'text',
-    label: 'Limit Example',
-    limit: 3
-  }		] 
-	}).sub('change', function(e){
-document.querySelector('.limitfield .result').innerHTML = JSON.stringify(e.form,null,2);
-	}
-).pub('change')
+
 
 
 
@@ -485,12 +462,12 @@ document.querySelector('.limitfield .result').innerHTML = JSON.stringify(e.form,
 new gform({
   "el":".columnsfield .form",
   "fields":[   {
-    type: 'text',
+    type: 'time',
     label: 'Column 1',
     columns: 4
   },
   {
-    type: 'text',
+    type: 'time',
     label: 'Column 2',
     columns: 8
   }		] 
@@ -500,9 +477,9 @@ document.querySelector('.columnsfield .result').innerHTML = JSON.stringify(e.for
 ).pub('change')
 new gform({
   "el":".targetfield .form",
-  "fields":[     {type: 'text', name: 'name_example'},
-    {type: 'text', label: 'Label Example'},	
-    {type: 'text'}		] 
+  "fields":[     {type: 'time', name: 'name_example'},
+    {type: 'time', label: 'Label Example'},	
+    {type: 'time'}		] 
 	}).sub('change', function(e){
 document.querySelector('.targetfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
@@ -510,7 +487,7 @@ document.querySelector('.targetfield .result').innerHTML = JSON.stringify(e.form
 new gform({
   "el":".arrayfield .form",
   "fields":[   {
-    type: 'text',
+    type: 'time',
     label: 'Array Example',
     array: {min: 2, max: 4}
   }		] 
@@ -521,13 +498,13 @@ document.querySelector('.arrayfield .result').innerHTML = JSON.stringify(e.form,
 new gform({
   "el":".displayfield .form",
   "fields":[   {
-    label: 'Display text Field',
+    label: 'Display time Field',
     name: 'display',
     type: 'checkbox'
   },
   {
-    type: 'text',
-    label: 'text Field',
+    type: 'time',
+    label: 'time Field',
     display:[{
       type: 'matches',
       name: 'display',
@@ -541,13 +518,13 @@ document.querySelector('.displayfield .result').innerHTML = JSON.stringify(e.for
 new gform({
   "el":".enablefield .form",
   "fields":[   {
-    label: 'Enable text Field',
+    label: 'Enable time Field',
     name: 'enable',
     type: 'checkbox'
   },
   {
-    type: 'text',
-    label: 'text Field',
+    type: 'time',
+    label: 'time Field',
     enable:[{
       type: 'matches',
       name: 'enable',
@@ -561,13 +538,13 @@ document.querySelector('.enablefield .result').innerHTML = JSON.stringify(e.form
 new gform({
   "el":".parsefield .form",
   "fields":[   {
-    label: 'Parse text Field',
+    label: 'Parse time Field',
     name: 'parse',
     type: 'checkbox'
   },
   {
-    type: 'text',
-    label: 'text Field',
+    type: 'time',
+    label: 'time Field',
     parse:[{
       type: 'matches',
       name: 'parse',
@@ -581,7 +558,7 @@ document.querySelector('.parsefield .result').innerHTML = JSON.stringify(e.form,
 new gform({
   "el":".validatefield .form",
   "fields":[ 	  {
-    type: 'text',
+    type: 'time',
     label: 'Validate Field',
     validate:[{type:'length', min: 2, max: 5}]
   },
@@ -597,7 +574,7 @@ document.querySelector('.validatefield .result').innerHTML = JSON.stringify(e.fo
 new gform({
   "el":".requiredfield .form",
   "fields":[ 	  {
-    type: 'text',
+    type: 'time',
     label: 'Required Field',
     required: true
   },

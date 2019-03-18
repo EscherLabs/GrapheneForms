@@ -3,7 +3,7 @@ gform.stencils = {
     <form novalidate  {{^autocomplete}}autocomplete="false"{{/autocomplete}}>
     {{#legend}}<legend for="{{name}}"><h4>{{{legend}}}</h4></legend>{{/legend}}
     </form>
-    <div class="row footer"></div>`,
+    <div class="row gform-footer"></div>`,
 text: `
 <div class="row row-wrap">
 <div class="column">

@@ -13,6 +13,8 @@
 		<link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
 		<link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
     <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/vendor/css/bootstrap-switch.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/vendor/css/bootstrap-datepicker.min.css'>
 		<link rel='stylesheet' type='text/css' href='../assets/css/demo.css'>
 
 
@@ -62,7 +64,7 @@
 
 				<div class="col-sm-3" ></div>
 				<div class="hidden-xs" style="position:fixed;overflow:auto;top:100px;bottom:0;width:200px" id="sidebar" role="navigation">
-					<a href="#options"><h4>Grid Field Options</h4></a>
+					<a href="#field_options"><h4>Grid Field Options</h4></a>
 					<ul class>
 						<!-- <li class="list-unstyled" ><a href="#opts"><i class="fa fa-chevron-right"></i> Options</a></li> -->
 					</ul>
@@ -70,25 +72,49 @@
 		
 <ul class>
       <li class="list-unstyled" ><a href="#name"><i class="fa fa-chevron-right"></i> name</a></li>
+
       <li class="list-unstyled" ><a href="#label"><i class="fa fa-chevron-right"></i> label</a></li>
+
       <li class="list-unstyled" ><a href="#value"><i class="fa fa-chevron-right"></i> value</a></li>
+
       <li class="list-unstyled" ><a href="#help"><i class="fa fa-chevron-right"></i> help</a></li>
+
       <li class="list-unstyled" ><a href="#placeholder"><i class="fa fa-chevron-right"></i> placeholder</a></li>
-      <li class="list-unstyled" ><a href="#columns"><i class="fa fa-chevron-right"></i> columns</a></li>
-      <li class="list-unstyled" ><a href="#target"><i class="fa fa-chevron-right"></i> target</a></li>
-      <li class="list-unstyled" ><a href="#array"><i class="fa fa-chevron-right"></i> array</a></li>
-      <li class="list-unstyled" ><a href="#display"><i class="fa fa-chevron-right"></i> display</a></li>
-      <li class="list-unstyled" ><a href="#enable"><i class="fa fa-chevron-right"></i> enable</a></li>
-      <li class="list-unstyled" ><a href="#parse"><i class="fa fa-chevron-right"></i> parse</a></li>
-      <li class="list-unstyled" ><a href="#validate"><i class="fa fa-chevron-right"></i> validate</a></li>
-      <li class="list-unstyled" ><a href="#required"><i class="fa fa-chevron-right"></i> required</a></li>
+
 
       <li class="list-unstyled" ><a href="#limit"><i class="fa fa-chevron-right"></i> limit</a></li>
+
+
+      <li class="list-unstyled" ><a href="#min"><i class="fa fa-chevron-right"></i> min</a></li>
+
+      <li class="list-unstyled" ><a href="#max"><i class="fa fa-chevron-right"></i> max</a></li>
+
+      <li class="list-unstyled" ><a href="#step"><i class="fa fa-chevron-right"></i> step</a></li>
+
+
+
+      <li class="list-unstyled" ><a href="#columns"><i class="fa fa-chevron-right"></i> columns</a></li>
+
+      <li class="list-unstyled" ><a href="#target"><i class="fa fa-chevron-right"></i> target</a></li>
+
+      <li class="list-unstyled" ><a href="#array"><i class="fa fa-chevron-right"></i> array</a></li>
+
+      <li class="list-unstyled" ><a href="#display"><i class="fa fa-chevron-right"></i> display</a></li>
+
+      <li class="list-unstyled" ><a href="#enable"><i class="fa fa-chevron-right"></i> enable</a></li>
+
+      <li class="list-unstyled" ><a href="#parse"><i class="fa fa-chevron-right"></i> parse</a></li>
+
+      <li class="list-unstyled" ><a href="#validate"><i class="fa fa-chevron-right"></i> validate</a></li>
+
+      <li class="list-unstyled" ><a href="#required"><i class="fa fa-chevron-right"></i> required</a></li>
+
 </ul>					<a href="#examples"><h4>Other Fields</h4></a>
 <ul class>
       <li class="list-unstyled" ><a href="./text.html"><i class="fa fa-chevron-right"></i> text</a></li>
-      <li class="list-unstyled" ><a href="./hidden.html"><i class="fa fa-chevron-right"></i> hidden</a></li>
       <li class="list-unstyled" ><a href="./number.html"><i class="fa fa-chevron-right"></i> number</a></li>
+      <li class="list-unstyled" ><a href="./date.html"><i class="fa fa-chevron-right"></i> date</a></li>
+      <li class="list-unstyled" ><a href="./time.html"><i class="fa fa-chevron-right"></i> time</a></li>
       <li class="list-unstyled" ><a href="./color.html"><i class="fa fa-chevron-right"></i> color</a></li>
       <li class="list-unstyled" ><a href="./email.html"><i class="fa fa-chevron-right"></i> email</a></li>
       <li class="list-unstyled" ><a href="./password.html"><i class="fa fa-chevron-right"></i> password</a></li>
@@ -103,13 +129,14 @@
       <li class="list-unstyled" ><a href="./switch.html"><i class="fa fa-chevron-right"></i> switch</a></li>
       <li class="list-unstyled" ><a href="./scale.html"><i class="fa fa-chevron-right"></i> scale</a></li>
       <li class="list-unstyled" ><a href="./grid.html"><i class="fa fa-chevron-right"></i> grid</a></li>
+      <li class="list-unstyled" ><a href="./hidden.html"><i class="fa fa-chevron-right"></i> hidden</a></li>
       <li class="list-unstyled" ><a href="./button.html"><i class="fa fa-chevron-right"></i> button</a></li>
 		</ul>
 				</div><!--/span-->
 				<div class="col-xs-12 col-sm-9">
 
 					<!--Introduction -->
-					<a name="options" style="display:block;position:relative;top:-80px"></a>
+					<a name="field_options" style="display:block;position:relative;top:-80px"></a>
 					<h2>Grid field Options</h2>
 					<!-- <a name="opts" style="display:block;position:relative;top:-80px"></a> -->
 					<!-- <h4>options</h4> -->
@@ -119,30 +146,44 @@
 	<thead> <tr> <th>Name</th> <th>Type</th> <th style="width:205px">Default</th> <th>Description</th> </tr> </thead> 
 	<tbody> 
 
-
-
-		<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
-
-		<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
-
-
-
-
 		<tr><td><a href="#name">name</a></td><td>string</td><td>lowercase label and replace spaces with '_'<br><br>no label -> name is generated i.e. 'f1'</td><td>This value is is the variable name used</td></tr>
+
 		<tr><td><a href="#label">label</a></td><td>string | bool</td><td>field.name</td><td>This is the label displayed for the field, if you want to hide the label then set this to <code>false</code><br><br>The string can also contain mustache i.e.<br>'My choice {{value}}'</td></tr>
+
 		<tr><td><a href="#value">value</a></td><td>string | function</td><td>''</td><td>Function will run once at instantiation</td></tr>
+
 		<tr><td><a href="#help">help</a></td><td>string</td><td>''</td><td>This text is used to provide context or help in filling out the field</td></tr>
+
 		<tr><td><a href="#placeholder">placeholder</a></td><td>string</td><td>''</td><td>This text will be visible in the text box until text is entered into the field</td></tr>
-		<tr><td><a href="#columns">columns</a></td><td>integer</td><td>12</td><td>The form is divided into a grid 12 columns wide, this is setting how many of those columns to display this element at, using this you can make split column forms</td></tr>
+
+
+		<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
+
+
+		<tr><td><a href="#min">min</a></td><td>integer</td><td>0</td><td></td></tr>
+
+		<tr><td><a href="#max">max</a></td><td>integer</td><td></td><td></td></tr>
+
+		<tr><td><a href="#step">step</a></td><td>integer</td><td>1</td><td></td></tr>
+
+
+
+		<tr><td><a href="#columns">columns</a></td><td>integer</td><td>12</td><td>The form is divided into a grid 12 columns wide, this is setting how many of those columns to display this element at, using this you can make milti-column forms</td></tr>
+
 		<tr><td><a href="#target">target</a></td><td>selector | node</td><td></td><td>If the target is not set then the field is appended to the parent element which is usually the main form but may be a fieldset</td></tr>
+
 		<tr><td><a href="#array">array</a></td><td>boolean | object</td><td>false</td><td>if set to true or and object then this field will have buttons for adding and removing instances of the item. Additionally the value will become an array of all instances of this field. Further information on this can be found <a href="../docs.html#field_array">here</a>.</td></tr>
+
 		<tr><td><a href="#display">display</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met</td></tr>
+
 		<tr><td><a href="#enable">enable</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>Similar to display but this option controls whether the field is enabled for interaction</td></tr>
+
 		<tr><td><a href="#parse">parse</a></td><td><a href="../docs.html#conditions">condition</a></td><td>'display'</td><td>This option determins if the field will be in the data result from <code>myform.get()</code></td></tr>
+
 		<tr><td><a href="#validate">validate</a></td><td>array</td><td>'[]'</td><td>This is a set of validations to perform on this field when <code>validate()</code> is called. Note: fields that are empty are not validated, if you require something to be filled in use the required attribute</td></tr>
+
 		<tr><td><a href="#required">required</a></td><td><a href="../docs.html#conditions">condition</a></td><td>false</td><td>This is a special case for validation that is calculated live and updates the label to indicate the required status. Validation of this happens when <code>validate()</code> is called</code></td></tr>
 
-		<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
 
 	</tbody> 
 </table>					</p>
@@ -225,6 +266,49 @@
     ,fields:[{label:'First'}]
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+					<!--limit -->
+					<a name="limit" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Limit</h4>
+					<p></p>
+					<div class="well limitfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+{
+    type: 'grid',
+    label: 'Limit Example',
+    limit: 3,
+    multiple:true,
+    options:[1, 2, 3, 4, 5]
+    ,fields:[{label:'First'}]
+  }
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+					<!--min -->
+					<a name="min" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Min</h4>
+					<p></p>
+					<div class="well minfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--max -->
+					<a name="max" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Max</h4>
+					<p></p>
+					<div class="well maxfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+					<!--step -->
+					<a name="step" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>Step</h4>
+					<p></p>
+					<div class="well stepfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+    {type: 'grid', label: 'Min/Max/Step', min: 2, max: 20, step: 2},
+]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+
 					<!--columns -->
 					<a name="columns" style="display:block;position:relative;top:-80px"></a>
 					<br>
@@ -367,22 +451,6 @@
     ,fields:[{label:'First'}]
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-
-					<!--limit -->
-					<a name="limit" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Limit</h4>
-					<p></p>
-					<div class="well limitfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-{
-    type: 'grid',
-    label: 'Limit Example',
-    limit: 3,
-    multiple:true,
-    options:[1, 2, 3, 4, 5]
-    ,fields:[{label:'First'}]
-  }
-]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<hr>
 					<footer>
 						<p>&copy; Escher Labs 2019</p>
@@ -393,10 +461,14 @@
 
 		</div><!--/.container-->
 
-		<script type='text/javascript' src='../assets/vendor/js/jquery.js'></script>    
+		<script type='text/javascript' src='../assets/vendor/js/jquery.js'></script>  
+		<script type='text/javascript' src='../assets/js/example_forms.js'></script>    
 		<script type='text/javascript' src='../assets/js/lodash.min.js'></script>    
 		<script type='text/javascript' src='../assets/vendor/js/colorpicker.min.js'></script>    
+		<script type='text/javascript' src='../assets/vendor/js/moment.js'></script>    
+		<script type='text/javascript' src='../assets/vendor/js/bootstrap-datepicker.js'></script>    
  
+		
 		 <script type='text/javascript' src='../assets/js/gform_bootstrap.min.js'></script> 
 		<script>
 				gform.options.autoFocus = false;
@@ -439,7 +511,7 @@ new gform({
 	}).sub('change', function(e){
 document.querySelector('.valuefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')	
+).pub('change')
 new gform({
   "el":".helpfield .form",
   "fields":[   {
@@ -466,6 +538,45 @@ new gform({
 document.querySelector('.placeholderfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
 ).pub('change')
+
+new gform({
+  "el":".limitfield .form",
+  "fields":[ {
+    type: 'grid',
+    label: 'Limit Example',
+    limit: 3,
+    multiple:true,
+    options:[1, 2, 3, 4, 5]
+    ,fields:[{label:'First'}]
+  }		] 
+	}).sub('change', function(e){
+document.querySelector('.limitfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+
+new gform({
+  "el":".minfield .form",
+  "fields":[ 		] 
+	}).sub('change', function(e){
+document.querySelector('.minfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".maxfield .form",
+  "fields":[ 		] 
+	}).sub('change', function(e){
+document.querySelector('.maxfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+new gform({
+  "el":".stepfield .form",
+  "fields":[     {type: 'grid', label: 'Min/Max/Step', min: 2, max: 20, step: 2},		] 
+	}).sub('change', function(e){
+document.querySelector('.stepfield .result').innerHTML = JSON.stringify(e.form,null,2);
+	}
+).pub('change')
+
+
 new gform({
   "el":".columnsfield .form",
   "fields":[   {
@@ -609,22 +720,6 @@ document.querySelector('.requiredfield .result').innerHTML = JSON.stringify(e.fo
 ).pub('change').sub('validate',function(e){
 		e.form.validate()
 })
-
-
-new gform({
-  "el":".limitfield .form",
-  "fields":[ {
-    type: 'grid',
-    label: 'Limit Example',
-    limit: 3,
-    multiple:true,
-    options:[1, 2, 3, 4, 5]
-    ,fields:[{label:'First'}]
-  }		] 
-	}).sub('change', function(e){
-document.querySelector('.limitfield .result').innerHTML = JSON.stringify(e.form,null,2);
-	}
-).pub('change')
 </script>
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 

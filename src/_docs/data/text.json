@@ -1,6 +1,19 @@
 {
   "field":{"type":"text","label":"Text"},
   "rows":{
+    "name":{},
+    "label":{},
+    "value":{},
+    "help":{},
+    "placeholder":{},
+    "columns":{},
+    "target":{},
+    "array":{},
+    "display":{},
+    "enable":{},
+    "parse":{},
+    "validate":{},
+    "required":{},
     "limit":{"description":"mystuff"}
   }
 }
