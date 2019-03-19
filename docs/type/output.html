@@ -64,7 +64,7 @@
 
 				<div class="col-sm-3" ></div>
 				<div class="hidden-xs" style="position:fixed;overflow:auto;top:100px;bottom:0;width:200px" id="sidebar" role="navigation">
-					<a href="#field_options"><h4>Radio Field Options</h4></a>
+					<a href="#field_options"><h4>Output Field Options</h4></a>
 					<ul class>
 						<!-- <li class="list-unstyled" ><a href="#opts"><i class="fa fa-chevron-right"></i> Options</a></li> -->
 					</ul>
@@ -81,16 +81,11 @@
 
       <li class="list-unstyled" ><a href="#placeholder"><i class="fa fa-chevron-right"></i> placeholder</a></li>
 
-      <li class="list-unstyled" ><a href="#multiple"><i class="fa fa-chevron-right"></i> multiple</a></li>
-
-      <li class="list-unstyled" ><a href="#limit"><i class="fa fa-chevron-right"></i> limit</a></li>
 
 
-      <li class="list-unstyled" ><a href="#min"><i class="fa fa-chevron-right"></i> min</a></li>
 
-      <li class="list-unstyled" ><a href="#max"><i class="fa fa-chevron-right"></i> max</a></li>
 
-      <li class="list-unstyled" ><a href="#step"><i class="fa fa-chevron-right"></i> step</a></li>
+
 
 
 
@@ -106,9 +101,7 @@
 
       <li class="list-unstyled" ><a href="#parse"><i class="fa fa-chevron-right"></i> parse</a></li>
 
-      <li class="list-unstyled" ><a href="#validate"><i class="fa fa-chevron-right"></i> validate</a></li>
 
-      <li class="list-unstyled" ><a href="#required"><i class="fa fa-chevron-right"></i> required</a></li>
 
 </ul>					<a href="#examples"><h4>Other Fields</h4></a>
 <ul class>
@@ -139,7 +132,7 @@
 
 					<!--Introduction -->
 					<a name="field_options" style="display:block;position:relative;top:-80px"></a>
-					<h2>Radio field Options</h2>
+					<h2>Output field Options</h2>
 					<!-- <a name="opts" style="display:block;position:relative;top:-80px"></a> -->
 					<!-- <h4>options</h4> -->
 					<p>
@@ -158,16 +151,11 @@
 
 		<tr><td><a href="#placeholder">placeholder</a></td><td>string</td><td>''</td><td>This text will be visible in the text box until text is entered into the field</td></tr>
 
-		<tr><td><a href="#multiple">multiple</a></td><td>boolean</td><td>false</td><td>Indicates whether multiple items should be selected - if this is true then the value of this field will be an array of all selected values</td></tr>
-
-		<tr><td><a href="#limit">limit</a></td><td>integer</td><td>0 (no limit)</td><td>This is used to set the <code>maxLength</code> property and limits the number of characters that can be entered.</td></tr>
 
 
-		<tr><td><a href="#min">min</a></td><td>integer</td><td>0</td><td>Used for generating options automatically. This will do nothing unless a 'max' value is also set.</td></tr>
 
-		<tr><td><a href="#max">max</a></td><td>integer</td><td></td><td>Options are generated for each integer from the value set for 'min' to the value set for 'max'.</td></tr>
 
-		<tr><td><a href="#step">step</a></td><td>integer</td><td>1</td><td>When options are generated from 'min' and 'max' the step between each option is defined by this value</td></tr>
+
 
 
 
@@ -183,9 +171,7 @@
 
 		<tr><td><a href="#parse">parse</a></td><td><a href="../docs.html#conditions">condition</a></td><td>'display'</td><td>This option determins if the field will be in the data result from <code>myform.get()</code></td></tr>
 
-		<tr><td><a href="#validate">validate</a></td><td>array</td><td>'[]'</td><td>This is a set of validations to perform on this field when <code>validate()</code> is called. Note: fields that are empty are not validated, if you require something to be filled in use the required attribute</td></tr>
 
-		<tr><td><a href="#required">required</a></td><td><a href="../docs.html#conditions">condition</a></td><td>false</td><td>This is a special case for validation that is calculated live and updates the label to indicate the required status. Validation of this happens when <code>validate()</code> is called</code></td></tr>
 
 
 	</tbody> 
@@ -204,15 +190,9 @@
 					<h4>Name</h4>
 					<p></p>
 					<div class="well namefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-    {type: 'radio', name: 'name_example',
-    options:[1, 2, 3, 4, 5]
-    },
-    {type: 'radio', label: 'Label Example',
-    options:[1, 2, 3, 4, 5]
-    },	
-    {type: 'radio',
-    options:[1, 2, 3, 4, 5]
-    }
+    {type: 'output', name: 'name_example'},
+    {type: 'output', label: 'Label Example'},	
+    {type: 'output'}
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--label -->
 					<a name="label" style="display:block;position:relative;top:-80px"></a>
@@ -221,10 +201,8 @@
 					<p></p>
 					<div class="well labelfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
 {
-    type: 'radio', 
-    label: 'Label Example',
-    options:[1, 2, 3, 4, 5]
-    
+    type: 'output', 
+    label: 'Label Example'
 }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--value -->
@@ -234,11 +212,9 @@
 					<p></p>
 					<div class="well valuefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
 {
-  type: 'radio',
+  type: 'output',
   label: 'Value Example',
-  value: 'This is a test',
-    options:[1, 2, 3, 4, 5]
-    
+  value: 'This is a test'
 }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--help -->
@@ -248,11 +224,9 @@
 					<p></p>
 					<div class="well helpfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    type: 'radio',
+    type: 'output',
     label: 'Help Example',
-    help: 'This is some help text',
-    options:[1, 2, 3, 4, 5]
-    
+    help: 'This is some help text'
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--placeholder -->
@@ -262,67 +236,17 @@
 					<p></p>
 					<div class="well placeholderfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    type: 'radio',
+    type: 'output',
     label: 'Placeholder Example',
-    placeholder: 'Placeholder text',
-    options:[1, 2, 3, 4, 5]
-    
-  }
-]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-					<!--multiple -->
-					<a name="multiple" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Multiple</h4>
-					<p></p>
-					<div class="well multiplefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-{
-    type: 'radio',
-    label: 'Limit Example',
-    multiple:true,
-    options:[1, 2, 3, 4, 5]
-    
-  }
-]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-					<!--limit -->
-					<a name="limit" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Limit</h4>
-					<p></p>
-					<div class="well limitfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-{
-    type: 'radio',
-    label: 'Limit Example',
-    limit: 3,
-    multiple:true,
-    options:[1, 2, 3, 4, 5]
-    
+    placeholder: 'Placeholder text'
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
-					<!--min -->
-					<a name="min" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Min</h4>
-					<p></p>
-					<div class="well minfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
 
-]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-					<!--max -->
-					<a name="max" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Max</h4>
-					<p></p>
-					<div class="well maxfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
 
-]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-					<!--step -->
-					<a name="step" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Step</h4>
-					<p></p>
-					<div class="well stepfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-    {type: 'radio', label: 'Min/Max/Step', min: 2, max: 20, step: 2},
-]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+
+
 
 
 					<!--columns -->
@@ -332,18 +256,14 @@
 					<p></p>
 					<div class="well columnsfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    type: 'radio',
+    type: 'output',
     label: 'Column 1',
-    columns: 4,
-    options:[1, 2, 3]
-    
+    columns: 4
   },
   {
-    type: 'radio',
+    type: 'output',
     label: 'Column 2',
-    columns: 8,
-    options:[1, 2, 3, 4]
-    
+    columns: 8
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--target -->
@@ -352,9 +272,9 @@
 					<h4>Target</h4>
 					<p></p>
 					<div class="well targetfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-    {type: 'radio', name: 'name_example'},
-    {type: 'radio', label: 'Label Example'},	
-    {type: 'radio'}
+    {type: 'output', name: 'name_example'},
+    {type: 'output', label: 'Label Example'},	
+    {type: 'output'}
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--array -->
 					<a name="array" style="display:block;position:relative;top:-80px"></a>
@@ -363,11 +283,9 @@
 					<p></p>
 					<div class="well arrayfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    type: 'radio',
+    type: 'output',
     label: 'Array Example',
-    array: {min: 2, max: 4},
-    options:[1, 2, 3, 4, 5]
-    
+    array: {min: 2, max: 4}
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--display -->
@@ -377,20 +295,18 @@
 					<p></p>
 					<div class="well displayfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    label: 'Display radio Field',
+    label: 'Display output Field',
     name: 'display',
     type: 'checkbox'
   },
   {
-    type: 'radio',
-    label: 'radio Field',
+    type: 'output',
+    label: 'output Field',
     display:[{
       type: 'matches',
       name: 'display',
       value: true
-    }],
-    options:[1, 2, 3, 4, 5]
-    
+    }]
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--enable -->
@@ -400,20 +316,18 @@
 					<p></p>
 					<div class="well enablefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    label: 'Enable radio Field',
+    label: 'Enable output Field',
     name: 'enable',
     type: 'checkbox'
   },
   {
-    type: 'radio',
-    label: 'radio Field',
+    type: 'output',
+    label: 'output Field',
     enable:[{
       type: 'matches',
       name: 'enable',
       value: true
-    }],
-    options:[1, 2, 3, 4, 5]
-    
+    }]
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 					<!--parse -->
@@ -423,50 +337,22 @@
 					<p></p>
 					<div class="well parsefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    label: 'Parse radio Field',
+    label: 'Parse output Field',
     name: 'parse',
     type: 'checkbox'
   },
   {
-    type: 'radio',
-    label: 'radio Field',
+    type: 'output',
+    label: 'output Field',
     parse:[{
       type: 'matches',
       name: 'parse',
       value: true
-    }],
-    options:[1, 2, 3, 4, 5]
-    
+    }]
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-					<!--validate -->
-					<a name="validate" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Validate</h4>
-					<p></p>
-					<div class="well validatefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-  {
-    type: 'radio',
-    label: 'Validate Field',
-    validate:[{type:'length', min: 2, max: 5}],
-    options:[1, 2, 3, 4, 5]
-    
-  }
-]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-					<!--required -->
-					<a name="required" style="display:block;position:relative;top:-80px"></a>
-					<br>
-					<h4>Required</h4>
-					<p></p>
-					<div class="well requiredfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
-  {
-    type: 'radio',
-    label: 'Required Field',
-    required: true,
-    options:[1, 2, 3, 4, 5]
-    
-  }
-]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
+
+
 					<hr>
 					<footer>
 						<p>&copy; Escher Labs 2019</p>
@@ -490,15 +376,9 @@
 				gform.options.autoFocus = false;
 new gform({
   "el":".namefield .form",
-  "fields":[     {type: 'radio', name: 'name_example',
-    options:[1, 2, 3, 4, 5]
-    },
-    {type: 'radio', label: 'Label Example',
-    options:[1, 2, 3, 4, 5]
-    },	
-    {type: 'radio',
-    options:[1, 2, 3, 4, 5]
-    }		] 
+  "fields":[     {type: 'output', name: 'name_example'},
+    {type: 'output', label: 'Label Example'},	
+    {type: 'output'}		] 
 	}).sub('change', function(e){
 document.querySelector('.namefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
@@ -506,10 +386,8 @@ document.querySelector('.namefield .result').innerHTML = JSON.stringify(e.form,n
 new gform({
   "el":".labelfield .form",
   "fields":[ {
-    type: 'radio', 
-    label: 'Label Example',
-    options:[1, 2, 3, 4, 5]
-    
+    type: 'output', 
+    label: 'Label Example'
 }		] 
 	}).sub('change', function(e){
 document.querySelector('.labelfield .result').innerHTML = JSON.stringify(e.form,null,2);
@@ -518,11 +396,9 @@ document.querySelector('.labelfield .result').innerHTML = JSON.stringify(e.form,
 new gform({
   "el":".valuefield .form",
   "fields":[ {
-  type: 'radio',
+  type: 'output',
   label: 'Value Example',
-  value: 'This is a test',
-    options:[1, 2, 3, 4, 5]
-    
+  value: 'This is a test'
 }		] 
 	}).sub('change', function(e){
 document.querySelector('.valuefield .result').innerHTML = JSON.stringify(e.form,null,2);
@@ -531,11 +407,9 @@ document.querySelector('.valuefield .result').innerHTML = JSON.stringify(e.form,
 new gform({
   "el":".helpfield .form",
   "fields":[   {
-    type: 'radio',
+    type: 'output',
     label: 'Help Example',
-    help: 'This is some help text',
-    options:[1, 2, 3, 4, 5]
-    
+    help: 'This is some help text'
   }		] 
 	}).sub('change', function(e){
 document.querySelector('.helpfield .result').innerHTML = JSON.stringify(e.form,null,2);
@@ -544,82 +418,33 @@ document.querySelector('.helpfield .result').innerHTML = JSON.stringify(e.form,n
 new gform({
   "el":".placeholderfield .form",
   "fields":[   {
-    type: 'radio',
+    type: 'output',
     label: 'Placeholder Example',
-    placeholder: 'Placeholder text',
-    options:[1, 2, 3, 4, 5]
-    
+    placeholder: 'Placeholder text'
   }		] 
 	}).sub('change', function(e){
 document.querySelector('.placeholderfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
 ).pub('change')
-new gform({
-  "el":".multiplefield .form",
-  "fields":[ {
-    type: 'radio',
-    label: 'Limit Example',
-    multiple:true,
-    options:[1, 2, 3, 4, 5]
-    
-  }		] 
-	}).sub('change', function(e){
-document.querySelector('.multiplefield .result').innerHTML = JSON.stringify(e.form,null,2);
-	}
-).pub('change')
-new gform({
-  "el":".limitfield .form",
-  "fields":[ {
-    type: 'radio',
-    label: 'Limit Example',
-    limit: 3,
-    multiple:true,
-    options:[1, 2, 3, 4, 5]
-    
-  }		] 
-	}).sub('change', function(e){
-document.querySelector('.limitfield .result').innerHTML = JSON.stringify(e.form,null,2);
-	}
-).pub('change')
 
-new gform({
-  "el":".minfield .form",
-  "fields":[ 		] 
-	}).sub('change', function(e){
-document.querySelector('.minfield .result').innerHTML = JSON.stringify(e.form,null,2);
-	}
-).pub('change')
-new gform({
-  "el":".maxfield .form",
-  "fields":[ 		] 
-	}).sub('change', function(e){
-document.querySelector('.maxfield .result').innerHTML = JSON.stringify(e.form,null,2);
-	}
-).pub('change')
-new gform({
-  "el":".stepfield .form",
-  "fields":[     {type: 'radio', label: 'Min/Max/Step', min: 2, max: 20, step: 2},		] 
-	}).sub('change', function(e){
-document.querySelector('.stepfield .result').innerHTML = JSON.stringify(e.form,null,2);
-	}
-).pub('change')
+
+
+
+
+
 
 
 new gform({
   "el":".columnsfield .form",
   "fields":[   {
-    type: 'radio',
+    type: 'output',
     label: 'Column 1',
-    columns: 4,
-    options:[1, 2, 3]
-    
+    columns: 4
   },
   {
-    type: 'radio',
+    type: 'output',
     label: 'Column 2',
-    columns: 8,
-    options:[1, 2, 3, 4]
-    
+    columns: 8
   }		] 
 	}).sub('change', function(e){
 document.querySelector('.columnsfield .result').innerHTML = JSON.stringify(e.form,null,2);
@@ -627,9 +452,9 @@ document.querySelector('.columnsfield .result').innerHTML = JSON.stringify(e.for
 ).pub('change')
 new gform({
   "el":".targetfield .form",
-  "fields":[     {type: 'radio', name: 'name_example'},
-    {type: 'radio', label: 'Label Example'},	
-    {type: 'radio'}		] 
+  "fields":[     {type: 'output', name: 'name_example'},
+    {type: 'output', label: 'Label Example'},	
+    {type: 'output'}		] 
 	}).sub('change', function(e){
 document.querySelector('.targetfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
@@ -637,11 +462,9 @@ document.querySelector('.targetfield .result').innerHTML = JSON.stringify(e.form
 new gform({
   "el":".arrayfield .form",
   "fields":[   {
-    type: 'radio',
+    type: 'output',
     label: 'Array Example',
-    array: {min: 2, max: 4},
-    options:[1, 2, 3, 4, 5]
-    
+    array: {min: 2, max: 4}
   }		] 
 	}).sub('change', function(e){
 document.querySelector('.arrayfield .result').innerHTML = JSON.stringify(e.form,null,2);
@@ -650,20 +473,18 @@ document.querySelector('.arrayfield .result').innerHTML = JSON.stringify(e.form,
 new gform({
   "el":".displayfield .form",
   "fields":[   {
-    label: 'Display radio Field',
+    label: 'Display output Field',
     name: 'display',
     type: 'checkbox'
   },
   {
-    type: 'radio',
-    label: 'radio Field',
+    type: 'output',
+    label: 'output Field',
     display:[{
       type: 'matches',
       name: 'display',
       value: true
-    }],
-    options:[1, 2, 3, 4, 5]
-    
+    }]
   }		] 
 	}).sub('change', function(e){
 document.querySelector('.displayfield .result').innerHTML = JSON.stringify(e.form,null,2);
@@ -672,20 +493,18 @@ document.querySelector('.displayfield .result').innerHTML = JSON.stringify(e.for
 new gform({
   "el":".enablefield .form",
   "fields":[   {
-    label: 'Enable radio Field',
+    label: 'Enable output Field',
     name: 'enable',
     type: 'checkbox'
   },
   {
-    type: 'radio',
-    label: 'radio Field',
+    type: 'output',
+    label: 'output Field',
     enable:[{
       type: 'matches',
       name: 'enable',
       value: true
-    }],
-    options:[1, 2, 3, 4, 5]
-    
+    }]
   }		] 
 	}).sub('change', function(e){
 document.querySelector('.enablefield .result').innerHTML = JSON.stringify(e.form,null,2);
@@ -694,60 +513,25 @@ document.querySelector('.enablefield .result').innerHTML = JSON.stringify(e.form
 new gform({
   "el":".parsefield .form",
   "fields":[   {
-    label: 'Parse radio Field',
+    label: 'Parse output Field',
     name: 'parse',
     type: 'checkbox'
   },
   {
-    type: 'radio',
-    label: 'radio Field',
+    type: 'output',
+    label: 'output Field',
     parse:[{
       type: 'matches',
       name: 'parse',
       value: true
-    }],
-    options:[1, 2, 3, 4, 5]
-    
+    }]
   }		] 
 	}).sub('change', function(e){
 document.querySelector('.parsefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
 ).pub('change')
-new gform({
-  "el":".validatefield .form",
-  "fields":[ 	  {
-    type: 'radio',
-    label: 'Validate Field',
-    validate:[{type:'length', min: 2, max: 5}],
-    options:[1, 2, 3, 4, 5]
-    
-  },
-		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
-			] 
-	}).sub('change', function(e){
-document.querySelector('.validatefield .result').innerHTML = JSON.stringify(e.form,null,2);
-	}
-).pub('change').sub('validate',function(e){
-		e.form.validate()
-})
 
-new gform({
-  "el":".requiredfield .form",
-  "fields":[ 	  {
-    type: 'radio',
-    label: 'Required Field',
-    required: true,
-    options:[1, 2, 3, 4, 5]
-    
-  },
-		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
-			] 
-	}).sub('change', function(e){
-document.querySelector('.requiredfield .result').innerHTML = JSON.stringify(e.form,null,2);
-	}
-).pub('change').sub('validate',function(e){
-		e.form.validate()
-})
+
 </script>
 		<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 

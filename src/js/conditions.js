@@ -76,17 +76,17 @@ gform.conditions = {
 		}
 	},
 	test: function(field, args, ) {
-		debugger;
 		return args.test.call(this, field, args);
 	},
-
-	
-	// contains: function(gform , args, func) {
-	// 	return gform.sub('change:' + args.name, function(args, local, topic, token) {
-	// 			func.call(this, (typeof local.value !== 'undefined'  && local.value.indexOf(args.value) !== -1 ), token);
-	// 		}.bind( this, args)
-	// 	).lastToken;
-	// },
+	contains: function(field, args) {
+		var val = args.value;
+		var localval = (field.parent.find(args.name) || {value:''}).value;
+		if(typeof val== "object" && localval !== null){
+			return (_.intersection(val,localval).length >0)
+		}else{
+			return (typeof localval !== 'undefined'  && localval.indexOf(val) !== -1 )
+		}
+	},
 	matches: function(field, args) {
 		var val = args.value;
 		var localval = (field.parent.find(args.name) || {value:''}).value;

@@ -75,26 +75,27 @@ var gform = function(data, el){
 
         if(typeof this.el == 'undefined'){
             this.options.renderer = 'modal';
-            this.el = gform.create(gform.render('modal_container', this.options))
-            document.querySelector('body').appendChild(this.el)
+            this.el = gform.create(gform.render(this.options.template || 'modal_container', this.options))
+            // document.querySelector('body').appendChild(this.el)
             gform.addClass(this.el, 'active')
 
-            this.sub('cancel', function(form){
-                gform.removeClass(form.el, 'active')
-                form.destroy();
-                document.body.removeChild(form.el);
-                delete this.el;
-            });
-            this.sub('save', function(form){
-                console.log(form.toJSON())
-                gform.removeClass(form.el, 'active')
+            this.sub('close', function(e){e.form.modal('hide')});
+            // this.sub('cancel', function(e){
+            //     gform.removeClass(e.form.el, 'active')
+            //     // e.form.destroy();
+            //     // document.body.removeChild(e.form.el);
+            //     // delete this.el;
+            // });
+            this.sub('save', function(e){
+                // console.log(e.form.toJSON())
+                gform.removeClass(e.form.el, 'active')
             });
             this.el.querySelector('.close').addEventListener('click', function(e){
-                this.pub('cancel', null, e)}.bind(this)
+                this.pub('cancel', this)}.bind(this)
             )
             document.addEventListener('keyup',function(e) {
                 if (e.key === "Escape") { // escape key maps to keycode `27`
-                    this.pub('cancel', null, e)
+                    this.pub('cancel', this)
                 }
             }.bind(this));
         }
@@ -146,7 +147,7 @@ var gform = function(data, el){
     this.isActive = true;
 
     this.destroy = function() {
-		this.pub('destroy');
+		this.pub(['close','destroy']);
 
 		//pub the destroy methods for each field
 		// _.each(function() {if(typeof this.destroy === 'function') {this.destroy();}});
@@ -712,7 +713,7 @@ gform.options = function(opts, value, count) {
         opts.options = newOpts.action.call(this);
     }
 	if(typeof opts.options == 'string' || typeof newOpts.url == 'string') {
-        newOpts.path = opts.options;
+        newOpts.path = newOpts.url || opts.options;
         newOpts.options = false;
         newOpts.url = null;
         gform.ajax({path: newOpts.path, success:function(data) {
@@ -730,7 +731,27 @@ gform.options = function(opts, value, count) {
     return newOpts.options;
 }
 
-gform.VERSION = '0.0.0.4';
+gform.render = function(template, options) {
+    return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))
+  }
+  gform.create = function(text) {
+   return document.createRange().createContextualFragment(text).firstElementChild;
+  }
+  gform.renderString = function(string,options) {
+    return gform.m(string || '', options || {})
+  }
+  
+  
+  // add some classes. Eg. 'nav' and 'nav header'
+  gform.addClass = function(elem, classes) {
+    elem.className = _.chain(elem.className).split(/[\s]+/).union(classes.split(' ')).join(' ').value();
+    // return elem;
+  };
+  gform.removeClass = function(elem, classes){
+    elem.className = _.chain(elem.className).split(/[\s]+/).difference(classes.split(' ')).join(' ').value();
+    // return elem
+  };
+gform.VERSION = '0.0.0.6';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);

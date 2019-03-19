@@ -75,26 +75,27 @@ var gform = function(data, el){
 
         if(typeof this.el == 'undefined'){
             this.options.renderer = 'modal';
-            this.el = gform.create(gform.render('modal_container', this.options))
-            document.querySelector('body').appendChild(this.el)
+            this.el = gform.create(gform.render(this.options.template || 'modal_container', this.options))
+            // document.querySelector('body').appendChild(this.el)
             gform.addClass(this.el, 'active')
 
-            this.sub('cancel', function(form){
-                gform.removeClass(form.el, 'active')
-                form.destroy();
-                document.body.removeChild(form.el);
-                delete this.el;
-            });
-            this.sub('save', function(form){
-                console.log(form.toJSON())
-                gform.removeClass(form.el, 'active')
+            this.sub('close', function(e){e.form.modal('hide')});
+            // this.sub('cancel', function(e){
+            //     gform.removeClass(e.form.el, 'active')
+            //     // e.form.destroy();
+            //     // document.body.removeChild(e.form.el);
+            //     // delete this.el;
+            // });
+            this.sub('save', function(e){
+                // console.log(e.form.toJSON())
+                gform.removeClass(e.form.el, 'active')
             });
             this.el.querySelector('.close').addEventListener('click', function(e){
-                this.pub('cancel', null, e)}.bind(this)
+                this.pub('cancel', this)}.bind(this)
             )
             document.addEventListener('keyup',function(e) {
                 if (e.key === "Escape") { // escape key maps to keycode `27`
-                    this.pub('cancel', null, e)
+                    this.pub('cancel', this)
                 }
             }.bind(this));
         }
@@ -146,7 +147,7 @@ var gform = function(data, el){
     this.isActive = true;
 
     this.destroy = function() {
-		this.pub('destroy');
+		this.pub(['close','destroy']);
 
 		//pub the destroy methods for each field
 		// _.each(function() {if(typeof this.destroy === 'function') {this.destroy();}});
@@ -712,7 +713,7 @@ gform.options = function(opts, value, count) {
         opts.options = newOpts.action.call(this);
     }
 	if(typeof opts.options == 'string' || typeof newOpts.url == 'string') {
-        newOpts.path = opts.options;
+        newOpts.path = newOpts.url || opts.options;
         newOpts.options = false;
         newOpts.url = null;
         gform.ajax({path: newOpts.path, success:function(data) {
@@ -730,7 +731,27 @@ gform.options = function(opts, value, count) {
     return newOpts.options;
 }
 
-gform.VERSION = '0.0.0.4';
+gform.render = function(template, options) {
+    return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))
+  }
+  gform.create = function(text) {
+   return document.createRange().createContextualFragment(text).firstElementChild;
+  }
+  gform.renderString = function(string,options) {
+    return gform.m(string || '', options || {})
+  }
+  
+  
+  // add some classes. Eg. 'nav' and 'nav header'
+  gform.addClass = function(elem, classes) {
+    elem.className = _.chain(elem.className).split(/[\s]+/).union(classes.split(' ')).join(' ').value();
+    // return elem;
+  };
+  gform.removeClass = function(elem, classes){
+    elem.className = _.chain(elem.className).split(/[\s]+/).difference(classes.split(' ')).join(' ').value();
+    // return elem
+  };
+gform.VERSION = '0.0.0.6';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
@@ -760,8 +781,8 @@ gform.getUID = function() {
               if(this.el.querySelector('.count') != null){
                 var text = this.value.length;
                 if(this.limit){text+='/'+this.limit;}
-              this.el.querySelector('.count').innerHTML = text;
-            }
+                this.el.querySelector('.count').innerHTML = text;
+              }
             //   this.update({value:this.get()},true);
             //   gform.types[this.type].focus.call(this)
               this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
@@ -864,6 +885,12 @@ gform.getUID = function() {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.value =  this.get();
+              if(this.el.querySelector('.count') != null){
+                var text = this.value.length;
+                if(this.limit){text+='/'+this.limit;}
+                this.el.querySelector('.count').innerHTML = text;
+              }
+
               gform.types[this.type].setup.call(this);
               this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 
@@ -1010,30 +1037,21 @@ gform.getUID = function() {
       }
   }
 };
-gform.render = function(template, options) {
-  return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))
-}
-gform.create = function(text) {
- return document.createRange().createContextualFragment(text).firstElementChild;
-}
-gform.renderString = function(string,options) {
-  return gform.m(string || '', options || {})
-}
-
-
-// add some classes. Eg. 'nav' and 'nav header'
-gform.addClass = function(elem, classes) {
-  elem.className = _.chain(elem.className).split(/[\s]+/).union(classes.split(' ')).join(' ').value();
-  // return elem;
-};
-gform.removeClass = function(elem, classes){
-  elem.className = _.chain(elem.className).split(/[\s]+/).difference(classes.split(' ')).join(' ').value();
-  // return elem
-};
 
 // remove the added classes
 gform.types['text']     = gform.types['password'] = gform.types['number'] = gform.types['color'] = gform.types['input'];
 gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false}});
+gform.types['output']   = _.extend({}, gform.types['input'], {
+    get: function(value) {
+        return this.el.querySelector('output').innerHTML;
+    },
+    set: function(value) {
+        this.value = gform.renderString(value, this);
+        this.el.querySelector('output').innerHTML = thisvalue;
+
+    },
+});
+
 gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: [{ type:'valid_email' }]}});
 
 gform.types['textarea'] = _.extend({}, gform.types['input'], {
@@ -1312,128 +1330,6 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
 // 	});
 // })(Berry,jQuery);
 
-
-
-
-// Berry.register({ type: 'radio_collection',
-// 	acceptObject: true,
-// 	create: function() {
-// 		this.options = Berry.processOpts.call(this.owner, this.item, this).options;
-// 		return Berry.render('berry_' + (this.elType || this.type), this);
-// 	},
-// 	setup: function() {
-// 		this.$el = this.self.find('[type=radio]');
-// 		this.$el.off();
-// 		if(this.onchange !== undefined) {
-// 			this.on('change', this.onchange);
-// 		}
-// 		this.$el.change($.proxy(function(){this.trigger('change');}, this));
-// 	},
-// 	getValue: function() {
-// 		var values = {}
-// 		for(var label in this.labels){
-// 			var selected = this.self.find('[name="'+this.name+this.labels[label].name+'"][type="radio"]:checked').data('label');
-// 			for(var i in this.item.options) {
-// 				if(this.item.options[i].label == selected) {
-// 					values[this.labels[label].name] = this.item.options[i].value;
-// 					// return this.item.options[i].value;
-// 				}
-// 			}
-// 		}
-// 		return values;
-// 	},
-// 	setValue: function(value) {
-// 		this.value = value;
-// 		for(var i in this.labels){
-// 			this.self.find('[name="'+this.name+this.labels[i].name+'"][value="' + this.value[this.labels[i].name] + '"]').prop('checked', true);
-// 		}
-// 	},
-// 	// set: function(value){
-// 	// 	if(this.value != value) {
-// 	// 		//this.value = value;
-// 	// 		this.setValue(value);
-// 	// 		this.trigger('change');
-// 	// 	}
-// 	// },
-// 	displayAs: function() {
-// 		for(var i in this.item.options) {
-// 			if(this.item.options[i].value == this.lastSaved) {
-// 				return this.item.options[i].label;
-// 			}
-// 		}
-// 	},
-// 	focus: function(){
-// 		this.self.find('[name='+this.labels[0].name+'][type="radio"]:checked').focus();
-// 	}
-// });
-
-// Berry.register({ type: 'check_collection',
-// 	defaults: {container: 'span', acceptObject: true},
-// 	create: function() {
-// 		this.options = Berry.processOpts.call(this.owner, this.item, this).options;
-
-// 		this.checkStatus(this.value);
-// 		return Berry.render('berry_check_collection', this);
-// 	},
-// 	checkStatus: function(value){
-// 		if(value === true || value === "true" || value === 1 || value === "1" || value === "on" || value == this.truestate){
-// 			this.value = true;
-// 		}else{
-// 			this.value = false;
-// 		}
-// 	},
-// 	setup: function() {
-// 		this.$el = this.self.find('[type=checkbox]');
-// 		this.$el.off();
-// 		if(this.onchange !== undefined) {
-// 			this.on('change', this.onchange);
-// 		}
-// 		this.$el.change($.proxy(function(){this.trigger('change');},this));
-// 	},
-// 	getValue: function() {
-
-// 		var values = [];
-// 		for(var opt in this.options){
-// 			if(this.self.find('[name="'+this.options[opt].value+'"][type="checkbox"]').is(':checked')){
-// 				// values[this.options[opt].value] = (this.truestate || true);
-// 				values.push(this.options[opt].value);
-// 			}else{
-// 				if(typeof this.falsestate !== 'undefined') {
-// 					// values[this.options[opt].value] = this.falsestate;
-// 				}else{
-// 					// values[this.options[opt].value] = false;
-// 				}
-// 			}
-			
-// 		}
-// 		return values;
-// 	},
-// 	setValue: function(value) {
-// 		// this.checkStatus(value);
-// 		// this.$el.prop('checked', this.value);
-// 		// this.value = value;
-// 		// debugger;
-// 		this.value = value;
-// 			this.self.find('[type="checkbox"]').prop('checked', false);
-// 		for(var i in this.value){
-// 			this.self.find('[name="'+this.value[i]+'"][type="checkbox"]').prop('checked', true);
-// 		}
-// 	},
-// 	displayAs: function() {
-// 		for(var i in this.item.options) {
-// 			if(this.item.options[i].value == this.lastSaved) {
-// 				return this.item.options[i].name;
-// 			}
-// 		}
-// 	},
-// 	focus: function(){
-// 		//this.$el.focus();
-// 		this.self.find('[type=checkbox]:first').focus();
-// 	},
-// 	satisfied: function(){
-// 		return this.$el.is(':checked');
-// 	},
-// });
 gform.processConditions = function(conditions, func) {
 	if (typeof conditions === 'string') {
 		if(conditions === 'display' || conditions === 'enable'  || conditions === 'parse') {
@@ -1512,17 +1408,17 @@ gform.conditions = {
 		}
 	},
 	test: function(field, args, ) {
-		debugger;
 		return args.test.call(this, field, args);
 	},
-
-	
-	// contains: function(gform , args, func) {
-	// 	return gform.sub('change:' + args.name, function(args, local, topic, token) {
-	// 			func.call(this, (typeof local.value !== 'undefined'  && local.value.indexOf(args.value) !== -1 ), token);
-	// 		}.bind( this, args)
-	// 	).lastToken;
-	// },
+	contains: function(field, args) {
+		var val = args.value;
+		var localval = (field.parent.find(args.name) || {value:''}).value;
+		if(typeof val== "object" && localval !== null){
+			return (_.intersection(val,localval).length >0)
+		}else{
+			return (typeof localval !== 'undefined'  && localval.indexOf(val) !== -1 )
+		}
+	},
 	matches: function(field, args) {
 		var val = args.value;
 		var localval = (field.parent.find(args.name) || {value:''}).value;

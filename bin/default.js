@@ -11,8 +11,17 @@ text: `
     <input{{#limit}} maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{id}}" />
     {{>_error}}
     </div>
-    </div>     
-    </div>   
+    </div>
+    {{>_actions}} 
+`,
+output: `
+<div class="row row-wrap">
+<div class="column">
+    {{>_label}}
+    <output name="{{name}}" id="{{id}}">{{value}}</output>
+    {{>_error}}
+    </div>
+    </div>
     {{>_actions}} 
 `,
 switch: `

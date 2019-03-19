@@ -49,49 +49,49 @@
       "type":"integer",
       "default":"",
       "size":4,
-      "description":""
+      "description":"Describes how large the selection area should be"
 		},
     "multiple":{
       "name":"multiple",
       "label":"Multiple",
       "type":"boolean",
       "default":"false",
-      "description":""
+      "description":"Indicates whether multiple items should be selected - if this is true then the value of this field will be an array of all selected values"
 		},
     "min":{
       "name":"min",
       "label":"Min",
       "type":"integer",
       "default":"0",
-      "description":""
+      "description":"Used for generating options automatically. This will do nothing unless a 'max' value is also set."
 		},
     "max":{
       "name":"max",
       "label":"Max",
       "type":"integer",
       "default":"",
-      "description":""
+      "description":"Options are generated for each integer from the value set for 'min' to the value set for 'max'."
 		},
     "step":{
       "name":"step",
       "label":"Step",
       "type":"integer",
       "default":"1",
-      "description":""
+      "description":"When options are generated from 'min' and 'max' the step between each option is defined by this value"
 		},
     "options":{
       "name":"options",
       "label":"Options",
       "type":"integer",
       "default":"[]",
-      "description":""
+      "description":"This is the options to be listed for this field, these are processesed after options generated from min/max/step if 'max' is defined"
 		},
     "format":{
       "name":"format",
       "label":"Format",
       "type":"integer",
-      "default":"{}",
-      "description":""
+      "default":"{label: '{{label}}', value: '{{value}}'}",
+      "description":"This is used to generated labels and values that are based on the options object but not necessarily the raw values. Useful for generating labels and values for existing api data that may be mapped diffently. {{index}} is always internally generated for use as well."
 		},
     "columns":{
       "name":"columns",
@@ -170,6 +170,7 @@
     "scale",
     "grid",
     "hidden",
-    "button"
+    "button",
+    "output"
   ]
 }

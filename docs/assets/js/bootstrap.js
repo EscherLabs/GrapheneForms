@@ -21,6 +21,60 @@ gform.stencils = {
 		{{>_actions}}
 	</div>
 </div>`,
+output: `
+<div class="row">
+<div class="col-xs-12">
+		{{>_label}}
+		
+	<div class="col-xs-12">
+    <output name="{{name}}" id="{{id}}">{{{value}}}</output>
+    {{>_error}}
+		{{>_addons}}
+		{{>_actions}} 
+		</div>
+    </div>
+    </div>
+`,
+grid: `
+<fieldset id="{{id}}" name="{{name}}" class="row"  style="margin-bottom:20px">
+
+    {{>_label}}
+		<div class="col-xs-12">
+    <table class="table table-striped" style="margin-bottom:0">
+    <thead>
+        <tr>
+            <th></th>
+            {{#options}}
+            <th><label>{{label}}</label></th>
+            {{/options}}
+            
+        </tr>
+    </thead>
+    <tbody>
+    {{#fields}}
+        <tr>
+            <td><label style="font-weight: 500;" for="{{id}}">{{{label}}}</label></td>
+            {{#options}}
+            <td>
+            {{#multiple}}
+                <div><input name="{{id}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/>
+            {{/multiple}}
+            {{^multiple}}
+                <input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
+            {{/multiple}}
+            </td>
+            {{/options}}
+        </tr>
+        {{/fields}}
+    </tbody>
+		</table>
+		
+{{>_addons}}
+{{>_actions}}
+</div>
+
+    </fieldset>
+`,
 switch:`
 <div class="row clearfix {{modifiers}} {{#array}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
@@ -65,7 +119,9 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/label}}
 	{{^label}}
 	<div class="col-md-12">
-	{{/label}}
+	{{/label}}		
+	{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
+
 		{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
 		{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
 			<select class="form-control test" {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
@@ -101,6 +157,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{^label}}
 	<div class="col-md-12">
 	{{/label}}
+	{{#limit}}<small class="count text-muted" style="display:block;text-align:left">0/{{limit}}</small>{{/limit}}
 
 
 			{{#options}}
@@ -248,7 +305,7 @@ button:`<div class="btn btn-default {{modifiers}}" style="margin:0 15px">{{{labe
 				{{/sections}}
 				
 			</div>
-			<div class="modal-footer"  style="padding-right: 0;padding-left: 0;">
+			<div class="modal-footer gform-footer"  style="padding-right: 0;padding-left: 0;">
 				{{{footer}}}
 				<div class="footer"></div>
 			</div>
@@ -374,7 +431,7 @@ gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section
         {type:"select",name:'country',options:'../data/countries.json',format:{label:'{{name}}',value:'{{code}}'},label:"Country", validate:[{type:"length",max:"15"}],columns:6}
     ]
 }});
-gform.THEME = {'bootstrap':'0.0.1'}
+gform.THEME = {'bootstrap':'0.0.2'}
 
 gform.types['datetime'] = _.extend({}, gform.types['input'], {
   defaults:{
@@ -406,3 +463,7 @@ gform.types['time']= _.extend({}, gform.types['datetime'], {
 		format:{input: "h:mm A"}
 	}
 })
+gform.prototype.modal = function(data){
+	$(this.el).modal(data)
+	return this;
+}

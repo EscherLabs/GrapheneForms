@@ -20,7 +20,8 @@
 	</div>
    <pre style="max-width:800px;padding:0 20px;margin:50px auto" id="result"></pre>
     <script src="../assets/js/lodash.min.js"></script>    
-    <script type='text/javascript' src='../assets/js/gform.min.js'></script>
+    <script type='text/javascript' src='../assets/js/gform.js'></script>
+    <script type='text/javascript' src='../assets/js/default.theme.min.js'></script>
 
     <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.gform.js'></script>    */-->
 
@@ -102,7 +103,9 @@
                 
             //   ]
 			},
-              {"label": "Favorite State", suffix:'',type:'select', "options": "../data/states.json",format:{"label":'({{value}}) {{name}}'} },
+              {"label": "Favorite State",multiple:true, suffix:'',type:'select', "options": "../data/states.json",format:{"label":'({{value}}) {{name}}'} },
+              {name: 'stated', label: 'Stated?',type: 'checkbox',required:true,display:[{type:'contains',name:'favorite_state',value:['NY','PA']}]},// , display: {matches:[{name:'number', value:['first','1']}]}},
+
               {label: 'Candies', type:'fieldset', fields: [
                 {label: 'Candy',required:true},
                 {label: 'Brand'},

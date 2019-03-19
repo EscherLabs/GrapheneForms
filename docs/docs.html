@@ -132,7 +132,8 @@
 						<!-- <li class="list-unstyled" ><a href="#display"><i class="fa fa-chevron-right"></i> display</a></li> -->
 						<li class="list-unstyled" ><a href="#requires"><i class="fa fa-chevron-right"></i> requires</a></li>
 						<li class="list-unstyled" ><a href="#matches"><i class="fa fa-chevron-right"></i> matches</a></li>
-						<li class="list-unstyled" ><a href="#requires"><i class="fa fa-chevron-right"></i> not_matches</a></li>
+						<li class="list-unstyled" ><a href="#not_matches"><i class="fa fa-chevron-right"></i> not_matches</a></li>
+						<li class="list-unstyled" ><a href="#contains"><i class="fa fa-chevron-right"></i> contains</a></li>
 						<li class="list-unstyled" ><a href="#test"><i class="fa fa-chevron-right"></i> test</a></li>
 						<li class="list-unstyled" ><a href="#condition_nesting"><i class="fa fa-chevron-right"></i> nesting</a></li>
 					</ul>
@@ -610,34 +611,6 @@ week
 						<br>note: 'index' is a calculated value that is available to generate labels and values. 
 					</p>					
 
-						<li><h5>validation</h5>			
-						<p>
-							The validation event is triggered whenevere form validation is performed.
-						</p></li>
-
-						<li><h5>invalid <span class="text-muted"> &nbsp;&nbsp;(invalid:fieldname)</span></h5>					
-						<p>
-							The invalid event is triggered whenevere form validation is performed and validation fails.
-						</p></li>
-
-						<li><h5>valid <span class="text-muted"> &nbsp;&nbsp;(valid:fieldname)</span></h5>					
-						<p>
-							The validation event is triggered whenevere form validation is performed and no errors exist.
-						</p></li>
-						<!--destroy -->
-						<li><h5>destroy</h5>					
-						<p>
-							This event is fired when the destroy method is called but before anything has been destroyed.
-						</p></li>
-
-						<!--destroyed -->
-						<li><h5>destroyed</h5>					
-						<p>
-							Fires after everything related to the form has been destroyed.
-						</p></li>
-					</ul>
-
-
 
 					<!--conditions -->
 					<a name="conditions" style="display:block;position:relative;top:-80px"></a>
@@ -687,6 +660,13 @@ week
 					<h4>not_matches</h4>					
 					<p>
 						The 'matches' condition requires that the value of the field indicated with the 'name' property does not match the value that is set in the 'value' property.
+					</p>
+					<!--not_matches -->
+					<a name="contains" style="display:block;position:relative;top:-80px"></a>
+					<br>
+					<h4>contains</h4>					
+					<p>
+						The 'contains' condition requires that the value of the field indicated with the 'name' property contains the value that is set in the 'value property'.
 					</p>
 
 					<!--test -->
@@ -969,6 +949,36 @@ Specific events may have other data provided as well but they will be highly sit
 						<p>
 							The removed event is triggered when a field that is duplicatable has had an instance removed
 						</p></li>
+
+
+						<li><h5>validation</h5>			
+							<p>
+								The validation event is triggered whenevere form validation is performed.
+							</p></li>
+	
+							<li><h5>invalid <span class="text-muted"> &nbsp;&nbsp;(invalid:fieldname)</span></h5>					
+							<p>
+								The invalid event is triggered whenevere form validation is performed and validation fails.
+							</p></li>
+	
+							<li><h5>valid <span class="text-muted"> &nbsp;&nbsp;(valid:fieldname)</span></h5>					
+							<p>
+								The validation event is triggered whenevere form validation is performed and no errors exist.
+							</p></li>
+							<!--destroy -->
+							<li><h5>destroy</h5>					
+							<p>
+								This event is fired when the destroy method is called but before anything has been destroyed.
+							</p></li>
+	
+							<!--destroyed -->
+							<li><h5>destroyed</h5>					
+							<p>
+								Fires after everything related to the form has been destroyed.
+							</p></li>
+						</ul>
+	
+	
 						<!--change field-->
 						<!-- <li><h5>change:fieldname</h5>					
 						<p>
