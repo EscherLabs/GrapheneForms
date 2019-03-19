@@ -730,7 +730,7 @@ gform.options = function(opts, value, count) {
     return newOpts.options;
 }
 
-gform.VERSION = '0.0.0.3';
+gform.VERSION = '0.0.0.4';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
@@ -1096,7 +1096,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         // if(this.other){
         //     this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
         // }
-        this.label = gform.renderString(this.item.label, this);
+        this.label = gform.renderString(this.item.label||this.label, this);
         this.el.querySelector('label').innerHTML = this.label
     },
   get: function(){

@@ -1,6 +1,6 @@
 gform.stencils = {
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
-    _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer row"></div>`,
+    _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer row"></div>`,
     text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
@@ -85,12 +85,6 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 			{{/section.label}}
 			{{/section}}
 			{{/options}}
-
-
-
-
-
-
 			</select>
 		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
 		{{^post}}{{#pre}}</div>{{/pre}}{{/post}}
@@ -133,10 +127,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 </div>
 {{/array}}
 {{^hideLabel}}
-{{#item.legend}}<legend>{{{item.legend}}}</legend>{{/item.legend}}
-{{^item.legend}}
 {{#item.label}}<legend>{{{item.label}}}</legend>{{/item.label}}
-{{/item.legend}}
 {{/hideLabel}}
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,
@@ -148,7 +139,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/array}}`,
     _label: `
     {{^hideLabel}}
-	<label for="{{name}}" {{#inline}}style="text-align:left"{{/inline}} class="control-label col-md-{{#inline}}12{{/inline}}{{^inline}}4{{/inline}}">
+	<label for="{{name}}" {{#inline}}style="text-align:left"{{/inline}} class="control-label {{#inline}}col-xs-12{{/inline}}{{^inline}}col-md-4{{/inline}}">
   {{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}
 </label>{{#label}}{{/label}}
 {{/hideLabel}}
@@ -271,7 +262,7 @@ modal_fieldset:`{{>_fieldset}}`
 
 gform.columns = 12;
 
-gform.columnClasses = _.map(new Array(13),function(item,i){return 'col-md-'+i})
+gform.columnClasses = _.map(new Array(13),function(item,i){return 'col-xs-'+i})
 gform.default.inline = true;
 gform.prototype.opts.suffix = "";
 
@@ -286,11 +277,11 @@ gform.handleError = function(field){
 		field.el.querySelector('.font-xs.text-danger').innerHTML = '';
 	}
 }
-gform.types['cancel']   = _.extend({}, gform.types['button'], {defaults:{
+gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 	"label":"<i class=\"fa fa-times\"></i> Cancel",
 	"action":"cancel",
 	"modifiers": "btn btn-danger"}});
-gform.types['save']   = _.extend({}, gform.types['button'], {defaults:{
+gform.types['save']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 	"label":"<i class=\"fa fa-check\"></i> Save",
 	"action":"save",
 	"modifiers": "btn btn-success"}});
@@ -383,7 +374,7 @@ gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section
         {type:"select",name:'country',options:'../data/countries.json',format:{label:'{{name}}',value:'{{code}}'},label:"Country", validate:[{type:"length",max:"15"}],columns:6}
     ]
 }});
-
+gform.THEME = {'bootstrap':'0.0.1'}
 
 gform.types['datetime'] = _.extend({}, gform.types['input'], {
   defaults:{

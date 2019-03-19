@@ -360,7 +360,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         // if(this.other){
         //     this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
         // }
-        this.label = gform.renderString(this.item.label, this);
+        this.label = gform.renderString(this.item.label||this.label, this);
         this.el.querySelector('label').innerHTML = this.label
     },
   get: function(){

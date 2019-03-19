@@ -730,7 +730,7 @@ gform.options = function(opts, value, count) {
     return newOpts.options;
 }
 
-gform.VERSION = '0.0.0.3';
+gform.VERSION = '0.0.0.4';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
