@@ -342,8 +342,14 @@ gform.types['save']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 	"label":"<i class=\"fa fa-check\"></i> Save",
 	"action":"save",
 	"modifiers": "btn btn-success"}});
-
-
+gform.types['reset']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+	"label":"<i class=\"fa fa-times\"></i> Reset",
+	"action":"reset",
+	"modifiers": "btn btn-default"}});
+gform.types['clear']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+	"label":"<i class=\"fa fa-times\"></i> Clear",
+	"action":"clear",
+	"modifiers": "btn btn-warning"}});
 
 gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collection'], {
     initialize: function() {

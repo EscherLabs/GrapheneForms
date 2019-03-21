@@ -259,5 +259,12 @@ gform.types['save']   = _.extend({}, gform.types['button'], {defaults:{
 	label:"<i class=\"fa fa-check\"></i> Save",
 	action:"save",
 	modifiers: "float-right"}});
-
+gform.types['reset']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+    "label":"<i class=\"fa fa-times\"></i> Reset",
+    "action":"reset",
+    "modifiers": "button-outline"}});
+gform.types['clear']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+    "label":"<i class=\"fa fa-times\"></i> Clear",
+    "action":"clear",
+    "modifiers": "button-outline"}});
 

@@ -8,36 +8,12 @@ var gform = function(data, el){
             this.handlers[index]=[event];
         }
     }.bind(this))
-    this.sub = function (event, handler) {
-        var events = event.split(' ');
-        if (typeof this.handlers[event] !== 'object') {
-        this.handlers[event] = [];
-        }
-        _.each(events,function(event){
-            this.handlers[event].push(handler);
-        }.bind(this))
-        return this;
-    }.bind(this);
-    this.on = this.sub;
-    this.pub = function (e,f,a) {
-        var a = a || {};
-        a.form = this;
-        a.field = f;
-
-        var events = []
-        if(typeof e == 'string'){
-            events.push(e)
-        }else{events = events.concat(e)}
-        _.each(events, function(args,event){
-            args.event = event;
-            var f = function (handler) {
-                handler.call(null,args);
-            }.bind(this)
-            _.each(this.handlers[event], f);
-            _.each(this.handlers['*'], f);
-        }.bind(this, a))
-        return this;
-    }.bind(this);
+    this.sub('reset', function(e){
+        e.form.set(e.form.options.data);
+    });          
+    this.sub('clear', function(e){
+        e.form.set();
+    });
     // this.sub = function (event, handler, delay) {
     //     delay = delay || 0;
     //     this.on(event, _.debounce(handler, delay));
@@ -47,7 +23,7 @@ var gform = function(data, el){
     
     //initalize form
     this.options = _.assignIn({legend: '', default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
-
+    this.options.fields = this.options.fields.concat(this.options.actions || [])
     if (typeof this.options.data == 'string') {
         this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
     }
@@ -639,6 +615,36 @@ gform.prototype.opts = {
     suffix: ':',
     rowClass: 'row',
     requiredText: '<span style="color:red">*</span>'
+}
+gform.prototype.sub = function (event, handler) {
+    var events = event.split(' ');
+    if (typeof this.handlers[event] !== 'object') {
+    this.handlers[event] = [];
+    }
+    _.each(events,function(event){
+        this.handlers[event].push(handler);
+    }.bind(this))
+    return this;
+};
+gform.prototype.on = gform.prototype.sub;
+gform.prototype.pub = function (e,f,a) {
+    var a = a || {};
+    a.form = this;
+    a.field = f;
+
+    var events = []
+    if(typeof e == 'string'){
+        events.push(e)
+    }else{events = events.concat(e)}
+    _.each(events, function(args,event){
+        args.event = event;
+        var f = function (handler) {
+            handler.call(null,args);
+        }.bind(this)
+        _.each(this.handlers[event], f);
+        _.each(this.handlers['*'], f);
+    }.bind(this, a))
+    return this;
 }
 
 gform.optionsObj = function(opts, value, count){
