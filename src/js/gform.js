@@ -40,6 +40,8 @@ var gform = function(data, el){
     this.el = el || data.el;
     if(typeof this.el == 'string'){
         this.el = document.querySelector(this.el);
+    }else if(typeof this.el == 'object'){
+        this.el;
     }else{
         el = '';
     }
