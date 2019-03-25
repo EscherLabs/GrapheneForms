@@ -632,7 +632,9 @@ gform.prototype.on = gform.prototype.sub;
 gform.prototype.pub = function (e,f,a) {
     var a = a || {};
     a.form = this;
-    a.field = f;
+    if(typeof f !== 'undefined'){
+        a.field = f;
+    }
 
     var events = []
     if(typeof e == 'string'){
@@ -722,10 +724,12 @@ gform.options = function(opts, value, count) {
     }
 	if(typeof opts.options == 'string' || typeof newOpts.url == 'string') {
         newOpts.path = newOpts.url || opts.options;
-        newOpts.options = false;
+        newOpts.options = {};
+        newOpts.options[newOpts.path] = false;
         newOpts.url = null;
         gform.ajax({path: newOpts.path, success:function(data) {
-            this.options = data;  
+            debugger;
+            this.options = data;
             this.options = gform.options.call(this, this, this.value);
             this.update()
         }.bind(this)})

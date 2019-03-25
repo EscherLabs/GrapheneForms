@@ -1,6 +1,13 @@
 gform.types = {
   'input':{
       defaults:{},
+      setLabel:function(){
+        this.label = gform.renderString(this.item.label||this.label, this);
+        var labelEl = this.el.querySelector('label');
+        if(labelEl !== null){
+            labelEl.innerHTML = this.label
+        }
+      },
       create: function(){
           var tempEl = document.createElement("span");
           tempEl.setAttribute("id", this.id);
@@ -44,8 +51,8 @@ gform.types = {
         }
         this.label = gform.renderString((item||{}).label||this.item.label, this);
 
-        var oldDiv = document.getElementById(this.id);
-
+        // var oldDiv = document.getElementById(this.id);
+        var oldDiv = this.el.querySelector('#'+this.id);
         this.destroy();
         this.el = gform.types[this.type].create.call(this);
         oldDiv.parentNode.replaceChild(this.el,oldDiv);
@@ -121,8 +128,7 @@ gform.types = {
         //   if(this.other){
         //       this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
         //   }
-          this.label = gform.renderString(this.item.label||this.label, this);
-          this.el.querySelector('label').innerHTML = this.label
+          gform.types[this.type].setLabel.call(this)
       },
       initialize: function() {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
@@ -189,7 +195,8 @@ gform.types = {
         }
         this.label = gform.renderString(({}||item).label||this.item.label, this);
 
-        var oldDiv = document.getElementById(this.id);
+        // var oldDiv = document.getElementById(this.id);
+        var oldDiv = this.el.querySelector('#'+this.id);
 
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
@@ -260,7 +267,8 @@ gform.types = {
           }
           this.label = gform.renderString(this.item.label, this);
 
-          var oldDiv = document.getElementById(this.id);
+        //   var oldDiv = document.getElementById(this.id);
+          var oldDiv = this.el.querySelector('#'+this.id);
 
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
@@ -357,8 +365,8 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         // if(this.other){
         //     this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
         // }
-        this.label = gform.renderString(this.item.label||this.label, this);
-        this.el.querySelector('label').innerHTML = this.label
+
+        gform.types[this.type].setLabel.call(this)
     },
   get: function(){
       if(this.multiple){
@@ -421,8 +429,8 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
                 }
             }.bind(this))
         }
-        this.label = gform.renderString(this.item.label, this);
-        this.el.querySelector('label').innerHTML = this.label
+
+        gform.types[this.type].setLabel.call(this)
     },
     initialize: function() {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
@@ -473,104 +481,6 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
 });
 
 
-
-
-
-
-
-
 //tags
 //upload
 //base64
-
-
-
-// gform.types['upload'] =       {
-// 		defaults: {autosize: true, advanced: false},
-// create: function() {
-//     var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
-//     gform.addClass(tempEl,gform.columnClasses[this.columns])
-//     return tempEl;
-// },
-// initialize: function() {
-//     //handle rows
-//     this.rows = {};
-// },        
-// render: function() {
-//     // if(this.section){
-//         return gform.render(this.owner.options.sections+'_fieldset', this);                
-//     // }else{
-//         // return gform.render('_fieldset', this);                
-//     // }
-// },
-// get: function(name) {
-//     return gform.toJSON.call(this, name)
-// },
-// find: function(name) {
-//     return gform.find.call(this, name)
-// },
-// reflow: function() {
-//     gform.reflow.call(this)
-// },
-// focus:function() {
-//     gform.types[this.fields[0].type].focus.call(this.fields[0]);
-// }
-
-// (function(b, $){
-// 	b.register({
-// 		type: 'upload',
-// 		defaults: {autosize: true, advanced: false},
-// 		setup: function() {
-// 			this.$el = this.self.find('form input');
-// 			this.$el.off();
-// 			if(this.onchange !== undefined) {
-// 				this.$el.on('input', this.onchange);
-// 			}
-// 			this.$el.on('input', $.proxy(function(){this.trigger('change');},this));
-// 			this.myDropzone = new Dropzone('#' + this.name, { method: 'post', paramName: this.name, success: $.proxy(function(message,response){
-// 				//contentManager.currentView.model.set(this.name, response[this.name]);
-// 				//myDropzone.removeAllFiles();
-
-// 				//this.setValue(response[this.name]);
-// 				this.setValue(response);
-// 				this.trigger('uploaded');
-// 			}, this)});
-// 			// myDropzone.on("complete", function(file) {
-// 			// 	myDropzone.removeFile(file);
-// 			// });
-// 		},
-// 		getValue: function() {
-// 		 return this.value; 
-// 		},
-// 		setValue: function(value){
-// 			if(typeof this.lastSaved === 'undefined'){
-// 				this.lastSaved = value;
-// 			}
-// 			this.value = value;
-// 			return this.$el;
-// 		},
-// 		update: function(item, silent) {
-// 			if(typeof item === 'object') {
-// 				$.extend(this.item, item);
-// 			}
-// 			$.extend(this, this.item);
-// 			this.setValue(this.value);
-// 			this.myDropzone.destroy();
-// 			this.render();
-// 			this.setup();
-// 			if(!silent) {
-// 				this.trigger('change');
-// 			}
-// 		},
-// 		render: function() {
-// 			if(typeof this.self === 'undefined') {
-// 				this.self = $(this.create()).attr('data-Berry', this.owner.options.name);
-// 			} else {
-// 				this.self.find('div:first').replaceWith($(this.create()).html())
-// 			}
-// 			this.display = this.getDisplay();
-// 			return this.self;
-// 		}
-// 	});
-// })(Berry,jQuery);
-
