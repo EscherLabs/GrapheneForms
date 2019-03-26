@@ -116,7 +116,7 @@ var gform = function(data, el){
         // if(typeof name == 'undefined'){
         if(name == null){
             gform.each.call(this, function(field) {
-                field.set(null);
+                field.set('');
             })
         }
         // _.find(this.fields, {name: name}).set(value);
@@ -651,97 +651,199 @@ gform.prototype.pub = function (e,f,a) {
     return this;
 }
 
-gform.optionsObj = function(opts, value, count){
-	// If max is set on the field, assume a number set is desired. 
-	// min defaults to 0 and the step defaults to 1.
 
-	if(typeof opts.max !== 'undefined' && opts.max !== '') {
-        for(var i = (opts.min || 0);i<=opts.max;i=i+(opts.step || 1)){
-            opts.options.push(""+i);
-        }
-    }
-    return _.map(opts.options, function(opts,item, i){
-        if(typeof item === 'object' && item.type == 'optgroup'){
-            // var section = {label:item.label};
-            item.options = gform.optionsObj.call(this, _.merge({options:[]},gform.default, item),value,count);
-            item.id = gform.getUID();
 
-            gform.processConditions.call(this, item.enable, function(id, result){
-                var op = this.el.querySelectorAll('[data-id="'+id+'"]');
-                for (var i = 0; i < op.length; i++) {
-                      op[i].disabled = !result;
-                  }
-            }.bind(this,item.id))            
-            gform.processConditions.call(this, item.display, function(id, result){
-                var op = this.el.querySelectorAll('[data-id="'+id+'"]');
-                for (var i = 0; i < op.length; i++) {
-                      op[i].hidden = !result;
-                  }
-            }.bind(this,item.id))
-            count += item.options.length;
+// gform.optionsObj = function(opts, value, count){
+// 	// If max is set on the field, assume a number set is desired. 
+// 	// min defaults to 0 and the step defaults to 1.
+// 	if(typeof opts.max !== 'undefined' && opts.max !== '') {
+//         for(var i = (opts.min || 0);i<=opts.max;i=i+(opts.step || 1)){
+//             opts.options.push(""+i);
+//         }
+//     }
+//     if(typeof opts.options == 'string' || typeof opts.url == 'string') {
+//         opts.path = opts.url || opts.options;
+//         opts.options = {label:'-'};
+//         opts.options[opts.path] = false;
+//         opts.url = null;
+//         gform.ajax({path: opts.path, success:function(data) {
+//             this.options = data;
+//             this.options = gform.mapOptions.call(this, this, this.value);
+//             this.update()
+//         }.bind(this)})
+// 		return opts;
+//     }
 
-            return {section:item};
-        }else{
-            if(typeof item === 'string' || typeof item === 'number' || typeof item == 'boolean') {
-                item = {label: item, value:item};
-            }
-            item.index = item.index || ""+count;
+//     return _.map(opts.options, function(opts,item, i){
+//         if(typeof item === 'object' && item.type == 'optgroup'){
+//             // var optgroup = {label:item.label};
+//             item.options = gform.optionsObj.call(this, _.merge({options:[]},gform.default, item),value,count);
+//             item.id = gform.getUID();
+
+//             gform.processConditions.call(this, item.enable, function(id, result){
+//                 var op = this.el.querySelectorAll('[data-id="'+id+'"]');
+//                 for (var i = 0; i < op.length; i++) {
+//                       op[i].disabled = !result;
+//                   }
+//             }.bind(this,item.id))            
+//             gform.processConditions.call(this, item.display, function(id, result){
+//                 var op = this.el.querySelectorAll('[data-id="'+id+'"]');
+//                 for (var i = 0; i < op.length; i++) {
+//                       op[i].hidden = !result;
+//                   }
+//             }.bind(this,item.id))
+//             count += item.options.length;
+
+//             return {optgroup:item};
+//         }else{
+//             if(typeof item === 'string' || typeof item === 'number' || typeof item == 'boolean') {
+//                 item = {label: item, value:item};
+//             }
+//             item.index = item.index || ""+count;
             
-            if(typeof opts.format !== 'undefined'){
+//             if(typeof opts.format !== 'undefined'){
 
-                if(typeof opts.format.label !== 'undefined' ){
-                    item.label = gform.renderString(opts.format.label,item);
-                }
-                if(typeof opts.format.value !== 'undefined' ){
-                    item.value = gform.renderString(opts.format.value,item);
-                }
-            }
-            // _.assignIn(item,{label: gform.renderString(opts.format.label,item), value: gform.renderString(opts.format.value,item) });
-            // debugger;
-            if(item.value == value || (this.multiple && (value.indexOf(item.value)>=0) )) { item.selected = true;}
+//                 if(typeof opts.format.label !== 'undefined' ){
+//                     item.label = gform.renderString(opts.format.label,item);
+//                 }
+//                 if(typeof opts.format.value !== 'undefined' ){
+//                     item.value = gform.renderString(opts.format.value,item);
+//                 }
+//             }
+//             // _.assignIn(item,{label: gform.renderString(opts.format.label,item), value: gform.renderString(opts.format.value,item) });
+//             if(item.value == value || (this.multiple && (value.indexOf(item.value)>=0) )) { item.selected = true;}
             
-            // if(item.value == value) { item.selected = true;}
-            count+=1;
-            item.i = count;
-            return item;
-        }
+//             // if(item.value == value) { item.selected = true;}
+//             count+=1;
+//             item.i = count;
+//             return item;
+//         }
 
-    }.bind(this,opts))
-}
+//     }.bind(this,opts))
+// }
 
-/* Process the options of a field for normalization */
-gform.options = function(opts, value, count) {
+// /* Process the options of a field for normalization */
+// gform.mapOptions = function(opts, value, count) {
 
-    count = count||0;
-    var newOpts = {options:[]};
-    if(typeof opts.options == 'object' && !_.isArray(opts.options)){
-        _.merge(newOpts.options, opts.options);    
-    }
+//     count = count||0;
+//     var newOpts = {options:[]};
+//     if(typeof opts.options == 'object' && !_.isArray(opts.options)){
+//         _.merge(newOpts.options, opts.options);    
+//         // newOpts.options = opts.options;
+//     }
     
-    if(typeof opts.options == 'function') {
-        newOpts.action = opts.options;
-        opts.options = newOpts.action.call(this);
+//     if(typeof opts.options == 'function') {
+//         newOpts.action = opts.options;
+//         opts.options = newOpts.action.call(this);
+//     }
+
+//     opts = _.merge({options:[]}, gform.default, opts);        
+
+//     newOpts.options =  gform.optionsObj.call(this,opts,value,count);
+//     return newOpts.options;
+// }
+
+
+gform.mapOptions = function(optgroup, value, count){
+    this.optgroup = optgroup;
+    count = count||0;
+    format = optgroup.format;
+    function pArray(opts){
+        return _.map(opts,function(item){
+            
+            if(typeof item === 'object' && item.type == 'optgroup'){
+                item.map = new gform.mapOptions(item,value,count);
+                item.id = gform.getUID();
+                gform.processConditions.call(this, item.enable, function(id, result){
+                    var op = this.el.querySelectorAll('[data-id="'+id+'"]');
+                    for (var i = 0; i < op.length; i++) {
+                        op[i].disabled = !result;
+                    }
+                }.bind(this,item.id))            
+                gform.processConditions.call(this, item.display, function(id, result){
+                    var op = this.el.querySelectorAll('[data-id="'+id+'"]');
+                    for (var i = 0; i < op.length; i++) {
+                        op[i].hidden = !result;
+                    }
+                }.bind(this,item.id))
+                // count += item.options.length;
+                return item;
+            }else{
+                var option = _.extend({},item)
+                option.data = item;
+                if(typeof item === 'string' || typeof item === 'number' || typeof item == 'boolean') {
+                    option.label = option.value = item;
+                }
+                option.index = item.index || ""+count;
+                if(typeof format !== 'undefined'){
+
+                    if(typeof format.label !== 'undefined' ){
+                        option.label = gform.renderString(format.label,option);
+                    }
+                    if(typeof format.value !== 'undefined' ){
+                        option.value = gform.renderString(format.value,option);
+                    }
+                }
+                if(option.value == value || (this.multiple && (value.indexOf(option.value)>=0) )) { option.selected = true;}
+                
+                count+=1;
+                option.i = count;
+                return option;
+            }
+        })
+    }       
+optgroup.options = optgroup.options || optgroup.path || optgroup.action;
+    switch(typeof optgroup.options){
+        case 'string':
+                optgroup.path = optgroup.path || optgroup.options;
+                optgroup.options = []
+                gform.ajax({path: optgroup.path, success:function(data) {
+                    this.optgroup.options = pArray(data);
+                    
+                    this.pub('change')
+                }.bind(this)})
+        break;
+        case 'function':
+            optgroup.action = optgroup.options;
+            optgroup.options = pArray(optgroup.action.call(this));
+        break;
+        default:
+        if(_.isArray(optgroup.options)){
+            optgroup.options = pArray(optgroup.options);
+        }
     }
-	if(typeof opts.options == 'string' || typeof newOpts.url == 'string') {
-        newOpts.path = newOpts.url || opts.options;
-        newOpts.options = {};
-        newOpts.options[newOpts.path] = false;
-        newOpts.url = null;
-        gform.ajax({path: newOpts.path, success:function(data) {
-            debugger;
-            this.options = data;
-            this.options = gform.options.call(this, this, this.value);
-            this.update()
-        }.bind(this)})
-		return newOpts;
-    }
 
-    opts = _.merge({options:[]}, gform.default, opts);        
-
-    newOpts.options =  gform.optionsObj.call(this,opts,value,count);
-
-    return newOpts.options;
+    return {getobject:function(){
+        var temp = {};
+        temp = _.map(this.optgroup.options,function(item){
+            if(typeof item.map !== 'undefined'){
+                item.options = item.map.getoptions();
+                return {optgroup:{label:item.label||'',options:item.map.getoptions()}}
+            }else{return item;}
+        })
+        return temp;
+    }.bind(this),getoptions:function(search){
+        var temp = [];
+        _.each(this.optgroup.options,function(item){
+            if(typeof item.map !== 'undefined'){
+                temp = temp.concat(item.map.getoptions())
+            }else{temp.push(item)}
+        })
+        // debugger;
+        if(typeof search !== 'undefined'){
+            return _.find(temp,search)
+        }
+        return temp;
+    }.bind(this),sub:this.on,pub:this.pub,handlers:this.handlers};
 }
+gform.mapOptions.prototype.handlers = {initialize: []}
+gform.mapOptions.prototype.on = gform.prototype.on;
+gform.mapOptions.prototype.pub = gform.prototype.pub;
+
+
+
+
+
 
 gform.render = function(template, options) {
     return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))

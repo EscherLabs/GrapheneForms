@@ -27,6 +27,7 @@ gform.types = {
         //   this.iel = this.el.querySelector('input[name="' + this.name + '"]')
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.onchangeEvent = function(){
+              this.input = true;
               this.value = this.get();
               if(this.el.querySelector('.count') != null){
                 var text = this.value.length;
@@ -42,6 +43,7 @@ gform.types = {
             //   this.owner.pub('input:'+this.name, this,{input:this.value});
             //   this.owner.pub('input', this,{input:this.value});
           }.bind(this)
+          this.input = this.input || false;
         //   this.el.addEventListener('change',this.onchangeEvent);		
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
       },
@@ -52,7 +54,7 @@ gform.types = {
         this.label = gform.renderString((item||{}).label||this.item.label, this);
 
         // var oldDiv = document.getElementById(this.id);
-        var oldDiv = this.el.querySelector('#'+this.id);
+        var oldDiv = this.owner.el.querySelector('#'+this.id);
         this.destroy();
         this.el = gform.types[this.type].create.call(this);
         oldDiv.parentNode.replaceChild(this.el,oldDiv);
@@ -93,7 +95,13 @@ gform.types = {
   'bool':{
       defaults:{options:[false, true],format:{label:''}},
       render: function() {
-          this.options = gform.options.call(this,this, this.value);
+        //   this.options = gform.mapOptions.call(this,this, this.value);
+          this.mapOptions = new gform.mapOptions(this, this.value)
+          this.options = this.mapOptions.getobject()
+          this.mapOptions.sub('change',function(){
+              this.options = this.mapOptions.getobject()
+              this.update();
+          }.bind(this))
           this.selected = (this.value == this.options[1].value);
           return gform.render(this.type, this);
       },
@@ -108,7 +116,13 @@ gform.types = {
   'collection':{
       defaults:{format:{label: '{{label}}', value: '{{value}}'}},
       render: function() {
-          this.options = gform.options.call(this,this, this.value);
+        //   this.options = gform.mapOptions.call(this,this, this.value);
+          this.mapOptions = new gform.mapOptions(this, this.value)
+          this.options = this.mapOptions.getobject()
+          this.mapOptions.sub('change',function(){
+              this.options = this.mapOptions.getobject()
+              this.update();
+          }.bind(this))
           return gform.render(this.type, this);
       },
       setup:function(){
@@ -133,6 +147,7 @@ gform.types = {
       initialize: function() {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
+              this.input = true;
               this.value =  this.get();
               if(this.el.querySelector('.count') != null){
                 var text = this.value.length;
@@ -144,6 +159,8 @@ gform.types = {
               this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 
           }.bind(this));
+          this.input = this.input || false;
+
           gform.types[this.type].setup.call(this);
       },
       get: function() {
@@ -196,7 +213,7 @@ gform.types = {
         this.label = gform.renderString(({}||item).label||this.item.label, this);
 
         // var oldDiv = document.getElementById(this.id);
-        var oldDiv = this.el.querySelector('#'+this.id);
+        var oldDiv = this.owner.el.querySelector('#'+this.id);
 
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
@@ -214,9 +231,9 @@ gform.types = {
           return gform.toJSON.call(this, name)
       },
       set: function(value){
-        if(value == null){
+        if(value == null || value == ''){
             gform.each.call(this, function(field) {
-                field.set(null);
+                field.set('');
             })
         }else{
             _.each(value,function(item,index){
@@ -268,7 +285,7 @@ gform.types = {
           this.label = gform.renderString(this.item.label, this);
 
         //   var oldDiv = document.getElementById(this.id);
-          var oldDiv = this.el.querySelector('#'+this.id);
+          var oldDiv = this.owner.el.querySelector('#'+this.id);
 
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
@@ -330,7 +347,13 @@ gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['inpu
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
-        this.options = gform.options.call(this,this, this.value);
+        this.mapOptions = new gform.mapOptions(this.item, this.value)
+        this.options = this.mapOptions.getobject()
+        this.mapOptions.sub('change', function(){
+            this.options = this.mapOptions.getobject()
+            this.update();
+        }.bind(this))
+        // this.options = gform.mapOptions.call(this,this, this.value);
 
   if(typeof this.placeholder == 'string'){
       this.options.unshift({label:this.placeholder, value:'',enabled:false,visible:false,selected:true})
@@ -400,7 +423,13 @@ gform.types['scale']    = _.extend({}, gform.types['radio']);
 gform.types['checkboxes']    = _.extend({}, gform.types['radio'],{multiple:true});
 gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
-        this.options = gform.options.call(this,this, this.value);
+        // this.options = gform.mapOptions.call(this,this, this.value);
+        this.mapOptions = new gform.mapOptions(this, this.value)
+        this.options = this.mapOptions.getobject()
+        this.mapOptions.sub('change',function(){
+            this.options = this.mapOptions.getobject()
+            this.update();
+        }.bind(this))
         this.fields = _.map(this.fields, function(field){
             return _.assignIn({
                 name: (gform.renderString(field.label)||'').toLowerCase().split(' ').join('_'), 

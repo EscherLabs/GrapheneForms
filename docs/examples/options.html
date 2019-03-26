@@ -24,7 +24,8 @@
         </div>
     </div>
     <script src="../assets/js/lodash.min.js"></script>    
-    <script src='../assets/js/gform.min.js'></script>
+    <script src='../assets/js/gform.js'></script>
+    <script src='../assets/js/default.theme.min.js'></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
@@ -37,7 +38,7 @@
             {"label":"Third","value":3}
         ]},       
         {label: 'Select Field Simple Array', name: 'simple', type:'select', options:[
-            '0','1','2'
+            {type:"optgroup",options:['0','1','2']}
         ]},
         {label: 'Checkbox Simple Array', name: 'checkbox', type:'checkbox', options:[
             'no','yes'
@@ -45,7 +46,7 @@
         {label: '<span style="color:{{value}}">Select Field function</span>',placeholder:'Choose a color', name: 'function', type:'select', options: function(){
             return["Red","Green","Blue"];
         }},
-        {label: 'Select Field (url string)', name: 'url', type:'select', options:'../data/days.json'}
+        {label: 'Select Field (url string)', name: 'url', type:'select', options:[{type:'optgroup', path:'../data/days.json'}]}
         ]
     }
     </script>

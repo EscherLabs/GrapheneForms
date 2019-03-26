@@ -126,20 +126,20 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 		{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
 			<select class="form-control test" {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
 			{{#options}}
-			{{^section}}
+			{{^optgroup}}
 			<option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}} value="{{value}}">{{{label}}}</option>
-			{{/section}}
-			{{#section}}
-			{{#section.label}}
-			<optgroup label="{{label}}" data-id="{{section.id}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}">
-			{{/section.label}}
+			{{/optgroup}}
+			{{#optgroup}}
+			{{#optgroup.label}}
+			<optgroup label="{{label}}" data-id="{{optgroup.id}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}">
+			{{/optgroup.label}}
 					{{#options}}
-					<option data-id="{{section.id}}" {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+					<option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
 					{{/options}}
-					{{#section.label}}
+					{{#optgroup.label}}
 			</optgroup>
-			{{/section.label}}
-			{{/section}}
+			{{/optgroup.label}}
+			{{/optgroup}}
 			{{/options}}
 			</select>
 		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
