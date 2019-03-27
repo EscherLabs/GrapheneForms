@@ -1,7 +1,6 @@
 var gform = function(data, el){
     "use strict";
     //event management
-
     this.handlers = data.events||{};
     _.map(data.events,function(event,index){
         if(!_.isArray(event)){
@@ -745,6 +744,8 @@ gform.prototype.pub = function (e,f,a) {
 
 
 gform.mapOptions = function(optgroup, value, count){
+    this.handlers = []
+
     this.optgroup = optgroup;
     count = count||0;
     format = optgroup.format;
@@ -753,6 +754,10 @@ gform.mapOptions = function(optgroup, value, count){
             
             if(typeof item === 'object' && item.type == 'optgroup'){
                 item.map = new gform.mapOptions(item,value,count);
+                item.map.sub('*',function(e){
+                    // debugger;
+                    this.pub(e.event)
+                }.bind(this))
                 item.id = gform.getUID();
                 gform.processConditions.call(this, item.enable, function(id, result){
                     var op = this.el.querySelectorAll('[data-id="'+id+'"]');
@@ -790,26 +795,26 @@ gform.mapOptions = function(optgroup, value, count){
                 option.i = count;
                 return option;
             }
-        })
-    }       
-optgroup.options = optgroup.options || optgroup.path || optgroup.action;
+        }.bind(this))
+    }
+    optgroup.options = optgroup.options || optgroup.path || optgroup.action;
     switch(typeof optgroup.options){
         case 'string':
                 optgroup.path = optgroup.path || optgroup.options;
                 optgroup.options = []
                 gform.ajax({path: optgroup.path, success:function(data) {
-                    this.optgroup.options = pArray(data);
+                    this.optgroup.options = pArray.call(this,data);
                     
                     this.pub('change')
                 }.bind(this)})
         break;
         case 'function':
             optgroup.action = optgroup.options;
-            optgroup.options = pArray(optgroup.action.call(this));
+            optgroup.options = pArray.call(this,optgroup.action.call(this));
         break;
         default:
         if(_.isArray(optgroup.options)){
-            optgroup.options = pArray(optgroup.options);
+            optgroup.options = pArray.call(this,optgroup.options);
         }
     }
 
@@ -836,8 +841,8 @@ optgroup.options = optgroup.options || optgroup.path || optgroup.action;
         return temp;
     }.bind(this),sub:this.on,pub:this.pub,handlers:this.handlers};
 }
-gform.mapOptions.prototype.handlers = {initialize: []}
-gform.mapOptions.prototype.on = gform.prototype.on;
+// gform.mapOptions.prototype.handlers = {initialize: []}
+gform.mapOptions.prototype.on = gform.prototype.sub;
 gform.mapOptions.prototype.pub = gform.prototype.pub;
 
 
@@ -882,7 +887,9 @@ gform.getUID = function() {
       create: function(){
           var tempEl = document.createElement("span");
           tempEl.setAttribute("id", this.id);
-          tempEl.setAttribute("class", ''+gform.columnClasses[this.columns]);
+          if(this.owner.options.clear){
+            tempEl.setAttribute("class", ''+gform.columnClasses[this.columns]);
+          }
           tempEl.innerHTML = this.render();
           return tempEl;
       },
@@ -925,7 +932,9 @@ gform.getUID = function() {
         this.label = gform.renderString((item||{}).label||this.item.label, this);
 
         // var oldDiv = document.getElementById(this.id);
-        var oldDiv = this.owner.el.querySelector('#'+this.id);
+        // debugger;
+        // var oldDiv = this.owner.el.querySelector('#'+this.id);
+        var oldDiv = this.el;
         this.destroy();
         this.el = gform.types[this.type].create.call(this);
         oldDiv.parentNode.replaceChild(this.el,oldDiv);
@@ -1084,7 +1093,8 @@ gform.getUID = function() {
         this.label = gform.renderString(({}||item).label||this.item.label, this);
 
         // var oldDiv = document.getElementById(this.id);
-        var oldDiv = this.owner.el.querySelector('#'+this.id);
+        // var oldDiv = this.owner.el.querySelector('#'+this.id);
+        var oldDiv = this.el;
 
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
@@ -1156,7 +1166,8 @@ gform.getUID = function() {
           this.label = gform.renderString(this.item.label, this);
 
         //   var oldDiv = document.getElementById(this.id);
-          var oldDiv = this.owner.el.querySelector('#'+this.id);
+        //   var oldDiv = this.owner.el.querySelector('#'+this.id);
+        var oldDiv = this.el;
 
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
@@ -1219,11 +1230,12 @@ gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['sectio
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         this.mapOptions = new gform.mapOptions(this.item, this.value)
-        this.options = this.mapOptions.getobject()
         this.mapOptions.sub('change', function(){
-            this.options = this.mapOptions.getobject()
+            this.options = this.mapOptions.getobject();
             this.update();
         }.bind(this))
+                this.options = this.mapOptions.getobject()
+
         // this.options = gform.mapOptions.call(this,this, this.value);
 
   if(typeof this.placeholder == 'string'){

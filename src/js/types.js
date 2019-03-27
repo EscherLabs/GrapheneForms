@@ -11,7 +11,9 @@ gform.types = {
       create: function(){
           var tempEl = document.createElement("span");
           tempEl.setAttribute("id", this.id);
-          tempEl.setAttribute("class", ''+gform.columnClasses[this.columns]);
+          if(this.owner.options.clear){
+            tempEl.setAttribute("class", ''+gform.columnClasses[this.columns]);
+          }
           tempEl.innerHTML = this.render();
           return tempEl;
       },
@@ -54,7 +56,9 @@ gform.types = {
         this.label = gform.renderString((item||{}).label||this.item.label, this);
 
         // var oldDiv = document.getElementById(this.id);
-        var oldDiv = this.owner.el.querySelector('#'+this.id);
+        // debugger;
+        // var oldDiv = this.owner.el.querySelector('#'+this.id);
+        var oldDiv = this.el;
         this.destroy();
         this.el = gform.types[this.type].create.call(this);
         oldDiv.parentNode.replaceChild(this.el,oldDiv);
@@ -213,7 +217,8 @@ gform.types = {
         this.label = gform.renderString(({}||item).label||this.item.label, this);
 
         // var oldDiv = document.getElementById(this.id);
-        var oldDiv = this.owner.el.querySelector('#'+this.id);
+        // var oldDiv = this.owner.el.querySelector('#'+this.id);
+        var oldDiv = this.el;
 
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
@@ -285,7 +290,8 @@ gform.types = {
           this.label = gform.renderString(this.item.label, this);
 
         //   var oldDiv = document.getElementById(this.id);
-          var oldDiv = this.owner.el.querySelector('#'+this.id);
+        //   var oldDiv = this.owner.el.querySelector('#'+this.id);
+        var oldDiv = this.el;
 
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
@@ -348,11 +354,12 @@ gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['sectio
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         this.mapOptions = new gform.mapOptions(this.item, this.value)
-        this.options = this.mapOptions.getobject()
         this.mapOptions.sub('change', function(){
-            this.options = this.mapOptions.getobject()
+            this.options = this.mapOptions.getobject();
             this.update();
         }.bind(this))
+                this.options = this.mapOptions.getobject()
+
         // this.options = gform.mapOptions.call(this,this, this.value);
 
   if(typeof this.placeholder == 'string'){

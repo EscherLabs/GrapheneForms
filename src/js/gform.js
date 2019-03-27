@@ -1,7 +1,6 @@
 var gform = function(data, el){
     "use strict";
     //event management
-
     this.handlers = data.events||{};
     _.map(data.events,function(event,index){
         if(!_.isArray(event)){
@@ -745,6 +744,8 @@ gform.prototype.pub = function (e,f,a) {
 
 
 gform.mapOptions = function(optgroup, value, count){
+    this.handlers = []
+
     this.optgroup = optgroup;
     count = count||0;
     format = optgroup.format;
@@ -753,6 +754,10 @@ gform.mapOptions = function(optgroup, value, count){
             
             if(typeof item === 'object' && item.type == 'optgroup'){
                 item.map = new gform.mapOptions(item,value,count);
+                item.map.sub('*',function(e){
+                    // debugger;
+                    this.pub(e.event)
+                }.bind(this))
                 item.id = gform.getUID();
                 gform.processConditions.call(this, item.enable, function(id, result){
                     var op = this.el.querySelectorAll('[data-id="'+id+'"]');
@@ -790,26 +795,26 @@ gform.mapOptions = function(optgroup, value, count){
                 option.i = count;
                 return option;
             }
-        })
-    }       
-optgroup.options = optgroup.options || optgroup.path || optgroup.action;
+        }.bind(this))
+    }
+    optgroup.options = optgroup.options || optgroup.path || optgroup.action;
     switch(typeof optgroup.options){
         case 'string':
                 optgroup.path = optgroup.path || optgroup.options;
                 optgroup.options = []
                 gform.ajax({path: optgroup.path, success:function(data) {
-                    this.optgroup.options = pArray(data);
+                    this.optgroup.options = pArray.call(this,data);
                     
                     this.pub('change')
                 }.bind(this)})
         break;
         case 'function':
             optgroup.action = optgroup.options;
-            optgroup.options = pArray(optgroup.action.call(this));
+            optgroup.options = pArray.call(this,optgroup.action.call(this));
         break;
         default:
         if(_.isArray(optgroup.options)){
-            optgroup.options = pArray(optgroup.options);
+            optgroup.options = pArray.call(this,optgroup.options);
         }
     }
 
@@ -836,8 +841,8 @@ optgroup.options = optgroup.options || optgroup.path || optgroup.action;
         return temp;
     }.bind(this),sub:this.on,pub:this.pub,handlers:this.handlers};
 }
-gform.mapOptions.prototype.handlers = {initialize: []}
-gform.mapOptions.prototype.on = gform.prototype.on;
+// gform.mapOptions.prototype.handlers = {initialize: []}
+gform.mapOptions.prototype.on = gform.prototype.sub;
 gform.mapOptions.prototype.pub = gform.prototype.pub;
 
 

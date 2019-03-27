@@ -321,6 +321,8 @@ gform.columns = 12;
 
 gform.columnClasses = _.map(new Array(13),function(item,i){return 'col-xs-'+i})
 gform.default.inline = true;
+gform.default.columns = 12;
+
 gform.prototype.opts.suffix = "";
 
 gform.handleError = function(field){
