@@ -50,6 +50,7 @@ gform.types = {
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
       },
       update: function(item, silent) {
+
         if(typeof item === 'object') {
             _.extend(this, this.item, item);
         }

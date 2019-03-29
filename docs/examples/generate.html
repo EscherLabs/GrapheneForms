@@ -24,17 +24,18 @@
         </div>
     </div>
     <script src="../assets/js/lodash.min.js"></script>    
-    <script src='../assets/js/gform.min.js'></script>
+    <script src='../assets/js/gform.js'></script>
+    <script src='../assets/js/default.theme.min.js'></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>                
 
     <script>
     options = {
         fields:[
-        {label: 'Up to Ten, min defaults to 0',type:'select',max:10},
-        {label: 'Start at two, step defaults to 1',type:'select',min:2, max:10},
-        {label: 'Step By Threes',type:'radio',min:1, max:10,step:3},
-        {label: "Max must be set",type:'select',min:1, step:3},
-        {label: "Number",type:'number',min:1, step:2, max:10,help:'HINT: use up/down arrows while focused on this input'}
+            {label: 'Up to Ten, min defaults to 0',type:'select',max:10},
+            {label: 'Start at two, step defaults to 1',type:'select',min:2, max:10},
+            {label: 'Step By Threes',type:'radio',min:1, max:10,step:3},
+            {label: "Max must be set",type:'select',min:1, step:3},
+            {label: "Number",type:'number',min:1, step:2, max:10,help:'HINT: use up/down arrows while focused on this input'}
         ]
     }
     </script>

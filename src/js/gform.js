@@ -750,12 +750,12 @@ gform.mapOptions = function(optgroup, value, count){
     count = count||0;
     format = optgroup.format;
     function pArray(opts){
+
         return _.map(opts,function(item){
             
             if(typeof item === 'object' && item.type == 'optgroup'){
                 item.map = new gform.mapOptions(item,value,count);
                 item.map.sub('*',function(e){
-                    // debugger;
                     this.pub(e.event)
                 }.bind(this))
                 item.id = gform.getUID();
@@ -797,26 +797,50 @@ gform.mapOptions = function(optgroup, value, count){
             }
         }.bind(this))
     }
+
+
+
+optgroup.options = optgroup.options || [];
     optgroup.options = optgroup.options || optgroup.path || optgroup.action;
+    
     switch(typeof optgroup.options){
         case 'string':
                 optgroup.path = optgroup.path || optgroup.options;
                 optgroup.options = []
-                gform.ajax({path: optgroup.path, success:function(data) {
-                    this.optgroup.options = pArray.call(this,data);
-                    
-                    this.pub('change')
-                }.bind(this)})
+
         break;
         case 'function':
             optgroup.action = optgroup.options;
-            optgroup.options = pArray.call(this,optgroup.action.call(this));
+            optgroup.options = []
         break;
-        default:
-        if(_.isArray(optgroup.options)){
-            optgroup.options = pArray.call(this,optgroup.options);
+
+    }
+        // 	// If max is set on the field, assume a number set is desired. 
+// 	// min defaults to 0 and the step defaults to 1.
+	if(typeof optgroup.max !== 'undefined' && optgroup.max !== '') {
+        for(var i = (opts.min || 0);i<=optgroup.max;i=i+(optgroup.step || 1)){
+            opts.options.push(""+i);
         }
     }
+
+    if(typeof optgroup.action !== 'undefined'){
+        optgroup.options = optgroup.options.concat(pArray.call(this,optgroup.action.call(this)));
+    }
+
+    if(_.isArray(optgroup.options)){
+        optgroup.options = pArray.call(this,optgroup.options);
+    }
+
+    if(typeof optgroup.path !== 'undefined'){
+        gform.ajax({path: optgroup.path, success:function(data) {
+            delete this.optgroup.path;
+            this.optgroup.options = pArray.call(this,data);
+            this.pub('change')
+        }.bind(this)})
+    }
+
+
+
 
     return {getobject:function(){
         var temp = {};
