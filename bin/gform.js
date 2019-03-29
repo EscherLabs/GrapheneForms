@@ -184,9 +184,8 @@ var gform = function(data, el){
                 _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){
                     // item.update({index:index})
                     item.index = index;
-
                     item.label = gform.renderString(item.item.label, item);
-                    item.el.querySelector('label').innerHTML = item.label
+                    item.el.querySelector('legend,label').innerHTML = item.label
                 })
                 
 
@@ -374,7 +373,7 @@ gform.normalizeField = function(fieldIn,parent){
     // if(typeof field.validate.required == 'undefined'){field.validate.required = false}
     if(field.name == ''){field.name = field.id;}
     // if((typeof fieldIn.label == 'undefined' || fieldIn.label == '') && (field.label == '' || typeof field.label == 'undefined') ){fieldIn.label = field.name;}
-    field.item = fieldIn;
+    field.item = _.extend(fieldIn,{});
     return field;
 }
 
@@ -746,9 +745,9 @@ gform.prototype.pub = function (e,f,a) {
 gform.mapOptions = function(optgroup, value, count){
     this.handlers = []
 
-    this.optgroup = optgroup;
+    this.optgroup = _.extend({},optgroup);
     count = count||0;
-    format = optgroup.format;
+    format = this.optgroup.format;
     function pArray(opts){
 
         return _.map(opts,function(item){
@@ -800,46 +799,43 @@ gform.mapOptions = function(optgroup, value, count){
 
 
 
-optgroup.options = optgroup.options || [];
-    optgroup.options = optgroup.options || optgroup.path || optgroup.action;
+    this.optgroup.options = this.optgroup.options || [];
+    // optgroup.options = optgroup.options || optgroup.path || optgroup.action;
     
-    switch(typeof optgroup.options){
+    switch(typeof this.optgroup.options){
         case 'string':
-                optgroup.path = optgroup.path || optgroup.options;
-                optgroup.options = []
-
+                this.optgroup.path = this.optgroup.path || this.optgroup.options;
+                this.optgroup.options = []
         break;
         case 'function':
-            optgroup.action = optgroup.options;
-            optgroup.options = []
+            this.optgroup.action = this.optgroup.options;
+            this.optgroup.options = []
         break;
 
     }
-        // 	// If max is set on the field, assume a number set is desired. 
-// 	// min defaults to 0 and the step defaults to 1.
-	if(typeof optgroup.max !== 'undefined' && optgroup.max !== '') {
-        for(var i = (opts.min || 0);i<=optgroup.max;i=i+(optgroup.step || 1)){
-            opts.options.push(""+i);
+
+    // If max is set on the field, assume a number set is desired. 
+    // min defaults to 0 and the step defaults to 1.
+	if(typeof this.optgroup.max !== 'undefined' && this.optgroup.max !== '') {
+        for(var i = (this.optgroup.min || 0);i<=this.optgroup.max;i=i+(this.optgroup.step || 1)){
+            this.optgroup.options.push(""+i);
         }
     }
 
-    if(typeof optgroup.action !== 'undefined'){
-        optgroup.options = optgroup.options.concat(pArray.call(this,optgroup.action.call(this)));
+    if(typeof this.optgroup.action !== 'undefined'){
+        this.optgroup.options = this.optgroup.options.concat(pArray.call(this,this.optgroup.action.call(this)));
     }
 
-    if(_.isArray(optgroup.options)){
-        optgroup.options = pArray.call(this,optgroup.options);
+    if(_.isArray(this.optgroup.options)){
+        this.optgroup.options = pArray.call(this,this.optgroup.options);
     }
 
-    if(typeof optgroup.path !== 'undefined'){
-        gform.ajax({path: optgroup.path, success:function(data) {
-            delete this.optgroup.path;
-            this.optgroup.options = pArray.call(this,data);
+    if(typeof this.optgroup.path !== 'undefined'){
+        gform.ajax({path: this.optgroup.path, success:function(data) {
+            this.optgroup.options = pArray.call(this.optgroup.map, data);
             this.pub('change')
         }.bind(this)})
     }
-
-
 
 
     return {getobject:function(){
@@ -863,7 +859,7 @@ optgroup.options = optgroup.options || [];
             return _.find(temp,search)
         }
         return temp;
-    }.bind(this),sub:this.on,pub:this.pub,handlers:this.handlers};
+    }.bind(this),sub:this.on,pub:this.pub,handlers:this.handlers,optgroup:this.optgroup};
 }
 // gform.mapOptions.prototype.handlers = {initialize: []}
 gform.mapOptions.prototype.on = gform.prototype.sub;
@@ -950,9 +946,27 @@ gform.getUID = function() {
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
       },
       update: function(item, silent) {
+        if(typeof item !== 'undefined' && (
+            typeof item.options !== undefined ||
+            typeof item.max !== undefined ||
+            typeof item.action !== undefined 
+            )
+            && typeof this.mapOptions !== 'undefined'){
+            delete this.mapOptions;
+            this.item = _.defaults({},item,this.item);
 
+            // this.item.options = _.assign([],this.item.options,item.options);
+            this.options = _.extend([],this.item.options);
+            this.max = this.item.max;
+            this.min = this.item.min;
+            this.path = this.item.path;
+            this.action = this.item.action;
+        }
+        // else if(typeof this.mapOptions !== 'undefined'){
+        //     debugger;
+        // }
         if(typeof item === 'object') {
-            _.extend(this, this.item, item);
+            _.extend(item,this);
         }
         this.label = gform.renderString((item||{}).label||this.item.label, this);
 
@@ -1001,12 +1015,16 @@ gform.getUID = function() {
       defaults:{options:[false, true],format:{label:''}},
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
+        if(typeof this.mapOptions == 'undefined'){
+
           this.mapOptions = new gform.mapOptions(this, this.value)
-          this.options = this.mapOptions.getobject()
           this.mapOptions.sub('change',function(){
               this.options = this.mapOptions.getobject()
               this.update();
           }.bind(this))
+        }
+        this.options = this.mapOptions.getobject()
+
           this.selected = (this.value == this.options[1].value);
           return gform.render(this.type, this);
       },
@@ -1022,12 +1040,16 @@ gform.getUID = function() {
       defaults:{format:{label: '{{label}}', value: '{{value}}'}},
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
+        if(typeof this.mapOptions == 'undefined'){
+
           this.mapOptions = new gform.mapOptions(this, this.value)
-          this.options = this.mapOptions.getobject()
           this.mapOptions.sub('change',function(){
               this.options = this.mapOptions.getobject()
               this.update();
           }.bind(this))
+        }
+        this.options = this.mapOptions.getobject()
+
           return gform.render(this.type, this);
       },
       setup:function(){
@@ -1227,9 +1249,9 @@ gform.types['output']   = _.extend({}, gform.types['input'], {
     },
 });
 
-gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: [{ type:'valid_email' }]}});
+gform.types['email'] = _.extend(gform.types['input'], {defaults:{validate: [{ type:'valid_email' }]}});
 
-gform.types['textarea'] = _.extend({}, gform.types['input'], {
+gform.types['textarea'] = _.extend(gform.types['input'], {
 
     // initialize: function(){
     //       this.onchangeEvent = function(){
@@ -1252,14 +1274,18 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool'],{default:{format:{label:""}}});
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
-gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
+gform.types['select']   = _.extend(gform.types['input'], gform.types['collection'],{
     render: function() {
-        this.mapOptions = new gform.mapOptions(this.item, this.value)
-        this.mapOptions.sub('change', function(){
-            this.options = this.mapOptions.getobject();
-            this.update();
-        }.bind(this))
-                this.options = this.mapOptions.getobject()
+        if(typeof this.mapOptions == 'undefined'){
+            // debugger;
+            this.mapOptions = new gform.mapOptions(this, this.value)
+            this.mapOptions.sub('change', function(){
+                // debugger;
+                this.options = this.mapOptions.getobject();
+                this.update();
+            }.bind(this))
+        }
+        this.options = this.mapOptions.getobject()
 
         // this.options = gform.mapOptions.call(this,this, this.value);
 
@@ -1332,12 +1358,16 @@ gform.types['checkboxes']    = _.extend({}, gform.types['radio'],{multiple:true}
 gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         // this.options = gform.mapOptions.call(this,this, this.value);
-        this.mapOptions = new gform.mapOptions(this, this.value)
+        if(typeof this.mapOptions == 'undefined'){
+
+            this.mapOptions = new gform.mapOptions(this, this.value)
+            this.mapOptions.sub('change',function(){
+                this.options = this.mapOptions.getobject()
+                this.update();
+            }.bind(this))
+        }
         this.options = this.mapOptions.getobject()
-        this.mapOptions.sub('change',function(){
-            this.options = this.mapOptions.getobject()
-            this.update();
-        }.bind(this))
+
         this.fields = _.map(this.fields, function(field){
             return _.assignIn({
                 name: (gform.renderString(field.label)||'').toLowerCase().split(' ').join('_'), 

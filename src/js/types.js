@@ -50,9 +50,27 @@ gform.types = {
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
       },
       update: function(item, silent) {
+        if(typeof item !== 'undefined' && (
+            typeof item.options !== undefined ||
+            typeof item.max !== undefined ||
+            typeof item.action !== undefined 
+            )
+            && typeof this.mapOptions !== 'undefined'){
+            delete this.mapOptions;
+            this.item = _.defaults({},item,this.item);
 
+            // this.item.options = _.assign([],this.item.options,item.options);
+            this.options = _.extend([],this.item.options);
+            this.max = this.item.max;
+            this.min = this.item.min;
+            this.path = this.item.path;
+            this.action = this.item.action;
+        }
+        // else if(typeof this.mapOptions !== 'undefined'){
+        //     debugger;
+        // }
         if(typeof item === 'object') {
-            _.extend(this, this.item, item);
+            _.extend(item,this);
         }
         this.label = gform.renderString((item||{}).label||this.item.label, this);
 
@@ -101,12 +119,16 @@ gform.types = {
       defaults:{options:[false, true],format:{label:''}},
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
+        if(typeof this.mapOptions == 'undefined'){
+
           this.mapOptions = new gform.mapOptions(this, this.value)
-          this.options = this.mapOptions.getobject()
           this.mapOptions.sub('change',function(){
               this.options = this.mapOptions.getobject()
               this.update();
           }.bind(this))
+        }
+        this.options = this.mapOptions.getobject()
+
           this.selected = (this.value == this.options[1].value);
           return gform.render(this.type, this);
       },
@@ -122,12 +144,16 @@ gform.types = {
       defaults:{format:{label: '{{label}}', value: '{{value}}'}},
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
+        if(typeof this.mapOptions == 'undefined'){
+
           this.mapOptions = new gform.mapOptions(this, this.value)
-          this.options = this.mapOptions.getobject()
           this.mapOptions.sub('change',function(){
               this.options = this.mapOptions.getobject()
               this.update();
           }.bind(this))
+        }
+        this.options = this.mapOptions.getobject()
+
           return gform.render(this.type, this);
       },
       setup:function(){
@@ -327,9 +353,9 @@ gform.types['output']   = _.extend({}, gform.types['input'], {
     },
 });
 
-gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: [{ type:'valid_email' }]}});
+gform.types['email'] = _.extend(gform.types['input'], {defaults:{validate: [{ type:'valid_email' }]}});
 
-gform.types['textarea'] = _.extend({}, gform.types['input'], {
+gform.types['textarea'] = _.extend(gform.types['input'], {
 
     // initialize: function(){
     //       this.onchangeEvent = function(){
@@ -352,14 +378,18 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool'],{default:{format:{label:""}}});
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
-gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
+gform.types['select']   = _.extend(gform.types['input'], gform.types['collection'],{
     render: function() {
-        this.mapOptions = new gform.mapOptions(this.item, this.value)
-        this.mapOptions.sub('change', function(){
-            this.options = this.mapOptions.getobject();
-            this.update();
-        }.bind(this))
-                this.options = this.mapOptions.getobject()
+        if(typeof this.mapOptions == 'undefined'){
+            // debugger;
+            this.mapOptions = new gform.mapOptions(this, this.value)
+            this.mapOptions.sub('change', function(){
+                // debugger;
+                this.options = this.mapOptions.getobject();
+                this.update();
+            }.bind(this))
+        }
+        this.options = this.mapOptions.getobject()
 
         // this.options = gform.mapOptions.call(this,this, this.value);
 
@@ -432,12 +462,16 @@ gform.types['checkboxes']    = _.extend({}, gform.types['radio'],{multiple:true}
 gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         // this.options = gform.mapOptions.call(this,this, this.value);
-        this.mapOptions = new gform.mapOptions(this, this.value)
+        if(typeof this.mapOptions == 'undefined'){
+
+            this.mapOptions = new gform.mapOptions(this, this.value)
+            this.mapOptions.sub('change',function(){
+                this.options = this.mapOptions.getobject()
+                this.update();
+            }.bind(this))
+        }
         this.options = this.mapOptions.getobject()
-        this.mapOptions.sub('change',function(){
-            this.options = this.mapOptions.getobject()
-            this.update();
-        }.bind(this))
+
         this.fields = _.map(this.fields, function(field){
             return _.assignIn({
                 name: (gform.renderString(field.label)||'').toLowerCase().split(' ').join('_'), 
