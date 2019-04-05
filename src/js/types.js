@@ -353,9 +353,9 @@ gform.types['output']   = _.extend({}, gform.types['input'], {
     },
 });
 
-gform.types['email'] = _.extend(gform.types['input'], {defaults:{validate: [{ type:'valid_email' }]}});
+gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: [{ type:'valid_email' }]}});
 
-gform.types['textarea'] = _.extend(gform.types['input'], {
+gform.types['textarea'] = _.extend({}, gform.types['input'], {
 
     // initialize: function(){
     //       this.onchangeEvent = function(){
@@ -378,7 +378,7 @@ gform.types['textarea'] = _.extend(gform.types['input'], {
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool'],{default:{format:{label:""}}});
 gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
-gform.types['select']   = _.extend(gform.types['input'], gform.types['collection'],{
+gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         if(typeof this.mapOptions == 'undefined'){
             // debugger;

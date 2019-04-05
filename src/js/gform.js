@@ -1,7 +1,13 @@
 var gform = function(data, el){
     "use strict";
     //event management
-    this.handlers = data.events||{};
+    // this.handlers = data.events||{};
+    this.eventBus = new gform.eventBus({owner:'form',item:'field',handlers:data.events||{}}, this)
+	this.on = this.eventBus.on;
+	this.sub = this.on;
+	this.pub = this.eventBus.dispatch;
+	this.dispatch = this.pub;
+
     _.map(data.events,function(event,index){
         if(!_.isArray(event)){
             this.handlers[index]=[event];
@@ -616,38 +622,80 @@ gform.prototype.opts = {
     rowClass: 'row',
     requiredText: '<span style="color:red">*</span>'
 }
-gform.prototype.sub = function (event, handler) {
-    var events = event.split(' ');
-    if (typeof this.handlers[event] !== 'object') {
-    this.handlers[event] = [];
-    }
-    _.each(events,function(event){
-        this.handlers[event].push(handler);
-    }.bind(this))
-    return this;
-};
-gform.prototype.on = gform.prototype.sub;
-gform.prototype.pub = function (e,f,a) {
-    var a = a || {};
-    a.form = this;
-    if(typeof f !== 'undefined'){
-        a.field = f;
-    }
 
-    var events = []
-    if(typeof e == 'string'){
-        events.push(e)
-    }else{events = events.concat(e)}
-    _.each(events, function(args,event){
-        args.event = event;
-        var f = function (handler) {
-            handler.call(null,args);
-        }.bind(this)
-        _.each(this.handlers[event], f);
-        _.each(this.handlers['*'], f);
-    }.bind(this, a))
-    return this;
+gform.eventBus = function(options, owner){
+	this.options = options || {owner:'form',item:'field'};
+	this.owner = owner||this;
+	this.handlers = options.handlers||[];
+	this.dispatch = function (e,f,a) {
+		var a = a || {};
+		a[this.options.owner] = this.owner;
+		if(typeof f !== 'undefined'){
+		    a[this.options.item] = f;
+		}
+        a.default = true;
+        a.continue = true;
+        a.preventDefault = function(){a.default = false;}.bind(this)
+        a.stopPropagation = function(){a.continue = false;}.bind(this)
+		var events = [];
+		if(typeof e == 'string'){
+		    events.push(e)
+		}else{events = events.concat(e)}
+		_.each(events, function(args,event){
+            args.event = event;
+            var f = function (handler) {
+                if(a.continue){
+                    handler.call(null, args);
+                }
+            }.bind(this)
+            _.each(this.handlers[event], f);
+            _.each(this.handlers['*'], f);
+		}.bind(this, a))
+		return a
+	}.bind(this)
+	this.on = function (event, handler) {
+		var events = event.split(' ');
+		if (typeof this.handlers[event] !== 'object') {
+		this.handlers[event] = [];
+		}
+		_.each(events,function(event){
+				this.handlers[event].push(handler);
+		}.bind(this))
+		return this.owner;
+	}.bind(this);
 }
+// gform.prototype.sub = function (event, handler) {
+//     var events = event.split(' ');
+//     if (typeof this.handlers[event] !== 'object') {
+//     this.handlers[event] = [];
+//     }
+//     _.each(events,function(event){
+//         this.handlers[event].push(handler);
+//     }.bind(this))
+//     return this;
+// };
+// gform.prototype.on = gform.prototype.sub;
+// gform.prototype.pub = function (e,f,a) {
+//     var a = a || {};
+//     a[this.options.owner||'form'] = this;
+//     if(typeof f !== 'undefined'){
+//         a[this.options.item||'field'] = f;
+//     }
+
+//     var events = []
+//     if(typeof e == 'string'){
+//         events.push(e)
+//     }else{events = events.concat(e)}
+//     _.each(events, function(args,event){
+//         args.event = event;
+//         var f = function (handler) {
+//             handler.call(null,args);
+//         }.bind(this)
+//         _.each(this.handlers[event], f);
+//         _.each(this.handlers['*'], f);
+//     }.bind(this, a))
+//     return this;
+// }
 
 
 
@@ -743,8 +791,7 @@ gform.prototype.pub = function (e,f,a) {
 
 
 gform.mapOptions = function(optgroup, value, count){
-    this.handlers = []
-
+    this.eventBus = new gform.eventBus({owner:'field',item:'option'}, this)
     this.optgroup = _.extend({},optgroup);
     count = count||0;
     format = this.optgroup.format;
@@ -755,7 +802,7 @@ gform.mapOptions = function(optgroup, value, count){
             if(typeof item === 'object' && item.type == 'optgroup'){
                 item.map = new gform.mapOptions(item,value,count);
                 item.map.sub('*',function(e){
-                    this.pub(e.event)
+                    this.eventBus.dispatch(e.event)
                 }.bind(this))
                 item.id = gform.getUID();
                 gform.processConditions.call(this, item.enable, function(id, result){
@@ -833,7 +880,7 @@ gform.mapOptions = function(optgroup, value, count){
     if(typeof this.optgroup.path !== 'undefined'){
         gform.ajax({path: this.optgroup.path, success:function(data) {
             this.optgroup.options = pArray.call(this.optgroup.map, data);
-            this.pub('change')
+            this.eventBus.dispatch('change')
         }.bind(this)})
     }
 
@@ -859,11 +906,11 @@ gform.mapOptions = function(optgroup, value, count){
             return _.find(temp,search)
         }
         return temp;
-    }.bind(this),sub:this.on,pub:this.pub,handlers:this.handlers,optgroup:this.optgroup};
+    }.bind(this),sub:this.eventBus.on,handlers:this.handlers,optgroup:this.optgroup};
 }
 // gform.mapOptions.prototype.handlers = {initialize: []}
-gform.mapOptions.prototype.on = gform.prototype.sub;
-gform.mapOptions.prototype.pub = gform.prototype.pub;
+// gform.mapOptions.prototype.on = gform.prototype.sub;
+// gform.mapOptions.prototype.pub = gform.prototype.pub;
 
 
 
@@ -890,7 +937,7 @@ gform.render = function(template, options) {
     elem.className = _.chain(elem.className).split(/[\s]+/).difference(classes.split(' ')).join(' ').value();
     // return elem
   };
-gform.VERSION = '0.0.0.6';
+gform.VERSION = '0.0.0.7';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
