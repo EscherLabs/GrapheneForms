@@ -7,12 +7,12 @@ var gform = function(data, el){
 	this.sub = this.on;
 	this.pub = this.eventBus.dispatch;
 	this.dispatch = this.pub;
-
-    _.map(data.events,function(event,index){
-        if(!_.isArray(event)){
-            this.handlers[index]=[event];
-        }
-    }.bind(this))
+    // debugger;
+    // _.map(data.events,function(event,index){
+    //     if(!_.isArray(event)){
+    //         this.eventBus.handlers[index]=[event];
+    //     }
+    // }.bind(this))
     this.sub('reset', function(e){
         e.form.set(e.form.options.data);
     });          
@@ -365,7 +365,7 @@ gform.normalizeField = function(fieldIn,parent){
         valid: true,
         parsable:true,
         visible:true,
-        enabled:true,
+        editable:true,
         parent: parent,
         array:false,
         columns: this.options.columns||gform.columns,
@@ -426,7 +426,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.destroy = gform.types[field.type].destroy.bind(field);
     
     field.active = function() {
-		return this.parent.active() && this.enabled && this.parsable && this.visible;
+		return this.parent.active() && this.editable && this.parsable && this.visible;
 	}
     field.set = function(value, silent){
         //not sure we should be excluding objects - test how to allow objects
@@ -509,7 +509,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         }
     }
 
-    gform.processConditions.call(field, field.display, function(result){
+    gform.processConditions.call(field, field.show, function(result){
         // if(this.visible !== result){
             // this.parent.reflow();
         // }
@@ -522,11 +522,11 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     //     this.visible = result;
     // })
     
-    gform.processConditions.call(field, field.enable, function(result){
-        this.enabled = result;        
-        gform.types[this.type].enable.call(this,this.enabled);
+    gform.processConditions.call(field, field.edit, function(result){
+        this.editable = result;        
+        gform.types[this.type].edit.call(this,this.editable);
     })
-    gform.processConditions.call(field, field.parse||field.display, function(result){
+    gform.processConditions.call(field, field.parse||field.show, function(result){
         this.parsable = result
     })
     if(field.required){
@@ -539,16 +539,16 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
 
 // debugger;
-//     this.enabledConditions = gform.processConditions.call(field, field.enable,
+//     this.editableConditions = gform.processConditions.call(field, field.edit,
 //         function(bool, token) {
 //             debugger;
 //             if(typeof bool == 'boolean') {
-//                 this.enabledConditions[token] = bool;
-//                 this.isEnabled = true;
-//                 this.enable();
-//                 for(var c in this.enabledConditions) {
-//                     if(!this.enabledConditions[c]) {
-//                         this.isEnabled = false;
+//                 this.editableConditions[token] = bool;
+//                 this.iseditable = true;
+//                 this.edit();
+//                 for(var c in this.editableConditions) {
+//                     if(!this.editableConditions[c]) {
+//                         this.iseditable = false;
 //                         this.disable();
 //                         break;
 //                     }
@@ -556,8 +556,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 //             }
 //         }
 //     );
-//     if(typeof this.enabledConditions == 'boolean'){
-//         this.isEnabled = this.enabledConditions;
+//     if(typeof this.editableConditions == 'boolean'){
+//         this.iseditable = this.editableConditions;
 //         // this.update({}, true);
 //     }
 
@@ -726,13 +726,13 @@ gform.eventBus = function(options, owner){
 //             item.options = gform.optionsObj.call(this, _.merge({options:[]},gform.default, item),value,count);
 //             item.id = gform.getUID();
 
-//             gform.processConditions.call(this, item.enable, function(id, result){
+//             gform.processConditions.call(this, item.edit, function(id, result){
 //                 var op = this.el.querySelectorAll('[data-id="'+id+'"]');
 //                 for (var i = 0; i < op.length; i++) {
 //                       op[i].disabled = !result;
 //                   }
 //             }.bind(this,item.id))            
-//             gform.processConditions.call(this, item.display, function(id, result){
+//             gform.processConditions.call(this, item.show, function(id, result){
 //                 var op = this.el.querySelectorAll('[data-id="'+id+'"]');
 //                 for (var i = 0; i < op.length; i++) {
 //                       op[i].hidden = !result;
@@ -805,13 +805,13 @@ gform.mapOptions = function(optgroup, value, count){
                     this.eventBus.dispatch(e.event)
                 }.bind(this))
                 item.id = gform.getUID();
-                gform.processConditions.call(this, item.enable, function(id, result){
+                gform.processConditions.call(this, item.edit, function(id, result){
                     var op = this.el.querySelectorAll('[data-id="'+id+'"]');
                     for (var i = 0; i < op.length; i++) {
                         op[i].disabled = !result;
                     }
                 }.bind(this,item.id))            
-                gform.processConditions.call(this, item.display, function(id, result){
+                gform.processConditions.call(this, item.show, function(id, result){
                     var op = this.el.querySelectorAll('[data-id="'+id+'"]');
                     for (var i = 0; i < op.length; i++) {
                         op[i].hidden = !result;

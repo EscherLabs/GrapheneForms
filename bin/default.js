@@ -60,14 +60,14 @@ select: `
     <select {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
         {{#options}}
             {{^optgroup}}
-            <option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+            <option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
             {{/optgroup}}
             {{#optgroup}}
             {{#optgroup.label}}
-            <optgroup label="{{label}}" data-id="{{optgroup.id}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}">
+            <optgroup label="{{label}}" data-id="{{optgroup.id}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}">
             {{/optgroup.label}}
                 {{#options}}
-                <option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+                <option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
                 {{/options}}
                 {{#optgroup.label}}
             </optgroup>

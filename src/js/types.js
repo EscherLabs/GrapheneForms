@@ -98,7 +98,7 @@ gform.types = {
       satisfied: function(value) {
           return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '');            
       },
-      enable: function(state) {
+      edit: function(state) {
           this.el.querySelector('[name="'+this.name+'"]').disabled = !state;            
       },find:function() {
           return this;
@@ -297,7 +297,7 @@ gform.types = {
       initialize: function() {
           this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
           this.onclickEvent = function(){
-              if(this.enabled) {
+              if(this.editable) {
                   this.owner.pub(this.action, this);
               }
           }.bind(this)
@@ -307,7 +307,7 @@ gform.types = {
           return gform.render('button', this);
       },
       satisfied: function(value) {
-          return this.enabled && this.visible;
+          return this.editable && this.visible;
       },
       update: function(item, silent) {
           
@@ -333,7 +333,7 @@ gform.types = {
       },
       set: function(value) {
       },
-      enable: function(state) {
+      edit: function(state) {
           this.el.disabled = !state;
       }
   }
@@ -394,7 +394,7 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
         // this.options = gform.mapOptions.call(this,this, this.value);
 
   if(typeof this.placeholder == 'string'){
-      this.options.unshift({label:this.placeholder, value:'',enabled:false,visible:false,selected:true})
+      this.options.unshift({label:this.placeholder, value:'',editable:false,visible:false,selected:true})
   }
         return gform.render(this.type, this);
     },
@@ -450,7 +450,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       }
       if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
   },
-  enable: function(state) {
+  edit: function(state) {
       _.each(this.el.querySelectorAll('input'),function(item){
           item.disabled = !state;            
       })

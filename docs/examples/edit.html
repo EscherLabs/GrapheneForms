@@ -13,7 +13,7 @@
     </head>
     <body>
       <div style="padding:20px">
-      <h4><a href="./">Examples</a> - Display</h4>
+      <h4><a href="./">Examples</a> - Edit</h4>
       <div class="container ">
           <div class="row ">
                 <div class="column" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
@@ -25,21 +25,25 @@
       <script src="../assets/js/lodash.min.js"></script>    
 
     <script src='../assets/js/gform.min.js'></script>
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+   <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
     options = {
         fields:[
-              {label: 'Text', type: 'text', display:true},
-            {label: 'Number', type: 'number',display: false},
-            {label: 'Textarea', type: 'textarea', display: [
+            {label: 'Text', type: 'text', edit:true},
+            {label: 'Number', type: 'number',edit: false},
+            {label: 'Textarea', type: 'textarea', edit: [
                     {type:"matches", "name": "text", "value": [""]}
             ]},
             {label: 'Checkbox', type: 'checkbox'},
-            {label: 'Select', type: 'select', options:[1,2,3], display: function(){return false}},
-            {label: 'Radio', type: 'radio', options:[1,2,3], display: [
-                    {type:"not_matches", "name": "checkbox", "value": true}
-            ]}
+            {label: 'Select', type: 'select', options:[1,2,3], edit: function(){return false}},
+            {label: 'Radio', type: 'radio', options:[1,2,3], edit: [
+                {type:"test",name:"checkbox",test:function(f){
+                    return f.parent.find('checkbox').get();
+                }}
+            ]},
+
+
         ]
     }
     </script>

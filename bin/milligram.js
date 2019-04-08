@@ -36,14 +36,14 @@ select: `
     <select name="{{name}}" value="{{value}}" id="{{id}}" />
         {{#options}}
             {{^section}}
-            <option {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+            <option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
             {{/section}}
             {{#section}}
             {{#section.label}}
-            <optgroup label="{{label}}" data-id="{{section.id}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}">
+            <optgroup label="{{label}}" data-id="{{section.id}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}">
             {{/section.label}}
                 {{#options}}
-                <option data-id="{{section.id}}" {{#selected}}selected='selected'{{/selected}} {{^enabled}}disabled{{/enabled}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+                <option data-id="{{section.id}}" {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
                 {{/options}}
                 {{#section.label}}
             </optgroup>
