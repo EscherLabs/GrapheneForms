@@ -7,7 +7,7 @@
     "help":{},
     "columns":{},
     "target":{},
-    "display":{},
-    "enable":{}
+    "show":{},
+    "edit":{}
   }
 }

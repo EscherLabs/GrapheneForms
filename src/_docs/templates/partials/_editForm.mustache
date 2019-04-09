@@ -1,14 +1,14 @@
   {
-    label: 'Display {{page.field.type}} Field',
-    name: 'display',
+    label: 'Edit {{page.field.type}} Field',
+    name: 'edit',
     type: 'checkbox'
   },
   {
     type: '{{page.field.type}}',
     label: '{{page.field.type}} Field',
-    display:[{
+    edit:[{
       type: 'matches',
-      name: 'display',
+      name: 'edit',
       value: true
     }]{{#page.field.collection}},
     options:[1, 2, 3, 4, 5]

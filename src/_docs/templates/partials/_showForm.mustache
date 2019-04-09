@@ -1,14 +1,14 @@
   {
-    label: 'Enable {{page.field.type}} Field',
-    name: 'enable',
+    label: 'Show {{page.field.type}} Field',
+    name: 'show',
     type: 'checkbox'
   },
   {
     type: '{{page.field.type}}',
     label: '{{page.field.type}} Field',
-    enable:[{
+    show:[{
       type: 'matches',
-      name: 'enable',
+      name: 'show',
       value: true
     }]{{#page.field.collection}},
     options:[1, 2, 3, 4, 5]

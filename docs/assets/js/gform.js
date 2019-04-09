@@ -964,15 +964,15 @@ gform.getUID = function() {
           return gform.render(this.type, this);
       },
       destroy:function(){
-        //   this.el.removeEventListener('change',this.onchangeEvent );		
+          this.el.removeEventListener('change',this.onchangeEvent );		
         //   this.el.removeEventListener('change',this.onchange );		
           this.el.removeEventListener('input', this.onchangeEvent);
       },
       initialize: function(){
         //   this.iel = this.el.querySelector('input[name="' + this.name + '"]')
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
-          this.onchangeEvent = function(){
-              this.input = true;
+          this.onchangeEvent = function(input){
+            //   this.input = input;
               this.value = this.get();
               if(this.el.querySelector('.count') != null){
                 var text = this.value.length;
@@ -989,8 +989,9 @@ gform.getUID = function() {
             //   this.owner.pub('input', this,{input:this.value});
           }.bind(this)
           this.input = this.input || false;
-        //   this.el.addEventListener('change',this.onchangeEvent);		
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+
+          this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
       },
       update: function(item, silent) {
         if(typeof item !== 'undefined' && (

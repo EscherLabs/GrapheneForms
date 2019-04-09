@@ -9,8 +9,8 @@
     "columns":{},
     "target":{},
     "array":{},
-    "display":{},
-    "enable":{},
+    "show":{},
+    "edit":{},
     "parse":{}
   }
 }

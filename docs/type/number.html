@@ -99,9 +99,9 @@
 
       <li class="list-unstyled" ><a href="#array"><i class="fa fa-chevron-right"></i> array</a></li>
 
-      <li class="list-unstyled" ><a href="#display"><i class="fa fa-chevron-right"></i> display</a></li>
+      <li class="list-unstyled" ><a href="#show"><i class="fa fa-chevron-right"></i> show</a></li>
 
-      <li class="list-unstyled" ><a href="#enable"><i class="fa fa-chevron-right"></i> enable</a></li>
+      <li class="list-unstyled" ><a href="#edit"><i class="fa fa-chevron-right"></i> edit</a></li>
 
       <li class="list-unstyled" ><a href="#parse"><i class="fa fa-chevron-right"></i> parse</a></li>
 
@@ -175,9 +175,9 @@
 
 		<tr><td><a href="#array">array</a></td><td>boolean | object</td><td>false</td><td>if set to true or and object then this field will have buttons for adding and removing instances of the item. Additionally the value will become an array of all instances of this field. Further information on this can be found <a href="../docs.html#field_array">here</a>.</td></tr>
 
-		<tr><td><a href="#display">display</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met</td></tr>
+		<tr><td><a href="#show">show</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met</td></tr>
 
-		<tr><td><a href="#enable">enable</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>Similar to display but this option controls whether the field is enabled for interaction</td></tr>
+		<tr><td><a href="#edit">edit</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>Similar to show but this option controls whether the field is enabled for interaction</td></tr>
 
 		<tr><td><a href="#parse">parse</a></td><td><a href="../docs.html#conditions">condition</a></td><td>'display'</td><td>This option determins if the field will be in the data result from <code>myform.get()</code></td></tr>
 
@@ -332,44 +332,44 @@
     array: {min: 2, max: 4}
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-					<!--display -->
-					<a name="display" style="display:block;position:relative;top:-80px"></a>
+					<!--show -->
+					<a name="show" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>Display</h4>
+					<h4>Show</h4>
 					<p></p>
-					<div class="well displayfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+					<div class="well showfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    label: 'Display number Field',
-    name: 'display',
+    label: 'Show number Field',
+    name: 'show',
     type: 'checkbox'
   },
   {
     type: 'number',
     label: 'number Field',
-    display:[{
+    show:[{
       type: 'matches',
-      name: 'display',
+      name: 'show',
       value: true
     }]
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-					<!--enable -->
-					<a name="enable" style="display:block;position:relative;top:-80px"></a>
+					<!--edit -->
+					<a name="edit" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>Enable</h4>
+					<h4>Edit</h4>
 					<p></p>
-					<div class="well enablefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+					<div class="well editfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    label: 'Enable number Field',
-    name: 'enable',
+    label: 'Edit number Field',
+    name: 'edit',
     type: 'checkbox'
   },
   {
     type: 'number',
     label: 'number Field',
-    enable:[{
+    edit:[{
       type: 'matches',
-      name: 'enable',
+      name: 'edit',
       value: true
     }]
   }
@@ -565,43 +565,43 @@ document.querySelector('.arrayfield .result').innerHTML = JSON.stringify(e.form,
 	}
 ).pub('change')
 new gform({
-  "el":".displayfield .form",
+  "el":".showfield .form",
   "fields":[   {
-    label: 'Display number Field',
-    name: 'display',
+    label: 'Show number Field',
+    name: 'show',
     type: 'checkbox'
   },
   {
     type: 'number',
     label: 'number Field',
-    display:[{
+    show:[{
       type: 'matches',
-      name: 'display',
+      name: 'show',
       value: true
     }]
   }		] 
 	}).sub('change', function(e){
-document.querySelector('.displayfield .result').innerHTML = JSON.stringify(e.form,null,2);
+document.querySelector('.showfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
 ).pub('change')
 new gform({
-  "el":".enablefield .form",
+  "el":".editfield .form",
   "fields":[   {
-    label: 'Enable number Field',
-    name: 'enable',
+    label: 'Edit number Field',
+    name: 'edit',
     type: 'checkbox'
   },
   {
     type: 'number',
     label: 'number Field',
-    enable:[{
+    edit:[{
       type: 'matches',
-      name: 'enable',
+      name: 'edit',
       value: true
     }]
   }		] 
 	}).sub('change', function(e){
-document.querySelector('.enablefield .result').innerHTML = JSON.stringify(e.form,null,2);
+document.querySelector('.editfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
 ).pub('change')
 new gform({

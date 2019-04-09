@@ -93,9 +93,9 @@
       <li class="list-unstyled" ><a href="#target"><i class="fa fa-chevron-right"></i> target</a></li>
 
 
-      <li class="list-unstyled" ><a href="#display"><i class="fa fa-chevron-right"></i> display</a></li>
+      <li class="list-unstyled" ><a href="#show"><i class="fa fa-chevron-right"></i> show</a></li>
 
-      <li class="list-unstyled" ><a href="#enable"><i class="fa fa-chevron-right"></i> enable</a></li>
+      <li class="list-unstyled" ><a href="#edit"><i class="fa fa-chevron-right"></i> edit</a></li>
 
 
 
@@ -160,9 +160,9 @@
 		<tr><td><a href="#target">target</a></td><td>selector | node</td><td></td><td>If the target is not set then the field is appended to the parent element which is usually the main form but may be a fieldset</td></tr>
 
 
-		<tr><td><a href="#display">display</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met</td></tr>
+		<tr><td><a href="#show">show</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met</td></tr>
 
-		<tr><td><a href="#enable">enable</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>Similar to display but this option controls whether the field is enabled for interaction</td></tr>
+		<tr><td><a href="#edit">edit</a></td><td><a href="../docs.html#conditions">condition</a></td><td>true</td><td>Similar to show but this option controls whether the field is enabled for interaction</td></tr>
 
 
 
@@ -260,44 +260,44 @@
     {type: 'button'}
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
 
-					<!--display -->
-					<a name="display" style="display:block;position:relative;top:-80px"></a>
+					<!--show -->
+					<a name="show" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>Display</h4>
+					<h4>Show</h4>
 					<p></p>
-					<div class="well displayfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+					<div class="well showfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    label: 'Display button Field',
-    name: 'display',
+    label: 'Show button Field',
+    name: 'show',
     type: 'checkbox'
   },
   {
     type: 'button',
     label: 'button Field',
-    display:[{
+    show:[{
       type: 'matches',
-      name: 'display',
+      name: 'show',
       value: true
     }]
   }
 ]})</code></pre></div><div class="col-md-5 form"></div></div><hr><pre class="result"></pre></div>
-					<!--enable -->
-					<a name="enable" style="display:block;position:relative;top:-80px"></a>
+					<!--edit -->
+					<a name="edit" style="display:block;position:relative;top:-80px"></a>
 					<br>
-					<h4>Enable</h4>
+					<h4>Edit</h4>
 					<p></p>
-					<div class="well enablefield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
+					<div class="well editfield"><div class="row"><div class="col-md-7"><pre><code class="prettyprint">new gform({fields: [
   {
-    label: 'Enable button Field',
-    name: 'enable',
+    label: 'Edit button Field',
+    name: 'edit',
     type: 'checkbox'
   },
   {
     type: 'button',
     label: 'button Field',
-    enable:[{
+    edit:[{
       type: 'matches',
-      name: 'enable',
+      name: 'edit',
       value: true
     }]
   }
@@ -403,43 +403,43 @@ document.querySelector('.targetfield .result').innerHTML = JSON.stringify(e.form
 ).pub('change')
 
 new gform({
-  "el":".displayfield .form",
+  "el":".showfield .form",
   "fields":[   {
-    label: 'Display button Field',
-    name: 'display',
+    label: 'Show button Field',
+    name: 'show',
     type: 'checkbox'
   },
   {
     type: 'button',
     label: 'button Field',
-    display:[{
+    show:[{
       type: 'matches',
-      name: 'display',
+      name: 'show',
       value: true
     }]
   }		] 
 	}).sub('change', function(e){
-document.querySelector('.displayfield .result').innerHTML = JSON.stringify(e.form,null,2);
+document.querySelector('.showfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
 ).pub('change')
 new gform({
-  "el":".enablefield .form",
+  "el":".editfield .form",
   "fields":[   {
-    label: 'Enable button Field',
-    name: 'enable',
+    label: 'Edit button Field',
+    name: 'edit',
     type: 'checkbox'
   },
   {
     type: 'button',
     label: 'button Field',
-    enable:[{
+    edit:[{
       type: 'matches',
-      name: 'enable',
+      name: 'edit',
       value: true
     }]
   }		] 
 	}).sub('change', function(e){
-document.querySelector('.enablefield .result').innerHTML = JSON.stringify(e.form,null,2);
+document.querySelector('.editfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
 ).pub('change')
 

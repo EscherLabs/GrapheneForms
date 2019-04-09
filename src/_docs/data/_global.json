@@ -114,19 +114,19 @@
       "default":"false",
       "description":"if set to true or and object then this field will have buttons for adding and removing instances of the item. Additionally the value will become an array of all instances of this field. Further information on this can be found <a href=\"../docs.html#field_array\">here</a>."
     },
-    "display":{
-      "name":"display",
-      "label":"Display",
+    "show":{
+      "name":"show",
+      "label":"Show",
       "type":"<a href=\"../docs.html#conditions\">condition</a>",
       "default":"true",
       "description":"This option controls whether this field should be visible to the user, allowing for fields to only be used if certain conditions are met"
     },
-    "enable":{
-      "name":"enable",
-      "label":"Enable",
+    "edit":{
+      "name":"edit",
+      "label":"Edit",
       "type":"<a href=\"../docs.html#conditions\">condition</a>",
       "default":"true",
-      "description":"Similar to display but this option controls whether the field is enabled for interaction"
+      "description":"Similar to show but this option controls whether the field is enabled for interaction"
     },
     "parse":{
       "name":"parse",
