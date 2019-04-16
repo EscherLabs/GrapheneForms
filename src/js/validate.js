@@ -20,7 +20,8 @@ gform.validateItem = function(force,item){
 		if(item.parsable && typeof item.validate === 'object'){
 			var errors = gform.validation.call(item,item.validate);
 			if(item.required){
-				var type = (item.satisfied(value) ? false : '{{label}} is required')
+				debugger;
+				var type = (item.satisfied(item.get()) ? false : '{{label}} is required')
 				if(type) {
 					errors.push(gform.renderString(item.required.message || type, {label:item.label,value:value, args:item.required}));
 				}

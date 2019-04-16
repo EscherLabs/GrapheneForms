@@ -1040,7 +1040,7 @@ gform.getUID = function() {
           this.el.querySelector('input[name="' + this.name + '"]').value = value;
       },
       satisfied: function(value) {
-          return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '');            
+          return (typeof value !== 'undefined' && value !== null && value !== '');            
       },
       edit: function(state) {
           this.el.querySelector('[name="'+this.name+'"]').disabled = !state;            
@@ -1619,7 +1619,8 @@ gform.validateItem = function(force,item){
 		if(item.parsable && typeof item.validate === 'object'){
 			var errors = gform.validation.call(item,item.validate);
 			if(item.required){
-				var type = (item.satisfied(value) ? false : '{{label}} is required')
+				debugger;
+				var type = (item.satisfied(item.get()) ? false : '{{label}} is required')
 				if(type) {
 					errors.push(gform.renderString(item.required.message || type, {label:item.label,value:value, args:item.required}));
 				}

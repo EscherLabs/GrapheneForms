@@ -97,7 +97,7 @@ gform.types = {
           this.el.querySelector('input[name="' + this.name + '"]').value = value;
       },
       satisfied: function(value) {
-          return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '');            
+          return (typeof value !== 'undefined' && value !== null && value !== '');            
       },
       edit: function(state) {
           this.el.querySelector('[name="'+this.name+'"]').disabled = !state;            
