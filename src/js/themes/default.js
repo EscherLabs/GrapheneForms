@@ -242,13 +242,20 @@ gform.handleError = function(field){
         // field.el.querySelector('.valid').innerHTML = field.validtext||'';
         }
 		field.el.classList.remove('error')		
-
-        field.el.querySelector('.error-text').innerHTML = '';
+        if(field.el.querySelector('.error-text') !== null){
+            field.el.querySelector('.error-text').innerHTML = '';
+        }
     }else{
-        field.el.querySelector('.error-text').innerHTML = field.errors;
+        if(field.el.querySelector('.error-text') !== null){
+            field.el.querySelector('.error-text').innerHTML = field.errors;
+        }
         field.el.classList.add('error');
 
         field.el.querySelector('.valid').innerHTML = '';
+
+        if(field.el.querySelector('.valid') !== null){
+            field.el.querySelector('.valid').innerHTML = '';
+        }
     }
 }
 gform.types['cancel']   = _.extend({}, gform.types['button'], {defaults:{

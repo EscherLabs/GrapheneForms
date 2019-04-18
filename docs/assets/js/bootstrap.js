@@ -339,7 +339,7 @@ gform.handleError = function(field){
 gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 	"label":"<i class=\"fa fa-times\"></i> Cancel",
 	"action":"cancel",
-	"modifiers": "btn btn-danger"}});
+	"modifiers": "btn btn-danger pull-left"}});
 gform.types['save']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 	"label":"<i class=\"fa fa-check\"></i> Save",
 	"action":"save",

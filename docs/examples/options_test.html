@@ -31,8 +31,8 @@
 
     <script>
     options = {
-        default:{hideLabel:true,type:'text',format:{label: '{{label}}', value: '{{value}}'}},
-        clear:false,
+        // default:{hideLabel:true,type:'text',format:{label: '{{label}}', value: '{{value}}'}},
+        // clear:false,
         legend: 'Options Array',
         fields:[
         {label: 'Select Field Array', name: 'array', type:'select', options:[
@@ -49,7 +49,8 @@
         {label: '<span style="color:{{value}}">Select Field function</span>',placeholder:'Choose a color', name: 'function', type:'select', options: function(){
             return["Red","Green","Blue"];
         }},
-        {label: 'Select Field (url string)', name: 'url', type:'select', options:[{type:'optgroup', path:'../data/days.json'}]}
+        {label: 'Select Field (url string)', name: 'url', type:'select', options:[{type:'optgroup', path:'../data/days.json',format:{label:'first{{label}}'}}]},
+        {label: 'Select Field (url string)', name: 'urls', type:'select', options: [{type:'optgroup',options:[{label:'No Filter',value:null}],format:{label:"{{label}}"}},{type:'optgroup',options:'../data/days.json'}]  }
         ]
     }
     </script>

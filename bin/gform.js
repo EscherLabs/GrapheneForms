@@ -28,7 +28,7 @@ var gform = function(data, el){
     
     //initalize form
     this.options = _.assignIn({legend: '', default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
-    this.options.fields = this.options.fields.concat(this.options.actions || [])
+    this.options.fields = this.options.fields.concat(this.options.actions || [{type:'cancel'},{type:'save'}])
     if (typeof this.options.data == 'string') {
         this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
     }
@@ -626,7 +626,13 @@ gform.prototype.opts = {
 gform.eventBus = function(options, owner){
 	this.options = options || {owner:'form',item:'field'};
 	this.owner = owner||this;
-	this.handlers = options.handlers||[];
+    this.handlers = options.handlers||{};
+    _.each(this.handlers,function(a,b,c){
+        if(typeof a == 'function'){
+            c[b] = [a];
+        }
+    })
+
 	this.dispatch = function (e,f,a) {
 		var a = a || {};
 		a[this.options.owner] = this.owner;
@@ -794,7 +800,7 @@ gform.mapOptions = function(optgroup, value, count){
     this.eventBus = new gform.eventBus({owner:'field',item:'option'}, this)
     this.optgroup = _.extend({},optgroup);
     count = count||0;
-    format = this.optgroup.format;
+    var format = this.optgroup.format;
     function pArray(opts){
 
         return _.map(opts,function(item){
@@ -878,10 +884,27 @@ gform.mapOptions = function(optgroup, value, count){
     }
 
     if(typeof this.optgroup.path !== 'undefined'){
-        gform.ajax({path: this.optgroup.path, success:function(data) {
-            this.optgroup.options = pArray.call(this.optgroup.map, data);
+
+
+        (this.collections || gform.collections).on(this.optgroup.path,function(e){
+            this.optgroup.options = pArray.call(this.optgroup.map, e.collection);
             this.eventBus.dispatch('change')
-        }.bind(this)})
+        }.bind(this))
+
+        if(typeof (this.collections || gform.collections).get(this.optgroup.path) === 'undefined'){
+            (this.collections || gform.collections).add(this.optgroup.path,[])
+            gform.ajax({path: this.optgroup.path, success:function(data) {
+                
+                (this.collections || gform.collections).update(this.optgroup.path,data)
+                // this.optgroup.options = pArray.call(this.optgroup.map, data);
+                // this.eventBus.dispatch('change')
+            }.bind(this)})
+        }else{
+            
+            this.optgroup.options = pArray.call(this.optgroup.map, (this.collections || gform.collections).get(this.optgroup.path));;
+     
+        }
+
     }
 
 
@@ -914,8 +937,27 @@ gform.mapOptions = function(optgroup, value, count){
 
 
 
+gform.collectionManager = function(refObject){
+    var collections = refObject||{};
+    this.eventBus = new gform.eventBus({owner:'manager',item:'collection',handlers:{}}, this)
+    
+	return {
+		add: function(name, data){
+			collections[name] = data;
+		},
+		get: function(name){
+			return collections[name];
+		},
+		update: function(name, data){
+			collections[name] = data;
+			this.eventBus.dispatch(name,collections[name]);
+		}.bind(this),
+		on: this.eventBus.on
+	}
+}
 
 
+gform.collections =  new gform.collectionManager()
 
 gform.render = function(template, options) {
     return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))
