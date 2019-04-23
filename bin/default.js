@@ -18,7 +18,7 @@ output: `
 <div class="row row-wrap">
 <div class="column">
     {{>_label}}
-    <output name="{{name}}" id="{{id}}">{{value}}</output>
+    <output name="{{name}}" id="{{id}}">{{{display}}}</output>
     {{>_error}}
     </div>
     </div>
@@ -174,7 +174,7 @@ grid: `
 `,
 _actions: `      
     {{#array}}
-    <div class="" style="float:right">
+    <div data-name="{{name}}" style="float:right">
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:green;color:green;float:right;margin:0 5px" class="gform-add button button-outline" type="button" value="+">
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:red;color:red;float:right;margin:0 5px" class="gform-minus button button-outline" type="button" value="-">
     </div>
@@ -258,11 +258,11 @@ gform.handleError = function(field){
         }
     }
 }
-gform.types['cancel']   = _.extend({}, gform.types['button'], {defaults:{
+gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 	label:"<i class=\"fa fa-times\"></i> Cancel",
 	action:"cancel",
 	modifiers: "button-outline"}});
-gform.types['save']   = _.extend({}, gform.types['button'], {defaults:{
+gform.types['save']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 	label:"<i class=\"fa fa-check\"></i> Save",
 	action:"save",
 	modifiers: "float-right"}});

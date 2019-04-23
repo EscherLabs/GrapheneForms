@@ -27,7 +27,7 @@ output: `
 		{{>_label}}
 		
 	<div class="col-xs-12">
-    <output name="{{name}}" id="{{id}}">{{{value}}}</output>
+    <output name="{{name}}" id="{{id}}">{{{display}}}</output>
     {{>_error}}
 		{{>_addons}}
 		{{>_actions}} 
@@ -179,8 +179,8 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 </div>`,
     _fieldset: `<div class="row"><fieldset data-type="fieldset" name="{{name}}" id="{{id}}" class="{{modifiers}} col-md-12" >
 {{#array}}
-<div class="btn-group actions">
-	<div data-id="{{id}}" class="gform-add btn btn-white"><i class="fa fa-plus text-success"></i></div><div data-id="{{id}}" class="btn btn-white gform-minus"><i class="fa fa-minus text-danger"></i></div>
+<div data-name="{{name}}" class="btn-group actions">
+	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}"  class="gform-add fa fa-plus text-success"></i></div><div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}"  class="fa gform-minus fa-minus text-danger"></i></div>
 </div>
 {{/array}}
 {{^hideLabel}}
@@ -189,7 +189,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,
 	_actions: `{{#array}}
-	<div class="btn-group actions pull-right">
+	<div data-name="{{name}}" class="btn-group actions pull-right">
 	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}" class="gform-add fa fa-plus text-success"></i></div>
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}" class="gform-minus fa fa-minus text-danger"></i></div>
 	</div>

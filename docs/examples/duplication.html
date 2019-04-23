@@ -32,8 +32,9 @@
     <script>
       options = {
           legend: 'Basic Form',
+          data:[{candy:{}},{candy:{}}],
           fields:[
-              {label:'Candy', type: 'fieldset', array: true, fields: [
+              {label:'Candy', type: 'fieldset', array: {min:2,max:2}, fields: [
                 {label: 'Flavor'},
                 // { label: 'Color ({{^index}}0{{/index}}{{index}})', type:'text',columns:6, array: {min:2,max:3}}
                 { label: 'Color{{#index}} ({{index}}){{/index}}',columns:6, array: {min:2,max:3}}

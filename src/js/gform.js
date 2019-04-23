@@ -193,7 +193,6 @@ var gform = function(data, el){
                     item.label = gform.renderString(item.item.label, item);
                     item.el.querySelector('legend,label').innerHTML = item.label
                 })
-                
 
                 gform.each.call(field.owner, function(field) {
                     field.owner.pub('change:' + field.name, field);
@@ -201,12 +200,21 @@ var gform = function(data, el){
 
                 gform.types[newField.type].focus.call(newField);
                 field.owner.pub(['change', 'change:'+field.name,'create', 'create:'+field.name,'inserted','inserted:'+field.name],field)
+                fieldCount++;
             }
+
+            var testFunc = function(status, button){
+                gform.toggleClass(button,'hidden', status)
+            }
+            _.each(document.body.querySelectorAll('[data-name="'+field.name+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
+
+            _.each(document.body.querySelectorAll('[data-name="'+field.name+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
+
         }
         if(e.target.classList.contains('gform-minus')){
             e.stopPropagation();
-
-            if(_.countBy(field.parent.fields, {name: field.name}).true > (field.array.min || 1)) {
+            var fieldCount =  _.countBy(field.parent.fields, {name: field.name}).true;
+            if(fieldCount > (field.array.min || 1)) {
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 field.parent.fields.splice(index, 1);
                 field.parent.reflow();
@@ -222,9 +230,17 @@ var gform = function(data, el){
                     this.container.querySelector( field.target ).removeChild(field.el);
                 }
                 field.owner.pub(['change', 'change:'+field.name,'removed','removed:'+field.name],field)
+                fieldCount--;
             }else{
                 field.set(null);
+            }           
+
+            var testFunc = function(status, button){
+                gform.toggleClass(button,'hidden', status)
             }
+            _.each(document.body.querySelectorAll('[data-name="'+field.name+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
+
+            _.each(document.body.querySelectorAll('[data-name="'+field.name+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
         }
     }.bind(this))
     return this;
@@ -336,19 +352,25 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
     }
     if(field.array) {
-        var count = field.array.min||0;
+        var fieldCount = field.array.min||0;
 
         if(typeof atts[field.name] !== 'object' && typeof field.owner.options.data[field.name] == 'object'){
             atts = field.owner.options.data;
         }
         if((typeof atts[field.name] == 'object' && atts[field.name].length > 1)){
-            if(atts[field.name].length> count){count = atts[field.name].length}
+            if(atts[field.name].length> fieldCount){fieldCount = atts[field.name].length}
         }
-        for(var i = 1; i<count; i++) {
+        for(var i = 1; i<fieldCount; i++) {
             var newfield = gform.createField.call(this, field.parent, atts, field.el, i, field.item, null, null,i);
             field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
             field = newfield;
         }
+        var testFunc = function(status, button){
+            gform.toggleClass(button,'hidden', status)
+        }
+        _.each(document.body.querySelectorAll('[data-name="'+field.name+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
+
+        _.each(document.body.querySelectorAll('[data-name="'+field.name+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
         
     }
 }
@@ -899,9 +921,7 @@ gform.mapOptions = function(optgroup, value, count){
                 // this.eventBus.dispatch('change')
             }.bind(this)})
         }else{
-            
-            this.optgroup.options = pArray.call(this.optgroup.map, (this.collections || gform.collections).get(this.optgroup.path));;
-     
+            this.optgroup.options = pArray.call(this.optgroup.map, (this.collections || gform.collections).get(this.optgroup.path));
         }
 
     }
@@ -978,6 +998,16 @@ gform.render = function(template, options) {
     elem.className = _.chain(elem.className).split(/[\s]+/).difference(classes.split(' ')).join(' ').value();
     // return elem
   };
+  gform.toggleClass = function(elem, classes, status){
+      if(status){
+        gform.addClass(elem,classes)
+      }else{
+        gform.removeClass(elem,classes)
+
+      }
+    // return elem
+  };
+  
 gform.VERSION = '0.0.0.7';
 gform.i = 0;
 gform.getUID = function() {
