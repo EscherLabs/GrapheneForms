@@ -275,3 +275,10 @@ gform.types['clear']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
     "action":"clear",
     "modifiers": "button-outline"}});
 
+gform.types.fieldset.setLabel = function(){
+    this.label = gform.renderString(this.item.label||this.label, this);
+    var labelEl = this.el.querySelector('legend');
+    if(labelEl !== null){
+        labelEl.innerHTML = '<h5>'+this.label+'</h5>';
+    }
+  }

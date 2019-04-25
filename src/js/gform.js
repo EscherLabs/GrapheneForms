@@ -190,8 +190,10 @@ var gform = function(data, el){
                 _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){
                     // item.update({index:index})
                     item.index = index;
-                    item.label = gform.renderString(item.item.label, item);
-                    item.el.querySelector('legend,label').innerHTML = item.label
+                    // item.label = gform.renderString(item.item.label, item);
+                    // item.el.querySelector('label').innerHTML = item.label
+                    gform.types[item.type].setLabel.call(item)
+
                 })
 
                 gform.each.call(field.owner, function(field) {
@@ -223,8 +225,10 @@ var gform = function(data, el){
                         // item.update({index:index})
                         item.index = index;
     
-                        item.label = gform.renderString(item.item.label, item);
-                        item.el.querySelector('label').innerHTML = item.label
+                        // item.label = gform.renderString(item.item.label, item);
+                        // item.el.querySelector('label').innerHTML = item.label
+                        gform.types[item.type].setLabel.call(item)
+
                     })
                 }else{
                     this.container.querySelector( field.target ).removeChild(field.el);

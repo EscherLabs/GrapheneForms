@@ -221,6 +221,13 @@ gform.types = {
       }
   },
   'section':{
+    setLabel:function(){
+        this.label = gform.renderString(this.item.label||this.label, this);
+        var labelEl = this.el.querySelector('legend');
+        if(labelEl !== null){
+            labelEl.innerHTML = this.label
+        }
+      },
       create: function() {
           var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
           gform.addClass(tempEl,gform.columnClasses[this.columns])
