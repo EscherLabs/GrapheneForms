@@ -19,6 +19,11 @@ var gform = function(data, el){
     this.sub('clear', function(e){
         e.form.set();
     });
+    if(typeof data.collections == 'object'){
+        this.collections = data.collections;
+    }else{
+        this.collections = gform.collections;
+    }
     // this.sub = function (event, handler, delay) {
     //     delay = delay || 0;
     //     this.on(event, _.debounce(handler, delay));
@@ -97,7 +102,9 @@ var gform = function(data, el){
         gform.each.call(this, function(field) {
             field.owner.pub('change:' + field.name, field);
         })
-        gform.instances[this.options.name] = this;   
+        if(!this.options.private){
+            gform.instances[this.options.name] = this;
+        }
     }
 
     this.restore = create.bind(this);
@@ -822,7 +829,8 @@ gform.eventBus = function(options, owner){
 // }
 
 
-gform.mapOptions = function(optgroup, value, count){
+gform.mapOptions = function(optgroup, value, count,collections){
+    this.collections = collections;
     this.eventBus = new gform.eventBus({owner:'field',item:'option'}, this)
     this.optgroup = _.extend({},optgroup);
     count = count||0;
@@ -831,7 +839,7 @@ gform.mapOptions = function(optgroup, value, count){
         return _.map(opts,function(item){
             
             if(typeof item === 'object' && item.type == 'optgroup'){
-                item.map = new gform.mapOptions(item,value,count);
+                item.map = new gform.mapOptions(item,value,count,this.collections);
                 item.map.sub('*',function(e){
                     this.eventBus.dispatch(e.event)
                 }.bind(this))
@@ -911,21 +919,21 @@ gform.mapOptions = function(optgroup, value, count){
     if(typeof this.optgroup.path !== 'undefined'){
 
 
-        (this.collections || gform.collections).on(this.optgroup.path,function(e){
+        this.collections.on(this.optgroup.path,function(e){
             this.optgroup.options = pArray.call(this.optgroup.map, e.collection);
             this.eventBus.dispatch('change')
         }.bind(this))
 
-        if(typeof (this.collections || gform.collections).get(this.optgroup.path) === 'undefined'){
-            (this.collections || gform.collections).add(this.optgroup.path,[])
+        if(typeof this.collections.get(this.optgroup.path) === 'undefined'){
+            this.collections.add(this.optgroup.path,[])
             gform.ajax({path: this.optgroup.path, success:function(data) {
                 
-                (this.collections || gform.collections).update(this.optgroup.path,data)
+                this.collections.update(this.optgroup.path,data)
                 // this.optgroup.options = pArray.call(this.optgroup.map, data);
                 // this.eventBus.dispatch('change')
             }.bind(this)})
         }else{
-            this.optgroup.options = pArray.call(this.optgroup.map, (this.collections || gform.collections).get(this.optgroup.path));
+            this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
         }
 
     }
@@ -972,7 +980,9 @@ gform.collectionManager = function(refObject){
 			return collections[name];
 		},
 		update: function(name, data){
-			collections[name] = data;
+            if(typeof data !== 'undefined'){
+                collections[name] = data;
+            }
 			this.eventBus.dispatch(name,collections[name]);
 		}.bind(this),
 		on: this.eventBus.on
@@ -1140,7 +1150,7 @@ gform.getUID = function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
 
-          this.mapOptions = new gform.mapOptions(this, this.value)
+          this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.sub('change',function(){
               this.options = this.mapOptions.getobject()
               this.update();
@@ -1165,7 +1175,7 @@ gform.getUID = function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
 
-          this.mapOptions = new gform.mapOptions(this, this.value)
+          this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.sub('change',function(){
               this.options = this.mapOptions.getobject()
               this.update();
@@ -1416,7 +1426,7 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
     render: function() {
         if(typeof this.mapOptions == 'undefined'){
             // debugger;
-            this.mapOptions = new gform.mapOptions(this, this.value)
+            this.mapOptions = new gform.mapOptions(this, this.value,0, this.owner.collections)
             this.mapOptions.sub('change', function(){
                 // debugger;
                 this.options = this.mapOptions.getobject();
@@ -1498,7 +1508,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
         // this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
 
-            this.mapOptions = new gform.mapOptions(this, this.value)
+            this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
             this.mapOptions.sub('change',function(){
                 this.options = this.mapOptions.getobject()
                 this.update();

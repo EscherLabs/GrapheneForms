@@ -122,7 +122,7 @@ gform.types = {
         //   this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
 
-          this.mapOptions = new gform.mapOptions(this, this.value)
+          this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.sub('change',function(){
               this.options = this.mapOptions.getobject()
               this.update();
@@ -147,7 +147,7 @@ gform.types = {
         //   this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
 
-          this.mapOptions = new gform.mapOptions(this, this.value)
+          this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.sub('change',function(){
               this.options = this.mapOptions.getobject()
               this.update();
@@ -398,7 +398,7 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
     render: function() {
         if(typeof this.mapOptions == 'undefined'){
             // debugger;
-            this.mapOptions = new gform.mapOptions(this, this.value)
+            this.mapOptions = new gform.mapOptions(this, this.value,0, this.owner.collections)
             this.mapOptions.sub('change', function(){
                 // debugger;
                 this.options = this.mapOptions.getobject();
@@ -480,7 +480,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
         // this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
 
-            this.mapOptions = new gform.mapOptions(this, this.value)
+            this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
             this.mapOptions.sub('change',function(){
                 this.options = this.mapOptions.getobject()
                 this.update();
