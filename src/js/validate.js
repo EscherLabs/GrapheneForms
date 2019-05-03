@@ -3,11 +3,11 @@ gform.prototype.validate = function(force){
 	this.valid = true;
 	_.each(this.fields, gform.validateItem.bind(null, force))
 	if(!this.valid){
-		this.pub('invalid',{errors:this.errors});
+		this.trigger('invalid',{errors:this.errors});
 	}else{
-		this.pub('valid');
+		this.trigger('valid');
 	}
-	this.pub('validation');
+	this.trigger('validation');
 	return this.valid;
 };
 gform.handleError = gform.update;
@@ -40,9 +40,9 @@ gform.validateItem = function(force,item){
 		}
 		
 		if(item.errors) {
-			item.owner.pub('invalid:'+item.name, {errors:item.errors});
+			item.owner.trigger('invalid:'+item.name, {errors:item.errors});
 		}else{
-			item.owner.pub('valid:'+item.name);
+			item.owner.trigger('valid:'+item.name);
 		}
 		item.owner.errors[item.name] = item.errors;
 		item.owner.valid = item.valid && item.owner.valid;

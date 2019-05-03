@@ -38,12 +38,12 @@ gform.types = {
               }
             //   this.update({value:this.get()},true);
             //   gform.types[this.type].focus.call(this)
-              this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+              this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 
-            //   this.owner.pub('change:'+this.name, this,{input:this.value});
-            //   this.owner.pub('change', this,{input:this.value});
-            //   this.owner.pub('input:'+this.name, this,{input:this.value});
-            //   this.owner.pub('input', this,{input:this.value});
+            //   this.owner.trigger('change:'+this.name, this,{input:this.value});
+            //   this.owner.trigger('change', this,{input:this.value});
+            //   this.owner.trigger('input:'+this.name, this,{input:this.value});
+            //   this.owner.trigger('input', this,{input:this.value});
           }.bind(this)
           this.input = this.input || false;
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
@@ -85,7 +85,7 @@ gform.types = {
         gform.types[this.type].initialize.call(this);
 
         if(!silent) {
-            this.owner.pub(['change:'+this.name,'change'], this);
+            this.owner.trigger(['change:'+this.name,'change'], this);
         }
         if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
         
@@ -123,7 +123,7 @@ gform.types = {
         if(typeof this.mapOptions == 'undefined'){
 
           this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
-          this.mapOptions.sub('change',function(){
+          this.mapOptions.on('change',function(){
               this.options = this.mapOptions.getobject()
               this.update();
           }.bind(this))
@@ -148,7 +148,7 @@ gform.types = {
         if(typeof this.mapOptions == 'undefined'){
 
           this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
-          this.mapOptions.sub('change',function(){
+          this.mapOptions.on('change',function(){
               this.options = this.mapOptions.getobject()
               this.update();
           }.bind(this))
@@ -188,7 +188,7 @@ gform.types = {
               }
 
               gform.types[this.type].setup.call(this);
-              this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+              this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 
           }.bind(this));
           this.input = this.input || false;
@@ -262,9 +262,9 @@ gform.types = {
           this.container =  this.el.querySelector('fieldset')|| this.el || null;
           this.reflow();
           if(!silent) {
-            //   this.owner.pub('change:'+this.name, this);
-            //   this.owner.pub('change', this);
-              this.owner.pub(['change:'+this.name,'change'], this);
+            //   this.owner.trigger('change:'+this.name, this);
+            //   this.owner.trigger('change', this);
+              this.owner.trigger(['change:'+this.name,'change'], this);
           }
         },
       get: function(name) {
@@ -306,7 +306,7 @@ gform.types = {
           this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
           this.onclickEvent = function(){
               if(this.editable) {
-                  this.owner.pub(this.action, this);
+                  this.owner.trigger(this.action, this);
               }
           }.bind(this)
           this.el.addEventListener('click',this.onclickEvent );	
@@ -381,7 +381,7 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
     //               if(this.limit){text+='/'+this.limit;}
     //             this.el.querySelector('.count').innerHTML = text;
     //           }
-    //           this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+    //           this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
     //       }.bind(this)
     //       this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
     //   },
@@ -399,7 +399,7 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
         if(typeof this.mapOptions == 'undefined'){
             // debugger;
             this.mapOptions = new gform.mapOptions(this, this.value,0, this.owner.collections)
-            this.mapOptions.sub('change', function(){
+            this.mapOptions.on('change', function(){
                 // debugger;
                 this.options = this.mapOptions.getobject();
                 this.update();
@@ -481,7 +481,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
         if(typeof this.mapOptions == 'undefined'){
 
             this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
-            this.mapOptions.sub('change',function(){
+            this.mapOptions.on('change',function(){
                 this.options = this.mapOptions.getobject()
                 this.update();
             }.bind(this))
@@ -524,7 +524,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection
           this.el.addEventListener('change', function(){
               this.value =  this.get();
               gform.types[this.type].setup.call(this);
-              this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+              this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 
           }.bind(this));
           gform.types[this.type].setup.call(this);

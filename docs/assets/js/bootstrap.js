@@ -359,7 +359,7 @@ gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collec
          
          this.onchangeEvent = function(){
             this.value = this.get();
-            this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+            this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
         }.bind(this)
       $(this.el).find('select').on('change',this.onchangeEvent)
     },
@@ -380,8 +380,8 @@ gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collec
 		  gform.types[this.type].initialize.call(this);
 
 		  if(!silent) {
-			  this.owner.pub(['change:'+this.name,'change'], this);
-			  // this.owner.pub('change', this);
+			  this.owner.trigger(['change:'+this.name,'change'], this);
+			  // this.owner.trigger('change', this);
 		  }
 		  
 	},
@@ -407,7 +407,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
   initialize: function(){
 	this.onchangeEvent = function(){
 		this.value = this.get();
-		this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+		this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 	}.bind(this)
 	this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
 
@@ -416,7 +416,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 
 	$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex'}).on('changeColor', function(ev){
 		this.el.querySelector('i').style.backgroundColor = this.get()
-		this.owner.pub('change',this);
+		this.owner.trigger('change',this);
 	}.bind(this));
 
   }
@@ -449,7 +449,7 @@ gform.types['datetime'] = _.extend({}, gform.types['input'], {
   initialize: function(){
 	this.onchangeEvent = function(){
 		this.value = this.get();
-		this.owner.pub(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+		this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 	}.bind(this)
 	
 	// this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
