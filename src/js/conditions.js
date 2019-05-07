@@ -35,7 +35,7 @@ gform.processConditions = function(conditions, func) {
 gform._subscribeByName = function(conditions, callback){
 	for(var i in conditions) {
 		if(typeof conditions[i].name !== 'undefined'){
-			this.owner.sub('change:' + conditions[i].name, callback)
+			this.owner.on('change:' + conditions[i].name, callback)
 		}else if(typeof conditions[i].conditions == 'object'){
 			gform._subscribeByName.call(this, conditions[i].conditions, callback)
 		}

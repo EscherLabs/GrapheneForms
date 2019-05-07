@@ -327,10 +327,10 @@ gform.reflow = function(){
             if(field.columns > 0){// && field.visible){
                 var cRow;
                 // cRow = field.owner.rows[field.owner.rows.length-1];
-                var formRows = field.parent.container.querySelectorAll('form > .'+field.owner.options.rowClass+',fieldset > .'+field.owner.options.rowClass);
+                var formRows = (field.parent||field.owner).container.querySelectorAll('form > .'+field.owner.options.rowClass+',fieldset > .'+field.owner.options.rowClass);
                 var temp =(formRows[formRows.length-1] || {}).id;
                 if(typeof temp !== 'undefined') {
-                    cRow = field.parent.rows[temp];	
+                    cRow = (field.parent||field.owner).rows[temp];	
                 }
                 if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > field.owner.options.columns || field.row == true){
                     var temp = gform.getUID();
@@ -340,8 +340,8 @@ gform.reflow = function(){
                     cRow.ref.setAttribute("id", temp);
                     cRow.ref.setAttribute("class", field.owner.options.rowClass);
                     cRow.ref.setAttribute("style", "margin-bottom:0;");
-                    field.parent.rows[temp] = cRow;
-                    field.parent.container.appendChild(cRow.ref);
+                    (field.parent||field.owner).rows[temp] = cRow;
+                    (field.parent||field.owner).container.appendChild(cRow.ref);
                 }
 
                 cRow.used += parseInt(field.columns, 10);
@@ -494,10 +494,10 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         if(field.columns >0){
 
         var cRow;
-        var formRows = field.parent.container.querySelectorAll('form > .'+field.owner.options.rowClass+',fieldset > .'+field.owner.options.rowClass);
+        var formRows = (field.parent||field.owner).container.querySelectorAll('form > .'+field.owner.options.rowClass+',fieldset > .'+field.owner.options.rowClass);
         var temp =(formRows[formRows.length-1] || {}).id;
         if(typeof temp !== 'undefined') {
-            cRow = field.parent.rows[temp];	
+            cRow = (field.parent||field.owner).rows[temp];	
         }
         if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns || field.row == true){
             var temp = gform.getUID();
@@ -507,8 +507,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             cRow.ref.setAttribute("id", temp);
             cRow.ref.setAttribute("class", field.owner.options.rowClass);
             cRow.ref.setAttribute("style", "margin-bottom:0;");
-            field.parent.rows[temp] = cRow;
-            field.parent.container.appendChild(cRow.ref);
+            (field.parent||field.owner).rows[temp] = cRow;
+            (field.parent||field.owner).container.appendChild(cRow.ref);
         }
 
         cRow.used += parseInt(field.columns, 10);

@@ -153,7 +153,7 @@
 	{{>formTop}}
 	{{>_validateForm}},
 		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
-	{{>formBottom}}.sub('validate',function(e){
+	{{>formBottom}}.on('validate',function(e){
 		e.form.validate()
 }){{/page.rows.validate}}
 {{/rows.validate}}
@@ -163,7 +163,7 @@
 	{{>formTop}}
 	{{>_requiredForm}},
 		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
-	{{>formBottom}}.sub('validate',function(e){
+	{{>formBottom}}.on('validate',function(e){
 		e.form.validate()
 })
 {{/page.rows.required}}

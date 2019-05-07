@@ -255,10 +255,10 @@ new gform({
   "fields":[     {type: 'hidden', name: 'name_example'},
     {type: 'hidden', label: 'Label Example'},	
     {type: 'hidden'}		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.namefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 
 new gform({
   "el":".valuefield .form",
@@ -267,10 +267,10 @@ new gform({
   label: 'Value Example',
   value: 'This is a test'
 }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.valuefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 
 
 
@@ -302,10 +302,10 @@ new gform({
       value: true
     }]
   }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.parsefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 
 
 </script>

@@ -1,5 +1,5 @@
 		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.{{name}}field .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')

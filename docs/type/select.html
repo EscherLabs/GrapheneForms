@@ -536,10 +536,10 @@ new gform({
     {type: 'select',
     options:[1, 2, 3, 4, 5]
     }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.namefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".labelfield .form",
   "fields":[ {
@@ -548,10 +548,10 @@ new gform({
     options:[1, 2, 3, 4, 5]
     
 }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.labelfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".valuefield .form",
   "fields":[ {
@@ -561,10 +561,10 @@ new gform({
     options:[1, 2, 3, 4, 5]
     
 }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.valuefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".helpfield .form",
   "fields":[   {
@@ -574,10 +574,10 @@ new gform({
     options:[1, 2, 3, 4, 5]
     
   }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.helpfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".placeholderfield .form",
   "fields":[   {
@@ -587,10 +587,10 @@ new gform({
     options:[1, 2, 3, 4, 5]
     
   }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.placeholderfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".multiplefield .form",
   "fields":[ {
@@ -600,10 +600,10 @@ new gform({
     options:[1, 2, 3, 4, 5]
     
   }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.multiplefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".limitfield .form",
   "fields":[ {
@@ -614,32 +614,32 @@ new gform({
     options:[1, 2, 3, 4, 5]
     
   }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.limitfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 
 new gform({
   "el":".minfield .form",
   "fields":[ 		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.minfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".maxfield .form",
   "fields":[ 		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.maxfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".stepfield .form",
   "fields":[     {type: 'select', label: 'Min/Max/Step', min: 2, max: 20, step: 2},		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.stepfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".optionsfield .form",
   "fields":[     {
@@ -656,10 +656,10 @@ new gform({
         ]
     },	
 		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.optionsfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".formatfield .form",
   "fields":[ 	{
@@ -668,10 +668,10 @@ new gform({
         options: ["No", "Yes"],        format: forms.format_select.fields[3].format
     }
 		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.formatfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".columnsfield .form",
   "fields":[   {
@@ -688,19 +688,19 @@ new gform({
     options:[1, 2, 3, 4]
     
   }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.columnsfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".targetfield .form",
   "fields":[     {type: 'select', name: 'name_example'},
     {type: 'select', label: 'Label Example'},	
     {type: 'select'}		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.targetfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".arrayfield .form",
   "fields":[   {
@@ -710,10 +710,10 @@ new gform({
     options:[1, 2, 3, 4, 5]
     
   }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.arrayfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".showfield .form",
   "fields":[   {
@@ -732,10 +732,10 @@ new gform({
     options:[1, 2, 3, 4, 5]
     
   }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.showfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".editfield .form",
   "fields":[   {
@@ -754,10 +754,10 @@ new gform({
     options:[1, 2, 3, 4, 5]
     
   }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.editfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".parsefield .form",
   "fields":[   {
@@ -776,10 +776,10 @@ new gform({
     options:[1, 2, 3, 4, 5]
     
   }		] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.parsefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change')
+).trigger('change')
 new gform({
   "el":".validatefield .form",
   "fields":[ 	  {
@@ -791,10 +791,10 @@ new gform({
   },
 		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
 			] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.validatefield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change').sub('validate',function(e){
+).trigger('change').on('validate',function(e){
 		e.form.validate()
 })
 
@@ -809,10 +809,10 @@ new gform({
   },
 		{type:'button', action:'validate',label:'Validate',modifiers:'btn btn-warning'}
 			] 
-	}).sub('change', function(e){
+	}).on('change', function(e){
 document.querySelector('.requiredfield .result').innerHTML = JSON.stringify(e.form,null,2);
 	}
-).pub('change').sub('validate',function(e){
+).trigger('change').on('validate',function(e){
 		e.form.validate()
 })
 </script>
