@@ -52,7 +52,20 @@ $('#cobler').on('click', function(e) {
     if(typeof forms[form] !== 'undefined'){
       var temp = $.extend(true, {}, forms[form]);
       for(var i in temp.fields){
-        temp.fields[i].options = gform.options(temp.fields[i]);//gform.normalizeItem(, i);
+        // temp.fields[i].options = gform.options(temp.fields[i]);//gform.normalizeItem(, i);
+
+
+        var mapOptions = new gform.mapOptions(temp.fields[i])
+        // this.mapOptions.on('change',function(){
+        //     this.options = this.mapOptions.getobject()
+        //     this.update();
+        // }.bind(this))
+      // }
+      temp.fields[i].options = mapOptions.getobject()
+
+
+
+
         switch(temp.fields[i].type) {
           case "select":
           case "radio":

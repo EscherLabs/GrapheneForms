@@ -62,7 +62,7 @@ describe('Radio Input', function () {
   // });
 
   it('should trigger events', function () {
-    mygform.sub('change', triggerOnChange);
+    mygform.on('change', triggerOnChange);
     mygform.find('test').set('hello',true);
     expect(triggerOnChange).not.toHaveBeenCalled();
     mygform.find('test').set('stuff');

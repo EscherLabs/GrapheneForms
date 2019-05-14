@@ -1,6 +1,6 @@
 gform.processConditions = function(conditions, func) {
 	if (typeof conditions === 'string') {
-		if(conditions === 'display' || conditions === 'enable'  || conditions === 'parse') {
+		if(conditions === 'show' || conditions === 'edit'  || conditions === 'parse') {
 			conditions = this.item[conditions];
 		}
 	}

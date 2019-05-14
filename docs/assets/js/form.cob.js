@@ -2,32 +2,32 @@
 gformEditor = function(container){
 	return function(){
 		var formConfig = {
-			sections: 'tab', 
-			data: this.get(), 
+			sections: 'tab',
+			data: this.get(),
 			fields: this.fields,
 			autoDestroy: true,
 			legend: 'Edit '+ this.get()['widgetType']
-			
 		}
 		var opts = container.owner.options;
 		var events = 'save';
 		if(typeof opts.formTarget !== 'undefined' && opts.formTarget.length){
-			formConfig.actions = false;
+			formConfig.actions = [];
 			events = 'change';
 		}	
 		for(var i in gform.instances){
 			gform.instances[i].destroy();
 		}
+		
 		var mygform = new gform(formConfig, $(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
-		mygform.sub(events, function(){
+		mygform.on(events, function(){
 			var temp = mygform.toJSON();
 			if(typeof temp.basics !== 'undefined'){
 				temp = $.extend({},temp.basics,temp.options_c)
 			}
 		 	container.update(temp, this);
-		 	mygform.pub('saved');
+		 	mygform.trigger('saved');
 		}.bind(this));
-		mygform.sub('cancel',function(){
+		mygform.on('cancel',function(){
 		 	container.update(this.get(), this)
 		}.bind(this));
 	}

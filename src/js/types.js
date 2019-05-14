@@ -238,11 +238,11 @@ gform.types = {
           this.rows = {};
       },        
       render: function() {
-          // if(this.section){
+          if(this.section){
               return gform.render(this.owner.options.sections+'_fieldset', this);                
-          // }else{
-              // return gform.render('_fieldset', this);                
-          // }
+          }else{
+              return gform.render('_fieldset', this);                
+          }
       },      
       update: function(item, silent) {
 
@@ -409,11 +409,11 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
 
         // this.options = gform.mapOptions.call(this,this, this.value);
 
-  if(typeof this.placeholder == 'string'){
-      this.options.unshift({label:this.placeholder, value:'',editable:false,visible:false,selected:true})
-  }
+        if(typeof this.placeholder == 'string'){
+            this.options.unshift({label:this.placeholder, value:'',editable:false,visible:false,selected:true})
+        }
         return gform.render(this.type, this);
-    },
+    }
 });
 gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     get: function(){
@@ -470,6 +470,9 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       _.each(this.el.querySelectorAll('input'),function(item){
           item.disabled = !state;            
       })
+  },	
+  focus: function(){
+    this.el.querySelector('[type="radio"]:checked,[type="radio"]').focus();
   }
 });
 

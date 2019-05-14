@@ -27,7 +27,7 @@ describe('gform Multiple', function () {
 					}
 				}
 			]
-		}, $('#berry')).sub('change', triggerOnChange);
+		}, $('#berry')).on('change', triggerOnChange);
 
 	});
 

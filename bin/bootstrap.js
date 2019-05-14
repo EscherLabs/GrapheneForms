@@ -1,7 +1,7 @@
 gform.stencils = {
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
-    _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer row"></div>`,
-    text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
+_container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer row"></div>`,
+text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{#inline}}<div class="col-md-12">{{/inline}}
@@ -215,7 +215,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/label}}
 		<div class="checkbox">
 			<label class="{{alt-display}}">
-				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#value}}checked=checked{{/value}}>{{#container}}<{{container}}  style="position:relative;display:inline-block;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">{{{text}}}</{{container}}>{{/container}}&nbsp;
+				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#value}}checked=checked{{/value}}>{{#details}}<span  style="position:relative;display:inline-block;-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">{{{details}}}</span>{{/details}}&nbsp;
 			</label>
 		</div>
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
@@ -276,7 +276,7 @@ button:`<div class="btn btn-default {{modifiers}}" style="margin:0 15px">{{{labe
 	    {{/section}}		
 		{{/fields}}
 	</ul></form>
-	</form><div class="footer row"></div>
+	</form><div class="gform-footer row"></div>
     `,
 	tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
 	modal_container:`<div class="modal fade" id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -307,7 +307,6 @@ button:`<div class="btn btn-default {{modifiers}}" style="margin:0 15px">{{{labe
 			</div>
 			<div class="modal-footer gform-footer"  style="padding-right: 0;padding-left: 0;">
 				{{{footer}}}
-				<div class="footer"></div>
 			</div>
 		</div>
 	</div>
@@ -386,7 +385,19 @@ gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collec
 		  
 	},
   render: function() {
-    this.options = gform.options.call(this,this, this.value);
+		// this.options = gform.options.call(this,this, this.value);
+		
+		if(typeof this.mapOptions == 'undefined'){
+
+			this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
+			this.mapOptions.on('change',function(){
+					this.options = this.mapOptions.getobject()
+					this.update();
+			}.bind(this))
+		}
+		this.options = this.mapOptions.getobject()
+
+
     return gform.render('select', this);
   },
   set: function(value) {

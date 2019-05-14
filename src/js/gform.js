@@ -32,7 +32,7 @@ var gform = function(data, el){
 
     
     //initalize form
-    this.options = _.assignIn({legend: '', default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
+    this.options = _.assignIn({fields:[], legend: '', default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
     this.options.fields = this.options.fields.concat(this.options.actions || [{type:'cancel'},{type:'save'}])
     if (typeof this.options.data == 'string') {
         this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
@@ -418,7 +418,6 @@ gform.normalizeField = function(fieldIn,parent){
 }
 
 gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
-
     var field = gform.normalizeField.call(this,fieldIn,parent) 
     field.owner = this;
 	if(field.columns > this.options.columns) { field.columns = this.options.columns; }
@@ -446,12 +445,12 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             } else {
                 //may need to search deeper in atts?
                 field.value =  atts[field.name] || field.value || '';
-            }  
+            }
         }
 	} else {
 		field.value = 0;
     }
-    field.index = instance||0;
+    field.index = field.index||instance||0;
     field.label = gform.renderString(field.item.label||field.label,field);
     // field.index = ;
 
@@ -492,41 +491,39 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
     if(!field.target && !field.section && (this.options.clear || field.isChild)){
         if(field.columns >0){
+            var cRow;
+            var formRows = (field.parent||field.owner).container.querySelectorAll('form > .'+field.owner.options.rowClass+',fieldset > .'+field.owner.options.rowClass);
+            var temp =(formRows[formRows.length-1] || {}).id;
+            if(typeof temp !== 'undefined') {
+                cRow = (field.parent||field.owner).rows[temp];	
+            }
+            if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns || field.row == true){
+                var temp = gform.getUID();
+                cRow = {};
+                cRow.used = 0;
+                cRow.ref  = document.createElement("div");
+                cRow.ref.setAttribute("id", temp);
+                cRow.ref.setAttribute("class", field.owner.options.rowClass);
+                cRow.ref.setAttribute("style", "margin-bottom:0;");
+                (field.parent||field.owner).rows[temp] = cRow;
+                (field.parent||field.owner).container.appendChild(cRow.ref);
+            }
 
-        var cRow;
-        var formRows = (field.parent||field.owner).container.querySelectorAll('form > .'+field.owner.options.rowClass+',fieldset > .'+field.owner.options.rowClass);
-        var temp =(formRows[formRows.length-1] || {}).id;
-        if(typeof temp !== 'undefined') {
-            cRow = (field.parent||field.owner).rows[temp];	
-        }
-        if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > this.options.columns || field.row == true){
-            var temp = gform.getUID();
-            cRow = {};
-            cRow.used = 0;
-            cRow.ref  = document.createElement("div");
-            cRow.ref.setAttribute("id", temp);
-            cRow.ref.setAttribute("class", field.owner.options.rowClass);
-            cRow.ref.setAttribute("style", "margin-bottom:0;");
-            (field.parent||field.owner).rows[temp] = cRow;
-            (field.parent||field.owner).container.appendChild(cRow.ref);
-        }
-
-        cRow.used += parseInt(field.columns, 10);
-        cRow.used += parseInt(field.offset, 10);
-        cRow.ref.appendChild(field.el);
-        field.row = temp;
+            cRow.used += parseInt(field.columns, 10);
+            cRow.used += parseInt(field.offset, 10);
+            cRow.ref.appendChild(field.el);
+            field.row = temp;
         }
     }else{
         if(!field.target){
             field.target = '[name="'+field.name+'"],[data-inline="'+field.name+'"]';
         }
-        var temp = this.el.querySelector(field.target)
-        if(typeof temp !== 'undefined' && temp !== null    ){
+        var temp = this.el.querySelector(field.target);
+        if(typeof temp !== 'undefined' && temp !== null){
             temp.appendChild(field.el);
         }else if(field.section){
             field.owner.el.querySelector('.'+field.owner.options.sections+'-content').appendChild(field.el);
         }
-       
     }
 
     gform.types[field.type].initialize.call(field);
@@ -685,7 +682,7 @@ gform.eventBus = function(options, owner){
             args.event = event;
             var f = function (handler) {
                 if(a.continue){
-                    handler.call(null, args);
+                    handler.call(owner, args);
                 }
             }.bind(this)
             _.each(this.handlers[event], f);

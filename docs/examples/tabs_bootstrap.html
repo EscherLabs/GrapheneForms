@@ -9,7 +9,7 @@
     </head>
     <body>
       <div style="padding:20px">
-      <h4><a href="./">Examples</a> - Types</h4>
+      <h4><a href="./">Examples</a> - Tabs</h4>
       <div class="container ">
           <div class="row ">
                 <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
@@ -21,36 +21,45 @@
       <script src='../assets/vendor/js/jquery.js'></script>
 
       <script src="../assets/js/lodash.min.js"></script>    
-      <script src='../assets/js/gform_bootstrap.min.js'></script> 
+      <script src='../assets/js/gform.js'></script> 
       <script src='../assets/vendor/js/combobox.js'></script>
       <script src='../assets/vendor/js/colorpicker.min.js'></script> 
 
-      <!-- <script src='../assets/js/gform.bootstrap.js'></script> -->
+      <script src='../assets/js/bootstrap.js'></script>
+      <script src='../assets/js/bootstrap.min.js'></script>
+
       <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
     options = {
+        actions:[],
+        sections: 'tab',
         fields:[
-            {label: 'Text', type: 'text'},
-            {label: 'Hidden', type: 'hidden', value:'hidden field'},
-            {label: 'Number', type: 'number'},
-            {label: 'Color', type: 'color'},
-            {label: 'Email', type: 'email'},
-            {label: 'Textarea', type: 'textarea'},
-            {label: 'Checkbox', type: 'checkbox',  "container": "span",
-},
-            {label: 'Select', type: 'select', options:[1,2,3]},
-            {label: 'Radio', type: 'radio', options:[1,2,3]},
-            {label: 'Combobox', type: 'combo', options:[1,2,3]},
-            {label: 'Fieldset', type: 'fieldset', fields:[
-                {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
-                {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
-            ]},
-            {label: 'Home Address', type: 'address'},
-
-        ]
+		{type: 'fieldset', name:'basics', legend: '<i class="fa fa-th"></i> Basics', hideLabel: true, inline: true, fields:[
+			{type: 'text', required: true, label: 'Field Label', name: 'label'},
+			{type: 'text', label: 'Name', name: 'name'},
+			{type: 'select', label: 'Display', name: 'type', value: 'select', options: [
+				{label: 'Dropdown', value: 'select'},
+				{label: 'Radio', value: 'radio'}
+			]},
+			{type: 'text', label: 'Default Value', name: 'value'},
+			{type: 'number', label: 'Max', name: 'max'},
+			{type: 'number', label: 'Min', name: 'min'},
+			{type: 'number', label: 'Step', name: 'step'},
+			{type: 'textarea', label: 'Instructions', name: 'help'},
+            {type: 'checkbox', label: 'Required', name: 'required'},
+		]},
+		{type: 'fieldset', name:'options_c', legend: '<i class="fa fa-th-list"></i> options', hideLabel: true,  inline: true, fields:[
+            {type: 'fieldset', label: false, array: true, name: 'options', fields: [
+				{label: 'Label'},
+				{label: 'Value'}
+			]}
+		]}
+	]
     }
     </script>
-    <script src="../assets/js/example.js"></script>   
+    <script src="../assets/js/example.js">
+    
+    </script>   
    </body>
 </html>

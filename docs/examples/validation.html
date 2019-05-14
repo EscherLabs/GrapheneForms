@@ -43,10 +43,19 @@
                 {type:"length", max:10, min:2, message: "Failed"},
                 {type:"valid_url"}
               ],op:'or'}
-            ]
-          },
-          {label: 'First', name: 'first', required:[{type:"matches",name:"second",value:""}]},
-          {label: 'Second', name: 'second', required:[{type:"matches",name:"first",value:""}]},
+            ],
+            "parse":[
+              {"conditions":[
+                {"type":"matches","name": "checked","value": [true]}
+            ]}],
+            "show": [
+              {"conditions":[
+                {"type":"matches","name": "checked","value": [true]}
+            ]}]
+          }
+
+          // {label: 'First', name: 'first', required:[{type:"matches",name:"second",value:""}]},
+          // {label: 'Second', name: 'second', required:[{type:"matches",name:"first",value:""}]},
 
         ]
     }

@@ -296,4 +296,3 @@ function Cobler(options) {
 }
 
 Cobler.types = {};
-
