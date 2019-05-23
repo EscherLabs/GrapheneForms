@@ -57,7 +57,7 @@ Cobler.types.textbox = function(container) {
 		enabled: true
 	}
 	var fields = [
-		{type: 'text', required: true, label: 'Field Label', name: 'label'},
+		{type: 'text', required: true, title: 'Field Label', name: 'title'},
 		{type: 'text', label: 'Name', name: 'name'},
 		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
 			{label: 'Single Line', value: 'text'},
@@ -121,8 +121,8 @@ Cobler.types.select = function(container) {
 
 			{type: 'text', label: 'Default Value', name: 'value'},
 			{type: 'number', label: 'Max', name: 'max'},
-			{type: 'number', label: 'Min', name: 'min'},
-			{type: 'number', label: 'Step', name: 'step'},
+			{type: 'number', label: 'Min', name: 'min',show:[{type:'not_matches',name:'max',value:''}]},
+			{type: 'number', label: 'Step', name: 'step',show:[{type:'not_matches',name:'max',value:''}]},
 			{type: 'textarea', label: 'Instructions', name: 'help'},
 			{type: 'checkbox', label: 'Required', name: 'required'},
 		]},
@@ -157,7 +157,7 @@ Cobler.types.checkbox = function(container) {
 		return item;
 	}
 	function toJSON() {
-		return get();
+		return  _.transform(get(),function(r,v) {_.extend(r,v)},{});//get();
 	}
 	function set(newItem) {
 		item = newItem;

@@ -13,7 +13,9 @@
       <div class="container ">
           <div class="row ">
                 <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
-                <div class="col-md-4" style=""><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>                
+                <div class="col-md-4" style=""><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div>
+            
+            </div>                
                 <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
               </div>
           </div>
@@ -35,28 +37,29 @@
         actions:[],
         sections: 'tab',
         fields:[
-		{type: 'fieldset', name:'basics', legend: '<i class="fa fa-th"></i> Basics', hideLabel: true, inline: true, fields:[
-			{type: 'text', required: true, label: 'Field Label', name: 'label'},
-			{type: 'text', label: 'Name', name: 'name'},
-			{type: 'select', label: 'Display', name: 'type', value: 'select', options: [
-				{label: 'Dropdown', value: 'select'},
-				{label: 'Radio', value: 'radio'}
-			]},
-			{type: 'text', label: 'Default Value', name: 'value'},
-			{type: 'number', label: 'Max', name: 'max'},
-			{type: 'number', label: 'Min', name: 'min'},
-			{type: 'number', label: 'Step', name: 'step'},
-			{type: 'textarea', label: 'Instructions', name: 'help'},
-            {type: 'checkbox', label: 'Required', name: 'required'},
-		]},
-		{type: 'fieldset', name:'options_c', legend: '<i class="fa fa-th-list"></i> options', hideLabel: true,  inline: true, fields:[
-            {type: 'fieldset', label: false, array: true, name: 'options', fields: [
-				{label: 'Label'},
-				{label: 'Value'}
-			]}
-		]}
-	]
+            {type: 'fieldset', name:'basics_tab', legend: '<i class="fa fa-th"></i> Basics', inline: true, fields:[
+                {type: 'text', required: true, label: 'Field Label', name: 'label'},
+                {type: 'text', label: 'Name', name: 'name'},
+                {type: 'select', label: 'Display', name: 'type', value: 'select', options: [
+                    {label: 'Dropdown', value: 'select'},
+                    {label: 'Radio', value: 'radio'}
+                ]},
+                {type: 'text', label: 'Default Value', name: 'value'},
+                {type: 'number', label: 'Max', name: 'max'},
+                {type: 'number', label: 'Min', name: 'min'},
+                {type: 'number', label: 'Step', name: 'step'},
+                {type: 'textarea', label: 'Instructions', name: 'help'},
+                {type: 'checkbox', label: 'Required', name: 'required'}
+            ]},
+            {type: 'fieldset', name:'options_tab', legend: '<i class="fa fa-th-list"></i> options',  inline: true, fields:[
+                {type: 'fieldset', label: false, array: true, name: 'options', fields: [
+                    {label: 'Label',columns:7},
+                    {label: 'Value',columns:5}
+                ]}
+            ]}
+        ]
     }
+    //_.transform(gform.instances.f0.get(),function(result, value, key) {_.extend(result,value)},{})
     </script>
     <script src="../assets/js/example.js">
     

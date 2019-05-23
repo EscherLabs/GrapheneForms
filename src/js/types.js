@@ -153,9 +153,10 @@ gform.types = {
               this.update();
           }.bind(this))
         }
-        this.options = this.mapOptions.getobject()
+        this.options = this.mapOptions.getobject();
+        this.value = this.value||(this.options[0]||{value:""}).value
 
-          return gform.render(this.type, this);
+        return gform.render(this.type, this);
       },
       setup:function(){
         if(this.multiple && typeof this.limit !== 'undefinded'){
@@ -291,7 +292,9 @@ gform.types = {
           gform.reflow.call(this)
       },
       focus:function() {
-          gform.types[this.fields[0].type].focus.call(this.fields[0]);
+          if(this.fields.length){
+            gform.types[this.fields[0].type].focus.call(this.fields[0]);
+          }
       }
   },
   'button':{
@@ -400,13 +403,12 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
             // debugger;
             this.mapOptions = new gform.mapOptions(this, this.value,0, this.owner.collections)
             this.mapOptions.on('change', function(){
-                // debugger;
                 this.options = this.mapOptions.getobject();
                 this.update();
             }.bind(this))
         }
         this.options = this.mapOptions.getobject()
-
+        this.value = this.value||(this.options[0]||{value:""}).value
         // this.options = gform.mapOptions.call(this,this, this.value);
 
         if(typeof this.placeholder == 'string'){

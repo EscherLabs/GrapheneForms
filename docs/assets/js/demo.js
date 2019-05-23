@@ -1,3 +1,4 @@
+
 $('#json, #schema').on('click', function(e){
   $(e.target).siblings().removeClass('active');
   $(e.target).addClass('active');
@@ -8,6 +9,7 @@ $('#json, #schema').on('click', function(e){
   $('#editor').addClass('hidden');
   setSchema(forms[form]);
 });
+
 $('#cobler').on('click', function(e) {
   $(e.target).siblings().removeClass('active');
   $(e.target).addClass('active');
@@ -34,6 +36,7 @@ $('#cobler').on('click', function(e) {
         cb.collections[0].addItem(e.target.dataset.type);
       })
       cb.on("change", function(){
+        debugger;
         if(typeof forms[form] !== 'undefined' && form !== 'builder'){
           // debugger;
           $.extend(forms[form], {fields: cb.toJSON()[0]});
@@ -61,11 +64,7 @@ $('#cobler').on('click', function(e) {
         //     this.update();
         // }.bind(this))
       // }
-      temp.fields[i].options = mapOptions.getobject()
-
-
-
-
+        temp.fields[i].options = mapOptions.getobject()
         switch(temp.fields[i].type) {
           case "select":
           case "radio":
@@ -79,7 +78,6 @@ $('#cobler').on('click', function(e) {
         }
 
       }
-
       
       list.className = list.className.replace('hidden', '');
       cb.collections[0].load(temp.fields);
@@ -90,9 +88,6 @@ $('#cobler').on('click', function(e) {
     }
 
 });
-
-
-
 
 document.addEventListener('DOMContentLoaded', function(){
 
@@ -107,12 +102,11 @@ document.addEventListener('DOMContentLoaded', function(){
         gform.instances[i].destroy();
       }
       var temp = new gform(
-        $.extend({autoFocus: false, actions: ['save'], name: 'myForm', data: QueryStringToHash(document.location.hash.substr(1) || "") }, forms[form] ) ,'.target')
-      temp.sub('change', function(){
-        debugger;
+        $.extend({autoFocus: false, actions: [{type:'save'}], name: 'myForm', data: QueryStringToHash(document.location.hash.substr(1) || "") }, forms[form] ) ,'.target')
+      temp.on('change', function(){
         $('.result').html("<pre>"+JSON.stringify(this.toJSON(), undefined, "\t")+"</pre>");
-      }.bind(temp))
-      temp.sub('save', function(){
+      }.bind(temp)).trigger('change')
+      temp.on('save', function(){
         if(this.validate()) { location.hash = '#'+$.param(this.toJSON());}}
       ).bind(this);
     } catch (e) {
@@ -141,6 +135,16 @@ function setSchema(obj){
 }
 
 
+
+
+
+
+
+
+
+
+
+
 /*utils*/
 
 var urlParams;
@@ -155,7 +159,6 @@ var urlParams;
     while (match = search.exec(query))
        urlParams[decode(match[1])] = decode(match[2]);
 })();
-
 
 var QueryStringToHash = function QueryStringToHash  (query) {
   var query_string = {};
