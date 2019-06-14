@@ -188,7 +188,7 @@ var gform = function(data, el){
             e.stopPropagation();
             var fieldCount =  _.countBy(field.parent.fields, {name: field.name}).true;
 
-            if(fieldCount < (field.array.max || 5)){
+            if(field.editable && fieldCount < (field.array.max || 5)){
                 var index = _.findIndex(field.parent.fields, {id: field.id});
                 var atts = {};
         
@@ -224,7 +224,7 @@ var gform = function(data, el){
         if(e.target.classList.contains('gform-minus')){
             e.stopPropagation();
             var fieldCount =  _.countBy(field.parent.fields, {name: field.name}).true;
-            if(fieldCount > (field.array.min || 1)) {
+            if(field.editable && fieldCount > (field.array.min || 1)) {
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 field.parent.fields.splice(index, 1);
                 field.parent.reflow();
@@ -244,7 +244,7 @@ var gform = function(data, el){
                 field.owner.trigger(['change', 'change:'+field.name,'removed','removed:'+field.name],field)
                 fieldCount--;
             }else{
-                field.set(null);
+                if(field.editable)field.set(null);
             }           
 
             var testFunc = function(status, button){
@@ -867,13 +867,14 @@ gform.mapOptions = function(optgroup, value, count,collections){
     var format = this.optgroup.format;
     function pArray(opts){
         return _.map(opts,function(item){
-            
+
             if(typeof item === 'object' && item.type == 'optgroup'){
                 item.map = new gform.mapOptions(item,value,count,this.collections);
                 item.map.on('*',function(e){
                     this.eventBus.dispatch(e.event)
                 }.bind(this))
                 item.id = gform.getUID();
+
                 gform.processConditions.call(this, item.edit, function(id, result){
                     var op = this.el.querySelectorAll('[data-id="'+id+'"]');
                     for (var i = 0; i < op.length; i++) {
@@ -904,7 +905,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
                         option.value = gform.renderString(format.value,option);
                     }
                 }
-                if(option.value == value || (this.multiple && (value.indexOf(option.value)>=0) )) { option.selected = true;}
+                if(option.value == value || (/*this.multiple && */(value.indexOf(option.value)>=0) )) { option.selected = true;}
                 
                 count+=1;
                 option.i = count;

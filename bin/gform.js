@@ -188,7 +188,7 @@ var gform = function(data, el){
             e.stopPropagation();
             var fieldCount =  _.countBy(field.parent.fields, {name: field.name}).true;
 
-            if(fieldCount < (field.array.max || 5)){
+            if(field.editable && fieldCount < (field.array.max || 5)){
                 var index = _.findIndex(field.parent.fields, {id: field.id});
                 var atts = {};
         
@@ -224,7 +224,7 @@ var gform = function(data, el){
         if(e.target.classList.contains('gform-minus')){
             e.stopPropagation();
             var fieldCount =  _.countBy(field.parent.fields, {name: field.name}).true;
-            if(fieldCount > (field.array.min || 1)) {
+            if(field.editable && fieldCount > (field.array.min || 1)) {
                 var index = _.findIndex(field.parent.fields,{id:field.id});
                 field.parent.fields.splice(index, 1);
                 field.parent.reflow();
@@ -244,7 +244,7 @@ var gform = function(data, el){
                 field.owner.trigger(['change', 'change:'+field.name,'removed','removed:'+field.name],field)
                 fieldCount--;
             }else{
-                field.set(null);
+                if(field.editable)field.set(null);
             }           
 
             var testFunc = function(status, button){
@@ -867,13 +867,14 @@ gform.mapOptions = function(optgroup, value, count,collections){
     var format = this.optgroup.format;
     function pArray(opts){
         return _.map(opts,function(item){
-            
+
             if(typeof item === 'object' && item.type == 'optgroup'){
                 item.map = new gform.mapOptions(item,value,count,this.collections);
                 item.map.on('*',function(e){
                     this.eventBus.dispatch(e.event)
                 }.bind(this))
                 item.id = gform.getUID();
+
                 gform.processConditions.call(this, item.edit, function(id, result){
                     var op = this.el.querySelectorAll('[data-id="'+id+'"]');
                     for (var i = 0; i < op.length; i++) {
@@ -904,7 +905,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
                         option.value = gform.renderString(format.value,option);
                     }
                 }
-                if(option.value == value || (this.multiple && (value.indexOf(option.value)>=0) )) { option.selected = true;}
+                if(option.value == value || (/*this.multiple && */(value.indexOf(option.value)>=0) )) { option.selected = true;}
                 
                 count+=1;
                 option.i = count;
@@ -1200,11 +1201,10 @@ gform.getUID = function() {
       }
   },
   'collection':{
-      defaults:{format:{label: '{{label}}', value: '{{value}}'}},
+      defaults:{format:{label: '{{{label}}}', value: '{{{value}}}'}},
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
-
           this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.on('change',function(){
               this.options = this.mapOptions.getobject()
@@ -1212,13 +1212,15 @@ gform.getUID = function() {
           }.bind(this))
         }
         this.options = this.mapOptions.getobject();
+        
         this.value = this.value||(this.options[0]||{value:""}).value
 
         return gform.render(this.type, this);
       },
       setup:function(){
+
         if(this.multiple && typeof this.limit !== 'undefinded'){
-            if(this.value.length >= this.limit){
+            if(this.get().length >= this.limit){
                 this.maxSelected = true;
                 _.each(this.el.querySelector('select').options,function(item){
                     item.disabled = !item.selected;
@@ -1229,6 +1231,11 @@ gform.getUID = function() {
                     item.disabled = false;
                 })  
             }
+            if(this.el.querySelector('.count') != null){
+                var text = this.get().length;
+                if(this.limit){text+='/'+this.limit;}
+                this.el.querySelector('.count').innerHTML = text;
+              }
           }
         //   if(this.other){
         //       this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
@@ -1267,7 +1274,10 @@ gform.getUID = function() {
         //   _.each(this.options.options, function(option, index){
         //       if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
         //   }.bind(this))
-        if(this.multiple && _.isArray(value)){
+        if(this.multiple){
+            if(!_.isArray(value)){
+                value = [value]
+            }
           if(typeof this.limit !== 'undefinded' && (value.length > this.limit)){return true}
           _.each(this.el.querySelector('select').options, function(option){
              option.selected = (value.indexOf(option.value)>=0)
@@ -1308,7 +1318,7 @@ gform.getUID = function() {
         if(typeof item === 'object') {
             _.extend(this.item,item);
         }
-        this.label = gform.renderString(({}||item).label||this.item.label, this);
+        this.label = gform.renderString((item||{}).label||this.item.label, this);
 
         // var oldDiv = document.getElementById(this.id);
         // var oldDiv = this.owner.el.querySelector('#'+this.id);
@@ -1366,6 +1376,7 @@ gform.getUID = function() {
       initialize: function() {
           this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
           this.onclickEvent = function(){
+              debugger;
               if(this.editable) {
                   this.owner.trigger(this.action, this);
               }
@@ -1383,7 +1394,8 @@ gform.getUID = function() {
           if(typeof item === 'object') {
               _.extend(this, this.item, item);
           }
-          this.label = gform.renderString(this.item.label, this);
+        //   this.label = gform.renderString(this.item.label, this);
+        this.label = gform.renderString((item||{}).label||this.item.label, this);
 
         //   var oldDiv = document.getElementById(this.id);
         //   var oldDiv = this.owner.el.querySelector('#'+this.id);
@@ -1403,7 +1415,10 @@ gform.getUID = function() {
       set: function(value) {
       },
       edit: function(state) {
+          this.editable = state;
           this.el.disabled = !state;
+          gform.toggleClass(this.el,'disabled',!state)
+
       }
   }
 };
@@ -1447,7 +1462,7 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
     //       this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
     //   },
       set: function(value) {
-          this.el.querySelector('textarea[name="' + this.name + '"]').innerHTML = value;
+          this.el.querySelector('textarea[name="' + this.name + '"]').value = value;
       },
       get: function() {
           return this.el.querySelector('textarea[name="' + this.name + '"]').value;
@@ -1486,8 +1501,9 @@ gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collect
 
 gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collection'], {
   setup: function(){
-    if(this.multiple && typeof this.limit !== 'undefinded'){
-        if(this.value.length >= this.limit){
+
+    if(this.multiple && typeof this.limit !== 'undefinded'){        
+        if(this.get().length>= this.limit){
             this.maxSelected = true;
             _.each(this.el.querySelectorAll('[type=checkbox]'),function(item){
                 item.disabled = !item.checked;
@@ -1498,7 +1514,13 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
                 item.disabled = false;
             })  
         }
+        if(this.el.querySelector('.count') != null){
+          var text = this.get().length;
+          if(this.limit){text+='/'+this.limit;}
+          this.el.querySelector('.count').innerHTML = text;
         }
+    }
+    
         // if(this.other){
         //     this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
         // }
@@ -1513,11 +1535,15 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       }
   },
   set:function(value){
-    if(this.multiple && _.isArray(value)){
+    if(this.multiple){
+        if(!_.isArray(value)){
+          value = [value]
+        }
         if(typeof this.limit !== 'undefinded' && (value.length > this.limit)){return true}
         _.each(this.el.querySelectorAll('[type=checkbox]'), function(option){
            option.checked = (value.indexOf(option.value)>=0)
         }.bind(this))
+      
       }else{
         var el = this.el.querySelector('[value="'+value+'"]');
         if(el !== null){
@@ -1532,7 +1558,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       })
   },	
   focus: function(){
-    this.el.querySelector('[type="radio"]:checked,[type="radio"]').focus();
+    this.el.querySelector('[type="radio"],[type="checkbox"]').focus();
   }
 });
 
@@ -1827,11 +1853,11 @@ gform.validations =
 	},
 	matches:function(value, args) {
 		var temp = this.parent.find(args.name);
+		if(typeof temp == 'undefined'){return "Matching field not defined";}
 		args.label = temp.label;
 		args.value = temp.get();
-		if(typeof temp == 'undefined'){return "Matching field not defined";}
-			return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
-		},
+		return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
+	},
 	date: function(value) {
 			return gform.regex.date.test(value) || value === '' ? false : '{{label}} should be in the format MM/DD/YYYY';
 	},

@@ -86,10 +86,10 @@ radio: `
 
     {{#multiple}}
         <div><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/>
-        <label class="label-inline" for="{{name}}_{{value}}">{{label}}</label></div>
+        <label class="noselect label-inline" for="{{name}}_{{value}}">{{label}}</label></div>
     {{/multiple}}
     {{^multiple}}
-        <label><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
+        <label class="noselect"><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
     {{/multiple}}
     {{/options}}
     </span>

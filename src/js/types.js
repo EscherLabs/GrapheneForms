@@ -142,11 +142,10 @@ gform.types = {
       }
   },
   'collection':{
-      defaults:{format:{label: '{{label}}', value: '{{value}}'}},
+      defaults:{format:{label: '{{{label}}}', value: '{{{value}}}'}},
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
-
           this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.on('change',function(){
               this.options = this.mapOptions.getobject()
@@ -154,13 +153,15 @@ gform.types = {
           }.bind(this))
         }
         this.options = this.mapOptions.getobject();
+        
         this.value = this.value||(this.options[0]||{value:""}).value
 
         return gform.render(this.type, this);
       },
       setup:function(){
+
         if(this.multiple && typeof this.limit !== 'undefinded'){
-            if(this.value.length >= this.limit){
+            if(this.get().length >= this.limit){
                 this.maxSelected = true;
                 _.each(this.el.querySelector('select').options,function(item){
                     item.disabled = !item.selected;
@@ -171,6 +172,11 @@ gform.types = {
                     item.disabled = false;
                 })  
             }
+            if(this.el.querySelector('.count') != null){
+                var text = this.get().length;
+                if(this.limit){text+='/'+this.limit;}
+                this.el.querySelector('.count').innerHTML = text;
+              }
           }
         //   if(this.other){
         //       this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
@@ -209,7 +215,10 @@ gform.types = {
         //   _.each(this.options.options, function(option, index){
         //       if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
         //   }.bind(this))
-        if(this.multiple && _.isArray(value)){
+        if(this.multiple){
+            if(!_.isArray(value)){
+                value = [value]
+            }
           if(typeof this.limit !== 'undefinded' && (value.length > this.limit)){return true}
           _.each(this.el.querySelector('select').options, function(option){
              option.selected = (value.indexOf(option.value)>=0)
@@ -250,7 +259,7 @@ gform.types = {
         if(typeof item === 'object') {
             _.extend(this.item,item);
         }
-        this.label = gform.renderString(({}||item).label||this.item.label, this);
+        this.label = gform.renderString((item||{}).label||this.item.label, this);
 
         // var oldDiv = document.getElementById(this.id);
         // var oldDiv = this.owner.el.querySelector('#'+this.id);
@@ -308,6 +317,7 @@ gform.types = {
       initialize: function() {
           this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
           this.onclickEvent = function(){
+              debugger;
               if(this.editable) {
                   this.owner.trigger(this.action, this);
               }
@@ -325,7 +335,8 @@ gform.types = {
           if(typeof item === 'object') {
               _.extend(this, this.item, item);
           }
-          this.label = gform.renderString(this.item.label, this);
+        //   this.label = gform.renderString(this.item.label, this);
+        this.label = gform.renderString((item||{}).label||this.item.label, this);
 
         //   var oldDiv = document.getElementById(this.id);
         //   var oldDiv = this.owner.el.querySelector('#'+this.id);
@@ -345,7 +356,10 @@ gform.types = {
       set: function(value) {
       },
       edit: function(state) {
+          this.editable = state;
           this.el.disabled = !state;
+          gform.toggleClass(this.el,'disabled',!state)
+
       }
   }
 };
@@ -389,7 +403,7 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
     //       this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
     //   },
       set: function(value) {
-          this.el.querySelector('textarea[name="' + this.name + '"]').innerHTML = value;
+          this.el.querySelector('textarea[name="' + this.name + '"]').value = value;
       },
       get: function() {
           return this.el.querySelector('textarea[name="' + this.name + '"]').value;
@@ -428,8 +442,9 @@ gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collect
 
 gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collection'], {
   setup: function(){
-    if(this.multiple && typeof this.limit !== 'undefinded'){
-        if(this.value.length >= this.limit){
+
+    if(this.multiple && typeof this.limit !== 'undefinded'){        
+        if(this.get().length>= this.limit){
             this.maxSelected = true;
             _.each(this.el.querySelectorAll('[type=checkbox]'),function(item){
                 item.disabled = !item.checked;
@@ -440,7 +455,13 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
                 item.disabled = false;
             })  
         }
+        if(this.el.querySelector('.count') != null){
+          var text = this.get().length;
+          if(this.limit){text+='/'+this.limit;}
+          this.el.querySelector('.count').innerHTML = text;
         }
+    }
+    
         // if(this.other){
         //     this.el.querySelector('input').style.display = (this.value == 'other')?"inline-block":"none";
         // }
@@ -455,11 +476,15 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       }
   },
   set:function(value){
-    if(this.multiple && _.isArray(value)){
+    if(this.multiple){
+        if(!_.isArray(value)){
+          value = [value]
+        }
         if(typeof this.limit !== 'undefinded' && (value.length > this.limit)){return true}
         _.each(this.el.querySelectorAll('[type=checkbox]'), function(option){
            option.checked = (value.indexOf(option.value)>=0)
         }.bind(this))
+      
       }else{
         var el = this.el.querySelector('[value="'+value+'"]');
         if(el !== null){
@@ -474,7 +499,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       })
   },	
   focus: function(){
-    this.el.querySelector('[type="radio"]:checked,[type="radio"]').focus();
+    this.el.querySelector('[type="radio"],[type="checkbox"]').focus();
   }
 });
 

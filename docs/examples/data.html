@@ -32,24 +32,24 @@
     options = {
         data:{multi_radio:['1','2'],select:"3"},
         fields:[
-            {label: 'Text', type: 'text'},
-            {label: 'Hidden', type: 'hidden', value:'hidden field'},
-            {label: 'Number', type: 'number'},
-            {label: 'Color', type: 'color'},
-            {label: 'Email', type: 'email'},
-            {label: 'Password', type: 'password'},
-            {label: 'Textarea', type: 'textarea'},
-            {label: 'Checkbox', type: 'checkbox',text:"you must select this one"},
-            {label: 'Switch', type: 'switch'},
-            {label: 'Select', type: 'select', options:[1,2,3]},
-            {label: 'Multi Select', multiple:true,size:3,length:2, type: 'select', options:[1,2,3]},
-            {label: 'Radio', type: 'radio', options:[1,2,3]},
-            {label: 'Multi Radio', multiple:true, type: 'radio',length:2, options:[1,2,3]},
-            {label: 'Range', type: 'range', min:20,max:60},
-            {label: 'Fieldset', type: 'fieldset', fields:[
-                {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
-                {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
-            ]}
+            // {label: 'Text', type: 'text'},
+            // {label: 'Hidden', type: 'hidden', value:'hidden field'},
+            // {label: 'Number', type: 'number'},
+            // {label: 'Color', type: 'color'},
+            // {label: 'Email', type: 'email'},
+            // {label: 'Password', type: 'password'},
+            // {label: 'Textarea', type: 'textarea'},
+            // {label: 'Checkbox', type: 'checkbox',text:"you must select this one"},
+            // {label: 'Switch', type: 'switch'},
+            // {label: 'Select', type: 'select', options:[1,2,3]},
+            // {label: 'Multi Select', multiple:true,size:3,length:2, type: 'select', options:[1,2,3]},
+            // {label: 'Radio', type: 'radio', options:[1,2,3]},
+            {label: 'Multi Radio', multiple:true, type: 'radio',limit:2, options:[1,2,3]},
+            // {label: 'Range', type: 'range', min:20,max:60},
+            // {label: 'Fieldset', type: 'fieldset', fields:[
+            //     {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
+            //     {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
+            // ]}
         ]
     }
     </script>

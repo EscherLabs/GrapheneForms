@@ -93,11 +93,11 @@ gform.validations =
 	},
 	matches:function(value, args) {
 		var temp = this.parent.find(args.name);
+		if(typeof temp == 'undefined'){return "Matching field not defined";}
 		args.label = temp.label;
 		args.value = temp.get();
-		if(typeof temp == 'undefined'){return "Matching field not defined";}
-			return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
-		},
+		return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
+	},
 	date: function(value) {
 			return gform.regex.date.test(value) || value === '' ? false : '{{label}} should be in the format MM/DD/YYYY';
 	},
