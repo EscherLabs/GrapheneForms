@@ -23,7 +23,7 @@ text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
 </div>`,
 output: `
 <div class="row">
-<div class="col-xs-12">
+<div>
 		{{>_label}}
 		
 	<div class="col-xs-12">

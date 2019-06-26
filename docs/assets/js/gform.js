@@ -1427,10 +1427,8 @@ gform.getUID = function() {
 gform.types['text']     = gform.types['password'] = gform.types['number'] = gform.types['color'] = gform.types['input'];
 gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false}});
 gform.types['output']   = _.extend({}, gform.types['input'], {
-
     render: function(){
-        this.display = gform.renderString(this.format.value||'{{{value}}}', this);
-
+        this.display = gform.renderString((this.format|| {}).value||'{{{value}}}', this);
         return gform.render(this.type, this);
     },
     get: function(value) {
@@ -1438,7 +1436,7 @@ gform.types['output']   = _.extend({}, gform.types['input'], {
     },
     set: function(value) {
         this.value = value;
-        this.display = gform.renderString(this.format.value||'{{{value}}}', this);
+        this.display = gform.renderString((this.format|| {}).value||'{{{value}}}', this);
         // gform.renderString(this.template, this);
         this.el.querySelector('output').innerHTML = this.display;
 
