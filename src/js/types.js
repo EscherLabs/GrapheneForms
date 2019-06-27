@@ -232,7 +232,9 @@ gform.types = {
   },
   'section':{
     setLabel:function(){
+        debugger;
         this.label = gform.renderString(this.item.label||this.label, this);
+        
         var labelEl = this.el.querySelector('legend');
         if(labelEl !== null){
             labelEl.innerHTML = this.label

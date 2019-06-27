@@ -185,7 +185,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 </div>
 {{/array}}
 {{^hideLabel}}
-{{#item.label}}<legend>{{{item.label}}}</legend>{{/item.label}}
+{{#label}}<legend>{{{label}}}</legend>{{/label}}
 {{/hideLabel}}
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,

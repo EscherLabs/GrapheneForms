@@ -1291,7 +1291,9 @@ gform.getUID = function() {
   },
   'section':{
     setLabel:function(){
+        debugger;
         this.label = gform.renderString(this.item.label||this.label, this);
+        
         var labelEl = this.el.querySelector('legend');
         if(labelEl !== null){
             labelEl.innerHTML = this.label
@@ -1771,6 +1773,7 @@ gform.prototype.validate = function(force){
 gform.handleError = gform.update;
 
 gform.validateItem = function(force,item){
+	debugger;
 	if(force || !item.valid || item.required || item.satisfied()){
 		var value = item.get();
 		item.valid = true;
@@ -1790,20 +1793,24 @@ gform.validateItem = function(force,item){
 				gform.handleError(item);
 			}
 
+		}
+		
+	}
+	if(item.parsable){
 			//validate sub fields
 			if(typeof item.fields !== 'undefined'){
 				_.each(item.fields, gform.validateItem.bind(null,force))
 			}
-		}
-		
-		if(item.errors) {
-			item.owner.trigger('invalid:'+item.name, {errors:item.errors});
-		}else{
-			item.owner.trigger('valid:'+item.name);
-		}
-		item.owner.errors[item.name] = item.errors;
-		item.owner.valid = item.valid && item.owner.valid;
 	}
+	if(item.errors) {
+		item.owner.trigger('invalid:'+item.name, {errors:item.errors});
+	}else{
+		item.owner.trigger('valid:'+item.name);
+	}
+	item.owner.errors[item.name] = item.errors;
+	item.owner.valid = item.valid && item.owner.valid;
+
+
 };
 
 gform.validation = function(rules, op){
