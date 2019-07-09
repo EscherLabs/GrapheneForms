@@ -5,6 +5,8 @@ Graphene Forms is a comprehensive form library that aims to make form creation, 
 
 [Click Here for Examples and Documentation](https://docs.escherlabs.com/GrapheneForms/)
 
+<div><a href="https://docs.escherlabs.com/GrapheneForms/"><img width="100%" src="https://docs.escherlabs.com/GrapheneForms/assets/img/form_example.png"></a></div>
+
 ## Features
 
 * Pre-populating forms
