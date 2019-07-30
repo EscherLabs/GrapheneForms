@@ -111,7 +111,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 			{{>_actions}}
 	</div>
 </div>`,
-    select: `<div class="row clearfix form-group {{modifiers}} {{#size}}size={{size}}{{/size}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+    select: `<div class="row clearfix form-group {{modifiers}} {{#size}}size={{size}}{{/size}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{#inline}}<div class="col-md-12">{{/inline}}
@@ -179,7 +179,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 </div>`,
     _fieldset: `<div class="row"><fieldset data-type="fieldset" style="margin-left: 15px;margin-right: -15px;" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
-<div data-name="{{name}}" class="btn-group actions">
+<div data-name="{{name}}" class="btn-group hidden-print actions">
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}"  class="fa gform-minus fa-minus text-danger"></i></div>
 	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}"  class="gform-add fa fa-plus text-success"></i></div>
 </div>
@@ -190,7 +190,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,
 	_actions: `{{#array}}
-	<div data-name="{{name}}" class="btn-group actions pull-right">
+	<div data-name="{{name}}" class="btn-group hidden-print actions pull-right">
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}" class="gform-minus fa fa-minus text-danger"></i></div>
 	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}" class="gform-add fa fa-plus text-success"></i></div>
 	</div>
@@ -260,7 +260,7 @@ scale:`
 		{{>_addons}}
 	</div>
 </div>`,
-button:`<button class="btn btn-default {{modifiers}}" style="margin:0 15px">{{{label}}}</button>`,
+button:`<button class="btn btn-default hidden-print {{modifiers}}" style="margin:0 15px">{{{label}}}</button>`,
 tab_container: `
 <form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
 	<ul class="nav nav-tabs" style="margin-bottom:15px">
@@ -349,7 +349,7 @@ gform.types['clear']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 
 gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collection'], {
     initialize: function() {
-         $('select[name="' + this.name + '"]').combobox({appendId:this.id});
+         this.combobox = $('select[name="' + this.name + '"]').combobox({appendId:this.id});
          
          this.onchangeEvent = function(){
             this.value = this.get();
@@ -372,6 +372,7 @@ gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collec
 		  this.el = gform.types[this.type].create.call(this);
 		  oldDiv.parentNode.replaceChild(this.el,oldDiv);
 		  gform.types[this.type].initialize.call(this);
+			this.combobox = $('select[name="' + this.name + '"]').combobox({appendId:this.id});
 
 		  if(!silent) {
 			  this.owner.trigger(['change:'+this.name,'change'], this);
@@ -445,7 +446,7 @@ gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section
         {type:"select",name:'country',options:'../data/countries.json',format:{label:'{{name}}',value:'{{code}}'},label:"Country", validate:[{type:"length",max:"15"}],columns:6}
     ]
 }});
-gform.THEME = {'bootstrap':'0.0.2'}
+gform.THEME = {'bootstrap':'0.0.3'}
 
 gform.types['datetime'] = _.extend({}, gform.types['input'], {
   defaults:{

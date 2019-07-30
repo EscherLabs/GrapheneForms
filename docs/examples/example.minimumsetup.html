@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="../assets/css/normalize.css">    
+    <link rel="stylesheet" href="../assets/css/gform.css">
+  </head>
+  <body>
+
+    <div class="container " id="form">
+    </div>
+    <script src="../assets/js/lodash.min.js"></script>    
+    <script src='../assets/js/gform.min.js'></script>
+    <script>
+      options = {
+          legend: 'Basic Form',
+          fields:[
+            {label: 'Field Label', name: 'label'}
+          ]
+      }
+      var myform = new gform(options, '#form')
+
+    </script>
+   </body>
+</html>

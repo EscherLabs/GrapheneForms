@@ -75,7 +75,7 @@ gform.conditions = {
 			return (val !== localval);
 		}
 	},
-	test: function(field, args, ) {
+	test: function(field, args) {
 		return args.test.call(this, field, args);
 	},
 	contains: function(field, args) {

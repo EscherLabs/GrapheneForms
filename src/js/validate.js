@@ -13,7 +13,6 @@ gform.prototype.validate = function(force){
 gform.handleError = gform.update;
 
 gform.validateItem = function(force,item){
-	debugger;
 	if(force || !item.valid || item.required || item.satisfied()){
 		var value = item.get();
 		item.valid = true;

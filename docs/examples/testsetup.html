@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+		<link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+    <!-- <link rel="stylesheet" href="../assets/css/normalize.css">    
+    <link rel="stylesheet" href="../assets/css/gform.css"> -->
+  </head>
+  <body>
+
+    <div class="container " id="form">
+    </div>
+    <script src="../assets/js/lodash.min.js"></script>    
+    <script src='../assets/js/gform.js'></script>
+    <!-- <script src='../assets/js/default.js'></script> -->
+
+    <script src='../assets/js/bootstrap.js'></script> 
+
+    <script>
+      options = {
+          legend: 'Basic Form',
+          fields:[
+            {label: 'Field Label', name: 'label'}
+          ]
+      }
+      options = {data:{resources:[{name:"adsfa",type:"Monday"},{name:"aasdfadsfa",type:"test"}]}, actions:[],fields:[
+			
+      {name:"resources",label:false,array:{min:3,max:3},type:"fieldset",fields:[
+        {name:"name",label:false, columns:6,type:"output",format:{value:'<label style="float:right">{{value}}:</label>'}},
+        {name:"type",label:false,type:"select",edit:true,columns:6,
+        options:[{type:'optgroup', path:'../data/days.json'}]
+        // options:'../data/days.json'
+      },
+        // {columns:3,show:[{type:"matches",name:"type",value:"string"}]},
+        // {columns:3,type:"select",show:[{type:"matches",name:"type",value:"group"}]},
+        // {columns:3,type:"select",options:'/api/groups/'+data.group_id+'/endpoints',show:[{type:"matches",name:"type",value:"endpoint"}],format:{label:"{{name}}",value:"{{id}}"}},
+        // {columns:3,show:[{type:"matches",name:"type",value:"user"}]}
+
+      ]}
+    ]}
+      var myform = new gform(options, '#form')
+
+    </script>
+   </body>
+</html>

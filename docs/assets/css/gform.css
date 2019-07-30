@@ -34,6 +34,16 @@ body {
      not supported by any browser */
 }
 
+@media print {
+  /* styles go here */
+  .noprint {
+    display: none !important;
+  }
+
+  .nobreak {
+    page-break-inside: avoid;
+  }
+}
 blockquote {
   border-left: 0.3rem solid #d1d1d1;
   margin-left: 0;

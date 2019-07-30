@@ -174,7 +174,7 @@ grid: `
 `,
 _actions: `      
     {{#array}}
-    <div data-name="{{name}}" style="float:right">
+    <div data-name="{{name}}" class="noprint" style="float:right">
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:green;color:green;float:right;margin:0 5px" class="gform-add button button-outline" type="button" value="+">
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:red;color:red;float:right;margin:0 5px" class="gform-minus button button-outline" type="button" value="-">
     </div>
@@ -186,7 +186,7 @@ _label: `
 
 `,
 _error:`<small class="error-text" style="color:red;display:block;position:relative;top:-12px"></small><small class="valid" style="color:green;display:block;"></small>`,
-button:`<button type="button" role="button" class="button {{modifiers}}" style="margin:0 15px 0">{{{label}}}</button>`,
+button:`<button type="button" role="button" class="button noprint {{modifiers}}" style="margin:0 15px 0">{{{label}}}</button>`,
 tab_container: `
 <form id="{{name}}" novalidate {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>
 {{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}

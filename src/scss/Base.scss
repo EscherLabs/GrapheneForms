@@ -32,3 +32,12 @@ body {
   user-select: none;           /* Non-prefixed version, currently
                                   not supported by any browser */
 }
+@media print {
+	/* styles go here */
+	.noprint {
+		display:none !important;
+	}
+	.nobreak {
+		page-break-inside: avoid;
+	}
+ }

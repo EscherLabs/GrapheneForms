@@ -1,6 +1,9 @@
 gform.types = {
   'input':{
       defaults:{},
+      setup:function(){
+          gform.types[this.type].setLabel.call(this)
+      },
       setLabel:function(){
         this.label = gform.renderString(this.item.label||this.label, this);
         var labelEl = this.el.querySelector('label');
@@ -38,6 +41,8 @@ gform.types = {
               }
             //   this.update({value:this.get()},true);
             //   gform.types[this.type].focus.call(this)
+                gform.types[this.type].setup.call(this);
+
               this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
 
             //   this.owner.trigger('change:'+this.name, this,{input:this.value});
@@ -83,6 +88,8 @@ gform.types = {
         this.el = gform.types[this.type].create.call(this);
         oldDiv.parentNode.replaceChild(this.el,oldDiv);
         gform.types[this.type].initialize.call(this);
+        this.el.style.display = this.visible ? "block" : "none";
+        gform.types[this.type].edit.call(this,this.editable);
 
         if(!silent) {
             this.owner.trigger(['change:'+this.name,'change'], this);
@@ -271,6 +278,9 @@ gform.types = {
           this.el = gform.types[this.type].create.call(this);
           oldDiv.parentNode.replaceChild(this.el, oldDiv);
           gform.types[this.type].initialize.call(this);
+          this.el.style.display = this.visible ? "block" : "none";
+          gform.types[this.type].edit.call(this,this.editable);
+
           this.container =  this.el.querySelector('fieldset')|| this.el || null;
           this.reflow();
           if(!silent) {
@@ -348,6 +358,10 @@ gform.types = {
           this.el = gform.types[this.type].create.call(this);
           oldDiv.parentNode.replaceChild(this.el, oldDiv);
           gform.types[this.type].initialize.call(this);
+          this.el.style.display = this.visible ? "block" : "none";
+          gform.types[this.type].edit.call(this,this.editable);
+
+
       },        
       destroy:function() {		
           this.el.removeEventListener('click', this.onclickEvent);
@@ -375,6 +389,7 @@ gform.types['output']   = _.extend({}, gform.types['input'], {
         return gform.render(this.type, this);
     },
     get: function(value) {
+        return this.value;
         return this.el.querySelector('output').innerHTML;
     },
     set: function(value) {
