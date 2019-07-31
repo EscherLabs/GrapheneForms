@@ -901,6 +901,9 @@ gform.mapOptions = function(optgroup, value, count,collections){
                     if(typeof format.label !== 'undefined' ){
                         option.label = gform.renderString(format.label,option);
                     }
+                    if(typeof format.display !== 'undefined' ){
+                        option.display = gform.renderString(format.display,option);
+                    }
                     if(typeof format.value !== 'undefined' ){
                         option.value = gform.renderString(format.value,option);
                     }

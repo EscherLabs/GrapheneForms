@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+		<link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+        <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+        <link rel="stylesheet" type='text/css' href="../assets/vendor/css/combobox.css">
+        <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
+
+    </head>
+    <body>
+      <div style="padding:20px">
+      <h4><a href="./">Examples</a> - Types</h4>
+      <div class="container ">
+          <div class="row ">
+                <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
+                <div class="col-md-4" style=""><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>                
+                <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
+              </div>
+          </div>
+      </div>
+      <script src='../assets/vendor/js/jquery.js'></script>
+
+      <script src="../assets/js/lodash.min.js"></script>    
+      <!-- <script src='../assets/js/gform_bootstrap.min.js'></script>  -->
+      <script src='../assets/js/gform.js'></script> 
+      <script src='../assets/js/bootstrap.js'></script> 
+
+      <!-- <script src='../assets/vendor/js/combobox.js'></script> -->
+      <!-- <script src='../assets/vendor/js/colorpicker.min.js'></script>  -->
+
+      <!-- <script src='../assets/js/gform.bootstrap.js'></script> -->
+      <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+
+    <script>
+    options = {
+        fields:[
+//             {label: 'Text', type: 'text'},
+//             {label: 'Hidden', type: 'hidden', value:'hidden field'},
+//             {label: 'Number', type: 'number'},
+//             {label: 'Color', type: 'color'},
+//             {label: 'Email', type: 'email'},
+//             {label: 'Textarea', type: 'textarea'},
+//             {label: 'Checkbox', type: 'checkbox',  "container": "span",
+// },
+//             {label: 'Select', type: 'select', options:[1,2,3]},
+//             {label: 'Radio', type: 'radio', options:[1,2,3]},
+            {label: 'Combobox', type: 'smallcombo', options:[{type:'optgroup', path:'../data/states.json',format:{value:"{{index}}",label:"{{name}}",display:'{{name}}<span style="float:right">{{index}}</span>'}}]},
+            // {label: 'Fieldset', type: 'fieldset', fields:[
+            //     {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
+            //     {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
+            // ]},
+            // {label: 'Home Address', type: 'address'},
+
+        ]
+    }
+
+_.mixin({
+  score: function(base, abbr, offset) {
+
+    offset = offset || 0;
+    
+    if(abbr.length === 0) return 0.9;
+    if(abbr.length > base.length) return 0.0;
+    
+    for (var i = abbr.length; i > 0; i--) {
+      var sub_abbr = abbr.substring(0,i);
+      var index = base.indexOf(sub_abbr);
+      
+      if(index < 0) continue;
+      if(index + abbr.length > base.length + offset) continue;
+      
+      var next_string = base.substring(index+sub_abbr.length);
+      var next_abbr = null;
+      
+      if(i >= abbr.length) {
+        next_abbr = '';
+      } else {
+        next_abbr = abbr.substring(i);
+      }
+      var remaining_score   = _.score(next_string, next_abbr,offset+index);
+      
+      if (remaining_score > 0) {
+        var score = base.length-next_string.length;
+        
+        if(index !== 0) {     
+          var c = base.charCodeAt(index-1);
+          if(c==32 || c == 9) {
+            for(var j=(index-2); j >= 0; j--) {
+              c = base.charCodeAt(j);
+              score -= ((c == 32 || c == 9) ? 1 : 0.15);
+            }
+          } else {
+            score -= index;
+          }
+        }
+        
+        score += remaining_score * next_string.length;
+        score /= base.length;
+        return(score);
+      }
+    }
+    return(0.0);
+      // return( result );
+  }
+})
+
+gform.stencils.smallcombo = `
+<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
+	{{>_label}}
+	{{#label}}
+	{{#inline}}<div class="col-md-12">{{/inline}}
+	{{^inline}}<div class="col-md-8">{{/inline}}
+	{{/label}}
+	{{^label}}
+	<div class="col-md-12">
+	{{/label}}
+    <div class="combobox-container"><div class="input-group"> 
+        <input type="text" name="{{name}}" class="form-control"  autocomplete="off"> 
+        <ul class="typeahead typeahead-long dropdown-menu"></ul>
+
+        <span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="caret"></span> <span class="fa fa-times"></span> </span> 
+        </div> 
+
+        </div>
+		{{>_addons}}
+		{{>_actions}}
+	</div>
+</div>
+    `;
+gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
+    render: function() {
+        //   this.options = gform.mapOptions.call(this,this, this.value);
+        if(typeof this.mapOptions == 'undefined'){
+          this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
+          this.mapOptions.on('change',function(){
+              this.options = this.mapOptions.getobject()
+              this.update();
+          }.bind(this))
+        }
+        this.options = this.mapOptions.getobject();
+        
+        this.value = this.value||(this.options[0]||{value:""}).value
+
+        return gform.render(this.type, this);
+    },
+    get: function() {
+        //   return this.el.querySelector('input[name="' + this.name + '"]').value;
+          return this.value;
+    },
+    set: function(value) {
+        // this.el.querySelector('input[name="' + this.name + '"]').value = value;
+        var item = _.find(this.mapOptions.getoptions(),{value:value})
+        if(typeof item !== 'undefined'){
+            this.combo.value =  item.label;
+            this.value = item.value;
+
+        }else{
+        }
+
+    },
+    initialize: function(){
+        //   this.iel = this.el.querySelector('input[name="' + this.name + '"]')
+        //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
+        this.onchangeEvent = function(input){
+            //   this.input = input;
+            this.renderMenu();
+            this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this, {input:this.value});
+
+        }.bind(this)
+        this.renderMenu = function(){
+            this.menu.style.display = 'none';
+            this.shown = false;
+            this.menu.innerHTML = "";
+            _.each(this.mapOptions.getoptions(),function(item){
+                if(this.combo.value == ""  || _.score(item.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
+                    var li = document.createElement("li");
+                    li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
+                    this.menu.appendChild(li);
+                }
+            }.bind(this))
+            var first = this.menu.querySelector('li');
+            if(first !== null){
+                gform.addClass(first,'active')
+                this.menu.style.display = 'block';
+                this.shown = true;
+            }else{
+                gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+                this.value = null;
+            }
+        }
+        this.shown = false;
+        this.input = this.input || false;
+        this.menu = this.el.querySelector('ul')
+        this.combo = this.el.querySelector('input');
+        // this.selected = false;
+
+        this.select = function(index){
+            var item = _.find(this.mapOptions.getoptions(),{index:index})
+            this.set(item.value);
+            this.menu.style.display = 'none';
+            this.shown = false;
+            this.combo.focus();
+            this.owner.trigger('input');
+            gform.addClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+
+        }
+        this.el.addEventListener('click',function(e){
+            if(e.target.classList[0] == "dropdown-item"){
+                this.select(e.target.dataset.index);   
+                e.stopPropagation();
+            }
+            debugger;
+            if(e.target.nodeName == "SPAN"){
+                debugger;
+                if(this.el.querySelector('.combobox-selected') !== null){
+                    gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+                    this.selected = false;
+                    this.combo.value = "";
+                    this.set();
+                }else{
+                    if(this.shown){
+                        this.menu.style.display = 'none';
+                        this.shown = false;
+                    }else{
+                        this.renderMenu();
+                    }
+                }
+
+                this.combo.focus();
+
+            }
+        }.bind(this))
+
+        this.el.addEventListener('keydown',function(e){
+            if (!this.shown) {
+                if(e.keyCode == 40){this.renderMenu();}
+                return;
+            }
+ 
+            switch(e.keyCode) {
+            case 9: // tab
+            case 13: // enter
+
+                e.preventDefault();
+                this.select(this.menu.querySelector('.active a').dataset.index);   
+
+                break;
+            case 27: // escape
+                e.preventDefault();
+                this.menu.style.display = 'none';
+                this.shown = false;
+                break;
+
+            case 38: // up arrow
+                e.preventDefault();
+                var active = $(this.menu).find('.active').removeClass('active')
+                    , prev = active.prev();
+            
+                if (!prev.length) {
+                    prev = $(this.menu).find('li').last();
+                }
+            
+                prev.addClass('active');
+                // this.prev();
+                // this.fixMenuScroll();
+
+
+                var active = $(this.menu).find('.active');
+                //fixscroll
+                if(active.length){
+                    var top = active.position().top;
+                    var bottom = top + active.height();
+                    var scrollTop = $(this.menu).scrollTop();
+                    var menuHeight = $(this.menu).height();
+                    if(bottom > menuHeight){
+                        $(this.menu).scrollTop(scrollTop + bottom - menuHeight);
+                    } else if(top < 0){
+                        $(this.menu).scrollTop(scrollTop + top);
+                    }
+                }
+                break;
+
+            case 40: // down arrow
+                e.preventDefault();
+                var active = $(this.menu).find('.active').removeClass('active')
+                    , next = active.next();
+            
+                if (!next.length) {
+                    next = $($(this.menu).find('li')[0]);
+                }
+            
+                next.addClass('active');
+
+                var active = $(this.menu).find('.active');
+                //fixscroll
+                if(active.length){
+                    var top = active.position().top;
+                    var bottom = top + active.height();
+                    var scrollTop = $(this.menu).scrollTop();
+                    var menuHeight = $(this.menu).height();
+                    if(bottom > menuHeight){
+                        $(this.menu).scrollTop(scrollTop + bottom - menuHeight);
+                    } else if(top < 0){
+                        $(this.menu).scrollTop(scrollTop + top);
+                    }
+                }
+                // this.next();
+                // this.fixMenuScroll();
+                break;
+            }
+
+            e.stopPropagation();
+        }.bind(this))
+
+        $(this.menu).on('mouseenter','li',function(e){
+                this.mousedover = true;
+                if(this.menu.querySelector('.active') !== null){
+                gform.removeClass(this.menu.querySelector('.active'),'active')
+                }
+                gform.addClass(e.currentTarget,'active')            
+        }.bind(this))
+
+        $(this.menu).on('mouseleave','li',function(e){
+                this.mousedover = false;            
+        }.bind(this))
+
+        this.combo.addEventListener('blur',function(e){
+            this.set(this.combo.value);
+            if (!this.mousedover && this.shown) {setTimeout(function () { 
+                debugger;
+                this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);}
+        }.bind(this))
+        this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+
+        // this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
+    },
+});
+
+    </script>
+    <script src="../assets/js/example.js"></script>   
+   </body>
+</html>
