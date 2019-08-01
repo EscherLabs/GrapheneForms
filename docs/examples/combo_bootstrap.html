@@ -44,7 +44,8 @@
 // },
 //             {label: 'Select', type: 'select', options:[1,2,3]},
 //             {label: 'Radio', type: 'radio', options:[1,2,3]},
-            {label: 'Combobox', type: 'smallcombo', options:[{type:'optgroup', path:'../data/states.json',format:{value:"{{index}}",label:"{{name}}",display:'{{name}}<span style="float:right">{{index}}</span>'}}]},
+            // {label: 'Combobox', type: 'smallcombo', options:[{type:'optgroup', path:'../data/states.json',format:{value:"{{index}}",label:"{{name}}",display:'{{name}}<span style="float:right">{{index}}</span>'}}]},
+            {label: 'Combobox', type: 'smallcombo', search:'../data/states.json',format:{value:"{{index}}",label:"{{name}}",display:'{{name}}<span style="float:right">{{index}}</span>'}},
             // {label: 'Fieldset', type: 'fieldset', fields:[
             //     {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
             //     {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
@@ -149,7 +150,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
     },
     set: function(value) {
         // this.el.querySelector('input[name="' + this.name + '"]').value = value;
-        var item = _.find(this.mapOptions.getoptions(),{value:value})
+        var item = _.find(this.liveOptions,{value:value})
         if(typeof item !== 'undefined'){
             this.combo.value =  item.label;
             this.value = item.value;
@@ -171,21 +172,63 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
             this.menu.style.display = 'none';
             this.shown = false;
             this.menu.innerHTML = "";
-            _.each(this.mapOptions.getoptions(),function(item){
-                if(this.combo.value == ""  || _.score(item.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
-                    var li = document.createElement("li");
-                    li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
-                    this.menu.appendChild(li);
+            if(typeof this.search !== 'string'){
+                this.liveOptions = this.mapOptions.getoptions();
+                _.each(this.liveOptions,function(item){
+                    if(this.combo.value == ""  || _.score(item.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
+                        var li = document.createElement("li");
+                        li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
+                        this.menu.appendChild(li);
+                    }
+                }.bind(this))
+                var first = this.menu.querySelector('li');
+                if(first !== null){
+                    gform.addClass(first,'active')
+                    this.menu.style.display = 'block';
+                    this.shown = true;
+                }else{
+                    gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+                    this.value = null;
                 }
-            }.bind(this))
-            var first = this.menu.querySelector('li');
-            if(first !== null){
-                gform.addClass(first,'active')
-                this.menu.style.display = 'block';
-                this.shown = true;
             }else{
-                gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
-                this.value = null;
+                gform.ajax({path: gform.renderString(this.search,{value:this.combo.value}), success:function(data) {
+                    
+                    this.liveOptions = _.map(data,function(option,index){
+                    option.index = (option.index||(++index))+"";
+                        if(typeof this.format !== 'undefined'){
+
+                            if(typeof this.format.label !== 'undefined' ){
+                                option.label = gform.renderString(this.format.label,option);
+                            }
+                            if(typeof this.format.display !== 'undefined' ){
+                                option.display = gform.renderString(this.format.display,option);
+                            }
+                            if(typeof this.format.value !== 'undefined' ){
+                                option.value = gform.renderString(this.format.value,option);
+                            }
+                        }
+
+                        if(this.combo.value == ""  || _.score(option.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
+                            var li = document.createElement("li");
+                            li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
+                            this.menu.appendChild(li);
+                        }
+                        return option;
+                    }.bind(this))
+                    var first = this.menu.querySelector('li');
+                    if(first !== null){
+                        gform.addClass(first,'active')
+                        this.menu.style.display = 'block';
+                        this.shown = true;
+                    }else{
+                        gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+                        this.value = null;
+                    }
+
+
+                }.bind(this)})
+        
+
             }
         }
         this.shown = false;
@@ -195,7 +238,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         // this.selected = false;
 
         this.select = function(index){
-            var item = _.find(this.mapOptions.getoptions(),{index:index})
+            var item = _.find(this.liveOptions,{index:index})
             this.set(item.value);
             this.menu.style.display = 'none';
             this.shown = false;
@@ -209,9 +252,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                 this.select(e.target.dataset.index);   
                 e.stopPropagation();
             }
-            debugger;
             if(e.target.nodeName == "SPAN"){
-                debugger;
                 if(this.el.querySelector('.combobox-selected') !== null){
                     gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
                     this.selected = false;
