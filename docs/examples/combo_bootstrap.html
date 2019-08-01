@@ -294,14 +294,23 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
             case 38: // up arrow
                 e.preventDefault();
-                var active = $(this.menu).find('.active').removeClass('active')
-                    , prev = active.prev();
-            
-                if (!prev.length) {
-                    prev = $(this.menu).find('li').last();
+                var active = this.menu.querySelector('.active');
+                gform.removeClass(active,'active');
+                // var active = $(this.menu).find('.active').removeClass('active')
+                //     , prev = active.prev();
+                            
+                prev = active.previousElementSibling;
+
+                if (!prev) {
+                    // debugger;
+                    var list = this.menu.querySelectorAll('li');
+                    prev =  list[list.length-1];
+                    // prev = $(this.menu).find('li').last()[0];
                 }
-            
-                prev.addClass('active');
+                            
+                gform.addClass(prev,'active')
+
+                // prev.addClass('active');
                 // this.prev();
                 // this.fixMenuScroll();
 
@@ -323,16 +332,19 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
             case 40: // down arrow
                 e.preventDefault();
-                var active = $(this.menu).find('.active').removeClass('active')
-                    , next = active.next();
-            
-                if (!next.length) {
-                    next = $($(this.menu).find('li')[0]);
+                var active = this.menu.querySelector('.active');
+                gform.removeClass(active,'active');
+                // var active = $(this.menu).find('.active').removeClass('active')
+                //     , next = active.next();
+                next = active.nextElementSibling;
+                if (!next) {
+                    next = this.menu.querySelector('li')
+                    // nedxt = $($(this.menu).find('li')[0]);
                 }
-            
-                next.addClass('active');
+                gform.addClass(next,'active')
+                // next.addClass('active');
 
-                var active = $(this.menu).find('.active');
+                var active = $(this.menu.querySelector('.active'));
                 //fixscroll
                 if(active.length){
                     var top = active.position().top;
