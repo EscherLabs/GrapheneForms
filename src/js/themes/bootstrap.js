@@ -451,7 +451,348 @@ gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section
         {type:"select",name:'country',options:'../data/countries.json',format:{label:'{{name}}',value:'{{code}}'},label:"Country", validate:[{type:"length",max:"15"}],columns:6}
     ]
 }});
-gform.THEME = {'bootstrap':'0.0.3'}
+
+
+
+
+
+
+
+
+gform.stencils.smallcombo = `
+<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
+	{{>_label}}
+	{{#label}}
+	{{#inline}}<div class="col-md-12">{{/inline}}
+	{{^inline}}<div class="col-md-8">{{/inline}}
+	{{/label}}
+	{{^label}}
+	<div class="col-md-12">
+	{{/label}}
+    <div class="combobox-container"><div class="input-group"> 
+        <input type="text" name="{{name}}" class="form-control"  autocomplete="off"> 
+        <ul class="typeahead typeahead-long dropdown-menu"></ul>
+
+        <span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="caret"></span> <span class="fa fa-times"></span> </span> 
+        </div> 
+
+        </div>
+		{{>_addons}}
+		{{>_actions}}
+	</div>
+</div>
+    `;
+gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
+    render: function() {
+        //   this.options = gform.mapOptions.call(this,this, this.value);
+        if(typeof this.mapOptions == 'undefined'){
+          this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
+          this.mapOptions.on('change',function(){
+              this.options = this.mapOptions.getobject()
+							this.update();
+							if(typeof this.value !== 'undefined'){
+								gform.types[this.type].set.call(this,this.value);
+							}
+          }.bind(this))
+        }
+				this.options = this.mapOptions.getobject();
+				
+        this.value = this.value||(this.options[0]||{value:""}).value
+
+        return gform.render(this.type, this);
+    },      
+    get: function() {
+				//   return this.el.querySelector('input[name="' + this.name + '"]').value;
+          return this.value;
+    },
+    set: function(value) {
+        // this.el.querySelector('input[name="' + this.name + '"]').value = value;
+        var item = _.find(this.options,{value:value})
+        if(typeof item !== 'undefined'){
+            this.combo.value =  item.label;
+            this.value = item.value;
+          gform.types[this.type].setLabel.call(this)
+        }else{
+        }
+
+    },
+    initialize: function(){
+        //   this.iel = this.el.querySelector('input[name="' + this.name + '"]')
+        //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
+        this.onchangeEvent = function(input){
+            //   this.input = input;
+            this.renderMenu();
+            this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this, {input:this.value});
+
+        }.bind(this)
+        this.renderMenu = function(){
+            this.menu.style.display = 'none';
+            this.shown = false;
+            this.menu.innerHTML = "";
+            if(typeof this.search !== 'string'){
+                // this.liveOptions = this.mapOptions.getoptions();
+                _.each(this.options,function(item){
+                    if(this.combo.value == ""  || _.score(item.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
+                        var li = document.createElement("li");
+                        li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
+                        this.menu.appendChild(li);
+                    }
+                }.bind(this))
+                var first = this.menu.querySelector('li');
+                if(first !== null){
+                    gform.addClass(first,'active')
+                    this.menu.style.display = 'block';
+                    this.shown = true;
+                }else{
+                    gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+                    this.value = null;
+                }
+            }else{
+                gform.ajax({path: gform.renderString(this.search,{search:this.combo.value}), success:function(data) {
+                    
+                    this.options = _.map(data,function(option,index){
+                    option.index = (option.index||(++index))+"";
+                        if(typeof this.format !== 'undefined'){
+
+                            if(typeof this.format.label !== 'undefined' ){
+                                option.label = gform.renderString(this.format.label,option);
+                            }
+                            if(typeof this.format.display !== 'undefined' ){
+                                option.display = gform.renderString(this.format.display,option);
+                            }
+                            if(typeof this.format.value !== 'undefined' ){
+                                option.value = gform.renderString(this.format.value,option);
+                            }
+                        }
+
+                        if(this.combo.value == ""  || _.score(option.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
+                            var li = document.createElement("li");
+                            li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
+                            this.menu.appendChild(li);
+                        }
+                        return option;
+                    }.bind(this))
+                    var first = this.menu.querySelector('li');
+                    if(first !== null){
+                        gform.addClass(first,'active')
+                        this.menu.style.display = 'block';
+                        this.shown = true;
+                    }else{
+                        gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+                        this.value = null;
+                    }
+
+
+                }.bind(this)})
+        
+
+            }
+        }
+        this.shown = false;
+        this.input = this.input || false;
+        this.menu = this.el.querySelector('ul')
+        this.combo = this.el.querySelector('input');
+        // this.selected = false;
+
+        this.select = function(index){
+            var item = _.find(this.options,{index:index})
+            this.set(item.value);
+            this.menu.style.display = 'none';
+            this.shown = false;
+            this.combo.focus();
+            this.owner.trigger('input');
+            gform.addClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+
+        }
+        this.el.addEventListener('click',function(e){
+            if(e.target.classList[0] == "dropdown-item"){
+                this.select(e.target.dataset.index);   
+                e.stopPropagation();
+            }
+            if(e.target.nodeName == "SPAN"){
+                if(this.el.querySelector('.combobox-selected') !== null){
+                    gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+                    this.selected = false;
+                    this.combo.value = "";
+                    this.set();
+                }else{
+                    if(this.shown){
+                        this.menu.style.display = 'none';
+                        this.shown = false;
+                    }else{
+                        this.renderMenu();
+                    }
+                }
+
+                this.combo.focus();
+
+            }
+        }.bind(this))
+
+        this.el.addEventListener('keydown',function(e){
+            if (!this.shown) {
+                if(e.keyCode == 40){this.renderMenu();}
+                return;
+            }
+ 
+            switch(e.keyCode) {
+            case 9: // tab
+            case 13: // enter
+						debugger;
+
+                e.preventDefault();
+                this.select(this.menu.querySelector('li.active a').dataset.index);   
+
+                break;
+            case 27: // escape
+                e.preventDefault();
+                this.menu.style.display = 'none';
+                this.shown = false;
+                break;
+
+            case 38: // up arrow
+                e.preventDefault();
+                var active = this.menu.querySelector('.active');
+                gform.removeClass(active,'active');
+                // var active = $(this.menu).find('.active').removeClass('active')
+                //     , prev = active.prev();
+                            
+                prev = active.previousElementSibling;
+
+                if (!prev) {
+                    var list = this.menu.querySelectorAll('li');
+                    prev =  list[list.length-1];
+                }
+                            
+                gform.addClass(prev,'active')
+
+                // prev.addClass('active');
+                // this.prev();
+                // this.fixMenuScroll();
+
+
+                var active = $(this.menu).find('.active');
+                //fixscroll
+                if(active.length){
+                    var top = active.position().top;
+                    var bottom = top + active.height();
+                    var scrollTop = $(this.menu).scrollTop();
+                    var menuHeight = $(this.menu).height();
+                    if(bottom > menuHeight){
+                        $(this.menu).scrollTop(scrollTop + bottom - menuHeight);
+                    } else if(top < 0){
+                        $(this.menu).scrollTop(scrollTop + top);
+                    }
+                }
+                break;
+
+            case 40: // down arrow
+                e.preventDefault();
+                var active = this.menu.querySelector('.active');
+                gform.removeClass(active,'active');
+                // var active = $(this.menu).find('.active').removeClass('active')
+                //     , next = active.next();
+                next = active.nextElementSibling;
+                if (!next) {
+                    next = this.menu.querySelector('li')
+                    // nedxt = $($(this.menu).find('li')[0]);
+                }
+                gform.addClass(next,'active')
+                // next.addClass('active');
+
+                var active = $(this.menu.querySelector('.active'));
+                //fixscroll
+                if(active.length){
+                    var top = active.position().top;
+                    var bottom = top + active.height();
+                    var scrollTop = $(this.menu).scrollTop();
+                    var menuHeight = $(this.menu).height();
+                    if(bottom > menuHeight){
+                        $(this.menu).scrollTop(scrollTop + bottom - menuHeight);
+                    } else if(top < 0){
+                        $(this.menu).scrollTop(scrollTop + top);
+                    }
+                }
+                // this.next();
+                // this.fixMenuScroll();
+                break;
+            }
+
+            e.stopPropagation();
+        }.bind(this))
+
+        $(this.menu).on('mouseenter','li',function(e){
+                this.mousedover = true;
+                if(this.menu.querySelector('.active') !== null){
+                gform.removeClass(this.menu.querySelector('.active'),'active')
+                }
+                gform.addClass(e.currentTarget,'active')            
+        }.bind(this))
+
+        $(this.menu).on('mouseleave','li',function(e){
+                this.mousedover = false;            
+        }.bind(this))
+
+        this.combo.addEventListener('blur',function(e){
+						if(this.el.querySelector('.combobox-selected') == null){
+							this.set(this.combo.value);
+						}
+						if(this.shown ){
+            	if (!this.mousedover && this.shown) {setTimeout(function () { 
+                debugger;
+								this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);}
+								
+						}
+				}.bind(this))
+
+				if(typeof this.search == 'string'){
+					debugger;
+					gform.ajax({path: gform.renderString(this.search,{value:this.value}), success:function(data) {
+// debugger;
+
+this.options = _.map(data,function(option,index){
+	option.index = (option.index||(++index))+"";
+			if(typeof this.format !== 'undefined'){
+
+					if(typeof this.format.label !== 'undefined' ){
+							option.label = gform.renderString(this.format.label,option);
+					}
+					if(typeof this.format.display !== 'undefined' ){
+							option.display = gform.renderString(this.format.display,option);
+					}
+					if(typeof this.format.value !== 'undefined' ){
+							option.value = gform.renderString(this.format.value,option);
+					}
+			}
+
+			if(this.combo.value == ""  || _.score(option.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
+					var li = document.createElement("li");
+					li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
+					this.menu.appendChild(li);
+			}
+			return option;
+	}.bind(this))
+if(typeof this.value !== 'undefined'){
+	gform.types[this.type].set.call(this,this.value);
+}
+					}.bind(this)}
+					)}else{
+						if(typeof this.value !== 'undefined'){
+							gform.types[this.type].set.call(this,this.value);
+						}
+					}
+
+        this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+
+        // this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
+    },
+});
+
+
+
+
+
+gform.THEME = {'bootstrap':'0.0.4'}
 
 gform.types['datetime'] = _.extend({}, gform.types['input'], {
   defaults:{
