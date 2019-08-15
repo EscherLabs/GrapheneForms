@@ -474,7 +474,7 @@ gform.stencils.smallcombo = `
 		
 gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 		toString: function(){
-
+			return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd>'
 		},
     render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
@@ -576,7 +576,8 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                     }else{
                         gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
                         this.value = null;
-                    }
+										}
+										this.owner.trigger('change')
                 }.bind(this)})
             }
         }
@@ -769,6 +770,8 @@ this.options = _.map(data,function(option,index){
 if(typeof this.value !== 'undefined'){
 	gform.types[this.type].set.call(this,this.value);
 }
+this.owner.trigger('change')
+
 					}.bind(this)}
 					)}else{
 						if(typeof this.value !== 'undefined'){

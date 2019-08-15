@@ -428,7 +428,7 @@ gform.normalizeField = function(fieldIn,parent){
         name: (gform.renderString(fieldIn.label || fieldIn.title)||'').toLowerCase().split(' ').join('_'), 
         id: gform.getUID(), 
         // type: 'text', 
-        label: fieldIn.legend || fieldIn.title || fieldIn.name,
+        label: fieldIn.legend || fieldIn.title || (gform.types[fieldIn.type]||gform.types['text']).defaults.label || fieldIn.name,
         validate: [],
         valid: true,
         parsable:true,

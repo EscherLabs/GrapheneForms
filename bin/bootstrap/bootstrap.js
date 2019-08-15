@@ -313,7 +313,7 @@ modal_fieldset:`{{>_fieldset}}`
 
 gform.columns = 12;
 
-gform.columnClasses = _.map(new Array(13),function(item,i){return 'col-xs-'+i})
+gform.columnClasses = _.map(new Array(13),function(item, i){return 'col-xs-'+i})
 gform.default.inline = true;
 gform.default.columns = 12;
 
@@ -321,12 +321,11 @@ gform.prototype.opts.suffix = "";
 
 gform.handleError = function(field){
 	if(!field.valid){
-		field.el.classList.add('has-error')		
+		field.el.classList.add('has-error');
 		field.el.querySelector('.font-xs.text-danger').innerHTML = field.errors;
 	}else{
-		field.el.classList.remove('has-error')		
-		// field.el.classList.add('has-success')		
-
+		field.el.classList.remove('has-error');
+		// field.el.classList.add('has-success')
 		field.el.querySelector('.font-xs.text-danger').innerHTML = '';
 	}
 }
@@ -347,21 +346,19 @@ gform.types['clear']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
 	"action":"clear",
 	"modifiers": "btn btn-warning"}});
 
-gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collection'], {
-    initialize: function() {
-         this.combobox = $(this.el).find('select[name="' + this.name + '"]').combobox({appendId:this.id});
-         
-         this.onchangeEvent = function(){
-						this.value = this.get();
-						gform.types[this.type].setup.call(this);
-
-            this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
-        }.bind(this)
-      $(this.el).find('select').on('change',this.onchangeEvent)
-    },
-    destroy:function(){	
-      $(this.el).find('select').off('change',this.onchangeEvent)
-    },
+gform.types['combo'] = _.extend({}, gform.types['input'], gform.types['collection'], {
+	initialize: function() {
+				this.combobox = $(this.el).find('select[name="' + this.name + '"]').combobox({appendId:this.id});         
+				this.onchangeEvent = function(){
+					this.value = this.get();
+					gform.types[this.type].setup.call(this);
+					this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+			}.bind(this)
+		$(this.el).find('select').on('change',this.onchangeEvent)
+	},
+	destroy:function(){	
+		$(this.el).find('select').off('change',this.onchangeEvent)
+	},
 	update: function(item, silent) {
 		if(typeof item === 'object') {
 			_.extend(this, this.item, item);
@@ -383,11 +380,9 @@ gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collec
 			  this.owner.trigger(['change:'+this.name,'change'], this);
 			  // this.owner.trigger('change', this);
 		  }
-		  
 	},
   render: function() {
 		// this.options = gform.options.call(this,this, this.value);
-		
 		if(typeof this.mapOptions == 'undefined'){
 
 			this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
@@ -396,18 +391,15 @@ gform.types['combo']    = _.extend({}, gform.types['input'], gform.types['collec
 					this.update();
 			}.bind(this))
 		}
-		this.options = this.mapOptions.getobject()
-
-
+		this.options = this.mapOptions.getobject();
     return gform.render('select', this);
   },
   set: function(value) {
-      this.el.querySelector('select').value = value;
-      _.each(this.options.options, function(option, index){
-          if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
-      }.bind(this))
-      this.el.querySelector('input[type=text]').value = (_.find(this.options,{value:value})||{label:""} ).label
-
+		this.el.querySelector('select').value = value;
+		_.each(this.options.options, function(option, index){
+				if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
+		}.bind(this))
+		this.el.querySelector('input[type=text]').value = (_.find(this.options,{value:value})||{label:""} ).label
   }
 });
 
@@ -433,14 +425,11 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 
   }
 });
-gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-envelope"></i>' ,
-			validate: [{ type:'valid_email' }]}});
-gform.types['url'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-link"></i>' ,
-			validate: [{ type:'valid_url' }]}});
-gform.types['tel'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-phone"></i>' ,
-			placeholder: '+1'}});
+gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-envelope"></i>', validate: [{ type:'valid_email' }]}});
+gform.types['url'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-link"></i>', validate: [{ type:'valid_url' }]}});
+gform.types['tel'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-phone"></i>', placeholder: '+1'}});
 gform.types['password'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-lock"></i>'}});
-gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section'],{
+gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section'], {
     defaults:{fields:[
         {type:"text",name:'street',label:"Street Address", validate:[{type:"length",max:"255"}]},
         {type:"text",name:'line2',label:"Address line 2", validate:[{type:"length",max:"150"}]},
@@ -481,8 +470,12 @@ gform.stencils.smallcombo = `
 		{{>_actions}}
 	</div>
 </div>
-    `;
+		`;
+		
 gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
+		toString: function(){
+			return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd>'
+		},
     render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
@@ -499,7 +492,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 				
         this.value = this.value||(this.options[0]||{value:""}).value
 
-        return gform.render(this.type, this);
+        return gform.render('smallcombo', this);
     },      
     get: function() {
 				//   return this.el.querySelector('input[name="' + this.name + '"]').value;
@@ -507,13 +500,15 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
     },
     set: function(value) {
         // this.el.querySelector('input[name="' + this.name + '"]').value = value;
-        var item = _.find(this.options,{value:value})
-        if(typeof item !== 'undefined'){
-            this.combo.value =  item.label;
-            this.value = item.value;
-          gform.types[this.type].setLabel.call(this)
-        }else{
-        }
+				var item = _.find(this.options,{value:value})
+				if(typeof item !== 'undefined'){
+						this.combo.value =  item.label;
+						this.value = item.value;
+				}else{
+					this.combo.value =  value;
+					this.value = value;
+				}
+				gform.types[this.type].setLabel.call(this)
 
     },
     initialize: function(){
@@ -521,7 +516,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
         this.onchangeEvent = function(input){
             //   this.input = input;
-            this.renderMenu();
+						_.throttle(this.renderMenu,100).call(this);
             this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this, {input:this.value});
 
         }.bind(this)
@@ -549,7 +544,8 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                 }
             }else{
                 gform.ajax({path: gform.renderString(this.search,{search:this.combo.value}), success:function(data) {
-                    
+										this.menu.innerHTML = "";
+
                     this.options = _.map(data,function(option,index){
                     option.index = (option.index||(++index))+"";
                         if(typeof this.format !== 'undefined'){
@@ -580,12 +576,9 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                     }else{
                         gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
                         this.value = null;
-                    }
-
-
+										}
+										this.owner.trigger('change')
                 }.bind(this)})
-        
-
             }
         }
         this.shown = false;
@@ -603,12 +596,14 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
             this.owner.trigger('input');
             gform.addClass(this.el.querySelector('.combobox-container'),'combobox-selected');
 
-        }
-        this.el.addEventListener('click',function(e){
-            if(e.target.classList[0] == "dropdown-item"){
-                this.select(e.target.dataset.index);   
+				}
+				$(this.el).on('click',".dropdown-item",function(e){
+					// if(e.target.classList[0] == "dropdown-item"){
+                this.select(e.currentTarget.dataset.index);   
                 e.stopPropagation();
-            }
+						// }
+				}.bind(this))
+        this.el.addEventListener('click',function(e){
             if(e.target.nodeName == "SPAN"){
                 if(this.el.querySelector('.combobox-selected') !== null){
                     gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
@@ -775,6 +770,8 @@ this.options = _.map(data,function(option,index){
 if(typeof this.value !== 'undefined'){
 	gform.types[this.type].set.call(this,this.value);
 }
+this.owner.trigger('change')
+
 					}.bind(this)}
 					)}else{
 						if(typeof this.value !== 'undefined'){
@@ -792,7 +789,7 @@ if(typeof this.value !== 'undefined'){
 
 
 
-gform.THEME = {'bootstrap':'0.0.4'}
+gform.THEME = {'bootstrap':'0.0.4.1'}
 
 gform.types['datetime'] = _.extend({}, gform.types['input'], {
   defaults:{

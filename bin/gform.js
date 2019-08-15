@@ -32,7 +32,7 @@ var gform = function(data, el){
 
     
     //initalize form
-    this.options = _.assignIn({fields:[], legend: '', default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
+    this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
     this.options.fields = this.options.fields.concat(this.options.actions || [{type:'cancel'},{type:'save'}])
     if (typeof this.options.data == 'string') {
         this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
@@ -138,6 +138,7 @@ var gform = function(data, el){
     this.isActive = true;
 
     this.destroy = function() {
+        this.isActive = false;
 		this.trigger(['close','destroy']);
 
 		//pub the destroy methods for each field
@@ -427,7 +428,7 @@ gform.normalizeField = function(fieldIn,parent){
         name: (gform.renderString(fieldIn.label || fieldIn.title)||'').toLowerCase().split(' ').join('_'), 
         id: gform.getUID(), 
         // type: 'text', 
-        label: fieldIn.legend || fieldIn.title || fieldIn.name,
+        label: fieldIn.legend || fieldIn.title || (gform.types[fieldIn.type]||gform.types['text']).defaults.label || fieldIn.name,
         validate: [],
         valid: true,
         parsable:true,
@@ -455,10 +456,18 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.owner = this;
 	if(field.columns > this.options.columns) { field.columns = this.options.columns; }
 
-    if(field.array && typeof (atts[field.name] || field.owner.options.data[field.name]) == 'object'){
-        field.value =  (atts[field.name] || field.owner.options.data[field.name])[index||0] || {};
+    if(!this.options.strict){
+        if(field.array && typeof (atts[field.name] || field.owner.options.data[field.name]) == 'object'){
+            field.value =  (atts[field.name] || field.owner.options.data[field.name])[index||0] || {};
+        }else{
+            field.value =  atts[field.name] || field.owner.options.data[field.name] || field.value;
+        }
     }else{
-        field.value =  atts[field.name] || field.owner.options.data[field.name] || field.value;
+        if(field.array && typeof (atts[field.name] || field.owner.options.data[field.name]) == 'object'){
+            field.value =  atts[field.name] || {};
+        }else{
+            field.value =  atts[field.name] || field.value;
+        }    
     }
 
 	if(field.item.value !== 0){
@@ -581,6 +590,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         field.fields = _.map(field.fields, gform.createField.bind(this, field, newatts, null, null) );
         if(field.array) {
             _.each(field.fields, gform.inflate.bind(this, newatts) );
+            field.reflow()
         }
     }
 
@@ -1079,7 +1089,7 @@ gform.getUID = function() {
           gform.types[this.type].setLabel.call(this)
       },
       setLabel:function(){
-        this.label = gform.renderString(this.item.label||this.label, this);
+        this.label = gform.renderString((this.format||{title:""}).title||this.item.label||this.label, this);
         var labelEl = this.el.querySelector('label');
         if(labelEl !== null){
             labelEl.innerHTML = this.label

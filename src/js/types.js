@@ -5,7 +5,7 @@ gform.types = {
           gform.types[this.type].setLabel.call(this)
       },
       setLabel:function(){
-        this.label = gform.renderString(this.item.label||this.label, this);
+        this.label = gform.renderString((this.format||{title:""}).title||this.item.label||this.label, this);
         var labelEl = this.el.querySelector('label');
         if(labelEl !== null){
             labelEl.innerHTML = this.label
