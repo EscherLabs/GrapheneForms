@@ -32,7 +32,7 @@ var gform = function(data, el){
 
     
     //initalize form
-    this.options = _.assignIn({fields:[], legend: '', default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
+    this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
     this.options.fields = this.options.fields.concat(this.options.actions || [{type:'cancel'},{type:'save'}])
     if (typeof this.options.data == 'string') {
         this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
@@ -110,7 +110,7 @@ var gform = function(data, el){
 
     this.restore = create.bind(this);
     this.get = this.toJSON = gform.toJSON.bind(this);
-
+    this.toString = gform.toString.bind(this)
     this.reflow = gform.reflow.bind(this)
     this.find = gform.find.bind(this)
 
@@ -138,6 +138,7 @@ var gform = function(data, el){
     this.isActive = true;
 
     this.destroy = function() {
+        this.isActive = false;
 		this.trigger(['close','destroy']);
 
 		//pub the destroy methods for each field
@@ -324,6 +325,17 @@ gform.toJSON = function(name) {
     }.bind(this))
     return obj;
 }
+gform.toString = function(name){
+    if(typeof name == 'string' && name.length>0) {
+        name = name.split('.');
+        return _.find(this.fields, {name: name.shift()}).toString(name.join('.'));
+    }
+    var obj = "";
+    _.each(this.fields, function(field) {
+            obj += field.toString()+'<hr>';
+    })
+    return obj;
+}
 gform.m = function (l,a,m,c){function h(a,b){b=b.pop?b:b.split(".");a=a[b.shift()]||"";return 0 in b?h(a,b):a}var k=gform.m,e="";a=_.isArray(a)?a:a?[a]:[];a=c?0 in a?[]:[1]:a;for(c=0;c<a.length;c++){var d="",f=0,n,b="object"==typeof a[c]?a[c]:{},b=_.assign({},m,b);b[""]={"":a[c]};l.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(a,c,l,m,p,q,g){f?d+=f&&!p||1<f?a:c:(e+=c.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(a,c,e,f,g,d){return c?h(b,c):f?h(b,d):g?k(h(b,d),b):e?"":(new Option(h(b,d))).innerHTML}),n=q);p?--f||(g=h(b,g),e=/^f/.test(typeof g)?e+g.call(b,d,function(a){return k(a,b)}):e+k(d,g,b,n),d=""):++f})}return e}
 
 gform.reflow = function(){
@@ -444,10 +456,18 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.owner = this;
 	if(field.columns > this.options.columns) { field.columns = this.options.columns; }
 
-    if(field.array && typeof (atts[field.name] || field.owner.options.data[field.name]) == 'object'){
-        field.value =  (atts[field.name] || field.owner.options.data[field.name])[index||0] || {};
+    if(!this.options.strict){
+        if(field.array && typeof (atts[field.name] || field.owner.options.data[field.name]) == 'object'){
+            field.value =  (atts[field.name] || field.owner.options.data[field.name])[index||0] || {};
+        }else{
+            field.value =  atts[field.name] || field.owner.options.data[field.name] || field.value;
+        }
     }else{
-        field.value =  atts[field.name] || field.owner.options.data[field.name] || field.value;
+        if(field.array && typeof (atts[field.name] || field.owner.options.data[field.name]) == 'object'){
+            field.value =  atts[field.name] || {};
+        }else{
+            field.value =  atts[field.name] || field.value;
+        }    
     }
 
 	if(field.item.value !== 0){
@@ -498,7 +518,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     }.bind(field)
 
     field.get = field.get || gform.types[field.type].get.bind(field);
-    
+    field.toString = gform.types[field.type].toString.bind(field);
+
     field.render = field.render || gform.types[field.type].render.bind(field);
     
     field.el = gform.types[field.type].create.call(field);
@@ -569,6 +590,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         field.fields = _.map(field.fields, gform.createField.bind(this, field, newatts, null, null) );
         if(field.array) {
             _.each(field.fields, gform.inflate.bind(this, newatts) );
+            field.reflow()
         }
     }
 
@@ -908,7 +930,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
                         option.value = gform.renderString(format.value,option);
                     }
                 }
-                if(option.value == value || (/*this.multiple && */(value.indexOf(option.value)>=0) )) { option.selected = true;}
+                if(option.value == value || (/*this.multiple && */value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
                 
                 count+=1;
                 option.i = count;

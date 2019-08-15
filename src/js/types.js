@@ -103,6 +103,9 @@ gform.types = {
       set: function(value) {
           this.el.querySelector('input[name="' + this.name + '"]').value = value;
       },
+      toString: function(){
+          return '<dt>'+this.label+'</dt> <dd>'+(this.value||'(empty)')+'</dd>'
+      },
       satisfied: function(value) {
           return (typeof value !== 'undefined' && value !== null && value !== '');            
       },
@@ -150,6 +153,17 @@ gform.types = {
   },
   'collection':{
       defaults:{format:{label: '{{{label}}}', value: '{{{value}}}'}},
+      toString: function(){
+        //   var tempString = ""
+        // if(data[field.name]){
+        //     var label = (_.find(field.options,function(value,intvalue,opt){return (opt.value==value || opt.value == intvalue)}.bind(null,data[field.name],parseInt(data[field.name]))) || {label:data[field.name]}).label;
+
+        //     this.tempString += '<dt>'+field.label+'</dt> <dd>'+label+'</dd>';
+        // }else{
+        //     this.preview += '<dt>'+field.label+'</dt> <dd>'+(data[field.name]||'(no selection)')+'</dd>';
+        // }
+        return '<dt>'+this.label+'</dt> <dd>'+((_.find(this.options,{value:this.value})||{label:""}).label||'(no selection)')+'</dd>';
+      },
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
@@ -292,6 +306,9 @@ gform.types = {
       get: function(name) {
           return gform.toJSON.call(this, name)
       },
+      toString: function(name) {
+          return '<h4>'+this.label+'</h4><hr><dl style="margin-left:10px">'+gform.toString.call(this, name)+'</dl>';
+      },
       set: function(value){
         if(value == null || value == ''){
             gform.each.call(this, function(field) {
@@ -319,6 +336,7 @@ gform.types = {
       }
   },
   'button':{
+    toString: function(){return ''},
       defaults:{parsable:false, columns:2, target:".gform-footer"},
       create: function() {
           var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
@@ -382,8 +400,9 @@ gform.types = {
 
 // remove the added classes
 gform.types['text']     = gform.types['password'] = gform.types['number'] = gform.types['color'] = gform.types['input'];
-gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false}});
+gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false},toString: function(){return ''}});
 gform.types['output']   = _.extend({}, gform.types['input'], {
+    toString: function(){return ''},
     render: function(){
         this.display = gform.renderString((this.format|| {}).value||'{{{value}}}', this);
         return gform.render(this.type, this);
