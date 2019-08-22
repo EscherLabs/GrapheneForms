@@ -50,7 +50,12 @@
 gform.types['states']= _.extend({}, gform.types['smallcombo'], {
   defaults:{search:"../data/states.json",format:{title:'{{{title}}} <span class="text-success pull-right">{{value}}</span>',label:"{{name}}",value:"{{index}}", display:'{{name}}<span style="float:right">{{index}}</span>'}}
 })
+myEvent = function(e){
+            debugger;
+            console.log(e);
+        }
     options = {
+        events:{'input:text':'myEvent'},
         // data:{text:"2"},
         fields:[
             {title: 'Text', name: "text", type: 'states',strict:true},

@@ -2,6 +2,8 @@ var gform = function(data, el){
     "use strict";
     //event management
     // this.handlers = data.events||{};
+    this.methods = data.methods||{};
+
     this.eventBus = new gform.eventBus({owner:'form',item:'field',handlers:data.events||{}}, this)
 	this.on = this.eventBus.on;
 	// this.sub = this.on;
@@ -715,8 +717,26 @@ gform.eventBus = function(options, owner){
     _.each(this.handlers,function(a,b,c){
         if(typeof a == 'function'){
             c[b] = [a];
+        }else if(typeof a == 'string'){
+            if(typeof this[a] == 'function'){
+                c[b] = [this[a]];
+            }else{
+              if(typeof this.owner[a] == 'function'){
+                c[b] = [this.owner[a]];
+              }else{
+                if(typeof this.owner.methods !== 'undefined' && typeof this.owner.methods[a] == 'function'){
+                  c[b] = [this.owner.methods[a]];
+                }else{
+                  if(typeof window[a] == 'function'){
+                    c[b] = [window[a]];
+                  }else{
+                    c[b] = null;
+                  }
+                }
+              }
+            }
         }
-    })
+    }.bind(this))
 
 	this.dispatch = function (e,f,a) {
 		var a = a || {};
@@ -750,7 +770,13 @@ gform.eventBus = function(options, owner){
 		this.handlers[event] = [];
 		}
 		_.each(events,function(event){
-			this.handlers[event].push(handler);
+            if(typeof handler == 'function'){
+                this.handlers[event].push(handler);
+            }else{
+                if(typeof this[handler] == 'function'){
+                    this.handlers[event].push(this[handler]);
+                }
+            }
 		}.bind(this))
 		return this.owner;
 	}.bind(this);
@@ -2566,6 +2592,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.select = function(index){
             var item = _.find(this.options,{index:index})
 						this.set(item.value);
+						debugger;
 						this.owner.trigger(['input:'+this.name,'input'], this, {input:this.value});
 
             this.menu.style.display = 'none';
