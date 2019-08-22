@@ -496,120 +496,123 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
     },      
     get: function() {
 				//   return this.el.querySelector('input[name="' + this.name + '"]').value;
-          return this.value;
+			if(this.strict){
+				return (_.find(this.options,{value:this.value})||{value:""}).value;
+			}else{
+				return this.value;
+			}
     },
-    set: function(value) {
+    set: function(value,silent) {				
         // this.el.querySelector('input[name="' + this.name + '"]').value = value;
 				var item = _.find(this.options,{value:value})
-				if(typeof item !== 'undefined'){
+				if(typeof item !== 'undefined') {
 						this.combo.value =  item.label;
 						this.value = item.value;
+						gform.addClass(this.el.querySelector('.combobox-container'), 'combobox-selected');
 				}else{
-					this.combo.value =  value;
-					this.value = value;
+					if(typeof value !== 'undefined') {
+						this.combo.value =  value||"";
+						this.value = value||"";
+					}
+					gform.toggleClass(this.el.querySelector('.combobox-container'), 'combobox-selected', this.value!=="");
 				}
-				gform.types[this.type].setLabel.call(this)
-
+				gform.types[this.type].setLabel.call(this);
+				if(!silent) {
+					this.owner.trigger(['change:'+this.name,'change'], this);
+				}
     },
     initialize: function(){
-        //   this.iel = this.el.querySelector('input[name="' + this.name + '"]')
-        //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
         this.onchangeEvent = function(input){
-            //   this.input = input;
+						this.set(this.combo.value)
 						_.throttle(this.renderMenu,100).call(this);
-            this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this, {input:this.value});
-
+            this.owner.trigger(['input:'+this.name,'input'], this, {input:this.value});
         }.bind(this)
         this.renderMenu = function(){
-            this.menu.style.display = 'none';
-            this.shown = false;
-            this.menu.innerHTML = "";
-            if(typeof this.search !== 'string'){
-                // this.liveOptions = this.mapOptions.getoptions();
-                _.each(this.options,function(item){
-                    if(this.combo.value == ""  || _.score(item.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
-                        var li = document.createElement("li");
-                        li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
-                        this.menu.appendChild(li);
-                    }
-                }.bind(this))
-                var first = this.menu.querySelector('li');
-                if(first !== null){
-                    gform.addClass(first,'active')
-                    this.menu.style.display = 'block';
-                    this.shown = true;
-                }else{
-                    gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
-                    this.value = null;
-                }
-            }else{
-                gform.ajax({path: gform.renderString(this.search,{search:this.combo.value}), success:function(data) {
-										this.menu.innerHTML = "";
+					this.menu.style.display = 'none';
+					this.shown = false;
+					this.menu.innerHTML = "";
+					
+					if(typeof this.search !== 'string'){
+						_.each(this.options,function(item){
+							if(this.combo.value == ""  || _.score(item.label.toLowerCase(), this.combo.value.toLowerCase())>.1){
+								var li = document.createElement("li");
+								li.innerHTML = gform.renderString('<a href="javaScript:void(0);" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
+								this.menu.appendChild(li);
+								item.filter = true;
+							}else{
+								item.filter = false;
+							}
+						}.bind(this))
+						var first = this.menu.querySelector('li');
+						if(first !== null){
+							gform.addClass(first,'active')
+							this.menu.style.display = 'block';
+							this.shown = true;
+						}else{
+							// gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+						}
+					}else{
+						gform.ajax({path: gform.renderString(this.search,{search:this.combo.value}), success:function(data) {
+							this.menu.innerHTML = "";
 
-                    this.options = _.map(data,function(option,index){
-                    option.index = (option.index||(++index))+"";
-                        if(typeof this.format !== 'undefined'){
-
-                            if(typeof this.format.label !== 'undefined' ){
-                                option.label = gform.renderString(this.format.label,option);
-                            }
-                            if(typeof this.format.display !== 'undefined' ){
-                                option.display = gform.renderString(this.format.display,option);
-                            }
-                            if(typeof this.format.value !== 'undefined' ){
-                                option.value = gform.renderString(this.format.value,option);
-                            }
-                        }
-
-                        if(this.combo.value == ""  || _.score(option.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
-                            var li = document.createElement("li");
-                            li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
-                            this.menu.appendChild(li);
-                        }
-                        return option;
-                    }.bind(this))
-                    var first = this.menu.querySelector('li');
-                    if(first !== null){
-                        gform.addClass(first,'active')
-                        this.menu.style.display = 'block';
-                        this.shown = true;
-                    }else{
-                        gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
-                        this.value = null;
-										}
-										this.owner.trigger('change')
-                }.bind(this)})
-            }
+							this.options = _.map(data,function(option,index){
+							option.index = (option.index||(++index))+"";
+								if(typeof this.format !== 'undefined'){
+									if(typeof this.format.label !== 'undefined' ){
+										option.label = gform.renderString(this.format.label,option);
+									}
+									if(typeof this.format.display !== 'undefined' ){
+										option.display = gform.renderString(this.format.display,option);
+									}
+									if(typeof this.format.value !== 'undefined' ){
+										option.value = gform.renderString(this.format.value,option);
+									}
+								}
+								
+								var li = document.createElement("li");
+								li.innerHTML = gform.renderString('<a  data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
+								this.menu.appendChild(li);
+								option.filter = true;
+								return option;
+							}.bind(this))
+							var first = this.menu.querySelector('li');
+							if(first !== null){
+								gform.addClass(first,'active')
+								this.menu.style.display = 'block';
+								this.shown = true;
+							}else{
+								// gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+								this.value = null;
+							}
+							this.owner.trigger(['change:'+this.name,'change'], this, {input:this.value});
+						}.bind(this)})
+					}
         }
         this.shown = false;
         this.input = this.input || false;
         this.menu = this.el.querySelector('ul')
         this.combo = this.el.querySelector('input');
-        // this.selected = false;
 
+				this.set = gform.types[this.type].set.bind(this)
         this.select = function(index){
             var item = _.find(this.options,{index:index})
-            this.set(item.value);
+						this.set(item.value);
+						this.owner.trigger(['input:'+this.name,'input'], this, {input:this.value});
+
             this.menu.style.display = 'none';
             this.shown = false;
             this.combo.focus();
-            this.owner.trigger('input');
-            gform.addClass(this.el.querySelector('.combobox-container'),'combobox-selected');
-
 				}
 				$(this.el).on('click',".dropdown-item",function(e){
-					// if(e.target.classList[0] == "dropdown-item"){
-                this.select(e.currentTarget.dataset.index);   
-                e.stopPropagation();
-						// }
+					this.select(e.currentTarget.dataset.index);   
+					e.stopPropagation();
 				}.bind(this))
         this.el.addEventListener('click',function(e){
             if(e.target.nodeName == "SPAN"){
                 if(this.el.querySelector('.combobox-selected') !== null){
-                    gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
-                    this.selected = false;
-                    this.combo.value = "";
-                    this.set();
+                    // this.selected = false;
+                    // this.combo.value = "";
+                    this.set("");
                 }else{
                     if(this.shown){
                         this.menu.style.display = 'none';
@@ -618,27 +621,22 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                         this.renderMenu();
                     }
                 }
-
                 this.combo.focus();
-
             }
         }.bind(this))
 
         this.el.addEventListener('keydown',function(e){
-            if (!this.shown) {
-                if(e.keyCode == 40){this.renderMenu();}
-                return;
-            }
- 
-            switch(e.keyCode) {
+					if (!this.shown) {
+						if(e.keyCode == 40){this.renderMenu();}                
+						return;
+					}
+
+          switch(e.keyCode) {
             case 9: // tab
             case 13: // enter
-						debugger;
-
-                e.preventDefault();
-                this.select(this.menu.querySelector('li.active a').dataset.index);   
-
-                break;
+							e.preventDefault();
+							this.select(this.menu.querySelector('li.active a').dataset.index);   
+							break;
             case 27: // escape
                 e.preventDefault();
                 this.menu.style.display = 'none';
@@ -664,7 +662,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                 // prev.addClass('active');
                 // this.prev();
                 // this.fixMenuScroll();
-
 
                 var active = $(this.menu).find('.active');
                 //fixscroll
@@ -717,72 +714,82 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         }.bind(this))
 
         $(this.menu).on('mouseenter','li',function(e){
-                this.mousedover = true;
-                if(this.menu.querySelector('.active') !== null){
-                gform.removeClass(this.menu.querySelector('.active'),'active')
-                }
-                gform.addClass(e.currentTarget,'active')            
+					this.mousedover = true;
+					if(this.menu.querySelector('.active') !== null){
+						gform.removeClass(this.menu.querySelector('.active'),'active')
+					}
+					gform.addClass(e.currentTarget,'active')            
         }.bind(this))
 
         $(this.menu).on('mouseleave','li',function(e){
-                this.mousedover = false;            
+          this.mousedover = false;            
         }.bind(this))
 
         this.combo.addEventListener('blur',function(e){
-						if(this.el.querySelector('.combobox-selected') == null){
-							this.set(this.combo.value);
+
+					if(this.shown ){
+						var list = _.filter(this.options,{filter:true});
+						if(list.length == 1){
+							this.set(list[0].value);
+						}else{
+							list = _.filter(this.options,{label:this.combo.value});
+							if(list.length){
+								this.set(list[0].value);
+							}
 						}
-						if(this.shown ){
-            	if (!this.mousedover && this.shown) {setTimeout(function () { 
-                debugger;
-								this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);}
-								
-						}
+						if (!this.mousedover && this.shown) {setTimeout(function () { 
+							this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);
+						}								
+						this.owner.trigger(['input:'+this.name,'input'], this, {input:this.value});
+					}
+				// if(this.el.querySelector('.combobox-selected') == null){
+					this.set(this.value||this.combo.value)
+
+					this.set(gform.types[this.type].get.call(this))
+					// }
 				}.bind(this))
 
 				if(typeof this.search == 'string'){
-					debugger;
 					gform.ajax({path: gform.renderString(this.search,{value:this.value}), success:function(data) {
-// debugger;
 
-this.options = _.map(data,function(option,index){
-	option.index = (option.index||(++index))+"";
-			if(typeof this.format !== 'undefined'){
+						this.options = _.map(data,function(option,index){
+							option.index = (option.index||(++index))+"";
+								if(typeof this.format !== 'undefined'){
+									if(typeof this.format.label !== 'undefined' ){
+										option.label = gform.renderString(this.format.label,option);
+									}
+									if(typeof this.format.display !== 'undefined' ){
+										option.display = gform.renderString(this.format.display,option);
+									}
+									if(typeof this.format.value !== 'undefined' ){
+										option.value = gform.renderString(this.format.value,option);
+									}
+								}
 
-					if(typeof this.format.label !== 'undefined' ){
-							option.label = gform.renderString(this.format.label,option);
-					}
-					if(typeof this.format.display !== 'undefined' ){
-							option.display = gform.renderString(this.format.display,option);
-					}
-					if(typeof this.format.value !== 'undefined' ){
-							option.value = gform.renderString(this.format.value,option);
-					}
-			}
-
-			if(this.combo.value == ""  || _.score(option.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
-					var li = document.createElement("li");
-					li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
-					this.menu.appendChild(li);
-			}
-			return option;
-	}.bind(this))
-if(typeof this.value !== 'undefined'){
-	gform.types[this.type].set.call(this,this.value);
-}
-this.owner.trigger('change')
+								if(this.combo.value == ""  || _.score(option.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
+									var li = document.createElement("li");
+									li.innerHTML = gform.renderString('<a href="#" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
+									this.menu.appendChild(li);
+								}
+								return option;
+							}.bind(this))
+						if(typeof this.value !== 'undefined'){
+							this.set(this.value);
+						}
+						// this.owner.trigger('change')
+						// this.owner.trigger(['change:'+this.name,'change'], this, {input:this.value});
 
 					}.bind(this)}
 					)}else{
 						if(typeof this.value !== 'undefined'){
-							gform.types[this.type].set.call(this,this.value);
+							this.set(this.value);
 						}
 					}
 
         this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
 
         // this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
-    },
+    }
 });
 
 

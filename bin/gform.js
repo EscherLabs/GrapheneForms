@@ -1089,7 +1089,10 @@ gform.getUID = function() {
           gform.types[this.type].setLabel.call(this)
       },
       setLabel:function(){
-        this.label = gform.renderString((this.format||{title:""}).title||this.item.label||this.label, this);
+        this.label = gform.renderString((this.format||{title:this.item.label}).title||this.label, this);
+        if(this.required){
+            this.label+=this.requiredText+this.suffix;
+        }
         var labelEl = this.el.querySelector('label');
         if(labelEl !== null){
             labelEl.innerHTML = this.label
@@ -1233,6 +1236,8 @@ gform.getUID = function() {
       },
       get: function() {
           return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0].value
+      },satisfied: function(value) {
+        return value == this.options[1].value;
       }
   },
   'collection':{
@@ -1337,9 +1342,10 @@ gform.getUID = function() {
   },
   'section':{
     setLabel:function(){
-        debugger;
         this.label = gform.renderString(this.item.label||this.label, this);
-        
+        if(this.required){
+            this.label+=this.requiredText+this.suffix;
+          }
         var labelEl = this.el.querySelector('legend');
         if(labelEl !== null){
             labelEl.innerHTML = this.label
