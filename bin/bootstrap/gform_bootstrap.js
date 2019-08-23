@@ -334,7 +334,8 @@ gform.toString = function(name){
     }
     var obj = "";
     _.each(this.fields, function(field) {
-            obj += field.toString()+'<hr>';
+            var fieldString = field.toString();
+            obj += fieldString;
     })
     return obj;
 }
@@ -1217,7 +1218,7 @@ gform.getUID = function() {
           this.el.querySelector('input[name="' + this.name + '"]').value = value;
       },
       toString: function(){
-          return '<dt>'+this.label+'</dt> <dd>'+(this.value||'(empty)')+'</dd>'
+          return '<dt>'+this.label+'</dt> <dd>'+(this.value||'(empty)')+'</dd><hr>'
       },
       satisfied: function(value) {
           return (typeof value !== 'undefined' && value !== null && value !== '');            
@@ -1269,15 +1270,21 @@ gform.getUID = function() {
   'collection':{
       defaults:{format:{label: '{{{label}}}', value: '{{{value}}}'}},
       toString: function(){
-        //   var tempString = ""
-        // if(data[field.name]){
-        //     var label = (_.find(field.options,function(value,intvalue,opt){return (opt.value==value || opt.value == intvalue)}.bind(null,data[field.name],parseInt(data[field.name]))) || {label:data[field.name]}).label;
-
-        //     this.tempString += '<dt>'+field.label+'</dt> <dd>'+label+'</dd>';
-        // }else{
-        //     this.preview += '<dt>'+field.label+'</dt> <dd>'+(data[field.name]||'(no selection)')+'</dd>';
-        // }
-        return '<dt>'+this.label+'</dt> <dd>'+((_.find(this.options,{value:this.value})||{label:""}).label||'(no selection)')+'</dd>';
+        if(this.multiple){
+            if(this.value.length){
+                return _.reduce(this.value,function(returnVal,item){
+                    var lookup = _.find(this.options,{value:item});
+                    if(typeof lookup !== 'undefined'){
+                        returnVal+='<dd>'+lookup.label+'</dd>'                        
+                    }
+                    return returnVal;
+                }.bind(this),'<dt>'+this.label+'</dt> ')+'<hr>'
+            }else{
+                return '<dt>'+this.label+'</dt> <dd>(no selection)</dd><hr>';
+            }
+        }else{
+            return '<dt>'+this.label+'</dt> <dd>'+((_.find(this.options,{value:this.value})||{label:""}).label||'(no selection)')+'</dd><hr>';
+        }
       },
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
@@ -1463,7 +1470,6 @@ gform.getUID = function() {
       initialize: function() {
           this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
           this.onclickEvent = function(){
-              debugger;
               if(this.editable) {
                   this.owner.trigger(this.action, this);
               }
@@ -2324,19 +2330,20 @@ gform.handleError = function(field){
 		field.el.querySelector('.font-xs.text-danger').innerHTML = '';
 	}
 }
-gform.types['cancel']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
-	"label":"<i class=\"fa fa-times\"></i> Cancel",
-	"action":"cancel",
-	"modifiers": "btn btn-danger"}});
-gform.types['save']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
-	"label":"<i class=\"fa fa-check\"></i> Save",
-	"action":"save",
-	"modifiers": "btn btn-success"}});
-gform.types['reset']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+
+gform.types['reset']   = _.defaultsDeep({toString: function(){return ''}},gform.types['button'], {defaults:{
 	"label":"<i class=\"fa fa-times\"></i> Reset",
 	"action":"reset",
 	"modifiers": "btn btn-default"}});
-gform.types['clear']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
+gform.types['cancel']   = _.defaultsDeep({toString: function(){return ''}},gform.types['button'], {defaults:{
+	"label":"<i class=\"fa fa-times\"></i> Cancel",
+	"action":"cancel",
+	"modifiers": "btn btn-danger"}});
+gform.types['save']   = _.defaultsDeep({toString: function(){return ''}},gform.types['button'], {defaults:{
+	"label":"<i class=\"fa fa-check\"></i> Save",
+	"action":"save",
+	"modifiers": "btn btn-success"}});
+gform.types['clear']   = _.defaultsDeep({toString: function(){return ''}},gform.types['button'], {defaults:{
 	"label":"<i class=\"fa fa-times\"></i> Clear",
 	"action":"clear",
 	"modifiers": "btn btn-warning"}});
@@ -2401,8 +2408,12 @@ gform.types['combo'] = _.extend({}, gform.types['input'], gform.types['collectio
 gform.types['color'] = _.extend({}, gform.types['input'], {
 	defaults: {
 		pre: '<i style="display: block;width:20px;height:20px;margin: 0 -5px;"></i>' ,
-		type: 'text'
+		elType: 'text',
+		value:"#000000"
 	},
+	toString: function(){
+		return '<dt>'+this.label+'</dt> <dd><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:'+this.value+';"></span> '+(this.value||'(empty)')+'</dd><hr>'
+},
   initialize: function(){
 	this.onchangeEvent = function(){
 		this.value = this.get();
@@ -2469,23 +2480,22 @@ gform.stencils.smallcombo = `
 		
 gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 		toString: function(){
-			return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd>'
+			return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
 		},
     render: function() {
-        //   this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
           this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.on('change',function(){
               this.options = this.mapOptions.getobject()
-							this.update();
+							// this.update();
 							if(typeof this.value !== 'undefined'){
-								gform.types[this.type].set.call(this,this.value);
+								gform.types[this.type].set.call(this, this.value);
 							}
           }.bind(this))
         }
 				this.options = this.mapOptions.getobject();
 				
-        this.value = this.value||(this.options[0]||{value:""}).value
+        this.value = this.value || "";
 
         return gform.render('smallcombo', this);
     },      
@@ -2527,9 +2537,10 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 					this.shown = false;
 					this.menu.innerHTML = "";
 					
-					if(typeof this.search !== 'string'){
+					// if(typeof this.search !== 'string'){
+						this.options = this.mapOptions.getobject();
 						_.each(this.options,function(item){
-							if(this.combo.value == ""  || _.score(item.label.toLowerCase(), this.combo.value.toLowerCase())>.1){
+							if(this.filter !== false && (this.combo.value == ""  || _.score(item.label.toLowerCase(), this.combo.value.toLowerCase())>.1)){
 								var li = document.createElement("li");
 								li.innerHTML = gform.renderString('<a href="javaScript:void(0);" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
 								this.menu.appendChild(li);
@@ -2543,45 +2554,49 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 							gform.addClass(first,'active')
 							this.menu.style.display = 'block';
 							this.shown = true;
-						}else{
-							// gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
 						}
-					}else{
-						gform.ajax({path: gform.renderString(this.search,{search:this.combo.value}), success:function(data) {
-							this.menu.innerHTML = "";
+						// else{
+							if(typeof this.search == 'string'){
+								gform.ajax({path: gform.renderString(this.search,{search:this.combo.value}), success:function(data) {
+									// this.menu.innerHTML = "";
+									
+									this.options = this.options.concat( _.map(data,function(option,index){
+									option.index = (option.index||(++index))+"";
+										if(typeof this.format !== 'undefined'){
+											if(typeof this.format.label !== 'undefined' ){
+												option.label = gform.renderString(this.format.label,option);
+											}
+											if(typeof this.format.display !== 'undefined' ){
+												option.display = gform.renderString(this.format.display,option);
+											}
+											if(typeof this.format.value !== 'undefined' ){
+												option.value = gform.renderString(this.format.value,option);
+											}
+										}
+										if(!this.filter || this.combo.value == ""  || _.score(option.label.toLowerCase(), this.combo.value.toLowerCase())>.1){
 
-							this.options = _.map(data,function(option,index){
-							option.index = (option.index||(++index))+"";
-								if(typeof this.format !== 'undefined'){
-									if(typeof this.format.label !== 'undefined' ){
-										option.label = gform.renderString(this.format.label,option);
+											var li = document.createElement("li");
+											li.innerHTML = gform.renderString('<a data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>', option);
+											this.menu.appendChild(li);
+											option.filter = true;
+										}
+										return option;
+									}.bind(this)))
+									var first = this.menu.querySelector('li');
+									if(first !== null){
+										gform.addClass(first,'active')
+										this.menu.style.display = 'block';
+										this.shown = true;
+									}else{
+										// gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
+										this.value = null;
 									}
-									if(typeof this.format.display !== 'undefined' ){
-										option.display = gform.renderString(this.format.display,option);
-									}
-									if(typeof this.format.value !== 'undefined' ){
-										option.value = gform.renderString(this.format.value,option);
-									}
-								}
-								
-								var li = document.createElement("li");
-								li.innerHTML = gform.renderString('<a  data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
-								this.menu.appendChild(li);
-								option.filter = true;
-								return option;
-							}.bind(this))
-							var first = this.menu.querySelector('li');
-							if(first !== null){
-								gform.addClass(first,'active')
-								this.menu.style.display = 'block';
-								this.shown = true;
-							}else{
-								// gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
-								this.value = null;
+									this.owner.trigger(['change:'+this.name,'change'], this, {input:this.value});
+								}.bind(this)})
 							}
-							this.owner.trigger(['change:'+this.name,'change'], this, {input:this.value});
-						}.bind(this)})
-					}
+						// }
+					// }else{
+
         }
         this.shown = false;
         this.input = this.input || false;
@@ -2592,7 +2607,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.select = function(index){
             var item = _.find(this.options,{index:index})
 						this.set(item.value);
-						debugger;
 						this.owner.trigger(['input:'+this.name,'input'], this, {input:this.value});
 
             this.menu.style.display = 'none';
@@ -2604,7 +2618,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 					e.stopPropagation();
 				}.bind(this))
         this.el.addEventListener('click',function(e){
-            if(e.target.nodeName == "SPAN"){
+            if(e.target.nodeName == "SPAN" && this.editable){
                 if(this.el.querySelector('.combobox-selected') !== null){
                     // this.selected = false;
                     // this.combo.value = "";
@@ -2796,8 +2810,8 @@ gform.THEME = {'bootstrap':'0.0.4.1'}
 
 gform.types['datetime'] = _.extend({}, gform.types['input'], {
   defaults:{
-	format:{input: "MM/DD/YYYY h:mm A"}
-
+	format:{input: "MM/DD/YYYY h:mm A"},
+	elType:'text'
   },
   initialize: function(){
 	this.onchangeEvent = function(){
@@ -2809,19 +2823,21 @@ gform.types['datetime'] = _.extend({}, gform.types['input'], {
 	// this.el.addEventListener('change', this.onchangeEvent.bind(null));
 	var $el = $(this.el.querySelector('input[name="' + this.name + '"]'));
 
-	  $el.attr('type','text');
+		// $el.attr('type','text');
 	  $el.datetimepicker({format: this.format.input})
 	  $el.on("dp.change", this.onchangeEvent.bind(null,true));
   },
 });
 gform.types['date'] = _.extend({},gform.types['datetime'], {
 	defaults:{
-	  format:{input: "MM/DD/YYYY"}
+	  format:{input: "MM/DD/YYYY"},
+		elType:'text'
 	},
 })
 gform.types['time']= _.extend({}, gform.types['datetime'], {
 	defaults:{
-		format:{input: "h:mm A"}
+		format:{input: "h:mm A"},
+		elType:'text'
 	}
 })
 gform.prototype.modal = function(data){

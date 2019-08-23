@@ -334,7 +334,8 @@ gform.toString = function(name){
     }
     var obj = "";
     _.each(this.fields, function(field) {
-            obj += field.toString()+'<hr>';
+            var fieldString = field.toString();
+            obj += fieldString;
     })
     return obj;
 }

@@ -107,7 +107,7 @@ gform.types = {
           this.el.querySelector('input[name="' + this.name + '"]').value = value;
       },
       toString: function(){
-          return '<dt>'+this.label+'</dt> <dd>'+(this.value||'(empty)')+'</dd>'
+          return '<dt>'+this.label+'</dt> <dd>'+(this.value||'(empty)')+'</dd><hr>'
       },
       satisfied: function(value) {
           return (typeof value !== 'undefined' && value !== null && value !== '');            
@@ -159,15 +159,21 @@ gform.types = {
   'collection':{
       defaults:{format:{label: '{{{label}}}', value: '{{{value}}}'}},
       toString: function(){
-        //   var tempString = ""
-        // if(data[field.name]){
-        //     var label = (_.find(field.options,function(value,intvalue,opt){return (opt.value==value || opt.value == intvalue)}.bind(null,data[field.name],parseInt(data[field.name]))) || {label:data[field.name]}).label;
-
-        //     this.tempString += '<dt>'+field.label+'</dt> <dd>'+label+'</dd>';
-        // }else{
-        //     this.preview += '<dt>'+field.label+'</dt> <dd>'+(data[field.name]||'(no selection)')+'</dd>';
-        // }
-        return '<dt>'+this.label+'</dt> <dd>'+((_.find(this.options,{value:this.value})||{label:""}).label||'(no selection)')+'</dd>';
+        if(this.multiple){
+            if(this.value.length){
+                return _.reduce(this.value,function(returnVal,item){
+                    var lookup = _.find(this.options,{value:item});
+                    if(typeof lookup !== 'undefined'){
+                        returnVal+='<dd>'+lookup.label+'</dd>'                        
+                    }
+                    return returnVal;
+                }.bind(this),'<dt>'+this.label+'</dt> ')+'<hr>'
+            }else{
+                return '<dt>'+this.label+'</dt> <dd>(no selection)</dd><hr>';
+            }
+        }else{
+            return '<dt>'+this.label+'</dt> <dd>'+((_.find(this.options,{value:this.value})||{label:""}).label||'(no selection)')+'</dd><hr>';
+        }
       },
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
@@ -353,7 +359,6 @@ gform.types = {
       initialize: function() {
           this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
           this.onclickEvent = function(){
-              debugger;
               if(this.editable) {
                   this.owner.trigger(this.action, this);
               }
