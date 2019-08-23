@@ -1105,7 +1105,7 @@ gform.render = function(template, options) {
     // return elem
   };
   
-gform.VERSION = '0.0.0.7';
+gform.VERSION = '0.0.0.8';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
