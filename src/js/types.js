@@ -5,13 +5,13 @@ gform.types = {
           gform.types[this.type].setLabel.call(this)
       },
       setLabel:function(){
-        this.label = gform.renderString((this.format||{title:this.item.label}).title||this.label, this);
+        var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
         if(this.required){
-            this.label+=this.requiredText+this.suffix;
+            label+=this.requiredText+this.suffix;
         }
         var labelEl = this.el.querySelector('label');
         if(labelEl !== null){
-            labelEl.innerHTML = this.label
+            labelEl.innerHTML = label
         }
       },
       create: function(){
@@ -264,13 +264,13 @@ gform.types = {
   },
   'section':{
     setLabel:function(){
-        this.label = gform.renderString(this.item.label||this.label, this);
+        var label = gform.renderString(this.item.label||this.label, this);
         if(this.required){
-            this.label+=this.requiredText+this.suffix;
+            label+=this.requiredText+this.suffix;
           }
         var labelEl = this.el.querySelector('legend');
         if(labelEl !== null){
-            labelEl.innerHTML = this.label
+            labelEl.innerHTML = label
         }
       },
       create: function() {
@@ -405,6 +405,9 @@ gform.types = {
           this.el.disabled = !state;
           gform.toggleClass(this.el,'disabled',!state)
 
+      },
+      focus:function() {
+        this.el.focus();
       }
   }
 };

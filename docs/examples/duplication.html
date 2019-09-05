@@ -31,6 +31,7 @@
 
     <script>
       options = {
+        data:{candy:[{flavor:"asdf",color:["#f00","#0f0"]}]},
           legend: 'Basic Form',
           fields:[
           {
@@ -41,79 +42,79 @@
       "label": "Email",
       "name": "email"
     },
-    {
-      "label": "Phone",
-      "name": "phone"
-    },
-    {
-      "label": "Supervisor",
-      "name": "supervisor"
-    },
-    {
-      "label": "Campus Department",
-      "name": "department"
-    },
-    {
-      "type": "radio",
-      "label": "I hereby authorize the Research Foundation HR/Payroll Office to",
-      "name": "action",
-      "options": [
-        {
-          "label": "Start Direct Deposit",
-          "value": "start"
-        },
-        {
-          "label": "Change my Direct Deposit",
-          "value": "change"
-        }
-      ]
-    },
-          {
-        "label": "Bank{{#index}} ({{index}}){{/index}}",
-        "name":"bank",
-        "type": "fieldset",
-        "array": {
-            "min": 1,
-            "max": 4
-        },
-        "fields": [
-            {
-                "label": "Bank Name",
-                "name":"bank_name"
-            },
-            {
-                "label": "Routing Number",
-                "name":"routing_number"
-            },
-            {
-                "label": "Account Number",
-                "name":"account_number"
-            },
-            {
-              "type": "radio",
-              "label": "Account Type",
-              "name": "type",
-              "options": [
-                {
-                  "label": "Checking",
-                  "value": "checking"
-                },
-                {
-                  "label": "Savings",
-                  "value": "savings"
-                }
-              ]
-            },
-            {
-                "label": "Amount",
-                "name":"amount"
-            }
-        ]
-    },
-              {label:'Candy{{#index}} ({{index}}){{/index}}', type: 'fieldset', array: true, fields: [
+    // {
+    //   "label": "Phone",
+    //   "name": "phone"
+    // },
+    // {
+    //   "label": "Supervisor",
+    //   "name": "supervisor"
+    // },
+    // {
+    //   "label": "Campus Department",
+    //   "name": "department"
+    // },
+    // {
+    //   "type": "radio",
+    //   "label": "I hereby authorize the Research Foundation HR/Payroll Office to",
+    //   "name": "action",
+    //   "options": [
+    //     {
+    //       "label": "Start Direct Deposit",
+    //       "value": "start"
+    //     },
+    //     {
+    //       "label": "Change my Direct Deposit",
+    //       "value": "change"
+    //     }
+    //   ]
+    // },
+        //   {
+        // "label": "Bank{{#index}} ({{index}}){{/index}}",
+        // "name":"bank",
+        // "type": "fieldset",
+        // "array": {
+        //     "min": 1,
+        //     "max": 4
+        // },
+    //     "fields": [
+    //         {
+    //             "label": "Bank Name",
+    //             "name":"bank_name"
+    //         },
+    //         {
+    //             "label": "Routing Number",
+    //             "name":"routing_number"
+    //         },
+    //         {
+    //             "label": "Account Number",
+    //             "name":"account_number"
+    //         },
+    //         {
+    //           "type": "radio",
+    //           "label": "Account Type",
+    //           "name": "type",
+    //           "options": [
+    //             {
+    //               "label": "Checking",
+    //               "value": "checking"
+    //             },
+    //             {
+    //               "label": "Savings",
+    //               "value": "savings"
+    //             }
+    //           ]
+    //         },
+    //         {
+    //             "label": "Amount",
+    //             "name":"amount"
+    //         }
+    //     ]
+    // },
+              {label:'Candy{{#index}} ({{index}}){{/index}}', type: 'fieldset', value:{flavor:"orange"}, array: true, fields: [
                 {label: 'Flavor'},
                 // { label: 'Color ({{^index}}0{{/index}}{{index}})', type:'text',columns:6, array: {min:2,max:3}}
-                { label: 'Color{{#index}} ({{index}}){{/index}}',columns:6, array: {min:2,max:3}}
+                { label: 'Color{{#index}} ({{index}}){{/index}}',columns:6, array: {min:2,max:7}}
               ]}
           ]
       }

@@ -115,6 +115,7 @@ var gform = function(data, el){
     this.toString = gform.toString.bind(this)
     this.reflow = gform.reflow.bind(this)
     this.find = gform.find.bind(this)
+    this.filter = gform.filter.bind(this)
 
     this.set = function(name, value) {
         if(typeof name == 'string'){
@@ -172,7 +173,8 @@ var gform = function(data, el){
             }
         }.bind(this))
     }
-    if(this.options.autoFocus || gform.options.autoFocus){
+    if((this.options.autoFocus || gform.options.autoFocus) && this.fields.length){
+
      gform.types[this.fields[0].type].focus.call(this.fields[0])
     }
 
@@ -194,7 +196,7 @@ var gform = function(data, el){
             if(field.editable && fieldCount < (field.array.max || 5)){
                 var index = _.findIndex(field.parent.fields, {id: field.id});
                 var atts = {};
-        
+                atts[field.name] = [field.item.value || null];
                 var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null,fieldCount);
                 field.parent.fields.splice(index+1, 0, newField)
                 field.parent.reflow();
@@ -280,6 +282,8 @@ gform.find = function(oname){
     //    debugger;
         // temp =this.fields[oname];// _.find(this.fields, {name: name.shift()})
         // name = oname;
+    }else if(typeof oname == 'object'){
+        return  gform.filter.call(this, oname)[0] || false;
     }
     if(typeof temp !== 'undefined'){
         if(typeof temp.find !== 'undefined'){
@@ -297,17 +301,24 @@ gform.find = function(oname){
     }
 }
 gform.findByID = function(id){
-    var temp = false;
+    return  gform.filter.call(this, {id:id})[0] || false;
+}
+
+
+gform.filter = function(search){
+    var temp = [];
+
     _.each(this.fields, function(field){
-        if(field.id == id){
-            temp = field;
-        } 
-        if(!temp && typeof field.fields !== 'undefined'){
-            temp = gform.findByID.call(field,id);
+        if(_.isMatch(field, search)){
+            temp.push(field)
+        }
+        if(typeof field.fields !== 'undefined'){
+            temp = temp.concat(gform.filter.call(field,search));
         }
     })
     return temp;
 }
+
 //parse form values into JSON object
 gform.toJSON = function(name) {
     if(typeof name == 'string' && name.length>0) {
@@ -936,7 +947,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
                         op[i].hidden = !result;
                     }
                 }.bind(this,item.id))
-                // count += item.options.length;
+                count += item.options.length;
                 return item;
             }else{
                 var option = _.extend({},item)
@@ -948,13 +959,31 @@ gform.mapOptions = function(optgroup, value, count,collections){
                 if(typeof format !== 'undefined'){
 
                     if(typeof format.label !== 'undefined' ){
-                        option.label = gform.renderString(format.label,option);
+                        if(typeof format.label == 'string'){
+                            option.label = gform.renderString(format.label,option);
+                          }else{
+                              if(typeof format.label == 'function'){
+                                  option.label = format.label.call(this.option);
+                              }
+                        }
                     }
                     if(typeof format.display !== 'undefined' ){
-                        option.display = gform.renderString(format.display,option);
+                        if(typeof format.display == 'string'){
+                            option.display = gform.renderString(format.display,option);
+                          }else{
+                              if(typeof format.display == 'function'){
+                                  option.display = format.display.call(this.option);
+                              }
+                        }
                     }
                     if(typeof format.value !== 'undefined' ){
-                        option.value = gform.renderString(format.value,option);
+                        if(typeof format.value == 'string'){
+                          option.value = gform.renderString(format.value,option);
+                        }else{
+                            if(typeof format.value == 'function'){
+                                option.value = format.value.call(this,option);
+                            }
+                        }
                     }
                 }
                 if(option.value == value || (/*this.multiple && */value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
@@ -1105,7 +1134,7 @@ gform.render = function(template, options) {
     // return elem
   };
   
-gform.VERSION = '0.0.0.8';
+gform.VERSION = '0.0.0.9';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);

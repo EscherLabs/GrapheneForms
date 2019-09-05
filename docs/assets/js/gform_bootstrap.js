@@ -115,6 +115,7 @@ var gform = function(data, el){
     this.toString = gform.toString.bind(this)
     this.reflow = gform.reflow.bind(this)
     this.find = gform.find.bind(this)
+    this.filter = gform.filter.bind(this)
 
     this.set = function(name, value) {
         if(typeof name == 'string'){
@@ -172,7 +173,8 @@ var gform = function(data, el){
             }
         }.bind(this))
     }
-    if(this.options.autoFocus || gform.options.autoFocus){
+    if((this.options.autoFocus || gform.options.autoFocus) && this.fields.length){
+
      gform.types[this.fields[0].type].focus.call(this.fields[0])
     }
 
@@ -194,7 +196,7 @@ var gform = function(data, el){
             if(field.editable && fieldCount < (field.array.max || 5)){
                 var index = _.findIndex(field.parent.fields, {id: field.id});
                 var atts = {};
-        
+                atts[field.name] = [field.item.value || null];
                 var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null,fieldCount);
                 field.parent.fields.splice(index+1, 0, newField)
                 field.parent.reflow();
@@ -280,6 +282,8 @@ gform.find = function(oname){
     //    debugger;
         // temp =this.fields[oname];// _.find(this.fields, {name: name.shift()})
         // name = oname;
+    }else if(typeof oname == 'object'){
+        return  gform.filter.call(this, oname)[0] || false;
     }
     if(typeof temp !== 'undefined'){
         if(typeof temp.find !== 'undefined'){
@@ -297,17 +301,24 @@ gform.find = function(oname){
     }
 }
 gform.findByID = function(id){
-    var temp = false;
+    return  gform.filter.call(this, {id:id})[0] || false;
+}
+
+
+gform.filter = function(search){
+    var temp = [];
+
     _.each(this.fields, function(field){
-        if(field.id == id){
-            temp = field;
-        } 
-        if(!temp && typeof field.fields !== 'undefined'){
-            temp = gform.findByID.call(field,id);
+        if(_.isMatch(field, search)){
+            temp.push(field)
+        }
+        if(typeof field.fields !== 'undefined'){
+            temp = temp.concat(gform.filter.call(field,search));
         }
     })
     return temp;
 }
+
 //parse form values into JSON object
 gform.toJSON = function(name) {
     if(typeof name == 'string' && name.length>0) {
@@ -936,7 +947,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
                         op[i].hidden = !result;
                     }
                 }.bind(this,item.id))
-                // count += item.options.length;
+                count += item.options.length;
                 return item;
             }else{
                 var option = _.extend({},item)
@@ -948,13 +959,31 @@ gform.mapOptions = function(optgroup, value, count,collections){
                 if(typeof format !== 'undefined'){
 
                     if(typeof format.label !== 'undefined' ){
-                        option.label = gform.renderString(format.label,option);
+                        if(typeof format.label == 'string'){
+                            option.label = gform.renderString(format.label,option);
+                          }else{
+                              if(typeof format.label == 'function'){
+                                  option.label = format.label.call(this.option);
+                              }
+                        }
                     }
                     if(typeof format.display !== 'undefined' ){
-                        option.display = gform.renderString(format.display,option);
+                        if(typeof format.display == 'string'){
+                            option.display = gform.renderString(format.display,option);
+                          }else{
+                              if(typeof format.display == 'function'){
+                                  option.display = format.display.call(this.option);
+                              }
+                        }
                     }
                     if(typeof format.value !== 'undefined' ){
-                        option.value = gform.renderString(format.value,option);
+                        if(typeof format.value == 'string'){
+                          option.value = gform.renderString(format.value,option);
+                        }else{
+                            if(typeof format.value == 'function'){
+                                option.value = format.value.call(this,option);
+                            }
+                        }
                     }
                 }
                 if(option.value == value || (/*this.multiple && */value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
@@ -1105,7 +1134,7 @@ gform.render = function(template, options) {
     // return elem
   };
   
-gform.VERSION = '0.0.0.8';
+gform.VERSION = '0.0.0.9';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
@@ -1116,13 +1145,13 @@ gform.getUID = function() {
           gform.types[this.type].setLabel.call(this)
       },
       setLabel:function(){
-        this.label = gform.renderString((this.format||{title:this.item.label}).title||this.label, this);
+        var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
         if(this.required){
-            this.label+=this.requiredText+this.suffix;
+            label+=this.requiredText+this.suffix;
         }
         var labelEl = this.el.querySelector('label');
         if(labelEl !== null){
-            labelEl.innerHTML = this.label
+            labelEl.innerHTML = label
         }
       },
       create: function(){
@@ -1375,13 +1404,13 @@ gform.getUID = function() {
   },
   'section':{
     setLabel:function(){
-        this.label = gform.renderString(this.item.label||this.label, this);
+        var label = gform.renderString(this.item.label||this.label, this);
         if(this.required){
-            this.label+=this.requiredText+this.suffix;
+            label+=this.requiredText+this.suffix;
           }
         var labelEl = this.el.querySelector('legend');
         if(labelEl !== null){
-            labelEl.innerHTML = this.label
+            labelEl.innerHTML = label
         }
       },
       create: function() {
@@ -1516,6 +1545,9 @@ gform.getUID = function() {
           this.el.disabled = !state;
           gform.toggleClass(this.el,'disabled',!state)
 
+      },
+      focus:function() {
+        this.el.focus();
       }
   }
 };
@@ -2225,6 +2257,20 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 		{{>_actions}}
 	</div>
 </div>`,
+switch: `
+<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+{{>_label}}
+<div class="col-md-12" style="margin:0 0 5px">
+<label class="switch">
+<input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+<span class="slider round"></span>
+</label>
+</div>
+    
+    {{>_error}}
+    </div>
+    {{>_actions}}
+</div>`,
 scale:`
 <div class="row clearfix form-group {{modifiers}} {{#multiple.duplicate}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/multiple.duplicate}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
@@ -2486,14 +2532,14 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         if(typeof this.mapOptions == 'undefined'){
           this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.on('change',function(){
-              this.options = this.mapOptions.getobject()
+              this.options = this.mapOptions.getoptions()
 							// this.update();
 							if(typeof this.value !== 'undefined'){
 								gform.types[this.type].set.call(this, this.value);
 							}
           }.bind(this))
         }
-				this.options = this.mapOptions.getobject();
+				this.options = this.mapOptions.getoptions();
 				
         this.value = this.value || "";
 
@@ -2531,24 +2577,33 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 						this.set(this.combo.value)
 						_.throttle(this.renderMenu,100).call(this);
             this.owner.trigger(['input:'+this.name,'input'], this, {input:this.value});
-        }.bind(this)
+				}.bind(this)
+				this.processOptions = function(item){
+					if(typeof item.optgroup !== 'undefined'){
+						if(typeof item.optgroup.options !== 'undefined' && item.optgroup.options.length){
+							_.each(item.optgroup.options,this.processOptions.bind(this))
+						}
+					}else{
+						if(this.filter !== false && (this.combo.value == ""  || _.score(item.label.toLowerCase(), this.combo.value.toLowerCase())>.1)){
+							var li = document.createElement("li");
+							li.innerHTML = gform.renderString('<a href="javaScript:void(0);" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
+							this.menu.appendChild(li);
+							item.filter = true;
+						}else{
+							item.filter = false;
+						}
+					}
+				}
         this.renderMenu = function(){
 					this.menu.style.display = 'none';
 					this.shown = false;
 					this.menu.innerHTML = "";
 					
 					// if(typeof this.search !== 'string'){
-						this.options = this.mapOptions.getobject();
-						_.each(this.options,function(item){
-							if(this.filter !== false && (this.combo.value == ""  || _.score(item.label.toLowerCase(), this.combo.value.toLowerCase())>.1)){
-								var li = document.createElement("li");
-								li.innerHTML = gform.renderString('<a href="javaScript:void(0);" data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
-								this.menu.appendChild(li);
-								item.filter = true;
-							}else{
-								item.filter = false;
-							}
-						}.bind(this))
+						this.options = this.mapOptions.getoptions();
+
+						_.each(this.options,this.processOptions.bind(this))
+
 						var first = this.menu.querySelector('li');
 						if(first !== null){
 							gform.addClass(first,'active')
@@ -2559,9 +2614,9 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 							if(typeof this.search == 'string'){
 								gform.ajax({path: gform.renderString(this.search,{search:this.combo.value}), success:function(data) {
 									// this.menu.innerHTML = "";
-									
-									this.options = this.options.concat( _.map(data,function(option,index){
-									option.index = (option.index||(++index))+"";
+									index = this.options.length;
+									this.options = this.options.concat( _.map(data,function(option){
+									option.i = (option.i||(++index));
 										if(typeof this.format !== 'undefined'){
 											if(typeof this.format.label !== 'undefined' ){
 												option.label = gform.renderString(this.format.label,option);
@@ -2576,7 +2631,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 										if(!this.filter || this.combo.value == ""  || _.score(option.label.toLowerCase(), this.combo.value.toLowerCase())>.1){
 
 											var li = document.createElement("li");
-											li.innerHTML = gform.renderString('<a data-index="{{index}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>', option);
+											li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>', option);
 											this.menu.appendChild(li);
 											option.filter = true;
 										}
@@ -2605,7 +2660,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
 				this.set = gform.types[this.type].set.bind(this)
         this.select = function(index){
-            var item = _.find(this.options,{index:index})
+            var item = _.find(this.options,{i:parseInt(index)})
 						this.set(item.value);
 						this.owner.trigger(['input:'+this.name,'input'], this, {input:this.value});
 
@@ -2758,11 +2813,15 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 					this.set(gform.types[this.type].get.call(this))
 					// }
 				}.bind(this))
-
-				if(typeof this.search == 'string'){
-					gform.ajax({path: gform.renderString(this.search,{value:this.value}), success:function(data) {
-
-						this.options = _.map(data,function(option,index){
+				this.options = this.mapOptions.getoptions();
+				// debugger;
+					if(typeof this.search == 'string'){
+						gform.ajax({path: gform.renderString(this.search,{value:this.value}), success:function(data) {
+							index = this.options.length;
+		
+							this.options = this.options.concat( _.map(data,function(option){
+		
+							// this.options = _.map(data,function(option,index){
 							option.index = (option.index||(++index))+"";
 								if(typeof this.format !== 'undefined'){
 									if(typeof this.format.label !== 'undefined' ){
@@ -2782,7 +2841,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 									this.menu.appendChild(li);
 								}
 								return option;
-							}.bind(this))
+							}.bind(this)))
 						if(typeof this.value !== 'undefined'){
 							this.set(this.value);
 						}
@@ -2806,7 +2865,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
 
 
-gform.THEME = {'bootstrap':'0.0.4.1'}
+gform.THEME = {'bootstrap':'0.0.4.2'}
 
 gform.types['datetime'] = _.extend({}, gform.types['input'], {
   defaults:{
