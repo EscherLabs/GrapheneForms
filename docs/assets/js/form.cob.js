@@ -57,7 +57,7 @@ Cobler.types.textbox = function(container) {
 		enabled: true
 	}
 	var fields = [
-		{type: 'text', required: true, title: 'Field Label', name: 'title'},
+		{type: 'text', required: true, title: 'Field Label', name: 'label'},
 		{type: 'text', label: 'Name', name: 'name'},
 		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
 			{label: 'Single Line', value: 'text'},

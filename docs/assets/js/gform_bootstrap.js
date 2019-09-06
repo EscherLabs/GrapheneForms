@@ -986,7 +986,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
                         }
                     }
                 }
-                if(option.value == value || (/*this.multiple && */value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
+                if(option.value == value || (/*this.multiple && */typeof value !=='undefined' && value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
                 
                 count+=1;
                 option.i = count;
