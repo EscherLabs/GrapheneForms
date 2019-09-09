@@ -1,10 +1,11 @@
 $('#cobler').on('click', function(e) {
   $(e.target).siblings().removeClass('active');
   $(e.target).addClass('active');
-  $('.view, .target, #form').addClass('hidden');
+  $('.view, #form').addClass('hidden');
   $('.view_result, .view_source, #editor').removeClass('hidden');
+
+
     if(typeof cb === 'undefined'){
-      // cb = new cobler({target: '#editor', types: ['form']});
 
       cb = new Cobler({formTarget:$('#form') ,disabled: false, targets: [document.getElementById('editor')],items:[[]]})
       list = document.getElementById('sortableList');
@@ -23,18 +24,13 @@ $('#cobler').on('click', function(e) {
         cb.collections[0].addItem(e.target.dataset.type);
       })
       cb.on("change", function(){
-        if(typeof forms[form] !== 'undefined' && form !== 'builder'){
-          $.extend(forms[form], {fields: cb.toJSON()[0]});
-        }else{
-          $.extend(forms[form], {fields: cb.toJSON()[0]});
-          $.jStorage.set('form', JSON.stringify(forms[form], undefined, "\t"));
-        }
+          $.extend(form, {fields: cb.toJSON()[0]});
+          $.jStorage.set('form', JSON.stringify(form, undefined, "\t"));
       })
-
     }
 
-    if(typeof forms[form] !== 'undefined'){
-      var temp = $.extend(true, {}, forms[form]);
+    if(typeof form !== 'undefined'){
+      var temp = $.extend(true, {}, form);
       for(var i in temp.fields){
         var mapOptions = new gform.mapOptions(temp.fields[i])
         temp.fields[i].options = mapOptions.getobject()
@@ -60,13 +56,11 @@ $('#cobler').on('click', function(e) {
 });
 
 document.addEventListener('DOMContentLoaded', function(){
-
-  forms['builder'] = JSON.parse(($.jStorage.get('form') || "{}"));
-  for(var i in forms['builder']){
-    delete forms['builder'][i].widgetType;
+form = JSON.parse(($.jStorage.get('form') || "{}"));
+  for(var i in form){
+    delete form[i].widgetType;
   }
-
-  form = 'builder'
+  $('#cobler').click();
 });
 
 

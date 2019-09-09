@@ -1,4 +1,3 @@
-
 gformEditor = function(container){
 	return function(){
 		var formConfig = {
@@ -34,15 +33,18 @@ gformEditor = function(container){
 }
 Cobler.types.textbox = function(container) {
 	function render(){
-	if(item.type == 'textarea'){
-      return gform.render('textarea', get());
-	}
-      return gform.render('text', get());
+	// if(item.type == 'textarea'){
+    //   return gform.render('textarea', get());
+	// }
+	//   return gform.render('text', get());
+	  
+	return gform.render(item.type, get());
 	}
 	function get() {
+		// debugger;
 		item.widgetType = 'textbox';
-		item.enabled = true;
-		return item;
+		item.editable = true;
+		return _.extend({},gform.prototype.opts,gform.types[item.type].defaults||{},item);
 	}
 	function toJSON() {
 		return get();
@@ -54,7 +56,7 @@ Cobler.types.textbox = function(container) {
 		widgetType: 'textbox',
 		type: 'text',
 		label: 'Label',
-		enabled: true
+		editable: true
 	}
 	var fields = [
 		{type: 'text', required: true, title: 'Field Label', name: 'label'},
@@ -62,16 +64,38 @@ Cobler.types.textbox = function(container) {
 		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
 			{label: 'Single Line', value: 'text'},
 			{label: 'Multi-line', value: 'textarea'},
-			{label: 'Phone', value: 'phone'},
+			{label: 'Phone', value: 'tel'},
+			{label: 'Url', value: 'url'},
 			{label: 'Email', value: 'email'},
 			{label: 'Date', value: 'date'},
 			{label: 'Number', value: 'number'},
-			{label: 'Color', value: 'color'}
+			{label: 'Password', value: 'password'},
+			{label: 'Color', value: 'color'},
+			{label: 'Output', value: 'output'},
+			{label: 'Hidden', value: 'hidden'}
 		]},
-		{type: 'text', label: 'Placeholder', name: 'placeholder'},
-		{type: 'text', label: 'Default value', name: 'value'},
+
+		{type: 'number', label: 'Limit Length', name: 'limit',min:1},
+		{type: 'select', label: 'Width',value:12, name: 'columns',min:1,max:12,format:{label:"{{value}} Column(s)"} },
+		{type: 'switch', label: 'Allow duplication', name: 'array', columns:6},
+		{type: 'number', label: 'Minimum', name: 'min',value:1,columns:3,show:[{name:"array",value:true,type:"matches"}]},
+		{type: 'number', label: 'Maximum', name: 'max',columns:3,show:[{name:"array",value:true,type:"matches"}]},
+
+		// array: {min: 2, max: 4}
+		{type: 'text', label: 'Placeholder', name: 'placeholder',columns:6},
+		{type: 'text', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:['color','number'],type:"not_matches"}]},
+		{type: 'color', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:'color',type:"matches"}]},
+		// {type: 'date', label: 'Default value', name: 'value',columns:6,show:[{name:"type",value:'date',type:"matches"}]},
+		{type: 'number', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:'number',type:"matches"}]},
+
 		{type: 'textarea', label: 'Instructions', name: 'help'},
 		{type: 'checkbox', label: 'Required', name: 'required'},
+		{type: 'checkbox', label: 'Edit', name: 'edit'}
+		
+		// show
+		// edit
+		// parse
+		// validate	
 	]
 	return {
 		fields: fields,

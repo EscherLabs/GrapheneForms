@@ -1561,9 +1561,8 @@ gform.types['output']   = _.extend({}, gform.types['input'], {
         this.display = gform.renderString((this.format|| {}).value||'{{{value}}}', this);
         return gform.render(this.type, this);
     },
-    get: function(value) {
+    get: function() {
         return this.value;
-        return this.el.querySelector('output').innerHTML;
     },
     set: function(value) {
         this.value = value;

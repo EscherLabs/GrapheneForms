@@ -1561,9 +1561,8 @@ gform.types['output']   = _.extend({}, gform.types['input'], {
         this.display = gform.renderString((this.format|| {}).value||'{{{value}}}', this);
         return gform.render(this.type, this);
     },
-    get: function(value) {
+    get: function() {
         return this.value;
-        return this.el.querySelector('output').innerHTML;
     },
     set: function(value) {
         this.value = value;
@@ -2477,10 +2476,11 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 
   }
 });
-gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-envelope"></i>', validate: [{ type:'valid_email' }]}});
-gform.types['url'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-link"></i>', validate: [{ type:'valid_url' }]}});
-gform.types['tel'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-phone"></i>', placeholder: '+1'}});
-gform.types['password'] = _.extend({}, gform.types['input'], {defaults:{post: '<i class="fa fa-lock"></i>'}});
+gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-envelope"></i>', validate: [{ type:'valid_email' }]}});
+gform.types['url'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-link"></i>', validate: [{ type:'valid_url' }]}});
+gform.types['tel'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-phone"></i>', placeholder: '+1'}});
+gform.types['number'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-number"></i>', placeholder: '+1'}});
+gform.types['password'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-lock"></i>'}});
 gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section'], {
     defaults:{fields:[
         {type:"text",name:'street',label:"Street Address", validate:[{type:"length",max:"255"}]},
