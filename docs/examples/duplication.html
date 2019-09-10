@@ -31,7 +31,7 @@
 
     <script>
       options = {
-        data:{candy:[{flavor:"asdf",color:["#f00","#0f0"]}]},
+        data:{candy:[{flavor:"asdf",color:["#f00","#0f0"]},{flavor:"asdf",color:["#f00","#0f0"]}]},
           legend: 'Basic Form',
           fields:[
           {
@@ -40,7 +40,17 @@
     },
     {
       "label": "Email",
-      "name": "email"
+      "name": "email",
+      "show":[
+        {name:"name",type:"matches",value:"adam"}
+      ]
+    },
+    {
+      "label": "Email",
+      "name": "email",
+      "show":[
+        {name:"name",type:"not_matches",value:"adam"}
+      ]
     },
     // {
     //   "label": "Phone",
@@ -115,7 +125,11 @@
                 {label: 'Flavor'},
                 // { label: 'Color ({{^index}}0{{/index}}{{index}})', type:'text',columns:6, array: {min:2,max:3}}
                 { label: 'Color{{#index}} ({{index}}){{/index}}',columns:6, array: {min:2,max:7}}
-              ]}
+              ]},
+    {
+      "label": "Campus Department",
+      "name": "department"
+    }
           ]
       }
     </script>

@@ -234,6 +234,7 @@ modal_container:`<div class="modal">
 
 gform.columns = 12;
 gform.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-'+item+' column'})
+gform.offsetClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-offset-'+item+' column'})
 gform.prototype.opts.suffix = ""
 
 gform.handleError = function(field){

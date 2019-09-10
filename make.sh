@@ -20,5 +20,5 @@ cp bin/bootstrap/* docs/assets/js/
 sass src/scss/gform.scss > docs/assets/css/gform.css 
 minify docs/assets/css/gform.css > docs/assets/css/gform.min.css 
 
-node ~/Projects/charge/charge.js src/_docs/
-node ~/Projects/charge/charge.js src/_examples/
+node ../charge/charge.js src/_docs/
+node ../charge/charge.js src/_examples/

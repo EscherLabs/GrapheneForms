@@ -25,13 +25,6 @@ gform.processConditions = function(conditions, func) {
 	return true;
 };
 
-// gform._rules = function(rules){
-// return _.every(_.map(rules, function(rule, i){
-// 	return _.every(_.map(rule, function(args,name,rule) {
-// 		return gform.conditions[name](this.owner, this, args)
-// 	}.bind(this)));
-// }.bind(this)))
-// }
 gform._subscribeByName = function(conditions, callback){
 	for(var i in conditions) {
 		if(typeof conditions[i].name !== 'undefined'){
@@ -59,7 +52,6 @@ gform._rules = function(rules, op){
 		}
 	}.bind(this),(op == 'and'))
 }
-
 
 gform.conditions = {
 	requires: function(field, args) {

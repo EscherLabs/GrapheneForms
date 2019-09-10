@@ -35,7 +35,7 @@ var gform = function(data, el){
     
     //initalize form
     this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
-    this.options.fields = this.options.fields.concat(this.options.actions || [{type:'cancel'},{type:'save'}])
+    this.options.fields = this.options.fields.concat(this.options.actions)
     if (typeof this.options.data == 'string') {
         this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
     }
@@ -99,6 +99,7 @@ var gform = function(data, el){
         this.fields = _.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
 
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
+        this.reflow()
         // _.each(this.fields, function(field) {
         //     field.owner.trigger('change:' + field.name,field.owner, field);
         // })
@@ -402,12 +403,16 @@ gform.reflow = function(){
 gform.instances = {};
 //creates multiple instances of duplicatable fields if input attributes exist for them
 gform.inflate = function(atts, fieldIn, ind, list) {
-    var newList = list;    
+    var newList = list;
+    //commented this out because I am not sure what its purpose is 
+    // - may need it but it breaks if you have an array following two fields with the same name
     if(fieldIn.array){
-        newList = _.uniqBy(newList,'name');
+        // debugger;
+        // newList = _.uniqBy(newList,'name');
+        newList = _.filter(newList,function(item){return !item.index})
+
     }
     var field = _.findLast(newList, {name: newList[ind].name});
-    // var field = _.findLast(newList, {name: fieldIn.name});
 
     if(!field.array && field.fields){
         _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
@@ -452,7 +457,7 @@ gform.normalizeField = function(fieldIn,parent){
         parent: parent,
         array:false,
         columns: this.options.columns||gform.columns,
-        offset: 0,
+        offset: this.options.offset||gform.offset||0,
         ischild:!(parent instanceof gform)        
     }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
     //keep required separate
@@ -716,6 +721,7 @@ gform.ajax = function(options){
 gform.default ={}; 
 gform.options = {autoFocus:true};
 gform.prototype.opts = {
+    actions:[{type:'cancel'},{type:'save'}],
     clear:true,
     sections:'',
     suffix: ':',
@@ -775,7 +781,8 @@ gform.eventBus = function(options, owner){
             _.each(this.handlers[event], f);
             _.each(this.handlers['*'], f);
 		}.bind(this, a))
-		return a
+        return a;
+        
 	}.bind(this)
 	this.on = function (event, handler) {
 		var events = event.split(' ');
@@ -1142,4 +1149,4 @@ gform.getUID = function() {
 };
 gform.about = function(){
     return _.extend({version:gform.VERSION},gform.THEME,{types:_.keys(gform.types)})
-}
+};

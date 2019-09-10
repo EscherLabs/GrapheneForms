@@ -18,7 +18,7 @@ gform.types = {
           var tempEl = document.createElement("span");
           tempEl.setAttribute("id", this.id);
           if(this.owner.options.clear){
-            tempEl.setAttribute("class", ''+gform.columnClasses[this.columns]);
+            tempEl.setAttribute("class", gform.columnClasses[this.columns]+' '+gform.offsetClasses[this.offset]);
           }
           tempEl.innerHTML = this.render();
           return tempEl;
@@ -79,8 +79,10 @@ gform.types = {
         //     debugger;
         // }
         if(typeof item === 'object') {
-            _.extend(item,this);
+            _.extend(this, item);
+            this.item = _.extend(this.item, item);
         }
+        //should be able to remove the or and just use this.item.label
         this.label = gform.renderString((item||{}).label||this.item.label, this);
 
         // var oldDiv = document.getElementById(this.id);
@@ -276,6 +278,8 @@ gform.types = {
       create: function() {
           var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
           gform.addClass(tempEl,gform.columnClasses[this.columns])
+          gform.addClass(tempEl,gform.offsetClasses[this.offset])
+
           return tempEl;
       },
       initialize: function() {
@@ -413,7 +417,10 @@ gform.types = {
 };
 
 // remove the added classes
-gform.types['text']     = gform.types['password'] = gform.types['number'] = gform.types['color'] = gform.types['input'];
+gform.types['text'] = gform.types['password'] = gform.types['color'] = gform.types['input'];
+gform.types['number']= _.extend({}, gform.types['input'],{get:function(){
+    return parseInt(this.el.querySelector('input[name="' + this.name + '"]').value,10);
+}});
 gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false},toString: function(){return ''}});
 gform.types['output']   = _.extend({}, gform.types['input'], {
     toString: function(){return ''},

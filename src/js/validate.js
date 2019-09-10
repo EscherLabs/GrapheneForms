@@ -83,7 +83,10 @@ gform.regex = {
 };
 
 gform.validations = 
-{
+{	
+	none:function(value) {
+			return false;
+	},
 	required:function(value) {
 			return (this.satisfied(value) ? false : '{{label}} is required');
 	},
@@ -132,14 +135,14 @@ gform.validations =
 		return false
 	},
 	numeric: function(value, args) {
-			if(!(gform.regex.decimal.test(value) || value === '')){
-				return '{{label}} must contain only numbers';
-			}
-			if(typeof args.min == 'number' && parseFloat(value) < parseFloat(args.min)){
-				return '{{label}} must contain a number greater than {{args.min}}'
-			}
-			if(typeof args.max == 'number' && parseFloat(value) > parseFloat(args.max)){
-				return '{{label}} must contain a number less than {{args.max}}'
-			}
+		if(!(gform.regex.decimal.test(value) || value === '')){
+			return '{{label}} must contain only numbers';
+		}
+		if(typeof args.min == 'number' && parseFloat(value) < parseFloat(args.min)){
+			return '{{label}} must contain a number greater than {{args.min}}'
+		}
+		if(typeof args.max == 'number' && parseFloat(value) > parseFloat(args.max)){
+			return '{{label}} must contain a number less than {{args.max}}'
+		}
 	}
 };

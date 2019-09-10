@@ -35,7 +35,7 @@ var gform = function(data, el){
     
     //initalize form
     this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
-    this.options.fields = this.options.fields.concat(this.options.actions || [{type:'cancel'},{type:'save'}])
+    this.options.fields = this.options.fields.concat(this.options.actions)
     if (typeof this.options.data == 'string') {
         this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
     }
@@ -99,6 +99,7 @@ var gform = function(data, el){
         this.fields = _.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
 
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
+        this.reflow()
         // _.each(this.fields, function(field) {
         //     field.owner.trigger('change:' + field.name,field.owner, field);
         // })
@@ -402,12 +403,16 @@ gform.reflow = function(){
 gform.instances = {};
 //creates multiple instances of duplicatable fields if input attributes exist for them
 gform.inflate = function(atts, fieldIn, ind, list) {
-    var newList = list;    
+    var newList = list;
+    //commented this out because I am not sure what its purpose is 
+    // - may need it but it breaks if you have an array following two fields with the same name
     if(fieldIn.array){
-        newList = _.uniqBy(newList,'name');
+        // debugger;
+        // newList = _.uniqBy(newList,'name');
+        newList = _.filter(newList,function(item){return !item.index})
+
     }
     var field = _.findLast(newList, {name: newList[ind].name});
-    // var field = _.findLast(newList, {name: fieldIn.name});
 
     if(!field.array && field.fields){
         _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
@@ -452,7 +457,7 @@ gform.normalizeField = function(fieldIn,parent){
         parent: parent,
         array:false,
         columns: this.options.columns||gform.columns,
-        offset: 0,
+        offset: this.options.offset||gform.offset||0,
         ischild:!(parent instanceof gform)        
     }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
     //keep required separate
@@ -716,6 +721,7 @@ gform.ajax = function(options){
 gform.default ={}; 
 gform.options = {autoFocus:true};
 gform.prototype.opts = {
+    actions:[{type:'cancel'},{type:'save'}],
     clear:true,
     sections:'',
     suffix: ':',
@@ -775,7 +781,8 @@ gform.eventBus = function(options, owner){
             _.each(this.handlers[event], f);
             _.each(this.handlers['*'], f);
 		}.bind(this, a))
-		return a
+        return a;
+        
 	}.bind(this)
 	this.on = function (event, handler) {
 		var events = event.split(' ');
@@ -1142,7 +1149,7 @@ gform.getUID = function() {
 };
 gform.about = function(){
     return _.extend({version:gform.VERSION},gform.THEME,{types:_.keys(gform.types)})
-}gform.types = {
+};gform.types = {
   'input':{
       defaults:{},
       setup:function(){
@@ -1162,7 +1169,7 @@ gform.about = function(){
           var tempEl = document.createElement("span");
           tempEl.setAttribute("id", this.id);
           if(this.owner.options.clear){
-            tempEl.setAttribute("class", ''+gform.columnClasses[this.columns]);
+            tempEl.setAttribute("class", gform.columnClasses[this.columns]+' '+gform.offsetClasses[this.offset]);
           }
           tempEl.innerHTML = this.render();
           return tempEl;
@@ -1223,8 +1230,10 @@ gform.about = function(){
         //     debugger;
         // }
         if(typeof item === 'object') {
-            _.extend(item,this);
+            _.extend(this, item);
+            this.item = _.extend(this.item, item);
         }
+        //should be able to remove the or and just use this.item.label
         this.label = gform.renderString((item||{}).label||this.item.label, this);
 
         // var oldDiv = document.getElementById(this.id);
@@ -1420,6 +1429,8 @@ gform.about = function(){
       create: function() {
           var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
           gform.addClass(tempEl,gform.columnClasses[this.columns])
+          gform.addClass(tempEl,gform.offsetClasses[this.offset])
+
           return tempEl;
       },
       initialize: function() {
@@ -1557,7 +1568,10 @@ gform.about = function(){
 };
 
 // remove the added classes
-gform.types['text']     = gform.types['password'] = gform.types['number'] = gform.types['color'] = gform.types['input'];
+gform.types['text'] = gform.types['password'] = gform.types['color'] = gform.types['input'];
+gform.types['number']= _.extend({}, gform.types['input'],{get:function(){
+    return parseInt(this.el.querySelector('input[name="' + this.name + '"]').value,10);
+}});
 gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false},toString: function(){return ''}});
 gform.types['output']   = _.extend({}, gform.types['input'], {
     toString: function(){return ''},
@@ -1819,13 +1833,6 @@ gform.processConditions = function(conditions, func) {
 	return true;
 };
 
-// gform._rules = function(rules){
-// return _.every(_.map(rules, function(rule, i){
-// 	return _.every(_.map(rule, function(args,name,rule) {
-// 		return gform.conditions[name](this.owner, this, args)
-// 	}.bind(this)));
-// }.bind(this)))
-// }
 gform._subscribeByName = function(conditions, callback){
 	for(var i in conditions) {
 		if(typeof conditions[i].name !== 'undefined'){
@@ -1853,7 +1860,6 @@ gform._rules = function(rules, op){
 		}
 	}.bind(this),(op == 'and'))
 }
-
 
 gform.conditions = {
 	requires: function(field, args) {
@@ -1975,7 +1981,10 @@ gform.regex = {
 };
 
 gform.validations = 
-{
+{	
+	none:function(value) {
+			return false;
+	},
 	required:function(value) {
 			return (this.satisfied(value) ? false : '{{label}} is required');
 	},
@@ -2024,15 +2033,15 @@ gform.validations =
 		return false
 	},
 	numeric: function(value, args) {
-			if(!(gform.regex.decimal.test(value) || value === '')){
-				return '{{label}} must contain only numbers';
-			}
-			if(typeof args.min == 'number' && parseFloat(value) < parseFloat(args.min)){
-				return '{{label}} must contain a number greater than {{args.min}}'
-			}
-			if(typeof args.max == 'number' && parseFloat(value) > parseFloat(args.max)){
-				return '{{label}} must contain a number less than {{args.max}}'
-			}
+		if(!(gform.regex.decimal.test(value) || value === '')){
+			return '{{label}} must contain only numbers';
+		}
+		if(typeof args.min == 'number' && parseFloat(value) < parseFloat(args.min)){
+			return '{{label}} must contain a number greater than {{args.min}}'
+		}
+		if(typeof args.max == 'number' && parseFloat(value) > parseFloat(args.max)){
+			return '{{label}} must contain a number less than {{args.max}}'
+		}
 	}
 };gform.stencils = {
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
@@ -2122,15 +2131,31 @@ switch:`
 	{{#inline}}<div class="col-md-12" style="margin: -10px 0 5px;"">{{/inline}}
 	{{^inline}}<div class="col-md-8" style="margin: -5px 0 10px">{{/inline}}
 	{{/label}}
+
+	<span class="falseLabel">{{options.0.label}} </span>
 		<label class="switch">
 		<input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
 		<span class="slider round"></span>
 		</label>
-	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
+		<span class="trueLabel">{{options.1.label}}</span>
 		{{>_addons}}
 		{{>_actions}}
 	</div>
 </div>`,
+// switch: `
+// <div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+// {{>_label}}
+// <div class="col-md-12" style="margin:0 0 5px">
+// <label class="switch">
+// <input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+// <span class="slider round"></span>
+// </label>
+// </div>
+    
+//     {{>_error}}
+//     </div>
+//     {{>_actions}}
+// </div>`,
 hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
     textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
@@ -2213,7 +2238,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 		{{>_actions}}
 	</div>
 </div>`,
-    _fieldset: `<div class="row"><fieldset data-type="fieldset" style="margin-left: 15px;margin-right: -15px;" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
+    _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
 <div data-name="{{name}}" class="btn-group hidden-print actions">
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}"  class="fa gform-minus fa-minus text-danger"></i></div>
@@ -2259,20 +2284,6 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 		{{>_addons}}
 		{{>_actions}}
 	</div>
-</div>`,
-switch: `
-<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
-{{>_label}}
-<div class="col-md-12" style="margin:0 0 5px">
-<label class="switch">
-<input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
-<span class="slider round"></span>
-</label>
-</div>
-    
-    {{>_error}}
-    </div>
-    {{>_actions}}
 </div>`,
 scale:`
 <div class="row clearfix form-group {{modifiers}} {{#multiple.duplicate}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/multiple.duplicate}}" name="{{name}}" data-type="{{type}}">
@@ -2364,6 +2375,7 @@ modal_fieldset:`{{>_fieldset}}`
 gform.columns = 12;
 
 gform.columnClasses = _.map(new Array(13),function(item, i){return 'col-xs-'+i})
+gform.offsetClasses = _.map(new Array(13),function(item, i){return 'col-xs-offset-'+i})
 gform.default.inline = true;
 gform.default.columns = 12;
 

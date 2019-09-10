@@ -10964,7 +10964,7 @@
 83709 verbose unlock done using /Users/adamsmallcomb/.npm/_locks/bower-68a46fce37febda8.lock for /Users/adamsmallcomb/.node/lib/node_modules/bower
 83710 verbose stack Error: EACCES: permission denied, unlink '/Users/adamsmallcomb/.node/lib/node_modules/n/bin'
 83710 verbose stack     at Error (native)
-83711 verbose cwd /Library/WebServer/Documents/Graphene-Forms
+83711 verbose cwd /Library/WebServer/Documents/GrapheneForms
 83712 error Darwin 15.3.0
 83713 error argv "/usr/local/Cellar/node/6.3.1/bin/node" "/Users/adamsmallcomb/.node/bin/npm" "update" "-g"
 83714 error node v6.3.1

@@ -86,15 +86,31 @@ switch:`
 	{{#inline}}<div class="col-md-12" style="margin: -10px 0 5px;"">{{/inline}}
 	{{^inline}}<div class="col-md-8" style="margin: -5px 0 10px">{{/inline}}
 	{{/label}}
+
+	<span class="falseLabel">{{options.0.label}} </span>
 		<label class="switch">
 		<input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
 		<span class="slider round"></span>
 		</label>
-	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
+		<span class="trueLabel">{{options.1.label}}</span>
 		{{>_addons}}
 		{{>_actions}}
 	</div>
 </div>`,
+// switch: `
+// <div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+// {{>_label}}
+// <div class="col-md-12" style="margin:0 0 5px">
+// <label class="switch">
+// <input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+// <span class="slider round"></span>
+// </label>
+// </div>
+    
+//     {{>_error}}
+//     </div>
+//     {{>_actions}}
+// </div>`,
 hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
     textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
@@ -177,7 +193,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 		{{>_actions}}
 	</div>
 </div>`,
-    _fieldset: `<div class="row"><fieldset data-type="fieldset" style="margin-left: 15px;margin-right: -15px;" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
+    _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
 <div data-name="{{name}}" class="btn-group hidden-print actions">
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}"  class="fa gform-minus fa-minus text-danger"></i></div>
@@ -223,20 +239,6 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 		{{>_addons}}
 		{{>_actions}}
 	</div>
-</div>`,
-switch: `
-<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
-{{>_label}}
-<div class="col-md-12" style="margin:0 0 5px">
-<label class="switch">
-<input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
-<span class="slider round"></span>
-</label>
-</div>
-    
-    {{>_error}}
-    </div>
-    {{>_actions}}
 </div>`,
 scale:`
 <div class="row clearfix form-group {{modifiers}} {{#multiple.duplicate}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/multiple.duplicate}}" name="{{name}}" data-type="{{type}}">
@@ -328,6 +330,7 @@ modal_fieldset:`{{>_fieldset}}`
 gform.columns = 12;
 
 gform.columnClasses = _.map(new Array(13),function(item, i){return 'col-xs-'+i})
+gform.offsetClasses = _.map(new Array(13),function(item, i){return 'col-xs-offset-'+i})
 gform.default.inline = true;
 gform.default.columns = 12;
 
