@@ -407,6 +407,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         newList = _.uniqBy(newList,'name');
     }
     var field = _.findLast(newList, {name: newList[ind].name});
+    // var field = _.findLast(newList, {name: fieldIn.name});
 
     if(!field.array && field.fields){
         _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
@@ -1138,7 +1139,10 @@ gform.VERSION = '0.0.0.9';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
-};gform.types = {
+};
+gform.about = function(){
+    return _.extend({version:gform.VERSION},gform.THEME,{types:_.keys(gform.types)})
+}gform.types = {
   'input':{
       defaults:{},
       setup:function(){
@@ -2452,7 +2456,7 @@ gform.types['combo'] = _.extend({}, gform.types['input'], gform.types['collectio
 
 gform.types['color'] = _.extend({}, gform.types['input'], {
 	defaults: {
-		pre: '<i style="display: block;width:20px;height:20px;margin: 0 -5px;"></i>' ,
+		pre: '<i style="display: block;width:20px;height:20px;margin: 0 -5px;background-color:{{value}}"></i>' ,
 		elType: 'text',
 		value:"#000000"
 	},
@@ -2479,7 +2483,6 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-envelope"></i>', validate: [{ type:'valid_email' }]}});
 gform.types['url'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-link"></i>', validate: [{ type:'valid_url' }]}});
 gform.types['tel'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-phone"></i>', placeholder: '+1'}});
-gform.types['number'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-number"></i>', placeholder: '+1'}});
 gform.types['password'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-lock"></i>'}});
 gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section'], {
     defaults:{fields:[

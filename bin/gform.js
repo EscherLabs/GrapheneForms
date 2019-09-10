@@ -407,6 +407,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         newList = _.uniqBy(newList,'name');
     }
     var field = _.findLast(newList, {name: newList[ind].name});
+    // var field = _.findLast(newList, {name: fieldIn.name});
 
     if(!field.array && field.fields){
         _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
@@ -1138,7 +1139,10 @@ gform.VERSION = '0.0.0.9';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
-};gform.types = {
+};
+gform.about = function(){
+    return _.extend({version:gform.VERSION},gform.THEME,{types:_.keys(gform.types)})
+}gform.types = {
   'input':{
       defaults:{},
       setup:function(){

@@ -1,7 +1,45 @@
+// var conditions = {label:'Condition{{#index}} ({{index}}){{/index}}', type: 'fieldset', value:{op:"and"}, array: true, fields: [
+// 				{label: false,name:'op',type:"radio",options:['or','and']},
+// 				{label:"Type",options:['matches','not_matches','contains','requires','conditions']},
+//                 {label: 'Name'},
+//                 { label: 'Value{{#index}}({{index}}){{/index}}',columns:6, array: {min:1}},
+// 				{name:'conditions',type:'fieldset',array:true,fields:conditions}
+//               ]}
+
+// var conditions=[];
+			  myconditions=
+// [
+[
+				{label: false,name:'op',type:"radio",options:['or','and']},
+				{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
+                {label: 'Name',name:"name"},
+                { label: 'Value{{#index}}({{index}}){{/index}}',name:"value",columns:6, array: {min:1}},
+				{name:'conditions',type:'fieldset',array:true,show:[{type:'matches',name:"type",value:"conditions"}],fields:[
+				{label: false,name:'op',type:"radio",options:['or','and']},
+				{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
+                {label: 'Name',name:"name"},
+                // { label: 'Value{{#index}}({{index}}){{/index}}',name:"value",columns:6, array: {min:1}},
+				// {name:'conditions',type:'fieldset',array:true,fields:conditions}
+              ]}
+              ]
+//     {
+//         "op":"and",
+//         "type": "matches", //not_matches, contains, requires,conditions
+//         "name": "text",
+//         "value": [
+//             ""
+//         ],
+//         conditions:[
+
+//         ]
+//     }
+
+// ]
+
 gformEditor = function(container){
 	return function(){
 		var formConfig = {
-			sections: 'tab',
+			// sections: 'tab',
 			data: this.get(),
 			fields: this.fields,
 			autoDestroy: true,
@@ -41,9 +79,9 @@ Cobler.types.textbox = function(container) {
 	return gform.render(item.type, get());
 	}
 	function get() {
-		// debugger;
 		item.widgetType = 'textbox';
 		item.editable = true;
+		item.type = item.type || 'text';
 		return _.extend({},gform.prototype.opts,gform.types[item.type].defaults||{},item);
 	}
 	function toJSON() {
@@ -74,24 +112,32 @@ Cobler.types.textbox = function(container) {
 			{label: 'Output', value: 'output'},
 			{label: 'Hidden', value: 'hidden'}
 		]},
-
-		{type: 'number', label: 'Limit Length', name: 'limit',min:1},
-		{type: 'select', label: 'Width',value:12, name: 'columns',min:1,max:12,format:{label:"{{value}} Column(s)"} },
-		{type: 'switch', label: 'Allow duplication', name: 'array', columns:6},
-		{type: 'number', label: 'Minimum', name: 'min',value:1,columns:3,show:[{name:"array",value:true,type:"matches"}]},
-		{type: 'number', label: 'Maximum', name: 'max',columns:3,show:[{name:"array",value:true,type:"matches"}]},
-
-		// array: {min: 2, max: 4}
-		{type: 'text', label: 'Placeholder', name: 'placeholder',columns:6},
+		{type: 'text', label: 'Placeholder', name: 'placeholder'},
 		{type: 'text', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:['color','number'],type:"not_matches"}]},
 		{type: 'color', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:'color',type:"matches"}]},
 		// {type: 'date', label: 'Default value', name: 'value',columns:6,show:[{name:"type",value:'date',type:"matches"}]},
 		{type: 'number', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:'number',type:"matches"}]},
-
-		{type: 'textarea', label: 'Instructions', name: 'help'},
-		{type: 'checkbox', label: 'Required', name: 'required'},
-		{type: 'checkbox', label: 'Edit', name: 'edit'}
 		
+		{type: 'number', label: 'Limit Length', name: 'limit',min:1},
+		{type: 'select', label: 'Width',value:12, name: 'columns',min:1,max:12,format:{label:"{{value}} Column(s)"} },
+		{type: 'switch', label: 'Allow duplication', name: 'array', columns:6,show:[{name:"type",value:['output'],type:"not_matches"}]},
+		{type: 'number', label: 'Minimum', name: 'min',value:1,columns:3,show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}]},
+		{type: 'number', label: 'Maximum', name: 'max',columns:3,show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}]},
+
+
+		{type: 'textarea', label: 'Instructions', name: 'help',show:[{name:"type",value:['output'],type:"not_matches"}]},
+		// {type: 'checkbox', label: 'Required', name: 'required',show:[{name:"type",value:['output'],type:"not_matches"}]},
+		// {type: 'checkbox', label: 'Edit', name: 'edit',show:[{name:"type",value:['output'],type:"not_matches"}]},
+		    //      {label:'Show{{#index}} ({{index}}){{/index}}', type: 'fieldset', value:{flavor:"orange"}, array: true, fields: [
+            //     {label: 'Flavor'},
+            //     // { label: 'Color ({{^index}}0{{/index}}{{index}})', type:'text',columns:6, array: {min:2,max:3}}
+            //     { label: 'Color{{#index}} ({{index}}){{/index}}',columns:6, array: {min:2,max:7}}
+            //   ]}
+		{type: 'fieldset', label:"Show",name:"show",fields:myconditions,array:true},
+		{type: 'fieldset', label:"Edit",name:"parse",fields:myconditions,array:true},
+		{type: 'fieldset', label:"Parse",name:"parse",fields:myconditions,array:true},
+		{type: 'fieldset', label:"Required",name:"required",fields:myconditions,array:true}
+
 		// show
 		// edit
 		// parse
