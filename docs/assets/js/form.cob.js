@@ -35,7 +35,8 @@ gformEditor = function(container){
 		for(var i in gform.instances){
 			gform.instances[i].destroy();
 		}
-		
+		var temp = _.find(formConfig.fields,{name:"name"});
+		temp.placeholder =  formConfig.data['label'].toLowerCase().split(' ').join('_');
 		var mygform = new gform(formConfig, $(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
 		mygform.on('change:label',function(e){
 			// debugger;
@@ -106,11 +107,14 @@ Cobler.types.textbox = function(container) {
 		{type: 'textarea',columns:12, label: 'Instructions', name: 'help',show:[{name:"type",value:['output'],type:"not_matches"}]},
 		{type: 'number', label: 'Limit Length', name: 'limit',min:1},
 		{type: 'select', label: 'Width',value:12, name: 'columns',min:1,max:12,format:{label:"{{value}} Column(s)"} },
-		{type: 'switch', label: 'Allow duplication', name: 'array', columns:6,show:[{name:"type",value:['output'],type:"not_matches"}]},
+		{type: 'switch', label: 'Allow duplication', name: 'array', show:[{name:"type",value:['output'],type:"not_matches"}]},
 		
-		{type: 'number', label: 'Minimum', name: 'min',value:1,columns:3,show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}]},
-		{type: 'number', label: 'Maximum', name: 'max',columns:3,show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}]},
+		{type: 'fieldset', label:false,name:"array",show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}],fields:[
+			{type: 'number', label: 'Minimum', name: 'min',value:1},
+			{type: 'number', label: 'Maximum', name: 'max'},
+		]},
 
+		
 
 		{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Show{{/index}}",name:"show",fields:myconditions,array:true},
 		{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Edit{{/index}}",name:"edit",fields:myconditions,array:true},
@@ -122,9 +126,7 @@ Cobler.types.textbox = function(container) {
 			{type: 'number', label: 'Minimum', name: 'min',value:1,columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
 			{type: 'number', label: 'Maximum', name: 'max',columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
 			{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Conditions{{/index}}",name:"conditions",fields:myconditions,array:true},
-
 		],array:true}
-
 		// validate	
 	]
 	return {
