@@ -1,7 +1,7 @@
 var gform = function(data, el){
     "use strict";
     //event management
-    // this.handlers = data.events||{};
+
     this.methods = data.methods||{};
 
     this.eventBus = new gform.eventBus({owner:'form',item:'field',handlers:data.events||{}}, this)
@@ -144,7 +144,7 @@ var gform = function(data, el){
     this.destroy = function() {
         this.isActive = false;
 		this.trigger(['close','destroy']);
-
+        this.el.removeEventListener('click',this.listener)
 		//pub the destroy methods for each field
 		// _.each(function() {if(typeof this.destroy === 'function') {this.destroy();}});
 		//Clean up affected containers
@@ -183,84 +183,96 @@ var gform = function(data, el){
 
 
 
-
-
-     this.el.addEventListener('click', function(e){
-         var field;
-         if(e.target.dataset.id){
-            field = gform.findByID.call(this,e.target.dataset.id)
-         }
-        if(e.target.classList.contains('gform-add')){
-            e.stopPropagation();
-            var fieldCount =  _.countBy(field.parent.fields, {name: field.name}).true;
-
-            if(field.editable && fieldCount < (field.array.max || 5)){
-                var index = _.findIndex(field.parent.fields, {id: field.id});
-                var atts = {};
-                atts[field.name] = [field.item.value || null];
-                var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null,fieldCount);
-                field.parent.fields.splice(index+1, 0, newField)
-                field.parent.reflow();
-                _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){
-                    // item.update({index:index})
-                    item.index = index;
-                    // item.label = gform.renderString(item.item.label, item);
-                    // item.el.querySelector('label').innerHTML = item.label
-                    gform.types[item.type].setLabel.call(item)
-
-                })
-
-                gform.each.call(field.owner, function(field) {
-                    field.owner.trigger('change:' + field.name, field);
-                })
-
-                gform.types[newField.type].focus.call(newField);
-                field.owner.trigger(['change', 'change:'+field.name,'create', 'create:'+field.name,'inserted','inserted:'+field.name],field)
-                fieldCount++;
-            }
-
-            var testFunc = function(status, button){
-                gform.toggleClass(button,'hidden', status)
-            }
-            _.each(field.parent.el.querySelectorAll('[data-name="'+field.name+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
-
-            _.each(field.parent.el.querySelectorAll('[data-name="'+field.name+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
-
+    this.listener = function(e){
+        var field;
+        if(e.target.dataset.id){
+           field = gform.findByID.call(this,e.target.dataset.id)
         }
-        if(e.target.classList.contains('gform-minus')){
-            e.stopPropagation();
-            var fieldCount =  _.countBy(field.parent.fields, {name: field.name}).true;
-            if(field.editable && fieldCount > (field.array.min || 1)) {
-                var index = _.findIndex(field.parent.fields,{id:field.id});
-                field.parent.fields.splice(index, 1);
-                field.parent.reflow();
-                if(!field.target) {
-                    _.each(_.filter(field.parent.fields, {name: field.name}),function(item,index){
-                        // item.update({index:index})
-                        item.index = index;
-    
-                        // item.label = gform.renderString(item.item.label, item);
-                        // item.el.querySelector('label').innerHTML = item.label
-                        gform.types[item.type].setLabel.call(item)
+       if(e.target.classList.contains('gform-add')){
+           e.stopPropagation();
+           // var fieldCount =  _.countBy(field.parent.fields, {name: field.name,array: true}).true;
+           debugger;
+           var fieldCount = _.filter(field.parent.fields, 
+               function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
+           ).length
 
-                    })
-                }else{
-                    this.container.querySelector( field.target ).removeChild(field.el);
-                }
-                field.owner.trigger(['change', 'change:'+field.name,'removed','removed:'+field.name],field)
-                fieldCount--;
-            }else{
-                if(field.editable)field.set(null);
-            }           
+           if(field.editable && fieldCount < (field.array.max || 5)){
+               var index = _.findIndex(field.parent.fields, {id: field.id});
+               var atts = {};
+               atts[field.name] = [field.item.value || null];
+               var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null,fieldCount);
+               field.parent.fields.splice(index+1, 0, newField)
+               field.parent.reflow();
+               _.each(_.filter(field.parent.fields, 
+                   function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
+               ),function(item,index){
+                   // item.update({index:index})
+                   item.index = index;
+                   // item.label = gform.renderString(item.item.label, item);
+                   // item.el.querySelector('label').innerHTML = item.label
+                   gform.types[item.type].setLabel.call(item)
 
-            var testFunc = function(status, button){
-                gform.toggleClass(button,'hidden', status)
-            }
-            _.each(field.parent.el.querySelectorAll('[data-name="'+field.name+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
+               })
 
-            _.each(field.parent.el.querySelectorAll('[data-name="'+field.name+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
-        }
-    }.bind(this))
+               gform.each.call(field.owner, function(field) {
+                   field.owner.trigger('change:' + field.name, field);
+               })
+
+               gform.types[newField.type].focus.call(newField);
+               field.owner.trigger(['change', 'change:'+field.name,'create', 'create:'+field.name,'inserted','inserted:'+field.name],field)
+               fieldCount++;
+           }
+
+           var testFunc = function(status, button){
+               gform.toggleClass(button,'hidden', status)
+           }
+           _.each(field.parent.el.querySelectorAll('[data-name="'+field.name+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
+
+           _.each(field.parent.el.querySelectorAll('[data-name="'+field.name+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
+
+       }
+       if(e.target.classList.contains('gform-minus')){
+           e.stopPropagation();
+           debugger;
+           // var fieldCount =  _.countBy(field.parent.fields, {name: field.name,array: true}).true;
+           var fieldCount =  _.filter(field.parent.fields, 
+               function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
+           ).length;
+           if(field.editable && fieldCount > (field.array.min || 1)) {
+               var index = _.findIndex(field.parent.fields,{id:field.id});
+               field.parent.fields.splice(index, 1);
+               field.parent.reflow();
+               if(!field.target) {
+                   _.each(_.filter(field.parent.fields, 
+                       function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
+                   ),function(item,index){
+                       // item.update({index:index})
+                       item.index = index;
+   
+                       // item.label = gform.renderString(item.item.label, item);
+                       // item.el.querySelector('label').innerHTML = item.label
+                       gform.types[item.type].setLabel.call(item)
+
+                   })
+               }else{
+                   this.container.querySelector( field.target ).removeChild(field.el);
+               }
+               field.owner.trigger(['change', 'change:'+field.name,'removed','removed:'+field.name],field)
+               fieldCount--;
+           }else{
+               if(field.editable)field.set(null);
+           }           
+
+           var testFunc = function(status, button){
+               gform.toggleClass(button,'hidden', status)
+           }
+           _.each(field.parent.el.querySelectorAll('[data-name="'+field.name+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
+
+           _.each(field.parent.el.querySelectorAll('[data-name="'+field.name+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
+       }
+   }.bind(this)
+
+    this.el.addEventListener('click', this.listener)
     return this;
                   
 }
@@ -331,6 +343,10 @@ gform.toJSON = function(name) {
         if(field.parsable){
             if(field.array){
                 obj[field.name] = obj[field.name] || [];
+                if(!Array.isArray(obj[field.name])){
+                    obj[field.name] = [];
+                }
+                
                 obj[field.name].push(field.get());
             }else{
                 obj[field.name] = field.get();
@@ -410,12 +426,12 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         // debugger;
         // newList = _.uniqBy(newList,'name');
         newList = _.filter(newList,function(item){return !item.index})
-
     }
     var field = _.findLast(newList, {name: newList[ind].name});
 
     if(!field.array && field.fields){
         _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
+        field.reflow()
     }
     if(field.array) {
         var fieldCount = field.array.min||0;
@@ -426,7 +442,11 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         if((typeof atts[field.name] == 'object' && atts[field.name].length > 1)){
             if(atts[field.name].length> fieldCount){fieldCount = atts[field.name].length}
         }
-        for(var i = 1; i<fieldCount; i++) {
+        var initialCount = _.filter(field.parent.fields, 
+            function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
+        ).length
+        
+        for(var i = initialCount; i<fieldCount; i++) {
             var newfield = gform.createField.call(this, field.parent, atts, field.el, i, field.item, null, null,i);
             field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
             field = newfield;
@@ -480,6 +500,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         if(field.array && typeof (atts[field.name] || field.owner.options.data[field.name]) == 'object'){
             field.value =  (atts[field.name] || field.owner.options.data[field.name])[index||0] || {};
         }else{
+            debugger;
             field.value =  atts[field.name] || field.owner.options.data[field.name] || field.value;
         }
     }else{
@@ -995,7 +1016,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
                     }
                 }
                 if(option.value == value || (/*this.multiple && */typeof value !=='undefined' && value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
-                
+
                 count+=1;
                 option.i = count;
                 return option;
@@ -1296,12 +1317,25 @@ gform.about = function(){
         }
         this.options = this.mapOptions.getobject()
 
-          this.selected = (this.value == this.options[1].value);
+        //   this.selected = (this.value == this.options[1].value);
           return gform.render(this.type, this);
       },
+      initialize: function(){
+          this.onchangeEvent = function(input){
+              this.value = this.get();
+              (_.find(this.options,{selected:true})||{selected:null}).selected = false;
+              (_.find(this.options,{value:this.value})||this.options[0]||{value:""}).selected = true;
+              gform.types[this.type].setup.call(this);
+
+              this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+          }.bind(this)
+          this.input = this.input || false;
+          this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+          this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
+      },
       set: function(value) {
-          this.selected = (value == this.options[1].value);
-          this.el.querySelector('input[name="' + this.name + '"]').checked = this.selected;
+        //   this.selected = (value == this.options[1].value);
+          this.el.querySelector('input[name="' + this.name + '"]').checked = (value == this.options[1].value);
       },
       get: function() {
           return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0].value
@@ -1373,6 +1407,10 @@ gform.about = function(){
           this.el.addEventListener('change', function(){
               this.input = true;
               this.value =  this.get();
+
+              (_.find(this.options,{selected:true})||{selected:null}).selected = false;
+              (_.find(this.options,{value:this.value})||{selected:null}).selected = true;
+
               if(this.el.querySelector('.count') != null){
                 var text = this.value.length;
                 if(this.limit){text+='/'+this.limit;}
@@ -1389,14 +1427,15 @@ gform.about = function(){
       },
       get: function() {
           var value = this.el.querySelector('select').value;
+          value = _.find(this.options,{index:value}).value
           if(this.multiple){
-            value = _.transform(this.el.querySelector('select').options,function(orig,opt){if(opt.selected){orig.push(opt.value)}},[])
+            value = _.transform(this.el.querySelector('select').options,function(orig,opt){if(opt.selected){orig.push(_.find(this.options,{index:opt.value}).value)}},[])
           }
         //   this.option = _.find()
           return value;
       },
       set: function(value) {
-          this.el.querySelector('select').value = value;
+        this.el.querySelector('select').value = _.find(this.options,{index:value}).value;
         //   _.each(this.options.options, function(option, index){
         //       if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
         //   }.bind(this))
@@ -1934,10 +1973,10 @@ gform.validateItem = function(force,item){
 		
 	}
 	if(item.parsable){
-			//validate sub fields
-			if(typeof item.fields !== 'undefined'){
-				_.each(item.fields, gform.validateItem.bind(null,force))
-			}
+		//validate sub fields
+		if(typeof item.fields !== 'undefined'){
+			_.each(item.fields, gform.validateItem.bind(null,force))
+		}
 	}
 	if(item.errors) {
 		item.owner.trigger('invalid:'+item.name, {errors:item.errors});
@@ -1990,7 +2029,13 @@ gform.validations =
 	},
 	pattern: function(value, args) {
 		var r = args.regex;
-		if(typeof r == 'string'){r = gform.regex[r]}
+		if(typeof r == 'string'){
+			if(typeof gform.regex[r] !== 'undefined'){
+				r = gform.regex[r]
+			}else{
+				r = new RegExp(jsonObject.regex, 'i');
+			}
+		}
 		return r.pattern(value) || value === '' ? false : args.message;
 	},
 	custom: function(value, args) {
@@ -2134,7 +2179,7 @@ switch:`
 
 	<span class="falseLabel">{{options.0.label}} </span>
 		<label class="switch">
-		<input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+		<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}} value="{{value}}" id="{{name}}" />
 		<span class="slider round"></span>
 		</label>
 		<span class="trueLabel">{{options.1.label}}</span>
@@ -2166,7 +2211,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{^label}}
 	<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>
 	{{/label}}
-		<textarea class="form-control"  {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} style="width:100%;height:auto;min-height:20px" rows="{{rows}}{{^rows}}3{{/rows}}" name="{{name}}" id="{{guid}}" placeholder="{{placeholder}}">{{content}}{{value}}</textarea>
+		<textarea class="form-control"  {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} style="width:100%;height:auto;min-height:20px" rows="{{size}}{{^size}}3{{/size}}" name="{{name}}" id="{{guid}}" placeholder="{{placeholder}}">{{content}}{{value}}</textarea>
 		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
 		{{>_addons}}
 			{{>_actions}}
@@ -2188,14 +2233,14 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 			<select class="form-control test" {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
 			{{#options}}
 			{{^optgroup}}
-			<option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}} value="{{value}}">{{{label}}}</option>
+			<option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}} value="{{index}}">{{{label}}}</option>
 			{{/optgroup}}
 			{{#optgroup}}
 			{{#optgroup.label}}
 			<optgroup label="{{label}}" data-id="{{optgroup.id}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}">
 			{{/optgroup.label}}
 					{{#options}}
-					<option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+					<option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{index}}">{{{label}}}</option>
 					{{/options}}
 					{{#optgroup.label}}
 			</optgroup>
@@ -2224,12 +2269,12 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 			{{#options}}
 			{{#multiple}}
 			<div class="checkbox">
-					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/> {{label}}</label>
+					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{index}}"/> {{label}}</label>
 			</div>
 			{{/multiple}}
 			{{^multiple}}
 			<div class="radio">
-					<label {{#inline}}class="radio-inline"{{/inline}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
+					<label {{#inline}}class="radio-inline"{{/inline}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{index}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
 			</div>
 			{{/multiple}}
 			{{/options}}
@@ -2277,7 +2322,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/label}}
 		<div class="checkbox">
 			<label class="{{alt-display}}">
-				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#value}}checked=checked{{/value}}>{{#details}}<span class="noselect">{{{details}}}</span>{{/details}}&nbsp;
+				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{#details}}<span class="noselect">{{{details}}}</span>{{/details}}&nbsp;
 			</label>
 		</div>
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
@@ -2311,7 +2356,7 @@ scale:`
 					{{#format.low}}<td><label style="font-weight: 500;" for="{{name}}_1">{{{format.low}}}</label></td>{{/format.low}}
 					{{#options}}
 					<td>
-						<input data-label="{{label}}" id="{{name}}_{{i}}" name="{{id}}" value="{{value}}" {{^editable}}readonly disabled{{/editable}} type="radio" {{#selected}}checked=checked{{/selected}} >
+						<input data-label="{{label}}" id="{{name}}_{{i}}" name="{{id}}" value="{{index}}" {{^editable}}readonly disabled{{/editable}} type="radio" {{#selected}}checked=checked{{/selected}} >
 					</td>
 					{{/options}}
 					{{#format.high}}<td><label style="font-weight: 500;" for="{{name}}_{{options.length}}">{{{format.high}}}</label></td>{{/format.high}}

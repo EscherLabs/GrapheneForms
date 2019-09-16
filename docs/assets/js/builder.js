@@ -2,8 +2,7 @@ $('#cobler').on('click', function(e) {
   $(e.target).siblings().removeClass('active');
   $(e.target).addClass('active');
   $('.view, #form').addClass('hidden');
-  $('.view_result, .view_source, #editor').removeClass('hidden');
-
+  $('.view_source').removeClass('hidden');
 
     if(typeof cb === 'undefined'){
 
@@ -37,9 +36,13 @@ $('#cobler').on('click', function(e) {
         switch(temp.fields[i].type) {
           case "select":
           case "radio":
+          case "scale":
+          case "range":
+          case "grid":
             temp.fields[i].widgetType = 'select';
             break;
           case "checkbox":
+          case "switch":
             temp.fields[i].widgetType = 'checkbox';
             break;
           default:

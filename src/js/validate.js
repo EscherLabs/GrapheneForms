@@ -36,10 +36,10 @@ gform.validateItem = function(force,item){
 		
 	}
 	if(item.parsable){
-			//validate sub fields
-			if(typeof item.fields !== 'undefined'){
-				_.each(item.fields, gform.validateItem.bind(null,force))
-			}
+		//validate sub fields
+		if(typeof item.fields !== 'undefined'){
+			_.each(item.fields, gform.validateItem.bind(null,force))
+		}
 	}
 	if(item.errors) {
 		item.owner.trigger('invalid:'+item.name, {errors:item.errors});
@@ -92,7 +92,13 @@ gform.validations =
 	},
 	pattern: function(value, args) {
 		var r = args.regex;
-		if(typeof r == 'string'){r = gform.regex[r]}
+		if(typeof r == 'string'){
+			if(typeof gform.regex[r] !== 'undefined'){
+				r = gform.regex[r]
+			}else{
+				r = new RegExp(jsonObject.regex, 'i');
+			}
+		}
 		return r.pattern(value) || value === '' ? false : args.message;
 	},
 	custom: function(value, args) {

@@ -145,12 +145,25 @@ gform.types = {
         }
         this.options = this.mapOptions.getobject()
 
-          this.selected = (this.value == this.options[1].value);
+        //   this.selected = (this.value == this.options[1].value);
           return gform.render(this.type, this);
       },
+      initialize: function(){
+          this.onchangeEvent = function(input){
+              this.value = this.get();
+              (_.find(this.options,{selected:true})||{selected:null}).selected = false;
+              (_.find(this.options,{value:this.value})||this.options[0]||{value:""}).selected = true;
+              gform.types[this.type].setup.call(this);
+
+              this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+          }.bind(this)
+          this.input = this.input || false;
+          this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+          this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
+      },
       set: function(value) {
-          this.selected = (value == this.options[1].value);
-          this.el.querySelector('input[name="' + this.name + '"]').checked = this.selected;
+        //   this.selected = (value == this.options[1].value);
+          this.el.querySelector('input[name="' + this.name + '"]').checked = (value == this.options[1].value);
       },
       get: function() {
           return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0].value
@@ -222,6 +235,10 @@ gform.types = {
           this.el.addEventListener('change', function(){
               this.input = true;
               this.value =  this.get();
+
+              (_.find(this.options,{selected:true})||{selected:null}).selected = false;
+              (_.find(this.options,{value:this.value})||{selected:null}).selected = true;
+
               if(this.el.querySelector('.count') != null){
                 var text = this.value.length;
                 if(this.limit){text+='/'+this.limit;}
@@ -238,14 +255,15 @@ gform.types = {
       },
       get: function() {
           var value = this.el.querySelector('select').value;
+          value = _.find(this.options,{index:value}).value
           if(this.multiple){
-            value = _.transform(this.el.querySelector('select').options,function(orig,opt){if(opt.selected){orig.push(opt.value)}},[])
+            value = _.transform(this.el.querySelector('select').options,function(orig,opt){if(opt.selected){orig.push(_.find(this.options,{index:opt.value}).value)}},[])
           }
         //   this.option = _.find()
           return value;
       },
       set: function(value) {
-          this.el.querySelector('select').value = value;
+        this.el.querySelector('select').value = _.find(this.options,{index:value}).value;
         //   _.each(this.options.options, function(option, index){
         //       if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
         //   }.bind(this))

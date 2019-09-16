@@ -27,7 +27,7 @@ output: `
 switch: `
 {{>_label}}
 <label class="switch">
-<input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}} value="{{value}}" id="{{name}}" />
 <span class="slider round"></span>
 </label>
     
@@ -37,7 +37,7 @@ switch: `
 `,  
 checkbox: `
     {{>_label}}
-    <input name="{{name}}" type="{{type}}" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+    <input name="{{name}}" type="{{type}}" {{#options.1.selected}} checked {{/options.1.selected}} value="{{value}}" id="{{name}}" />
     <label class="label-inline" for="{{name}}"><span class="falseLabel">{{options.0.label}}</span><span class="trueLabel">{{options.1.label}}</span></label>
     {{>_error}}
     </div>
@@ -49,7 +49,7 @@ textarea: `
 <div class="column">
     {{>_label}}
     {{#limit}}<small class="column count" style="text-align:right">0/{{limit}}</small>{{/limit}}
-    <textarea{{#limit}} maxlength="{{limit}}"{{/limit}} placeholder="{{placeholder}}" name="{{name}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
+    <textarea{{#limit}} maxlength="{{limit}}"{{/limit}} placeholder="{{placeholder}}" name="{{name}}" rows="{{rows}}{{^rows}}3{{/rows}}" type="{{type}}" id="{{id}}" />{{value}}</textarea>
     {{>_error}}
     </div>
     {{>_actions}}   

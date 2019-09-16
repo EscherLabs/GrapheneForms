@@ -89,7 +89,7 @@ switch:`
 
 	<span class="falseLabel">{{options.0.label}} </span>
 		<label class="switch">
-		<input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+		<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}} value="{{value}}" id="{{name}}" />
 		<span class="slider round"></span>
 		</label>
 		<span class="trueLabel">{{options.1.label}}</span>
@@ -121,7 +121,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{^label}}
 	<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>
 	{{/label}}
-		<textarea class="form-control"  {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} style="width:100%;height:auto;min-height:20px" rows="{{rows}}{{^rows}}3{{/rows}}" name="{{name}}" id="{{guid}}" placeholder="{{placeholder}}">{{content}}{{value}}</textarea>
+		<textarea class="form-control"  {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} style="width:100%;height:auto;min-height:20px" rows="{{size}}{{^size}}3{{/size}}" name="{{name}}" id="{{guid}}" placeholder="{{placeholder}}">{{content}}{{value}}</textarea>
 		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
 		{{>_addons}}
 			{{>_actions}}
@@ -143,14 +143,14 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 			<select class="form-control test" {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
 			{{#options}}
 			{{^optgroup}}
-			<option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}} value="{{value}}">{{{label}}}</option>
+			<option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}} value="{{index}}">{{{label}}}</option>
 			{{/optgroup}}
 			{{#optgroup}}
 			{{#optgroup.label}}
 			<optgroup label="{{label}}" data-id="{{optgroup.id}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}">
 			{{/optgroup.label}}
 					{{#options}}
-					<option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+					<option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{index}}">{{{label}}}</option>
 					{{/options}}
 					{{#optgroup.label}}
 			</optgroup>
@@ -179,12 +179,12 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 			{{#options}}
 			{{#multiple}}
 			<div class="checkbox">
-					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/> {{label}}</label>
+					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{index}}"/> {{label}}</label>
 			</div>
 			{{/multiple}}
 			{{^multiple}}
 			<div class="radio">
-					<label {{#inline}}class="radio-inline"{{/inline}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
+					<label {{#inline}}class="radio-inline"{{/inline}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{index}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
 			</div>
 			{{/multiple}}
 			{{/options}}
@@ -232,7 +232,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/label}}
 		<div class="checkbox">
 			<label class="{{alt-display}}">
-				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#value}}checked=checked{{/value}}>{{#details}}<span class="noselect">{{{details}}}</span>{{/details}}&nbsp;
+				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{#details}}<span class="noselect">{{{details}}}</span>{{/details}}&nbsp;
 			</label>
 		</div>
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
@@ -266,7 +266,7 @@ scale:`
 					{{#format.low}}<td><label style="font-weight: 500;" for="{{name}}_1">{{{format.low}}}</label></td>{{/format.low}}
 					{{#options}}
 					<td>
-						<input data-label="{{label}}" id="{{name}}_{{i}}" name="{{id}}" value="{{value}}" {{^editable}}readonly disabled{{/editable}} type="radio" {{#selected}}checked=checked{{/selected}} >
+						<input data-label="{{label}}" id="{{name}}_{{i}}" name="{{id}}" value="{{index}}" {{^editable}}readonly disabled{{/editable}} type="radio" {{#selected}}checked=checked{{/selected}} >
 					</td>
 					{{/options}}
 					{{#format.high}}<td><label style="font-weight: 500;" for="{{name}}_{{options.length}}">{{{format.high}}}</label></td>{{/format.high}}

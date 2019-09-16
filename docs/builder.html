@@ -21,6 +21,7 @@
 			  display: inline-block;
 			  width: 4rem;
 			  height: 2.2rem;
+			  margin: .5em;
 			}
 			
 			/* Hide default HTML checkbox */
@@ -29,7 +30,6 @@
 			  width: 0;
 			  height: 0;
 			}
-			
 			
 			/* The slider */
 			.slider {
@@ -141,18 +141,17 @@
 								<button type="button" id="cobler" class="btn btn-default">Build</button>
 							</div>
 							<a class="pull-right" href="examples/">Examples</a>
+							<a class="pull-right" onclick="new gform(JSON.parse($.jStorage.get('form'))).modal().on('cancel',function(e){e.form.trigger('close')})">Preview </a>
 						</div>
 						<div class="panel-body">
-							<div id="schema_editor" class="view view_schema"></div>		
-							<div class="hidden result view view_json"></div>	
 							<div class="hidden source view view_source" id="alt-sidebar">
 								<ul id="sortableList" class="list-group ">
 									<li class="list-group-item" data-type="textbox">Text</li>
 									<li class="list-group-item" data-type="select">Select</li>
 									<li class="list-group-item" data-type="checkbox">Checkbox</li>
 								</ul>			
-							<div id="form"></div>				
-							</div>
+								<div id="form"></div>				
+								</div>
 						</div>
 					</div>
 				</div>

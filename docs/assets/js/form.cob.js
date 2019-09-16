@@ -1,25 +1,88 @@
+gform.types.enable = _.extend({}, gform.types['input'], gform.types['bool'],{
+	defaults:{options:[false, true],format:{label:''}},
+	render: function() {
+	  this.value = (!!this.value);
+	  if(typeof this.mapOptions == 'undefined'){
 
-			  myconditions=[
-				{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
-					return !!field.parent.index;
-				}}]},
-				{label:"Type",name:"type",type:"select",options:[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, 'matches','not_matches','contains','requires','conditions']},
-                {label: 'Name',name:"name",show:[{type:'matches',name:"type",value:["matches","not_matches","contains","requires"]}]},
-                { label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1},show:[{type:'matches',name:"type",value:["matches","not_matches","contains"]}]},
-				{name:'conditions',columns:10,offset:1,type:'fieldset',array:true,show:[{type:'matches',name:"type",value:"conditions"}],fields:[
-					{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
-						return !!field.parent.index;
-					}}]},
-					{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
-					{label: 'Name',name:"name"},
-                	{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1}}
-				]},
-              ]
+		this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
+		this.mapOptions.on('change',function(){
+			this.options = this.mapOptions.getobject()
+			this.update();
+		}.bind(this))
+	  }
+	  this.options = this.mapOptions.getobject()
+
+		this.selected = (this.value == this.options[1].value);
+		return gform.render('switch', this);
+	}
+} );
+
+gform.types['selectObject']   = _.extend({}, gform.types['input'], gform.types['collection'],{
+	defaults:{format:{label: '{{{label}}}', value: function(item){
+		return item.value;
+	}}},//'{{{value}}}{{^value}}false{{/value}}'}},
+    render: function() {
+		debugger;
+		if(this.value !== false){
+			this.value = this.value||(this.options[0]||{value:""}).value
+		}else{
+			debugger;
+		}
+		if(typeof this.value == 'object'){
+			this.value = 'object';
+		}
+		
+        if(typeof this.mapOptions == 'undefined'){
+            this.mapOptions = new gform.mapOptions(this, this.value, 0, this.owner.collections)
+            this.mapOptions.on('change', function(){
+                this.options = this.mapOptions.getobject();
+                this.update();
+            }.bind(this))
+        }
+		this.options = this.mapOptions.getobject()
+		// debugger;
+
+        if(typeof this.placeholder == 'string'){
+            this.options.unshift({label:this.placeholder, value:'',editable:false,visible:false,selected:true})
+        }
+        return gform.render('select', this);
+	},
+	// get: function() {
+	// 	// var value = this.el.querySelector('select').value;
+	// 	// value = _.find(this.options,{value:value}).data.value
+
+	// 	var value = this.el.querySelector('select').value;
+	// 	value = _.find(this.options,{index:value}).value
+
+	// 	if(this.multiple){
+	// 	  value = _.transform(this.el.querySelector('select').options,function(orig,opt){if(opt.selected){orig.push(opt.value)}},[])
+	// 	}
+	// 	return value;
+	// }
+});
+
+myconditions=[
+	{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
+		return !!field.parent.index;
+	}}]},
+	{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
+	{label: 'Name',name:"name",show:[{type:'matches',name:"type",value:["matches","not_matches","contains","requires"]}]},
+	{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1},show:[{type:'matches',name:"type",value:["matches","not_matches","contains"]}]},
+	{name:'conditions',columns:10,offset:1,type:'fieldset',array:true,show:[{type:'matches',name:"type",value:"conditions"}],fields:[
+		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
+			return !!field.parent.index;
+		}}]},
+		{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
+		{label: 'Name',name:"name"},
+		{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1}}
+	]}
+]
 
 gformEditor = function(container){
 	return function(){
 		var formConfig = {
-			// sections: 'tab',
+			// sections: 'tab'
+			name:"editor",
 			default:{type:"text",columns:6},
 			data: this.get(),
 			fields: this.fields,
@@ -32,15 +95,18 @@ gformEditor = function(container){
 			formConfig.actions = [];
 			events = 'change';
 		}	
-		for(var i in gform.instances){
-			gform.instances[i].destroy();
+		// for(var i in gform.instances){
+		// 	gform.instances[i].destroy();
+		// }
+		if(typeof gform.instances.editor !== 'undefined'){
+			gform.instances.editor.destroy();
 		}
+		
 		var temp = _.find(formConfig.fields,{name:"name"});
 		temp.placeholder =  formConfig.data['label'].toLowerCase().split(' ').join('_');
 		var mygform = new gform(formConfig, $(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
 		mygform.on('change:label',function(e){
-			// debugger;
-			e.form.find('name').update({placeholder:e.field.get().toLowerCase().split(' ').join('_')},true)
+			// e.form.find('name').update({placeholder:e.field.get().toLowerCase().split(' ').join('_')},true)
 		})
 		mygform.on(events, function(){
 			var temp = mygform.toJSON();
@@ -57,12 +123,14 @@ gformEditor = function(container){
 }
 Cobler.types.textbox = function(container) {
 	function render(){
-	// if(item.type == 'textarea'){
+	var data = get();
+	if(item.type == 'output'){
+		data.display = gform.renderString((data.format|| {}).value||'{{{value}}}', data);
     //   return gform.render('textarea', get());
-	// }
+	}
 	//   return gform.render('text', get());
-	  
-	return gform.render(item.type, get());
+
+	return gform.render(item.type, data);
 	}
 	function get() {
 		item.widgetType = 'textbox';
@@ -106,28 +174,47 @@ Cobler.types.textbox = function(container) {
 		
 		{type: 'textarea',columns:12, label: 'Instructions', name: 'help',show:[{name:"type",value:['output'],type:"not_matches"}]},
 		{type: 'number', label: 'Limit Length', name: 'limit',min:1},
+		{type: 'number', label: 'Size', name: 'size',min:1,show:[{name:"type",value:['textarea'],type:"matches"}]},
 		{type: 'select', label: 'Width',value:12, name: 'columns',min:1,max:12,format:{label:"{{value}} Column(s)"} },
-		{type: 'switch', label: 'Allow duplication', name: 'array', show:[{name:"type",value:['output'],type:"not_matches"}]},
+		{type: 'enable', label: 'Allow duplication', name: 'array', show:[{name:"type",value:['output'],type:"not_matches"}]},
 		
-		{type: 'fieldset', label:false,name:"array",show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}],fields:[
+		{type: 'fieldset',columns:12, label:false,name:"array",show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}],fields:[
 			{type: 'number', label: 'Minimum', name: 'min',value:1},
-			{type: 'number', label: 'Maximum', name: 'max'},
+			{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
 		]},
 
 		
+		
+		{type: 'selectObject',columns:12, label:"Show",name:"show",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Edit',value:'edit'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"show",fields:myconditions,array:true,show:[{name:"show",value:['object'],type:"matches"}]},
 
-		{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Show{{/index}}",name:"show",fields:myconditions,array:true},
-		{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Edit{{/index}}",name:"edit",fields:myconditions,array:true},
-		{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Parse{{/index}}",name:"parse",fields:myconditions,array:true},
-		{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Required{{/index}}",name:"required",fields:myconditions,array:true},
+		{type: 'selectObject',columns:12, label:"Edit",name:"edit",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Show',value:'show'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"edit",fields:myconditions,array:true,show:[{name:"edit",value:['object'],type:"matches"}]},
+
+		{type: 'selectObject',columns:12, label:"Parse",name:"parse",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"parse",fields:myconditions,array:true,show:[{name:"parse",value:['object'],type:"matches"}]},
+
+		{type: 'selectObject',columns:12, label:"Required",name:"required",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"required",fields:myconditions,array:true,show:[{name:"required",value:['object'],type:"matches"}]},
+
 		{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Validate{{/index}}",name:"validate",fields:[
 			{name:'type',label:'Type',type:'select',options:['none','matches','date','valid_url','valid_email','length','numeric']},
 			{name:'name',label:"Name",show:[{name:"type",value:['matches'],type:"matches"}]},
 			{type: 'number', label: 'Minimum', name: 'min',value:1,columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
 			{type: 'number', label: 'Maximum', name: 'max',columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
-			{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Conditions{{/index}}",name:"conditions",fields:myconditions,array:true},
+			{type: 'selectObject',value:false,columns:12, label:"Apply",name:"required",options:		
+				[{label:'Always',value:true},{label:"Conditions",value:"object"}]
+			},
+			{type: 'fieldset',columns:11,offset:1, label:"{{index}}{{^index}}Conditions{{/index}}",name:"conditions",fields:myconditions,array:true,show:[{name:"required",value:['object'],type:"matches"}]}
 		],array:true}
-		// validate	
 	]
 	return {
 		fields: fields,
@@ -141,8 +228,13 @@ Cobler.types.textbox = function(container) {
 
 Cobler.types.select = function(container) {
 	function render() {
-		
-    return gform.render(item.type, get());
+
+		var options = get()
+		var temp = _.find(options.options,{value: options.value}) || options.options[0]
+		if(typeof temp !== 'undefined') {
+			temp.selected = true;
+		}
+		return gform.render(item.type, options);
 	}
 	function get() {		
 		item.widgetType = 'select';
@@ -162,33 +254,68 @@ Cobler.types.select = function(container) {
 		enabled: true
 	}
 	var fields = [
-		{type: 'fieldset', name:'basics', legend: '<i class="fa fa-th"></i> Basics', hideLabel: true, inline: true, fields:[
-			{type: 'text', required: true, label: 'Field Label', name: 'label'},
-			{type: 'text', label: 'Name', name: 'name'},
-			{type: 'select', label: 'Display', name: 'type', value: 'select', options: [
-				{label: 'Dropdown', value: 'select'},
-				{label: 'Radio', value: 'radio'},
-				// {label: 'Range', value: 'range'}
-			]},
-			// {type: 'text', label: 'External List', name: 'options'},
-
-			// {type: 'text', label: 'Label-key', name: 'label_key'},
-			// {type: 'text', label: 'Value-key', name: 'value_key'},
-
-			{type: 'text', label: 'Default Value', name: 'value'},
-			{type: 'number', label: 'Max', name: 'max'},
-			{type: 'number', label: 'Min', name: 'min',show:[{type:'not_matches',name:'max',value:''}]},
-			{type: 'number', label: 'Step', name: 'step',show:[{type:'not_matches',name:'max',value:''}]},
-			{type: 'textarea', label: 'Instructions', name: 'help'},
-			{type: 'checkbox', label: 'Required', name: 'required'},
+		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
+			{label: 'Dropdown', value: 'select'},
+			{label: 'Radio', value: 'radio'},
+			{label: 'Scale', value: 'scale'},
+			{label: 'Range', value: 'range'},
+			{label: 'Grid', value: 'grid'},
 		]},
-		{type: 'fieldset', name:'options_c', legend: '<i class="fa fa-th-list"></i> options', hideLabel: true,  inline: true, fields:[
-			{type: 'fieldset', label: false, array: true, name: 'options', fields: [
-				{label: 'Label'},
-				{label: 'Value'}
-			]}
+		{type: 'text', required: true, title: 'Field Label', name: 'label'},
+		{type: 'text', label: 'Name', name: 'name'},
+		{type: 'text', label: 'Placeholder', name: 'placeholder'},
+		{type: 'text', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:['color','number'],type:"not_matches"}]},
+		{type: 'color', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:'color',type:"matches"}]},
+		// {type: 'date', label: 'Default value', name: 'value',columns:6,show:[{name:"type",value:'date',type:"matches"}]},
+		{type: 'number', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:'number',type:"matches"}]},
+		
+		{type: 'textarea',columns:12, label: 'Instructions', name: 'help',show:[{name:"type",value:['output'],type:"not_matches"}]},
+		{type: 'number', label: 'Limit Selections', name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"matches"}]},
+		{type: 'number', label: 'Size', name: 'size',min:1,show:[{name:"type",value:['select','radio'],type:"matches"}]},
+		{type: 'select', label: 'Width',value:12, name: 'columns',min:1,max:12,format:{label:"{{value}} Column(s)"} },
+		{type: 'enable', label: 'Allow duplication', name: 'array', show:[{name:"type",value:['output'],type:"not_matches"}]},
+		
+		{type: 'fieldset',columns:12, label:false,name:"array",show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}],fields:[
+			{type: 'number', label: 'Minimum', name: 'min',value:1},
+			{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
+		]},
+		
+		{type: 'selectObject',value:true,columns:12, label:"Show",name:"show",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Edit',value:'edit'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"show",fields:myconditions,array:true,show:[{name:"show",value:['object'],type:"matches"}]},
+
+		{type: 'selectObject',value:true,columns:12, label:"Edit",name:"edit",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Show',value:'show'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"edit",fields:myconditions,array:true,show:[{name:"edit",value:['object'],type:"matches"}]},
+
+		{type: 'selectObject',value:true,columns:12, label:"Parse",name:"parse",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"parse",fields:myconditions,array:true,show:[{name:"parse",value:['object'],type:"matches"}]},
+
+		{type: 'selectObject',value:false,columns:12, label:"Required",name:"required",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"required",fields:myconditions,array:true,show:[{name:"required",value:['object'],type:"matches"}]},
+
+		{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Validate{{/index}}",name:"validate",fields:[
+			{name:'type',label:'Type',type:'select',options:['none','matches','date','valid_url','valid_email','length','numeric']},
+			{name:'name',label:"Name",show:[{name:"type",value:['matches'],type:"matches"}]},
+			{type: 'number', label: 'Minimum', name: 'min',value:1,columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
+			{type: 'number', label: 'Maximum', name: 'max',columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
+			{type: 'selectObject',value:false,columns:12, label:"Apply",name:"required",options:		
+				[{label:'Always',value:true},{label:"Conditions",value:"object"}]
+			},
+			{type: 'fieldset',columns:11,offset:1, label:"{{index}}{{^index}}Conditions{{/index}}",name:"conditions",fields:myconditions,array:true,show:[{name:"required",value:['object'],type:"matches"}]}
+		],array:true},
+		{type: 'fieldset', label: false, array: true, name: 'options', fields: [
+			{label: 'Label'},
+			{label: 'Value'}
 		]}
 	]
+
 	return {
 		fields: fields,
 		render: render,
@@ -202,18 +329,20 @@ Cobler.types.select = function(container) {
 Cobler.types.checkbox = function(container) {
 	function render() {
 		// item.container = 'span';
-    return gform.render('checkbox', get());
+    return gform.render(item.type, get());
 
 	}
 	function get() {
 		item.widgetType = 'checkbox';
 		item.enabled = true;
 
-		item.type = 'checkbox';
+		// item.type = 'checkbox';
 		return item;
 	}
 	function toJSON() {
-		return  _.transform(get(),function(r,v) {_.extend(r,v)},{});//get();
+
+		return get();
+		// return  _.transform(get(),function(r,v) {_.extend(r,v)},{});//get();
 	}
 	function set(newItem) {
 		item = newItem;
@@ -222,14 +351,60 @@ Cobler.types.checkbox = function(container) {
 		widgetType: 'checkbox',
 		type: 'checkbox',
 		label: 'Label',
-		enabled: true
+		editable: true
 	}
 	var fields = [
-		{type: 'text', required: true, label: 'Field Label', name: 'label'},
+		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
+			{label: 'Checkbox', value: 'checkbox'},
+			{label: 'Switch', value: 'switch'}
+		]},
+		{type: 'text', required: true, title: 'Field Label', name: 'label'},
 		{type: 'text', label: 'Name', name: 'name'},
-		{type: 'checkbox', label: 'Default Value', name: 'value'},
-		{type: 'textarea', label: 'Instructions', name: 'help'},
-		{type: 'checkbox', label: 'Required', name: 'required'},
+		{type: 'checkbox', label: 'Default value', name: 'value'},
+		
+		{type: 'textarea',columns:12, label: 'Instructions', name: 'help',show:[{name:"type",value:['output'],type:"not_matches"}]},
+		{type: 'select', label: 'Width',value:12, name: 'columns',min:1,max:12,format:{label:"{{value}} Column(s)"} },
+		{type: 'enable', label: 'Allow duplication', name: 'array', show:[{name:"type",value:['output'],type:"not_matches"}]},
+		
+		{type: 'fieldset',columns:12, label:false,name:"array",show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}],fields:[
+			{type: 'number', label: 'Minimum', name: 'min',value:1},
+			{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
+		]},
+		
+		{type: 'selectObject',value:true,columns:12, label:"Show",name:"show",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Edit',value:'edit'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"show",fields:myconditions,array:true,show:[{name:"show",value:['object'],type:"matches"}]},
+
+		{type: 'selectObject',value:true,columns:12, label:"Edit",name:"edit",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Show',value:'show'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"edit",fields:myconditions,array:true,show:[{name:"edit",value:['object'],type:"matches"}]},
+
+		{type: 'selectObject',value:true,columns:12, label:"Parse",name:"parse",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"parse",fields:myconditions,array:true,show:[{name:"parse",value:['object'],type:"matches"}]},
+
+		{type: 'selectObject',value:false,columns:12, label:"Required",name:"required",options:		
+			[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"object"}]
+		},
+		{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"required",fields:myconditions,array:true,show:[{name:"required",value:['object'],type:"matches"}]},
+
+		{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Validate{{/index}}",name:"validate",fields:[
+			{name:'type',label:'Type',type:'select',options:['none','matches','date','valid_url','valid_email','length','numeric']},
+			{name:'name',label:"Name",show:[{name:"type",value:['matches'],type:"matches"}]},
+			{type: 'number', label: 'Minimum', name: 'min',value:1,columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
+			{type: 'number', label: 'Maximum', name: 'max',columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
+			{type: 'selectObject',value:false,columns:12, label:"Apply",name:"required",options:		
+				[{label:'Always',value:true},{label:"Conditions",value:"object"}]
+			},
+			{type: 'fieldset',columns:11,offset:1, label:"{{index}}{{^index}}Conditions{{/index}}",name:"conditions",fields:myconditions,array:true,show:[{name:"required",value:['object'],type:"matches"}]}
+		],array:true},
+		{type: 'fieldset', label: false, array: {min:2,max:2}, name: 'options', fields: [
+			{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Label','name':'label'},
+			{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Value','name':'value'},
+		]}
 	]
 	return {
 		fields: fields,
