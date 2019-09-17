@@ -33,6 +33,7 @@ describe('Radio Input', function () {
 
   it('sets value with set - get value from name', function () {
     expect(mygform.toJSON('test')).toEqual('');
+    debugger;
     mygform.find('test').set('stuff');
     expect(mygform.toJSON('test')).toEqual('stuff');
   });

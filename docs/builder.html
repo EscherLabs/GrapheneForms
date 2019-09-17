@@ -141,7 +141,7 @@
 								<button type="button" id="cobler" class="btn btn-default">Build</button>
 							</div>
 							<a class="pull-right" href="examples/">Examples</a>
-							<a class="pull-right" onclick="new gform(JSON.parse($.jStorage.get('form'))).modal().on('cancel',function(e){e.form.trigger('close')})">Preview </a>
+							<a class="pull-right" onclick="new gform(_.extend(JSON.parse($.jStorage.get('form')),{name:'modal'}) ).modal().on('cancel',function(e){e.form.trigger('close')})">Preview </a>
 						</div>
 						<div class="panel-body">
 							<div class="hidden source view view_source" id="alt-sidebar">

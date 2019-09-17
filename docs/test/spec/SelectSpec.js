@@ -26,8 +26,8 @@ describe('Select Input', function () {
 	// });
 
   it('sets value with set', function () {
-		expect(mygform.toJSON('test')).toEqual('hello');
-    mygform.set('test','stuff');
+    expect(mygform.toJSON('test')).toEqual('hello');
+    mygform.find('test').set('stuff');
     expect(mygform.toJSON().test).toEqual('stuff');
   });
 
@@ -49,13 +49,18 @@ describe('Select Input', function () {
   //   mygform.fields.test.set('stuff');
   //   expect(triggerOnChange).toHaveBeenCalled();
   // });
-  it('should trigger events', function () {
+
+  it('should not trigger events if silent', function () {
     mygform.on('change', triggerOnChange);
-    mygform.find('test').set('hello');
+    mygform.find('test').update({value:'hello'},true);
     expect(triggerOnChange).not.toHaveBeenCalled();
-    mygform.find('test').set('test');
-    expect(triggerOnChange).toHaveBeenCalled();
   });
+
+  it('should trigger events on update', function () {
+    mygform.on('change', triggerOnChange);
+    mygform.find('test').update({value:'test'});
+    expect(triggerOnChange).toHaveBeenCalled();
+  });  
 
   // it('should suppress change event during setValue', function () {
   //   mygform.fields.test.setValue('stuff');

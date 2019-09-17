@@ -60,14 +60,14 @@ select: `
     <select {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
         {{#options}}
             {{^optgroup}}
-            <option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+            <option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{index}}">{{{label}}}</option>
             {{/optgroup}}
             {{#optgroup}}
             {{#optgroup.label}}
             <optgroup label="{{label}}" data-id="{{optgroup.id}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}">
             {{/optgroup.label}}
                 {{#options}}
-                <option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{value}}">{{{label}}}</option>
+                <option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{index}}">{{{label}}}</option>
                 {{/options}}
                 {{#optgroup.label}}
             </optgroup>
@@ -89,7 +89,7 @@ radio: `
         <label class="noselect label-inline" for="{{name}}_{{value}}">{{label}}</label></div>
     {{/multiple}}
     {{^multiple}}
-        <label class="noselect"><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
+        <label class="noselect"><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{index}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
     {{/multiple}}
     {{/options}}
     </span>

@@ -191,7 +191,6 @@ var gform = function(data, el){
        if(e.target.classList.contains('gform-add')){
            e.stopPropagation();
            // var fieldCount =  _.countBy(field.parent.fields, {name: field.name,array: true}).true;
-           debugger;
            var fieldCount = _.filter(field.parent.fields, 
                function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
            ).length
@@ -233,7 +232,6 @@ var gform = function(data, el){
        }
        if(e.target.classList.contains('gform-minus')){
            e.stopPropagation();
-           debugger;
            // var fieldCount =  _.countBy(field.parent.fields, {name: field.name,array: true}).true;
            var fieldCount =  _.filter(field.parent.fields, 
                function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
@@ -500,14 +498,15 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         if(field.array && typeof (atts[field.name] || field.owner.options.data[field.name]) == 'object'){
             field.value =  (atts[field.name] || field.owner.options.data[field.name])[index||0] || {};
         }else{
-            debugger;
-            field.value =  atts[field.name] || field.owner.options.data[field.name] || field.value;
+            // field.value =  atts[field.name] || field.owner.options.data[field.name] || field.value;
+            field.value = _.defaults({value:atts[field.name]},{value:field.owner.options.data[field.name]},field).value
         }
     }else{
         if(field.array && typeof (atts[field.name] || field.owner.options.data[field.name]) == 'object'){
             field.value =  atts[field.name] || {};
         }else{
-            field.value =  atts[field.name] || field.value;
+            field.value =  _.defaults({value:atts[field.name]},field).value
+           
         }    
     }
 
@@ -527,7 +526,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                 }.bind(field));
             } else {
                 //may need to search deeper in atts?
-                field.value =  atts[field.name] || field.value || '';
+                // field.value =  atts[field.name] || field.value || '';
+                field.value = _.defaults({value:atts[field.name],},field,{value:''}).value
             }
         }
 	} else {
@@ -636,11 +636,14 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     }
 
     gform.processConditions.call(field, field.show, function(result){
-        // if(this.visible !== result){
-            // this.parent.reflow();
-        // }
+        var events = (this.visible !== result);
         this.el.style.display = result ? "block" : "none";
         this.visible = result;
+    
+        if(events){
+            this.owner.trigger('change', this);
+        }
+
         // this.parent.reflow();
     })      
     // gform.processConditions.call(field, field.visible, function(result){

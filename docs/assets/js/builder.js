@@ -25,6 +25,15 @@ $('#cobler').on('click', function(e) {
       cb.on("change", function(){
           $.extend(form, {fields: cb.toJSON()[0]});
           $.jStorage.set('form', JSON.stringify(form, undefined, "\t"));
+          // var testForm = new gform(form)
+          // temp = [];
+          // gform.each.call(form,function(item){temp.push(item);})
+          // testForm.destroy();
+
+
+          // gform.collections.update('fields', temp);
+
+
       })
     }
 
@@ -54,6 +63,14 @@ $('#cobler').on('click', function(e) {
       cb.collections[0].load(temp.fields);
     }else{
       cb.collections[0].load(JSON.parse(($.jStorage.get('form') || "{}")));
+
+      // var testForm = new gform(JSON.parse(($.jStorage.get('form') || "{}")))
+      //     temp = [];
+      //     gform.each.call(form,function(item){temp.push(item);})
+      //     testForm.destroy();
+
+      // gform.collections.add('fields', _.where(attributes.code.map, {type: "endpoint"}))
+
     }
 
 });

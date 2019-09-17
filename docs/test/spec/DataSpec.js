@@ -42,8 +42,9 @@ describe('Data population', function () {
                     ]}
                 ]}
             ]
+            debugger;
         var data = {"label":"Field Label","name":"label","type":"select","value":"","help":"","required":false,"options":[{"label":"Hello","value":"Stuff"}]}
-        mygform = new gform({fields:fields,data:data}, '#gform')
+        mygform = new gform({strict:false,fields:fields,data:data}, '#gform')
 
         expect(mygform.toJSON().options_c.options[0].label).toBe('Hello');
 
