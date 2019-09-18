@@ -480,7 +480,10 @@ gform.normalizeField = function(fieldIn,parent){
     }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
     //keep required separate
     // field.validate.required = field.validate.required|| field.required || false;
-
+    if(typeof field.multiple == 'undefined' && typeof field.limit !== 'undefined' && field.limit>1)
+    {
+        field.multiple = true;
+    }
 
     // if(typeof field.validate.required == 'undefined'){field.validate.required = false}
     if(field.name == ''){field.name = field.id;}
@@ -1175,6 +1178,7 @@ gform.about = function(){
     return _.extend({version:gform.VERSION},gform.THEME,{types:_.keys(gform.types)})
 };gform.types = {
   'input':{
+      base:'input',
       defaults:{},
       setup:function(){
           gform.types[this.type].setLabel.call(this)
@@ -1214,7 +1218,7 @@ gform.about = function(){
               this.value = this.get();
               if(this.el.querySelector('.count') != null){
                 var text = this.value.length;
-                if(this.limit){text+='/'+this.limit;}
+                if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
             //   this.update({value:this.get()},true);
@@ -1290,7 +1294,9 @@ gform.about = function(){
           return (typeof value !== 'undefined' && value !== null && value !== '');            
       },
       edit: function(state) {
-          this.el.querySelector('[name="'+this.name+'"]').disabled = !state;            
+          var search = this.name;
+          if(this.multiple){search+='[]'}
+          this.el.querySelector('[name="'+search+'"]').disabled = !state;            
       },find:function() {
           return this;
       },
@@ -1307,10 +1313,11 @@ gform.about = function(){
   },
 //   'textarea':,
   'bool':{
+
+      base:'bool',
       defaults:{options:[false, true],format:{label:''}},
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
-        debugger;
         if(!this.strict && this.options[0]==false && this.options[1]==true){
             this.value = (!!this.value);
         }
@@ -1353,6 +1360,8 @@ gform.about = function(){
       }
   },
   'collection':{
+
+    base:'collection',
       defaults:{format:{label: '{{{label}}}',  value: function(item){
 		return item.value;
 	}}},
@@ -1415,13 +1424,13 @@ gform.about = function(){
             }
             if(this.el.querySelector('.count') != null){
                 var text = this.get().length;
-                if(this.limit){text+='/'+this.limit;}
+                if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
           }
           gform.types[this.type].setLabel.call(this)
       },
-      initialize: function() {
+      initialize: function() {       
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.input = true;
@@ -1432,7 +1441,7 @@ gform.about = function(){
 
               if(this.el.querySelector('.count') != null){
                 var text = this.value.length;
-                if(this.limit){text+='/'+this.limit;}
+                if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
 
@@ -1459,7 +1468,8 @@ gform.about = function(){
           
          
           if(this.multiple){
-            value = _.transform(this.el.querySelector('select').options,function(orig,opt){if(opt.selected){orig.push(_.find(this.options,{index:opt.value}).value)}},[])
+            var that = this;
+            value = _.transform(this.el.querySelector('select').options,function(orig,opt){if(opt.selected){orig.push(_.find(that.options,{index:opt.value}).value)}},[])
           }
         //   this.option = _.find()
           return value;
@@ -1485,6 +1495,8 @@ gform.about = function(){
       }
   },
   'section':{
+
+    base:'section',
     setLabel:function(){
         var label = gform.renderString(this.item.label||this.label, this);
         if(this.required){
@@ -1566,12 +1578,14 @@ gform.about = function(){
           gform.reflow.call(this)
       },
       focus:function() {
-          if(this.fields.length){
+          if(typeof this.fields !== 'undefined' && this.fields.length){
             gform.types[this.fields[0].type].focus.call(this.fields[0]);
           }
       }
   },
   'button':{
+
+    base:'button',
     toString: function(){return ''},
       defaults:{parsable:false, columns:2, target:".gform-footer"},
       create: function() {
@@ -1669,7 +1683,7 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
     //           this.value = this.get();
     //           if(this.el.querySelector('.count') != null){
     //               var text = this.value.length;
-    //               if(this.limit){text+='/'+this.limit;}
+    //               if(this.limit>1){text+='/'+this.limit;}
     //             this.el.querySelector('.count').innerHTML = text;
     //           }
     //           this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
@@ -1743,7 +1757,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         }
         if(this.el.querySelector('.count') != null){
           var text = this.get().length;
-          if(this.limit){text+='/'+this.limit;}
+          if(this.limit>1){text+='/'+this.limit;}
           this.el.querySelector('.count').innerHTML = text;
         }
     }
@@ -1819,7 +1833,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
 
 gform.types['scale']    = _.extend({}, gform.types['radio']);
 gform.types['checkboxes']    = _.extend({}, gform.types['radio'],{multiple:true});
-gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['collection'],{
+gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'], gform.types['collection'],{
     render: function() {
         // this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
@@ -1989,8 +2003,19 @@ gform.conditions = {
 	},
 	contains: function(field, args) {
 		var val = args.value;
-		var localval = (field.parent.find(args.name) || {value:''}).value;
-		if(typeof val== "object" && localval !== null){
+		var targetField = field.parent.find(args.name);
+		var localval = null;
+		if(typeof targetField !== 'undefined'){
+			if(targetField.array != false){
+				localval = field.parent.find(args.name).parent.get()[args.name]
+			}else{
+				localval = targetField.value;
+			}
+		}else{
+			return "Target field "+args.name+" not found!"
+		}
+
+		if(typeof val == "object" && localval !== null){
 			return (_.intersection(val,localval).length >0)
 		}else{
 			return (typeof localval !== 'undefined'  && localval.indexOf(val) !== -1 )
@@ -2296,7 +2321,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{^label}}
 	<div class="col-md-12">
 	{{/label}}		
-	{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
+	{{#limit}}{{#multiple}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/multiple}}{{/limit}}
 
 		{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
 		{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
@@ -2333,7 +2358,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{^label}}
 	<div class="col-md-12">
 	{{/label}}
-	{{#limit}}<small class="count text-muted" style="display:block;text-align:left">0/{{limit}}</small>{{/limit}}
+	{{#limit}}{{#multiple}}<small class="count text-muted" style="display:block;text-align:left">0/{{limit}}</small>{{/multiple}}{{/limit}}
 
 
 			{{#options}}

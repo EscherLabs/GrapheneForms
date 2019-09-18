@@ -72,8 +72,19 @@ gform.conditions = {
 	},
 	contains: function(field, args) {
 		var val = args.value;
-		var localval = (field.parent.find(args.name) || {value:''}).value;
-		if(typeof val== "object" && localval !== null){
+		var targetField = field.parent.find(args.name);
+		var localval = null;
+		if(typeof targetField !== 'undefined'){
+			if(targetField.array != false){
+				localval = field.parent.find(args.name).parent.get()[args.name]
+			}else{
+				localval = targetField.value;
+			}
+		}else{
+			return "Target field "+args.name+" not found!"
+		}
+
+		if(typeof val == "object" && localval !== null){
 			return (_.intersection(val,localval).length >0)
 		}else{
 			return (typeof localval !== 'undefined'  && localval.indexOf(val) !== -1 )

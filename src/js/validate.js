@@ -13,8 +13,8 @@ gform.prototype.validate = function(force){
 gform.handleError = gform.update;
 
 gform.validateItem = function(force,item){
-	if(force || !item.valid || item.required || item.satisfied()){
-		var value = item.get();
+	var value = item.get();
+	if(force || !item.valid || item.required || item.satisfied(value)){
 		item.valid = true;
 		item.errors = '';
 		if(item.parsable && typeof item.validate === 'object'){

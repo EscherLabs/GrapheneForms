@@ -140,15 +140,16 @@
 							<div class="btn-group" role="group" aria-label="...">
 								<button type="button" id="cobler" class="btn btn-default">Build</button>
 							</div>
-							<a class="pull-right" href="examples/">Examples</a>
-							<a class="pull-right" onclick="new gform(_.extend(JSON.parse($.jStorage.get('form')),{name:'modal'}) ).modal().on('cancel',function(e){e.form.trigger('close')})">Preview </a>
+							<a class="pull-right btn btn-info" href="examples/">Examples</a>
+							<a class="pull-right btn btn-success" style="margin-right:10px" onclick="new gform(_.extend(JSON.parse($.jStorage.get('form')),{name:'modal'}) ).modal().on('cancel',function(e){e.form.trigger('close')})">Preview </a>
 						</div>
 						<div class="panel-body">
 							<div class="hidden source view view_source" id="alt-sidebar">
 								<ul id="sortableList" class="list-group ">
-									<li class="list-group-item" data-type="textbox">Text</li>
-									<li class="list-group-item" data-type="select">Select</li>
-									<li class="list-group-item" data-type="checkbox">Checkbox</li>
+									<li class="list-group-item" data-type="textbox">Input</li>
+									<li class="list-group-item" data-type="select">Options</li>
+									<li class="list-group-item" data-type="checkbox">Boolean</li>
+									<li class="list-group-item" data-type="fieldset">Section</li>
 								</ul>			
 								<div id="form"></div>				
 								</div>

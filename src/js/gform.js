@@ -480,7 +480,10 @@ gform.normalizeField = function(fieldIn,parent){
     }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
     //keep required separate
     // field.validate.required = field.validate.required|| field.required || false;
-
+    if(typeof field.multiple == 'undefined' && typeof field.limit !== 'undefined' && field.limit>1)
+    {
+        field.multiple = true;
+    }
 
     // if(typeof field.validate.required == 'undefined'){field.validate.required = false}
     if(field.name == ''){field.name = field.id;}
