@@ -115,13 +115,24 @@ gformEditor = function(container){
 		 	container.update(this.get(), this)
 		}.bind(this));
 		mygform.on('manage',function(e){
+			if(e.form.get('name') == ""){
+				e.form.find('name').update({value:e.form.get('label').toLowerCase().split(' ').join('_')})
+			}
+			// var temp = mygform.toJSON();
+			// if(typeof temp.basics !== 'undefined'){
+			// 	temp = $.extend({},temp.basics,temp.options_c)
+			// }
+		 	// container.update(temp, this);
+		 	// mygform.trigger('saved');
+
+
 			path.push(e.form.get('name'));
 			cb.deactivate();
 			renderBuilder()
 		})
 	}
 }
-Cobler.types.textbox = function(container) {
+Cobler.types.input = function(container) {
 	function render(){
 	var data = get();
 	if(item.type == 'output'){
@@ -129,14 +140,13 @@ Cobler.types.textbox = function(container) {
     //   return gform.render('textarea', get());
 	}
 	//   return gform.render('text', get());
-
-	return gform.render(item.type, data);
+	return gform.render(item.type, _.extend({},myform.default,data));
 	}
 	function get() {
-		item.widgetType = 'textbox';
+		item.widgetType = 'input';
 		item.editable = true;
 		item.type = item.type || 'text';
-		return _.extend({},gform.prototype.opts,gform.types[item.type].defaults||{},item);
+		return _.extend({},gform.types[item.type].defaults||{},item);
 	}
 	function toJSON() {
 		return get();
@@ -145,7 +155,7 @@ Cobler.types.textbox = function(container) {
 		item = newItem;
 	}
 	var item = {
-		widgetType: 'textbox',
+		widgetType: 'input',
 		type: 'text',
 		label: 'Label',
 		editable: true
@@ -173,7 +183,7 @@ Cobler.types.textbox = function(container) {
 	}
 }
 
-Cobler.types.select = function(container) {
+Cobler.types.collection = function(container) {
 	function render() {
 
 		var options = get()
@@ -183,10 +193,10 @@ Cobler.types.select = function(container) {
 		}
 		options.multiple = (options.limit>1);
 		
-		return gform.render(item.type, options);
+		return gform.render(item.type, _.extend({},myform.default,options));
 	}
 	function get() {		
-		item.widgetType = 'select';
+		item.widgetType = 'collection';
 		item.enabled = true;
 		return item;
 	}
@@ -197,7 +207,7 @@ Cobler.types.select = function(container) {
 		item = newItem;
 	}
 	var item = {
-		widgetType: 'select',
+		widgetType: 'collection',
 		type: 'select',
 		label: 'Label',
 		enabled: true
@@ -210,11 +220,39 @@ Cobler.types.select = function(container) {
 			{label: 'Range', value: 'range'},
 			// {label: 'Grid', value: 'grid'},
 		]}
-	].concat(baseFields,baseConditions,[{type: 'fieldset', label: false, array: true, name: 'options', fields: [
-		{label: 'Label'},
-		{label: 'Value'}
-	]}])
+	].concat(baseFields,baseConditions,[
+		{type: 'fieldset', label: false, array: true,columns:12, name: 'options', 
+			fields: [
+				{label: 'Section Label (optional)', name:"label"},
+				{label: 'Type',type:"select",parse:false, name:"options_type",options:[{label:"External",value:"string"},{label:"Derived",value:"int"},{label:"Manual",value:"object"}],value:function(e){
+					var result = "object";
+					// if(result == 'undefined' && (typeof e.field.parent.get()['max'] !== 'undefined')) {
+					// 	result = 'int';
+					// }
+					if(typeof e.field.parent.get()['max'] !== 'undefined'){
+						result = "int";
+					}
+					if(typeof e.field.parent.get()['url'] !== 'undefined'){
+						result = "string";
+					}
 
+					return result;
+
+				}},
+				{name:"type",type:"hidden",value:"optgroup"},
+				{type: 'fieldset', label: false, array: true, name: 'options', fields:[
+					{label: 'Label'},
+					{label: 'Value'},
+				],show:[{type:"matches",name:"options_type",value:"object"}]},
+
+				{type: 'text', label: "Url", name: 'url',show:[{type:"matches",name:"options_type",value:"string"}]},
+				{type: 'number', label: "Min", name: 'Min',show:[{type:"matches",name:"options_type",value:"int"}]},
+				{type: 'number', label: "Max", name: 'Max',show:[{type:"matches",name:"options_type",value:"int"}]}
+				// {label: 'Option Type',name:"options"}
+			]
+		}
+	])
+//{type:"optgroup",label:"stuff",format:{"label":'{{label}}'}, options:[3,4,5,9]},
 	return {
 		fields: fields,
 		render: render,
@@ -225,17 +263,17 @@ Cobler.types.select = function(container) {
 	}
 }
 
-Cobler.types.checkbox = function(container) {
+Cobler.types.bool = function(container) {
 	function render() {
 	
 	var options = get();
 	// debugger;
 	(_.defaults(options.options,[{value:false},{value:true}]) ) [options.value?1:0].selected = true;
-	return gform.render(item.type, options);
+	return gform.render(item.type, _.extend({},myform.default,optins));
 
 	}
 	function get() {
-		item.widgetType = 'checkbox';
+		item.widgetType = 'bool';
 		item.enabled = true;
 
 		// item.type = 'checkbox';
@@ -250,7 +288,7 @@ Cobler.types.checkbox = function(container) {
 		item = newItem;
 	}
 	var item = {
-		widgetType: 'checkbox',
+		widgetType: 'bool',
 		type: 'checkbox',
 		label: 'Label',
 		editable: true
@@ -274,13 +312,22 @@ Cobler.types.checkbox = function(container) {
 	}
 }
 
-Cobler.types.fieldset = function(container) {
+Cobler.types.section = function(container) {
 	function render() {
 		var temp = get();
-    	return gform.render('_fieldset', get());
+
+		var content = "";
+		_.each(temp.fields,function(e){
+			var nTemp = new Cobler.types[gform.types[e.type].base]()
+			nTemp.set(e);
+			content += nTemp.render()
+		})
+		var html = $(gform.render('_fieldset', _.extend({},myform.default,temp)));
+		html.find('fieldset').append(content)
+    	return html.html();
 	}
 	function get() {
-		item.widgetType = 'fieldset';
+		item.widgetType = 'section';
 		item.enabled = true;
 		item.type = 'fieldset';
 
@@ -296,7 +343,7 @@ Cobler.types.fieldset = function(container) {
 		item.fields = fields;
 	}
 	var item = {
-		widgetType: 'fieldset',
+		widgetType: 'section',
 		type: 'fieldset',
 		label: 'Label'
 	}
@@ -308,7 +355,9 @@ Cobler.types.fieldset = function(container) {
 			{type: 'number', label: 'Minimum', name: 'min',value:1,placeholder:1},
 			{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
 		]},
-		{type:"button",label:"Manage Fields",action:"manage"}
+		{type:"button",label:"Manage Fields",action:"manage",name:"manage",show:[{type:"test",name:"manage",test:function(e){
+return !e.owner.options.nomanage;
+		}}]}
 	]
 	return {
 		fields: fields,

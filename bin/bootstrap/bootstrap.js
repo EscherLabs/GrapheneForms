@@ -1,11 +1,11 @@
 gform.stencils = {
-	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
+	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
 _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer row"></div>`,
 text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{#inline}}<div class="col-md-12">{{/inline}}
-	{{^inline}}<div class="col-md-8">{{/inline}}
+	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
 	{{/label}}
 	{{^label}}
 	<div class="col-md-12">
@@ -79,12 +79,12 @@ switch:`
 <div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{#inline}}<div class="col-md-12" style="margin:0 0 5px">{{/inline}}
-	{{^inline}}<div class="col-md-8" style="margin:0 0 15px">{{/inline}}
+	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8" style="margin:0 0 15px">{{/horizontal}}
 	{{/label}}
 	{{^label}}
-	{{#inline}}<div class="col-md-12" style="margin: -10px 0 5px;"">{{/inline}}
-	{{^inline}}<div class="col-md-8" style="margin: -5px 0 10px">{{/inline}}
+	{{^horizontal}}<div class="col-md-12" style="margin: -10px 0 5px;"">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8" style="margin: -5px 0 10px">{{/horizontal}}
 	{{/label}}
 
 	<span class="falseLabel">{{options.0.label}} </span>
@@ -115,8 +115,8 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
     textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{#inline}}<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/inline}}
-	{{^inline}}<div class="col-md-8" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/inline}}
+	{{^horizontal}}<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/horizontal}}
 	{{/label}}
 	{{^label}}
 	<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>
@@ -130,8 +130,8 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
     select: `<div class="row clearfix form-group {{modifiers}} {{#size}}size={{size}}{{/size}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{#inline}}<div class="col-md-12">{{/inline}}
-	{{^inline}}<div class="col-md-8">{{/inline}}
+	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
 	{{/label}}
 	{{^label}}
 	<div class="col-md-12">
@@ -167,8 +167,8 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
     radio: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{#inline}}<div class="col-md-12">{{/inline}}
-	{{^inline}}<div class="col-md-8">{{/inline}}
+	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
 	{{/label}}
 	{{^label}}
 	<div class="col-md-12">
@@ -184,7 +184,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 			{{/multiple}}
 			{{^multiple}}
 			<div class="radio">
-					<label {{#inline}}class="radio-inline"{{/inline}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{index}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
+					<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{index}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
 			</div>
 			{{/multiple}}
 			{{/options}}
@@ -213,7 +213,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/array}}`,
     _label: `
     {{^hideLabel}}
-	<label for="{{name}}" {{#inline}}style="text-align:left"{{/inline}} class="control-label {{#inline}}col-xs-12{{/inline}}{{^inline}}col-md-4{{/inline}}">
+	<label for="{{name}}" {{^horizontal}}style="text-align:left"{{/horizontal}} class="control-label {{^horizontal}}col-xs-12{{/horizontal}}{{#horizontal}}col-md-4{{/horizontal}}">
   {{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}
 </label>{{#label}}{{/label}}
 {{/hideLabel}}
@@ -223,12 +223,12 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
     checkbox:`<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{#inline}}<div class="col-md-12" style="margin:0 0 5px">{{/inline}}
-	{{^inline}}<div class="col-md-8" style="margin:0 0 15px">{{/inline}}
+	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8" style="margin:0 0 15px">{{/horizontal}}
 	{{/label}}
 	{{^label}}
-	{{#inline}}<div class="col-md-12" style="margin: -10px 0 5px;"">{{/inline}}
-	{{^inline}}<div class="col-md-8" style="margin: -5px 0 10px">{{/inline}}
+	{{^horizontal}}<div class="col-md-12" style="margin: -10px 0 5px;"">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8" style="margin: -5px 0 10px">{{/horizontal}}
 	{{/label}}
 		<div class="checkbox">
 			<label class="{{alt-display}}">
@@ -245,8 +245,8 @@ scale:`
 	{{>_label}}
 	{{>_actions}}
 	{{#label}}
-	{{#inline}}<div class="col-md-12">{{/inline}}
-	{{^inline}}<div class="col-md-8">{{/inline}}
+	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
 	{{/label}}
 	{{^label}}
 	<div class="col-md-12">
@@ -278,7 +278,7 @@ scale:`
 </div>`,
 button:`<button class="btn btn-default hidden-print {{modifiers}}" style="margin:0 15px">{{{label}}}</button>`,
 tab_container: `
-<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
+<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
 	<ul class="nav nav-tabs" style="margin-bottom:15px">
 		{{#fields}}
 			{{#section}}
@@ -290,7 +290,7 @@ tab_container: `
 	</ul></form>
 	</form><div class="gform-footer row"></div>`,
 tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
-modal_container:`<div class="modal fade" id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form-horizontal{{/horizontal}} " id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">
@@ -300,10 +300,10 @@ modal_container:`<div class="modal fade" id="myModal{{name}}" data-update="{{upd
 			<div class="modal-body">
 				{{{body}}}
 				{{^sections}}
-				<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}></form>
+				<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}></form>
 				{{/sections}}
 				{{#sections}}
-				<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{^options.inline}} smart-form-horizontal form-horizontal{{/options.inline}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>   
+				<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>   
 				<ul class="nav nav-tabs" style="margin-bottom:15px">
 					{{#fields}}
 					{{#section}}
@@ -474,8 +474,8 @@ gform.stencils.smallcombo = `
 <div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{#inline}}<div class="col-md-12">{{/inline}}
-	{{^inline}}<div class="col-md-8">{{/inline}}
+	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
 	{{/label}}
 	{{^label}}
 	<div class="col-md-12">

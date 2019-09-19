@@ -60,12 +60,13 @@ var gform = function(data, el){
     }
 
   
-    this.trigger('initialize');
+    this.trigger('initialize',this);
 
     var create = function(){
 
         if(typeof this.el == 'undefined'){
             this.options.renderer = 'modal';
+            debugger;
             this.el = gform.create(gform.render(this.options.template || 'modal_container', this.options))
             // document.querySelector('body').appendChild(this.el)
             gform.addClass(this.el, 'active')
@@ -271,6 +272,8 @@ var gform = function(data, el){
    }.bind(this)
 
     this.el.addEventListener('click', this.listener)
+    this.trigger('initialized',this);
+
     return this;
                   
 }
@@ -520,13 +523,17 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             if(typeof field.item.value === 'function') {
                 //uncomment this when ready to test function as value for input
                 field.valueFunc = field.item.value;
-                field.derivedValue = function() {
-                    return field.valueFunc.call(field, field.owner.toJSON());
+                field.derivedValue = function(e) {
+                    
+                    return e.field.valueFunc.call(null, e);
                 };
-                field.item.value = field.item.value = field.derivedValue();
-                field.owner.on('change', function() {
-                    this.set.call(this,this.derivedValue());
-                }.bind(field));
+                // field.item.value = field.item.value;// = field.derivedValue({form:field.owner,field:field});
+                delete field.value;
+                field.owner.on('initialized', function(f,e) {
+                    e.field = f;
+                    f.set.call(null,f.derivedValue(e));
+                }.bind(null,field));
+                
             } else {
                 //may need to search deeper in atts?
                 // field.value =  atts[field.name] || field.value || '';

@@ -138,19 +138,19 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<div class="btn-group" role="group" aria-label="...">
-								<button type="button" id="cobler" class="btn btn-default">Build</button>
+								<a class="btn btn-success" onclick="new gform(_.extend(JSON.parse($.jStorage.get('form')),{name:'modal'}) ).modal().on('cancel',function(e){e.form.trigger('close')})">Preview </a>
+								<!-- <a class="btn btn-info" href="examples/">Examples</a> -->
 							</div>
-							<a class="pull-right btn btn-info" href="examples/">Examples</a>
-							<a class="pull-right btn btn-success" style="margin-right:10px" onclick="new gform(_.extend(JSON.parse($.jStorage.get('form')),{name:'modal'}) ).modal().on('cancel',function(e){e.form.trigger('close')})">Preview </a>
 						</div>
 						<div class="panel-body">
-							<div class="hidden source view view_source" id="alt-sidebar">
+							<div class=" source view view_source" id="alt-sidebar">
 								<ul id="sortableList" class="list-group ">
-									<li class="list-group-item" data-type="textbox">Input</li>
-									<li class="list-group-item" data-type="select">Options</li>
-									<li class="list-group-item" data-type="checkbox">Boolean</li>
-									<li class="list-group-item" data-type="fieldset">Section</li>
+									<li class="list-group-item" data-type="input">Input</li>
+									<li class="list-group-item" data-type="collection">Options</li>
+									<li class="list-group-item" data-type="bool">Boolean</li>
+									<li class="list-group-item" data-type="section">Section</li>
 								</ul>			
+								<div id="mainform"></div>				
 								<div id="form"></div>				
 								</div>
 						</div>
