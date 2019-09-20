@@ -278,7 +278,7 @@ scale:`
 </div>`,
 button:`<button class="btn btn-default hidden-print {{modifiers}}" style="margin:0 15px">{{{label}}}</button>`,
 tab_container: `
-<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
+<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
 	<ul class="nav nav-tabs" style="margin-bottom:15px">
 		{{#fields}}
 			{{#section}}
@@ -300,10 +300,10 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form
 			<div class="modal-body">
 				{{{body}}}
 				{{^sections}}
-				<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}></form>
+				<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}></form>
 				{{/sections}}
 				{{#sections}}
-				<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>   
+				<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>   
 				<ul class="nav nav-tabs" style="margin-bottom:15px">
 					{{#fields}}
 					{{#section}}
@@ -363,63 +363,6 @@ gform.types['clear']   = _.defaultsDeep({toString: function(){return ''}},gform.
 	"label":"<i class=\"fa fa-times\"></i> Clear",
 	"action":"clear",
 	"modifiers": "btn btn-warning"}});
-
-gform.types['combo'] = _.extend({}, gform.types['input'], gform.types['collection'], {
-	initialize: function() {
-				this.combobox = $(this.el).find('select[name="' + this.name + '"]').combobox({appendId:this.id});         
-				this.onchangeEvent = function(){
-					this.value = this.get();
-					gform.types[this.type].setup.call(this);
-					this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
-			}.bind(this)
-		$(this.el).find('select').on('change',this.onchangeEvent)
-	},
-	destroy:function(){	
-		$(this.el).find('select').off('change',this.onchangeEvent)
-	},
-	update: function(item, silent) {
-		if(typeof item === 'object') {
-			_.extend(this, this.item, item);
-		}
-		this.label = gform.renderString((item||{}).label||this.item.label, this);
-
-		var oldDiv = document.getElementById(this.id);
-
-		  this.destroy();
-		  this.el = gform.types[this.type].create.call(this);
-		  oldDiv.parentNode.replaceChild(this.el,oldDiv);
-			gform.types[this.type].initialize.call(this);
-			
-			this.el.style.display = this.visible ? "block" : "none";
-			gform.types[this.type].edit.call(this,this.editable);
-			this.combobox = $('select[name="' + this.name + '"]').combobox({appendId:this.id});
-
-		  if(!silent) {
-			  this.owner.trigger(['change:'+this.name,'change'], this);
-			  // this.owner.trigger('change', this);
-		  }
-	},
-  render: function() {
-		// this.options = gform.options.call(this,this, this.value);
-		if(typeof this.mapOptions == 'undefined'){
-
-			this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
-			this.mapOptions.on('change',function(){
-					this.options = this.mapOptions.getobject()
-					this.update();
-			}.bind(this))
-		}
-		this.options = this.mapOptions.getobject();
-    return gform.render('select', this);
-  },
-  set: function(value) {
-		this.el.querySelector('select').value = value;
-		_.each(this.options.options, function(option, index){
-				if(option.value == value || parseInt(option.value) == parseInt(value)) this.el.querySelector('[name="' + this.name + '"]').selectedIndex = index;
-		}.bind(this))
-		this.el.querySelector('input[type=text]').value = (_.find(this.options,{value:value})||{label:""} ).label
-  }
-});
 
 gform.types['color'] = _.extend({}, gform.types['input'], {
 	defaults: {

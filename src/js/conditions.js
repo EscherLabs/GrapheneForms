@@ -71,6 +71,7 @@ gform.conditions = {
 		return args.test.call(this, field, args);
 	},
 	contains: function(field, args) {
+		debugger;
 		var val = args.value;
 		var targetField = field.parent.find(args.name);
 		var localval = null;
@@ -85,7 +86,11 @@ gform.conditions = {
 		}
 
 		if(typeof val == "object" && localval !== null){
-			return (_.intersection(val,localval).length >0)
+			if(typeof localval == 'object'){
+				return (_.intersection(val,localval).length >0)
+			}else if(typeof localval == 'string'){
+				return _.some(val, function(filter) { return (localval.indexOf(filter) >= 0); });				
+			}
 		}else{
 			return (typeof localval !== 'undefined'  && localval.indexOf(val) !== -1 )
 		}

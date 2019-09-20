@@ -66,7 +66,6 @@ var gform = function(data, el){
 
         if(typeof this.el == 'undefined'){
             this.options.renderer = 'modal';
-            debugger;
             this.el = gform.create(gform.render(this.options.template || 'modal_container', this.options))
             // document.querySelector('body').appendChild(this.el)
             gform.addClass(this.el, 'active')
@@ -144,6 +143,7 @@ var gform = function(data, el){
 
     this.destroy = function() {
         this.isActive = false;
+        delete this.eventBus;
 		this.trigger(['close','destroy']);
         this.el.removeEventListener('click',this.listener)
 		//pub the destroy methods for each field
@@ -665,7 +665,10 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         this.editable = result;        
         gform.types[this.type].edit.call(this,this.editable);
     })
-    gform.processConditions.call(field, field.parse||field.show, function(result){
+    if(typeof field.parse == 'undefined'){
+        field.parse = field.show;
+    }
+    gform.processConditions.call(field, field.parse, function(result){
         this.parsable = result
     })
     if(field.required){
@@ -989,7 +992,8 @@ gform.mapOptions = function(optgroup, value, count,collections){
                         op[i].hidden = !result;
                     }
                 }.bind(this,item.id))
-                count += item.options.length;
+                // count += item.options.length;
+                count += item.map.getoptions().length;
                 return item;
             }else{
                 var option = _.extend({},item)

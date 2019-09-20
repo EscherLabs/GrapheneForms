@@ -90,7 +90,7 @@ gformEditor = function(container){
 		var events = 'save';
 		if(typeof opts.formTarget !== 'undefined' && opts.formTarget.length){
 			formConfig.actions = [];
-			events = 'change';
+			events = 'input';
 		}	
 
 		if(typeof gform.instances.editor !== 'undefined'){
@@ -103,11 +103,14 @@ gformEditor = function(container){
 		mygform.on('change:label',function(e){
 			// e.form.find('name').update({placeholder:e.field.get().toLowerCase().split(' ').join('_')},true)
 		})
-		mygform.on(events, function(){
+		mygform.on(events, function(e){
 			var temp = mygform.toJSON();
 			if(typeof temp.basics !== 'undefined'){
 				temp = $.extend({},temp.basics,temp.options_c)
 			}
+			// if(temp.name == ''){
+			// 	e.form.find('name').update({placeholder:temp.label.toLowerCase().split(' ').join('_')})
+			// }
 		 	container.update(temp, this);
 		 	mygform.trigger('saved');
 		}.bind(this));
@@ -185,8 +188,8 @@ Cobler.types.input = function(container) {
 
 Cobler.types.collection = function(container) {
 	function render() {
-
 		var options = get()
+		
 		var temp = _.find(options.options,{value: options.value}) || (options.options||[])[0]
 		if(typeof temp !== 'undefined') {
 			temp.selected = true;
@@ -216,6 +219,7 @@ Cobler.types.collection = function(container) {
 		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
 			{label: 'Dropdown', value: 'select'},
 			{label: 'Radio', value: 'radio'},
+			{label: 'Combobox', value: 'smallcombo'},
 			// {label: 'Scale', value: 'scale'},
 			{label: 'Range', value: 'range'},
 			// {label: 'Grid', value: 'grid'},
@@ -229,13 +233,13 @@ Cobler.types.collection = function(container) {
 					// if(result == 'undefined' && (typeof e.field.parent.get()['max'] !== 'undefined')) {
 					// 	result = 'int';
 					// }
-					if(typeof e.field.parent.get()['max'] !== 'undefined'){
+					if(typeof e.field.parent.value['max'] !== 'undefined'){
 						result = "int";
 					}
-					if(typeof e.field.parent.get()['url'] !== 'undefined'){
+					if(typeof e.field.parent.value['path'] !== 'undefined'){
 						result = "string";
 					}
-
+// debugger;
 					return result;
 
 				}},
@@ -245,9 +249,9 @@ Cobler.types.collection = function(container) {
 					{label: 'Value'},
 				],show:[{type:"matches",name:"options_type",value:"object"}]},
 
-				{type: 'text', label: "Url", name: 'url',show:[{type:"matches",name:"options_type",value:"string"}]},
-				{type: 'number', label: "Min", name: 'Min',show:[{type:"matches",name:"options_type",value:"int"}]},
-				{type: 'number', label: "Max", name: 'Max',show:[{type:"matches",name:"options_type",value:"int"}]}
+				{type: 'text', label: "Url", name: 'path',show:[{type:"matches",name:"options_type",value:"string"}]},
+				{type: 'number', label: "Min", name: 'min',show:[{type:"matches",name:"options_type",value:"int"}]},
+				{type: 'number', label: "Max", name: 'max',show:[{type:"matches",name:"options_type",value:"int"}]}
 				// {label: 'Option Type',name:"options"}
 			]
 		}
@@ -267,7 +271,7 @@ Cobler.types.bool = function(container) {
 	function render() {
 	
 	var options = get();
-	// debugger;
+
 	(_.defaults(options.options,[{value:false},{value:true}]) ) [options.value?1:0].selected = true;
 	return gform.render(item.type, _.extend({},myform.default,optins));
 
