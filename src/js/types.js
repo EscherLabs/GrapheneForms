@@ -60,6 +60,8 @@ gform.types = {
           this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
       },
       update: function(item, silent) {
+        var oldDiv = this.el;
+
         if(typeof item !== 'undefined' && (
             typeof item.options !== undefined ||
             typeof item.max !== undefined ||
@@ -89,7 +91,6 @@ gform.types = {
         // var oldDiv = document.getElementById(this.id);
         // debugger;
         // var oldDiv = this.owner.el.querySelector('#'+this.id);
-        var oldDiv = this.el;
         this.destroy();
         this.el = gform.types[this.type].create.call(this);
         oldDiv.parentNode.replaceChild(this.el,oldDiv);

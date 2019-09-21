@@ -84,14 +84,10 @@ gformEditor = function(container){
 			fields: this.fields,
 			autoDestroy: true,
 			legend: 'Edit '+ this.get()['widgetType'],
-			cobler:this
+			cobler:this,
+			actions:[]
 		}
 		var opts = container.owner.options;
-		var events = 'save';
-		if(typeof opts.formTarget !== 'undefined' && opts.formTarget.length){
-			formConfig.actions = [];
-			events = 'input';
-		}	
 
 		if(typeof gform.instances.editor !== 'undefined'){
 			gform.instances.editor.destroy();
@@ -103,16 +99,19 @@ gformEditor = function(container){
 		mygform.on('change:label',function(e){
 			// e.form.find('name').update({placeholder:e.field.get().toLowerCase().split(' ').join('_')},true)
 		})
-		mygform.on(events, function(e){
+		mygform.on('input', function(e){
 			var temp = mygform.toJSON();
-			if(typeof temp.basics !== 'undefined'){
-				temp = $.extend({},temp.basics,temp.options_c)
-			}
+			// if(typeof temp.basics !== 'undefined'){
+			// 	temp = $.extend({},temp.basics,temp.options_c)
+			// }
 			// if(temp.name == ''){
 			// 	e.form.find('name').update({placeholder:temp.label.toLowerCase().split(' ').join('_')})
 			// }
+			if(e.form.get('name') == ""){
+				e.form.find('name').update({placeholder:e.form.get('label').toLowerCase().split(' ').join('_')})
+			}
 		 	container.update(temp, this);
-		 	mygform.trigger('saved');
+		 	// mygform.trigger('saved');
 		}.bind(this));
 		mygform.on('cancel',function(){
 		 	container.update(this.get(), this)
@@ -121,18 +120,11 @@ gformEditor = function(container){
 			if(e.form.get('name') == ""){
 				e.form.find('name').update({value:e.form.get('label').toLowerCase().split(' ').join('_')})
 			}
-			// var temp = mygform.toJSON();
-			// if(typeof temp.basics !== 'undefined'){
-			// 	temp = $.extend({},temp.basics,temp.options_c)
-			// }
-		 	// container.update(temp, this);
-		 	// mygform.trigger('saved');
-
-
+		 	container.update(mygform.toJSON(), this);
 			path.push(e.form.get('name'));
 			cb.deactivate();
 			renderBuilder()
-		})
+		}.bind(this))
 	}
 }
 Cobler.types.input = function(container) {
@@ -273,7 +265,7 @@ Cobler.types.bool = function(container) {
 	var options = get();
 
 	(_.defaults(options.options,[{value:false},{value:true}]) ) [options.value?1:0].selected = true;
-	return gform.render(item.type, _.extend({},myform.default,optins));
+	return gform.render(item.type, _.extend({},myform.default,options));
 
 	}
 	function get() {

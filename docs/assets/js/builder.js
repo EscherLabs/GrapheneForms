@@ -91,7 +91,6 @@ renderBuilder = function(){
 mainForm();
 } 
 mainForm = function(){
-  
   var form = myform;
   _.each(path,function(p){
     form = _.find(form.fields,{name:p})
