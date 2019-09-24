@@ -7,8 +7,22 @@ var gform = function(data, el){
     this.eventBus = new gform.eventBus({owner:'form',item:'field',handlers:data.events||{}}, this)
 	this.on = this.eventBus.on;
 	// this.sub = this.on;
-	this.trigger = this.eventBus.dispatch;
-	this.dispatch = this.trigger;
+	this.trigger = function(a,b,c){
+        if(typeof a == 'string'){ 
+            a = [a];
+        }
+        var events = a;
+
+        if(typeof b == 'object') {
+            _.each(a, function(item){
+                if(item.indexOf(':') == '-1'){
+                    events.unshift(item+':'+b.name)
+                }
+            })
+        }
+        this.dispatch(_.uniq(events),b,c);
+    }.bind(this)
+	this.dispatch = this.eventBus.dispatch;
     // debugger;
     // _.map(data.events,function(event,index){
     //     if(!_.isArray(event)){
@@ -550,6 +564,11 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.satisfied = field.satisfied || gform.types[field.type].satisfied.bind(field);
     field.update = gform.types[field.type].update.bind(field);
     field.destroy = gform.types[field.type].destroy.bind(field);
+    if(gform.types[field.type].trigger){
+        field.trigger = gform.types[field.type].trigger.bind(field);
+    }else{
+        field.trigger = field.owner.trigger;
+    }
     
     field.active = function() {
 		return this.parent.active() && this.editable && this.parsable && this.visible;
@@ -561,8 +580,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                 this.value = value;
 
                 if(!silent){
-                    this.owner.trigger(['change:'+this.name,'change'],this);
-                    // this.owner.trigger('change',this);this.owner.trigger('change:'+this.name,this)
+                    this.parent.trigger(['change'],this);
+                    // this.parent.trigger('change',this);this.parent.trigger('change:'+this.name,this)
                 };
             };
 		}
@@ -651,7 +670,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         this.visible = result;
     
         if(events){
-            this.owner.trigger('change', this);
+            this.parent.trigger('change', this);
         }
 
         // this.parent.reflow();
@@ -802,8 +821,8 @@ gform.eventBus = function(options, owner){
 		}
         a.default = true;
         a.continue = true;
-        a.preventDefault = function(){a.default = false;}.bind(this)
-        a.stopPropagation = function(){a.continue = false;}.bind(this)
+        a.preventDefault = function(){this.a.default = false;}.bind(this)
+        a.stopPropagation = function(){this.a.continue = false;}.bind(this)
 		var events = [];
 		if(typeof e == 'string'){
 		    events.push(e)
@@ -1235,13 +1254,13 @@ gform.about = function(){
             //   this.update({value:this.get()},true);
             //   gform.types[this.type].focus.call(this)
                 gform.types[this.type].setup.call(this);
+// debugger;
+              this.parent.trigger(['change','input'], this,{input:this.value});
 
-              this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
-
-            //   this.owner.trigger('change:'+this.name, this,{input:this.value});
-            //   this.owner.trigger('change', this,{input:this.value});
-            //   this.owner.trigger('input:'+this.name, this,{input:this.value});
-            //   this.owner.trigger('input', this,{input:this.value});
+            //   this.parent.trigger('change:'+this.name, this,{input:this.value});
+            //   this.parent.trigger('change', this,{input:this.value});
+            //   this.parent.trigger('input:'+this.name, this,{input:this.value});
+            //   this.parent.trigger('input', this,{input:this.value});
           }.bind(this)
           this.input = this.input || false;
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
@@ -1288,7 +1307,7 @@ gform.about = function(){
         gform.types[this.type].edit.call(this,this.editable);
 
         if(!silent) {
-            this.owner.trigger(['change:'+this.name,'change'], this);
+            this.parent.trigger(['change'], this);
         }
         if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
         
@@ -1304,7 +1323,7 @@ gform.about = function(){
       },
       satisfied: function(value) {
           value = value||this.value;
-          return (typeof value !== 'undefined' && value !== null && value !== '');            
+          return (typeof value !== 'undefined' && value !== null && value !== '' && !(typeof value == 'number' && isNaN(value)));            
       },
       edit: function(state) {
           this.el.querySelector('[name="'+this.name+'"]').disabled = !state;            
@@ -1354,7 +1373,7 @@ gform.about = function(){
               (_.find(this.options,{value:this.value})||this.options[0]||{value:""}).selected = true;
               gform.types[this.type].setup.call(this);
 
-              this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+              this.parent.trigger(['change','input'], this,{input:this.value});
           }.bind(this)
           this.input = this.input || false;
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
@@ -1463,7 +1482,7 @@ gform.about = function(){
               }
 
               gform.types[this.type].setup.call(this);
-              this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+              this.parent.trigger(['change','input'], this,{input:this.value});
 
           }.bind(this));
           this.input = this.input || false;
@@ -1567,9 +1586,9 @@ gform.about = function(){
           this.container =  this.el.querySelector('fieldset')|| this.el || null;
           this.reflow();
           if(!silent) {
-            //   this.owner.trigger('change:'+this.name, this);
-            //   this.owner.trigger('change', this);
-              this.owner.trigger(['change:'+this.name,'change'], this);
+            //   this.parent.trigger('change:'+this.name, this);
+            //   this.parent.trigger('change', this);
+              this.parent.trigger(['change'], this);
           }
         },
       get: function(name) {
@@ -1602,10 +1621,35 @@ gform.about = function(){
           if(typeof this.fields !== 'undefined' && this.fields.length){
             gform.types[this.fields[0].type].focus.call(this.fields[0]);
           }
+      },
+      satisfied: function(value) {
+          debugger;
+          value = value||this.get();
+          return (typeof value !== 'undefined' && value !== null && value !== '' && !(typeof value == 'object' && _.isEmpty(value)));            
+      },
+      trigger: function(a,b,c){
+        // if(typeof a == 'string' && typeof b == 'object') {
+        //     this.parent.dispatch(a+b.name,b,c);
+        //     this.parent.dispatch(a,b,c);
+        // }else{
+        //     this.dispatch(a,b,c);
+        // }
+        if(typeof a == 'string'){ 
+            a = [a];
+        }
+        var events = a;
+
+        _.each(a, function(item){
+            if(item.indexOf(':') == '-1'){
+                events.unshift(item+':'+this.name)
+            }
+        }.bind(this))
+        // a.unshift(a+':'+this.name)
+        this.parent.trigger(_.uniq(events),b,c);
+
       }
   },
   'button':{
-
     base:'button',
     toString: function(){return ''},
       defaults:{parsable:false, columns:2, target:".gform-footer"},
@@ -1619,7 +1663,7 @@ gform.about = function(){
           this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
           this.onclickEvent = function(){
               if(this.editable) {
-                  this.owner.trigger(this.action, this);
+                  this.parent.trigger(this.action, this);
               }
           }.bind(this)
           this.el.addEventListener('click',this.onclickEvent );	
@@ -1707,7 +1751,7 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
     //               if(this.limit>1){text+='/'+this.limit;}
     //             this.el.querySelector('.count').innerHTML = text;
     //           }
-    //           this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+    //           this.parent.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
     //       }.bind(this)
     //       this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
     //   },
@@ -1795,12 +1839,12 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         if(typeof this.mapOptions == 'undefined'){
             this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
             this.mapOptions.on('change', function(){
-                this.options = this.mapOptions.getobject()
+                this.options = this.mapOptions.getoptions()
                 this.list = this.mapOptions.getoptions()
                 this.update();
             }.bind(this))
             }
-            this.options = this.mapOptions.getobject();
+            this.options = this.mapOptions.getoptions();
             this.list = this.mapOptions.getoptions()
     
             var search = _.find(this.list,{value:this.value});
@@ -1820,8 +1864,11 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
             return gform.render(this.type, this);        
       },
   get: function(){
+
       if(this.multiple){
-          return _.transform(this.el.querySelectorAll('[type="checkbox"]:checked'),function(value,item){value.push(_.find(this.options,{index:item.value}).value)},[])
+
+        var that = this;
+          return _.transform(this.el.querySelectorAll('[type="checkbox"]:checked'),function(value,item){value.push(_.find(that.options,{index:item.value}).value)},[])
       }else{
         return (_.find(this.list,{index:(this.el.querySelector('[type="radio"]:checked')||{value:null}).value}) ||{value:''}).value;
         // return (this.el.querySelector('[type="radio"]:checked')||{value:''}).value; 
@@ -1909,7 +1956,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
           this.el.addEventListener('change', function(){
               this.value =  this.get();
               gform.types[this.type].setup.call(this);
-              this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+              this.parent.trigger(['change','input'], this,{input:this.value});
 
           }.bind(this));
           gform.types[this.type].setup.call(this);

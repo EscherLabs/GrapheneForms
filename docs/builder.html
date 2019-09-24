@@ -141,6 +141,7 @@
 						<div class="panel-heading">
 							<div class="btn-group" role="group" aria-label="...">
 								<a class="btn btn-success" onclick="new gform(_.extend(JSON.parse($.jStorage.get('form')),{name:'modal'}) ).modal().on('cancel',function(e){e.form.trigger('close')})">Preview </a>
+								<a class="btn btn-info" onclick="new gform({legend:'Descriptor',actions:[{type:'cancel'}],fields:[{type:'textarea',size:25,value:$.jStorage.get('form') }]}).modal().on('cancel',function(e){e.form.trigger('close')})">Descriptor </a>
 								<!-- <a class="btn btn-info" href="examples/">Examples</a> -->
 							</div>
 						</div>
