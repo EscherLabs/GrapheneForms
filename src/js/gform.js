@@ -7,8 +7,22 @@ var gform = function(data, el){
     this.eventBus = new gform.eventBus({owner:'form',item:'field',handlers:data.events||{}}, this)
 	this.on = this.eventBus.on;
 	// this.sub = this.on;
-	this.trigger = this.eventBus.dispatch;
-	this.dispatch = this.trigger;
+	this.trigger = function(a,b,c){
+        if(typeof a == 'string'){ 
+            a = [a];
+        }
+        var events = a;
+
+        if(typeof b == 'object') {
+            _.each(a, function(item){
+                if(item.indexOf(':') == '-1'){
+                    events.unshift(item+':'+b.name)
+                }
+            })
+        }
+        this.dispatch(_.uniq(events),b,c);
+    }.bind(this)
+	this.dispatch = this.eventBus.dispatch;
     // debugger;
     // _.map(data.events,function(event,index){
     //     if(!_.isArray(event)){
@@ -550,6 +564,11 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.satisfied = field.satisfied || gform.types[field.type].satisfied.bind(field);
     field.update = gform.types[field.type].update.bind(field);
     field.destroy = gform.types[field.type].destroy.bind(field);
+    if(gform.types[field.type].trigger){
+        field.trigger = gform.types[field.type].trigger.bind(field);
+    }else{
+        field.trigger = field.owner.trigger;
+    }
     
     field.active = function() {
 		return this.parent.active() && this.editable && this.parsable && this.visible;
@@ -561,8 +580,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                 this.value = value;
 
                 if(!silent){
-                    this.owner.trigger(['change:'+this.name,'change'],this);
-                    // this.owner.trigger('change',this);this.owner.trigger('change:'+this.name,this)
+                    this.parent.trigger(['change'],this);
+                    // this.parent.trigger('change',this);this.parent.trigger('change:'+this.name,this)
                 };
             };
 		}
@@ -651,7 +670,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         this.visible = result;
     
         if(events){
-            this.owner.trigger('change', this);
+            this.parent.trigger('change', this);
         }
 
         // this.parent.reflow();
@@ -802,8 +821,8 @@ gform.eventBus = function(options, owner){
 		}
         a.default = true;
         a.continue = true;
-        a.preventDefault = function(){a.default = false;}.bind(this)
-        a.stopPropagation = function(){a.continue = false;}.bind(this)
+        a.preventDefault = function(){this.a.default = false;}.bind(this)
+        a.stopPropagation = function(){this.a.continue = false;}.bind(this)
 		var events = [];
 		if(typeof e == 'string'){
 		    events.push(e)

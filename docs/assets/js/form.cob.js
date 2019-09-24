@@ -25,19 +25,21 @@ baseFields = [
 	{type: 'number', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:'number',type:"matches"}]},
 	{type: 'checkbox', label: 'Default value', name: 'value',show:[{type:"matches",name:"type",value:["checkbox","switch"]}]},
 	{type: 'textarea',columns:12, label: 'Instructions', name: 'help',show:[{name:"type",value:['output'],type:"not_matches"}]},
+	{type: 'checkbox', label: 'Mupltiple Selections', name: 'multiple',min:1,show:[{name:"type",value:['select','radio'],type:"matches"}]},
+	{type: 'number', label: 'Limit Selections',parse:[{type:"requires",name:"limit"}],placeholder:"No Limit", name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"matches"},{name:"multiple",value:true,type:"matches"}]},
 	{type: 'number', label: 'Limit Length', name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"not_matches"}]},
-	{type: 'number', label: 'Limit Selections', name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"matches"}]},
+
 	{type: 'number', label: 'Size', name: 'size',min:1,show:[{name:"type",value:['textarea','select','radio'],type:"matches"}]},
 
 	{type: 'select', label: 'Width', value:"12", name: 'columns', min:1, max:12, format:{label:"{{value}} Column(s)"} },
+	{name:"horizontal",label:"Horizontal",type:"select",value:"i",parse:[{type:"not_matches",name:"horizontal",value:"i"}],options:[{label:"Inherit",value:"i"},{label:"Yes",value:true},{label:"No",value:false}]},
 	{type: 'switch', label: 'Allow duplication', name: 'array', show:[{name:"type",value:['output'],type:"not_matches"}]},
 	{type: 'fieldset',columns:12, label:false,name:"array",show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}],fields:[
 		{type: 'number', label: 'Minimum', name: 'min',value:1,placeholder:1},
 		{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
 	]}
 ]
-
-baseConditions = [
+baseCond = [
 	{type: 'select',other:true, columns:12, label:"Show", value:true, name:"show",options:		
 		[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Edit',value:'edit'}, {label:"Conditions",value:"other"}]
 	},
@@ -56,7 +58,11 @@ baseConditions = [
 	{type: 'select',other:true, columns:12, label:"Required", value:false, name:"required",options:		
 		[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"other"}]
 	},
-	{type: 'fieldset',columns:11,offset:'1', label:"{{index}}", name:"required", fields:myconditions, array:true, show:[{name:"required",value:['other'], type:"matches"}]},
+	{type: 'fieldset',columns:11,offset:'1', label:"{{index}}", name:"required", fields:myconditions, array:true, show:[{name:"required",value:['other'], type:"matches"}]}
+]
+
+
+baseConditions = baseCond.concat([
 	{type: 'switch', label: 'Validate', name: 'validate'},
 	{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Validations{{/index}}", show:[{name:"validate",value:true,type:"matches"}],name:"validate",fields:[
 		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
@@ -71,9 +77,7 @@ baseConditions = [
 		},
 		{type: 'fieldset',columns:11,offset:1, label:"{{index}}{{^index}}Conditions{{/index}}",name:"conditions",fields:myconditions,array:true,show:[{name:"conditions",value:['other'],type:"matches"}]}
 	],array:true}
-]
-
-
+])
 gformEditor = function(container){
 	return function(){
 		var formConfig = {
@@ -186,7 +190,7 @@ Cobler.types.collection = function(container) {
 		if(typeof temp !== 'undefined') {
 			temp.selected = true;
 		}
-		options.multiple = (options.limit>1);
+		// options.multiple = (options.limit>1 || options.limit == 0);
 		
 		return gform.render(item.type, _.extend({},myform.default,options));
 	}
@@ -210,13 +214,19 @@ Cobler.types.collection = function(container) {
 	var fields = [
 		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
 			{label: 'Dropdown', value: 'select'},
-			{label: 'Radio', value: 'radio'},
+			{label: 'List', value: 'radio'},
 			{label: 'Combobox', value: 'smallcombo'},
 			// {label: 'Scale', value: 'scale'},
 			{label: 'Range', value: 'range'},
 			// {label: 'Grid', value: 'grid'},
 		]}
 	].concat(baseFields,baseConditions,[
+		{type: 'fieldset', label: "Format",columns:12, name: 'format',parse:[{type:"requires",name:"format"}], fields:[
+			{name:"label",label:"Label",parse:[{type:"requires",name:"label"}]},
+			{name:"value",label:"Value",parse:[{type:"requires",name:"value"}]},
+			{name:"display",label:"Display",show:[{type:"matches",value:"smallcombo",name:"type"}]}
+			// {name:"Title",label:"title"}
+		] },
 		{type: 'fieldset', label: false, array: true,columns:12, name: 'options', 
 			fields: [
 				{label: 'Section Label (optional)', name:"label"},
@@ -231,7 +241,6 @@ Cobler.types.collection = function(container) {
 					if(typeof e.field.parent.value['path'] !== 'undefined'){
 						result = "string";
 					}
-// debugger;
 					return result;
 
 				}},
@@ -354,7 +363,7 @@ Cobler.types.section = function(container) {
 		{type:"button",label:"Manage Fields",action:"manage",name:"manage",show:[{type:"test",name:"manage",test:function(e){
 return !e.owner.options.nomanage;
 		}}]}
-	]
+	].concat(baseCond)
 	return {
 		fields: fields,
 		render: render,

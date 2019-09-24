@@ -376,7 +376,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
   initialize: function(){
 	this.onchangeEvent = function(){
 		this.value = this.get();
-		this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+		this.parent.trigger(['change','input'], this,{input:this.value});
 	}.bind(this)
 	this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
 
@@ -385,7 +385,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 
 	$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex'}).on('changeColor', function(ev){
 		this.el.querySelector('i').style.backgroundColor = this.get()
-		this.owner.trigger('change',this);
+		this.parent.trigger('change',this);
 	}.bind(this));
 
   }
@@ -482,14 +482,14 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 				}
 				gform.types[this.type].setLabel.call(this);
 				if(!silent) {
-					this.owner.trigger(['change:'+this.name,'change'], this);
+					this.parent.trigger(['change'], this);
 				}
     },
     initialize: function(){
         this.onchangeEvent = function(input){
 						this.set(this.combo.value)
 						_.throttle(this.renderMenu,100).call(this);
-            this.owner.trigger(['input:'+this.name,'input'], this, {input:this.value});
+            this.parent.trigger(['input'], this, {input:this.value});
 				}.bind(this)
 				this.processOptions = function(item){
 					if(typeof item.optgroup !== 'undefined'){
@@ -559,7 +559,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 										// gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
 										this.value = null;
 									}
-									this.owner.trigger(['change:'+this.name,'change'], this, {input:this.value});
+									this.parent.trigger(['change'], this, {input:this.value});
 								}.bind(this)})
 							}
 						// }
@@ -575,7 +575,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.select = function(index){
             var item = _.find(this.options,{i:parseInt(index)})
 						this.set(item.value);
-						this.owner.trigger(['input:'+this.name,'input'], this, {input:this.value});
+						this.parent.trigger(['input'], this, {input:this.value});
 
             this.menu.style.display = 'none';
             this.shown = false;
@@ -718,7 +718,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 						if (!this.mousedover && this.shown) {setTimeout(function () { 
 							this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);
 						}								
-						this.owner.trigger(['input:'+this.name,'input'], this, {input:this.value});
+						this.parent.trigger(['input'], this, {input:this.value});
 					}
 				// if(this.el.querySelector('.combobox-selected') == null){
 					this.set(this.value||this.combo.value)
@@ -758,8 +758,8 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 						if(typeof this.value !== 'undefined'){
 							this.set(this.value);
 						}
-						// this.owner.trigger('change')
-						// this.owner.trigger(['change:'+this.name,'change'], this, {input:this.value});
+						// this.parent.trigger('change')
+						// this.parent.trigger(['change:'+this.name,'change'], this, {input:this.value});
 
 					}.bind(this)}
 					)}else{
@@ -788,7 +788,7 @@ gform.types['datetime'] = _.extend({}, gform.types['input'], {
   initialize: function(){
 	this.onchangeEvent = function(){
 		this.value = this.get();
-		this.owner.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
+		this.parent.trigger(['change','input'], this,{input:this.value});
 	}.bind(this)
 	
 	// this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
