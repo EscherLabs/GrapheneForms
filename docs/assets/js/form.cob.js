@@ -221,12 +221,6 @@ Cobler.types.collection = function(container) {
 			// {label: 'Grid', value: 'grid'},
 		]}
 	].concat(baseFields,baseConditions,[
-		{type: 'fieldset', label: "Format",columns:12, name: 'format',parse:[{type:"requires",name:"format"}], fields:[
-			{name:"label",label:"Label",parse:[{type:"requires",name:"label"}]},
-			{name:"value",label:"Value",parse:[{type:"requires",name:"value"}]},
-			{name:"display",label:"Display",show:[{type:"matches",value:"smallcombo",name:"type"}]}
-			// {name:"Title",label:"title"}
-		] },
 		{type: 'fieldset', label: false, array: true,columns:12, name: 'options', 
 			fields: [
 				{label: 'Section Label (optional)', name:"label"},
@@ -252,7 +246,13 @@ Cobler.types.collection = function(container) {
 
 				{type: 'text', label: "Url", name: 'path',show:[{type:"matches",name:"options_type",value:"string"}]},
 				{type: 'number', label: "Min", name: 'min',show:[{type:"matches",name:"options_type",value:"int"}]},
-				{type: 'number', label: "Max", name: 'max',show:[{type:"matches",name:"options_type",value:"int"}]}
+				{type: 'number', label: "Max", name: 'max',show:[{type:"matches",name:"options_type",value:"int"}]},
+				{type: 'fieldset', label: "Format",columns:12, name: 'format',parse:[{type:"requires",name:"format"}], fields:[
+					{name:"label",label:"Label",parse:[{type:"requires",name:"label"}]},
+					{name:"value",label:"Value",parse:[{type:"requires",name:"value"}]},
+					{name:"display",label:"Display",show:[{type:"matches",value:"smallcombo",name:"type"}]}
+					// {name:"Title",label:"title"}
+				] }
 				// {label: 'Option Type',name:"options"}
 			]
 		}

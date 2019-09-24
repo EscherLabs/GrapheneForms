@@ -233,7 +233,7 @@ var gform = function(data, el){
                })
 
                gform.types[newField.type].focus.call(newField);
-               field.owner.trigger(['change', 'change:'+field.name,'create', 'create:'+field.name,'inserted','inserted:'+field.name],field)
+               field.parent.trigger(['change', 'create', 'inserted'],field)
                fieldCount++;
            }
 
@@ -270,7 +270,7 @@ var gform = function(data, el){
                }else{
                    this.container.querySelector( field.target ).removeChild(field.el);
                }
-               field.owner.trigger(['change', 'change:'+field.name,'removed','removed:'+field.name],field)
+               field.parent.trigger(['change','removed'],field)
                fieldCount--;
            }else{
                if(field.editable)field.set(null);
@@ -1538,11 +1538,13 @@ gform.about = function(){
 
     base:'section',
     setLabel:function(){
+        debugger;
+
         var label = gform.renderString(this.item.label||this.label, this);
         if(this.required){
             label+=this.requiredText+this.suffix;
           }
-        var labelEl = this.el.querySelector('legend');
+        var labelEl = this.el.querySelector('fieldset#'+this.id+'>legend')
         if(labelEl !== null){
             labelEl.innerHTML = label
         }
@@ -1623,7 +1625,6 @@ gform.about = function(){
           }
       },
       satisfied: function(value) {
-          debugger;
           value = value||this.get();
           return (typeof value !== 'undefined' && value !== null && value !== '' && !(typeof value == 'object' && _.isEmpty(value)));            
       },

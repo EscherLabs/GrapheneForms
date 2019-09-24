@@ -330,11 +330,13 @@ gform.types = {
 
     base:'section',
     setLabel:function(){
+        debugger;
+
         var label = gform.renderString(this.item.label||this.label, this);
         if(this.required){
             label+=this.requiredText+this.suffix;
           }
-        var labelEl = this.el.querySelector('legend');
+        var labelEl = this.el.querySelector('fieldset#'+this.id+'>legend')
         if(labelEl !== null){
             labelEl.innerHTML = label
         }
@@ -415,7 +417,6 @@ gform.types = {
           }
       },
       satisfied: function(value) {
-          debugger;
           value = value||this.get();
           return (typeof value !== 'undefined' && value !== null && value !== '' && !(typeof value == 'object' && _.isEmpty(value)));            
       },
