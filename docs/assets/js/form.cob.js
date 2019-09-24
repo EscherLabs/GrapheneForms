@@ -39,8 +39,7 @@ baseFields = [
 		{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
 	]}
 ]
-
-baseConditions = [
+baseCond = [
 	{type: 'select',other:true, columns:12, label:"Show", value:true, name:"show",options:		
 		[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Edit',value:'edit'}, {label:"Conditions",value:"other"}]
 	},
@@ -59,7 +58,11 @@ baseConditions = [
 	{type: 'select',other:true, columns:12, label:"Required", value:false, name:"required",options:		
 		[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"other"}]
 	},
-	{type: 'fieldset',columns:11,offset:'1', label:"{{index}}", name:"required", fields:myconditions, array:true, show:[{name:"required",value:['other'], type:"matches"}]},
+	{type: 'fieldset',columns:11,offset:'1', label:"{{index}}", name:"required", fields:myconditions, array:true, show:[{name:"required",value:['other'], type:"matches"}]}
+]
+
+
+baseConditions = baseCond.concat([
 	{type: 'switch', label: 'Validate', name: 'validate'},
 	{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Validations{{/index}}", show:[{name:"validate",value:true,type:"matches"}],name:"validate",fields:[
 		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
@@ -74,9 +77,7 @@ baseConditions = [
 		},
 		{type: 'fieldset',columns:11,offset:1, label:"{{index}}{{^index}}Conditions{{/index}}",name:"conditions",fields:myconditions,array:true,show:[{name:"conditions",value:['other'],type:"matches"}]}
 	],array:true}
-]
-
-
+])
 gformEditor = function(container){
 	return function(){
 		var formConfig = {
@@ -362,7 +363,7 @@ Cobler.types.section = function(container) {
 		{type:"button",label:"Manage Fields",action:"manage",name:"manage",show:[{type:"test",name:"manage",test:function(e){
 return !e.owner.options.nomanage;
 		}}]}
-	]
+	].concat(baseCond)
 	return {
 		fields: fields,
 		render: render,
