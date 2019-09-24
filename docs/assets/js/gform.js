@@ -233,7 +233,7 @@ var gform = function(data, el){
                })
 
                gform.types[newField.type].focus.call(newField);
-               field.parent.trigger(['change', 'create', 'inserted'],field)
+               field.parent.trigger(['change','input', 'create', 'inserted'],field)
                fieldCount++;
            }
 
@@ -270,7 +270,7 @@ var gform = function(data, el){
                }else{
                    this.container.querySelector( field.target ).removeChild(field.el);
                }
-               field.parent.trigger(['change','removed'],field)
+               field.parent.trigger(['input','change','removed'],field)
                fieldCount--;
            }else{
                if(field.editable)field.set(null);
