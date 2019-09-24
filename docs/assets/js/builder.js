@@ -136,7 +136,9 @@ mainForm = function(){
         delete form.actions;
       }
       $.jStorage.set('form', JSON.stringify(myform, undefined, "\t"));
-      // renderBuilder()
+      // if(typeof e.field !== 'undefined' && e.field.name == 'horizontal'){
+      //   renderBuilder()
+      // }
 
     }) ).on('input:horizontal',function(){
       renderBuilder();

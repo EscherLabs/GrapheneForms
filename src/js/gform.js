@@ -11,7 +11,7 @@ var gform = function(data, el){
         if(typeof a == 'string'){ 
             a = [a];
         }
-        var events = a;
+        var events = _.extend([],a);
 
         if(typeof b == 'object') {
             _.each(a, function(item){

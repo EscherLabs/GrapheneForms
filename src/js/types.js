@@ -429,7 +429,7 @@ gform.types = {
         if(typeof a == 'string'){ 
             a = [a];
         }
-        var events = a;
+        var events = _.extend([],a);
 
         _.each(a, function(item){
             if(item.indexOf(':') == '-1'){
