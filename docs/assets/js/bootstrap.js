@@ -232,7 +232,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/label}}
 		<div class="checkbox">
 			<label class="{{alt-display}}">
-				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{#details}}<span class="noselect">{{{details}}}</span>{{/details}}&nbsp;
+				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{#display}}<span class="noselect">{{{display}}}</span>{{/display}}&nbsp;
 			</label>
 		</div>
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
@@ -439,7 +439,11 @@ gform.stencils.smallcombo = `
 		
 gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 		toString: function(){
-			return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
+			if(typeof this.combo !== 'undefined'){
+				return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
+			}else{
+				return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
+			}
 		},
     render: function() {
         if(typeof this.mapOptions == 'undefined'){
@@ -570,7 +574,9 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.input = this.input || false;
         this.menu = this.el.querySelector('ul')
         this.combo = this.el.querySelector('input');
-
+		// this.combo.addEventListener('focus',function(){
+		// 	this.renderMenu();
+		// }.bind(this))
 				this.set = gform.types[this.type].set.bind(this)
         this.select = function(index){
             var item = _.find(this.options,{i:parseInt(index)})
@@ -590,7 +596,9 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                 if(this.el.querySelector('.combobox-selected') !== null){
                     // this.selected = false;
                     // this.combo.value = "";
-                    this.set("");
+					this.set("");			
+					this.renderMenu();
+
                 }else{
                     if(this.shown){
                         this.menu.style.display = 'none';
@@ -599,7 +607,8 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                         this.renderMenu();
                     }
                 }
-                this.combo.focus();
+				this.combo.focus();
+				
             }
         }.bind(this))
 

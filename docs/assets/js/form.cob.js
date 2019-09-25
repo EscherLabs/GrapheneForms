@@ -94,6 +94,7 @@ gformEditor = function(container){
 		var opts = container.owner.options;
 
 		if(typeof gform.instances.editor !== 'undefined'){
+			// debugger;
 			gform.instances.editor.destroy();
 		}
 		
@@ -101,21 +102,12 @@ gformEditor = function(container){
 		temp.placeholder =  formConfig.data['label'].toLowerCase().split(' ').join('_');
 		var mygform = new gform(formConfig, $(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
 		mygform.on('change:label',function(e){
-			// e.form.find('name').update({placeholder:e.field.get().toLowerCase().split(' ').join('_')},true)
-		})
-		mygform.on('input', function(e){
-			var temp = mygform.toJSON();
-			// if(typeof temp.basics !== 'undefined'){
-			// 	temp = $.extend({},temp.basics,temp.options_c)
-			// }
-			// if(temp.name == ''){
-			// 	e.form.find('name').update({placeholder:temp.label.toLowerCase().split(' ').join('_')})
-			// }
-			if(e.form.get('name') == ""){
+			if(e.field.name == 'label' && e.form.get('name') == ""){
 				e.form.find('name').update({placeholder:e.form.get('label').toLowerCase().split(' ').join('_')})
-			}
-		 	container.update(temp, this);
-		 	// mygform.trigger('saved');
+			}		
+		}.bind(this))
+		mygform.on('input', function(e){
+		 	container.update(e.form.get(), this);
 		}.bind(this));
 		mygform.on('cancel',function(){
 		 	container.update(this.get(), this)
@@ -129,6 +121,13 @@ gformEditor = function(container){
 			cb.deactivate();
 			renderBuilder()
 		}.bind(this))
+		mygform.on('destroy',function(e){
+			container;
+			if(e.form.get('name') == "" && typeof e.form.get('label') !== 'undefined'){
+				e.form.find('name').set(e.form.get('label').toLowerCase().split(' ').join('_'))
+				container.update(e.form.get(), this);
+			}
+		}.bind(this))
 	}
 }
 Cobler.types.input = function(container) {
@@ -136,16 +135,14 @@ Cobler.types.input = function(container) {
 	var data = get();
 	if(item.type == 'output'){
 		data.display = gform.renderString((data.format|| {}).value||'{{{value}}}', data);
-    //   return gform.render('textarea', get());
 	}
-	//   return gform.render('text', get());
 	return gform.render(item.type, _.extend({},myform.default,data));
 	}
 	function get() {
 		item.widgetType = 'input';
 		item.editable = true;
 		item.type = item.type || 'text';
-		return _.extend({},gform.types[item.type].defaults||{},item);
+		return _.extend({},(gform.types[item.type]||gform.types['text']).defaults||{},item);
 	}
 	function toJSON() {
 		return get();
@@ -159,7 +156,7 @@ Cobler.types.input = function(container) {
 		label: 'Label',
 		editable: true
 	}
-	var fields = [{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
+	var fields = [{type: 'smallcombo', label: 'Display', name: 'type', value: 'text', 'options': [
 		{label: 'Single Line', value: 'text'},
 		{label: 'Multi-line', value: 'textarea'},
 		{label: 'Phone', value: 'tel'},
@@ -212,7 +209,7 @@ Cobler.types.collection = function(container) {
 		enabled: true
 	}
 	var fields = [
-		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
+		{type: 'smallcombo', label: 'Display', name: 'type', value: 'text', 'options': [
 			{label: 'Dropdown', value: 'select'},
 			{label: 'List', value: 'radio'},
 			{label: 'Combobox', value: 'smallcombo'},
@@ -240,13 +237,13 @@ Cobler.types.collection = function(container) {
 				}},
 				{name:"type",type:"hidden",value:"optgroup"},
 				{type: 'fieldset', label: false, array: true, name: 'options', fields:[
-					{label: 'Label'},
-					{label: 'Value'},
+					{name:"label",label:"Label",parse:[{type:"requires",name:"label"}]},
+					{name:"value",label:"Value",parse:[{type:"requires",name:"value"}]}
 				],show:[{type:"matches",name:"options_type",value:"object"}]},
 
 				{type: 'text', label: "Url", name: 'path',show:[{type:"matches",name:"options_type",value:"string"}]},
-				{type: 'number', label: "Min", name: 'min',show:[{type:"matches",name:"options_type",value:"int"}]},
-				{type: 'number', label: "Max", name: 'max',show:[{type:"matches",name:"options_type",value:"int"}]},
+				{type: 'number', label: "Min", name: 'min',placeholder:"1",show:[{type:"matches",name:"options_type",value:"int"}]},
+				{type: 'number', label: "Max", name: 'max',required:true,show:[{type:"matches",name:"options_type",value:"int"}]},
 				{type: 'fieldset', label: "Format",columns:12, name: 'format',parse:[{type:"requires",name:"format"}], fields:[
 					{name:"label",label:"Label",parse:[{type:"requires",name:"label"}]},
 					{name:"value",label:"Value",parse:[{type:"requires",name:"value"}]},
@@ -282,7 +279,7 @@ Cobler.types.bool = function(container) {
 		item.enabled = true;
 
 		// item.type = 'checkbox';
-		return item;
+		return _.extend({},item);
 	}
 	function toJSON() {
 

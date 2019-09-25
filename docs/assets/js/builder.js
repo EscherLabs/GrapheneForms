@@ -17,18 +17,18 @@ renderBuilder = function(){
     cb = new Cobler({formTarget:$('#form') ,disabled: false, targets: [document.getElementById('editor')],items:[[]]})
     list = document.getElementById('sortableList');
     cb.addSource(list);
-    cb.on('activate', function(){
+    cb.on('activate', function(e){
       if(list.className.indexOf('hidden') == -1){
         list.className += ' hidden';
       }
       $('#form').removeClass('hidden');
     })
     cb.on('deactivate', function(){
+      if(typeof gform.instances.editor !== 'undefined'){
+          gform.instances.editor.destroy();
+      }
       list.className = list.className.replace('hidden', '');
       $('#form').addClass('hidden');
-      if(typeof gform.instances.editor !== 'undefined'){
-        gform.instances.editor.destroy();
-      }
       mainForm();
     })
     document.getElementById('sortableList').addEventListener('click', function(e) {
@@ -36,11 +36,9 @@ renderBuilder = function(){
     })
     cb.on("change", function(){
       var workingForm = myform;
-      // if(path != []){
-        _.each(path,function(p){
-          workingForm = _.find(workingForm.fields,{name:p})
-        })
-      // }
+      _.each(path,function(p){
+        workingForm = _.find(workingForm.fields,{name:p})
+      })
       workingForm.fields = cb.toJSON()[0];
       
       $.jStorage.set('form', JSON.stringify(myform, undefined, "\t"));
@@ -88,7 +86,7 @@ renderBuilder = function(){
     gform.instances.editor.destroy();
   }
 
-mainForm();
+  mainForm();
 } 
 mainForm = function(){
   var form = myform;

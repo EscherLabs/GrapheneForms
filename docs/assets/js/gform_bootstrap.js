@@ -157,7 +157,7 @@ var gform = function(data, el){
 
     this.destroy = function() {
         this.isActive = false;
-        delete this.eventBus;
+        // debugger;
 		this.trigger(['close','destroy']);
         this.el.removeEventListener('click',this.listener)
 		//pub the destroy methods for each field
@@ -172,7 +172,9 @@ var gform = function(data, el){
 		//Remove the global reference to our form
 		delete gform.instances[this.options.name];
 
-		this.trigger('destroyed');
+        this.trigger('destroyed');
+        delete this.eventBus;
+
     };
     create.call(this)
 
@@ -351,7 +353,11 @@ gform.filter = function(search){
 gform.toJSON = function(name) {
     if(typeof name == 'string' && name.length>0) {
         name = name.split('.');
-        return _.find(this.fields, {name: name.shift()}).get(name.join('.'));
+        var field = _.find(this.fields, {name: name.shift()});
+        if(typeof field !=='undefined'){
+            return field.get(name.join('.'));
+        }
+        return undefined;
     }
     var obj = {};
     _.each(this.fields, function(field) {
@@ -478,6 +484,10 @@ gform.inflate = function(atts, fieldIn, ind, list) {
 gform.normalizeField = function(fieldIn,parent){
     var parent = parent || null;
     fieldIn.type = fieldIn.type || this.options.default.type || 'text';
+    if(typeof gform.types[fieldIn.type] == 'undefined'){
+        console.warn('Field type "'+fieldIn.type+'" not supported - using text instead');
+        fieldIn.type = 'text';
+    }
     //work gform.default in here
     var field = _.assignIn({
         name: (gform.renderString(fieldIn.label || fieldIn.title)||'').toLowerCase().split(' ').join('_'), 
@@ -993,7 +1003,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
         return _.map(opts,function(item){
 
             if(typeof item === 'object' && item.type == 'optgroup'){
-                item.map = new gform.mapOptions(item,value,count,this.collections);
+                item.map = new gform.mapOptions(_.extend({format:format},item),value,count,this.collections);
                 item.map.on('*',function(e){
                     this.eventBus.dispatch(e.event)
                 }.bind(this))
@@ -1255,12 +1265,10 @@ gform.about = function(){
             //   gform.types[this.type].focus.call(this)
                 gform.types[this.type].setup.call(this);
 // debugger;
-              this.parent.trigger(['change','input'], this,{input:this.value});
-
-            //   this.parent.trigger('change:'+this.name, this,{input:this.value});
-            //   this.parent.trigger('change', this,{input:this.value});
-            //   this.parent.trigger('input:'+this.name, this,{input:this.value});
-            //   this.parent.trigger('input', this,{input:this.value});
+              this.parent.trigger(['change'], this,{input:this.value});
+              if(input){
+                this.parent.trigger(['input'], this,{input:this.value});
+              }
           }.bind(this)
           this.input = this.input || false;
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
@@ -1375,7 +1383,6 @@ gform.about = function(){
 
               this.parent.trigger(['change','input'], this,{input:this.value});
           }.bind(this)
-          this.input = this.input || false;
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
           this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
       },
@@ -1395,7 +1402,7 @@ gform.about = function(){
 
     base:'collection',
       defaults:{format:{label: '{{{label}}}',  value: function(item){
-		return item.value;
+		return item.value || (item.label || item.index).toLowerCase().split(' ').join('_');
 	}}},
       toString: function(){
         if(this.multiple){
@@ -1469,7 +1476,6 @@ gform.about = function(){
       initialize: function() {       
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
-              this.input = true;
               this.value =  this.get();
 
               (_.find(this.list,{selected:true})||{selected:null}).selected = false;
@@ -1485,7 +1491,6 @@ gform.about = function(){
               this.parent.trigger(['change','input'], this,{input:this.value});
 
           }.bind(this));
-          this.input = this.input || false;
 
           gform.types[this.type].setup.call(this);
       },
@@ -1505,7 +1510,14 @@ gform.about = function(){
          
           if(this.multiple){
             var that = this;
-            value = _.transform(this.el.querySelector('select').options,function(orig,opt){if(opt.selected){orig.push(_.find(that.options,{index:opt.value}).value)}},[])
+            value = _.transform(this.el.querySelector('select').options,function(orig,opt){
+                if(opt.selected){
+                    var option = _.find(that.list,{index:opt.value});
+                    if(typeof option !== 'undefined'){
+                        orig.push(option.value)
+                    }
+                }
+            },[])
           }
         //   this.option = _.find()
           return value;
@@ -1538,7 +1550,6 @@ gform.about = function(){
 
     base:'section',
     setLabel:function(){
-        debugger;
 
         var label = gform.renderString(this.item.label||this.label, this);
         if(this.required){
@@ -1869,7 +1880,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       if(this.multiple){
 
         var that = this;
-          return _.transform(this.el.querySelectorAll('[type="checkbox"]:checked'),function(value,item){value.push(_.find(that.options,{index:item.value}).value)},[])
+          return _.transform(this.el.querySelectorAll('[type="checkbox"]:checked'),function(value,item){value.push(_.find(that.list,{index:item.value}).value)},[])
       }else{
         return (_.find(this.list,{index:(this.el.querySelector('[type="radio"]:checked')||{value:null}).value}) ||{value:''}).value;
         // return (this.el.querySelector('[type="radio"]:checked')||{value:''}).value; 
@@ -2497,7 +2508,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/label}}
 		<div class="checkbox">
 			<label class="{{alt-display}}">
-				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{#details}}<span class="noselect">{{{details}}}</span>{{/details}}&nbsp;
+				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{#display}}<span class="noselect">{{{display}}}</span>{{/display}}&nbsp;
 			</label>
 		</div>
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
@@ -2704,7 +2715,11 @@ gform.stencils.smallcombo = `
 		
 gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 		toString: function(){
-			return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
+			if(typeof this.combo !== 'undefined'){
+				return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
+			}else{
+				return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
+			}
 		},
     render: function() {
         if(typeof this.mapOptions == 'undefined'){
@@ -2835,7 +2850,9 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.input = this.input || false;
         this.menu = this.el.querySelector('ul')
         this.combo = this.el.querySelector('input');
-
+		// this.combo.addEventListener('focus',function(){
+		// 	this.renderMenu();
+		// }.bind(this))
 				this.set = gform.types[this.type].set.bind(this)
         this.select = function(index){
             var item = _.find(this.options,{i:parseInt(index)})
@@ -2855,7 +2872,9 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                 if(this.el.querySelector('.combobox-selected') !== null){
                     // this.selected = false;
                     // this.combo.value = "";
-                    this.set("");
+					this.set("");			
+					this.renderMenu();
+
                 }else{
                     if(this.shown){
                         this.menu.style.display = 'none';
@@ -2864,7 +2883,8 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                         this.renderMenu();
                     }
                 }
-                this.combo.focus();
+				this.combo.focus();
+				
             }
         }.bind(this))
 

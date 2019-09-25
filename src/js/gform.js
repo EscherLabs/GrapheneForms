@@ -157,7 +157,7 @@ var gform = function(data, el){
 
     this.destroy = function() {
         this.isActive = false;
-        delete this.eventBus;
+        // debugger;
 		this.trigger(['close','destroy']);
         this.el.removeEventListener('click',this.listener)
 		//pub the destroy methods for each field
@@ -172,7 +172,9 @@ var gform = function(data, el){
 		//Remove the global reference to our form
 		delete gform.instances[this.options.name];
 
-		this.trigger('destroyed');
+        this.trigger('destroyed');
+        delete this.eventBus;
+
     };
     create.call(this)
 
@@ -351,7 +353,11 @@ gform.filter = function(search){
 gform.toJSON = function(name) {
     if(typeof name == 'string' && name.length>0) {
         name = name.split('.');
-        return _.find(this.fields, {name: name.shift()}).get(name.join('.'));
+        var field = _.find(this.fields, {name: name.shift()});
+        if(typeof field !=='undefined'){
+            return field.get(name.join('.'));
+        }
+        return undefined;
     }
     var obj = {};
     _.each(this.fields, function(field) {
@@ -478,6 +484,10 @@ gform.inflate = function(atts, fieldIn, ind, list) {
 gform.normalizeField = function(fieldIn,parent){
     var parent = parent || null;
     fieldIn.type = fieldIn.type || this.options.default.type || 'text';
+    if(typeof gform.types[fieldIn.type] == 'undefined'){
+        console.warn('Field type "'+fieldIn.type+'" not supported - using text instead');
+        fieldIn.type = 'text';
+    }
     //work gform.default in here
     var field = _.assignIn({
         name: (gform.renderString(fieldIn.label || fieldIn.title)||'').toLowerCase().split(' ').join('_'), 
@@ -993,7 +1003,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
         return _.map(opts,function(item){
 
             if(typeof item === 'object' && item.type == 'optgroup'){
-                item.map = new gform.mapOptions(item,value,count,this.collections);
+                item.map = new gform.mapOptions(_.extend({format:format},item),value,count,this.collections);
                 item.map.on('*',function(e){
                     this.eventBus.dispatch(e.event)
                 }.bind(this))
