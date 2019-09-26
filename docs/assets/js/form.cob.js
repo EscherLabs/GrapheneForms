@@ -15,7 +15,7 @@ myconditions=[
 	]}
 ]
 
-baseFields = [
+baseFields = _.map([
 	{type: 'text', required: true, title: 'Field Label', name: 'label'},
 	{type: 'text', label: 'Name', name: 'name'},
 	{type: 'text', label: 'Placeholder', name: 'placeholder',show:[{name:"type",value:['radio','checkbox','switch'],type:"not_matches"}]},
@@ -27,7 +27,11 @@ baseFields = [
 	{type: 'textarea',columns:12, label: 'Instructions', name: 'help',show:[{name:"type",value:['output'],type:"not_matches"}]},
 	{type: 'checkbox', label: 'Mupltiple Selections', name: 'multiple',min:1,show:[{name:"type",value:['select','radio'],type:"matches"}]},
 	{type: 'number', label: 'Limit Selections',parse:[{type:"requires",name:"limit"}],placeholder:"No Limit", name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"matches"},{name:"multiple",value:true,type:"matches"}]},
-	{type: 'number', label: 'Limit Length', name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"not_matches"}]},
+	{type: 'number', label: 'Limit Length', name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"not_matches"}]}
+],function(item){
+	item.target = "#collapseBasic .panel-body";
+	return item;
+}).concat(_.map([
 
 	{type: 'number', label: 'Size', name: 'size',min:1,show:[{name:"type",value:['textarea','select','radio'],type:"matches"}]},
 
@@ -38,8 +42,14 @@ baseFields = [
 		{type: 'number', label: 'Minimum', name: 'min',value:1,placeholder:1},
 		{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
 	]}
-]
-baseCond = [
+],function(item){
+	item.target = "#collapseDisplay .panel-body";
+	return item;
+})
+
+
+)
+baseCond = _.map([
 	{type: 'select',other:true, columns:12, label:"Show", value:true, name:"show",options:		
 		[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Edit',value:'edit'}, {label:"Conditions",value:"other"}]
 	},
@@ -59,10 +69,13 @@ baseCond = [
 		[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"other"}]
 	},
 	{type: 'fieldset',columns:11,offset:'1', label:"{{index}}", name:"required", fields:myconditions, array:true, show:[{name:"required",value:['other'], type:"matches"}]}
-]
+],function(item){
+	item.target = "#collapseConditions .panel-body";
+	return item;
+})
 
 
-baseConditions = baseCond.concat([
+baseConditions = baseCond.concat(_.map([
 	{type: 'switch', label: 'Validate', name: 'validate'},
 	{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Validations{{/index}}", show:[{name:"validate",value:true,type:"matches"}],name:"validate",fields:[
 		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
@@ -77,7 +90,10 @@ baseConditions = baseCond.concat([
 		},
 		{type: 'fieldset',columns:11,offset:1, label:"{{index}}{{^index}}Conditions{{/index}}",name:"conditions",fields:myconditions,array:true,show:[{name:"conditions",value:['other'],type:"matches"}]}
 	],array:true}
-])
+],function(item){
+	item.target = "#collapseValidation .panel-body";
+	return item;
+}))
 gformEditor = function(container){
 	return function(){
 		var formConfig = {
@@ -89,17 +105,19 @@ gformEditor = function(container){
 			autoDestroy: true,
 			legend: 'Edit '+ this.get()['widgetType'],
 			cobler:this,
-			actions:[]
+			actions:[],
+			clear:false
 		}
 		var opts = container.owner.options;
 
 		if(typeof gform.instances.editor !== 'undefined'){
 			gform.instances.editor.destroy();
 		}
-		
+		$(opts.formTarget).html(gform.renderString(accordion))
+
 		var temp = _.find(formConfig.fields,{name:"name"});
 		temp.placeholder =  formConfig.data['label'].toLowerCase().split(' ').join('_');
-		var mygform = new gform(formConfig, $(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
+		var mygform = new gform(formConfig,$(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
 		mygform.on('change:label',function(e){
 			// e.form.find('name').update({placeholder:e.field.get().toLowerCase().split(' ').join('_')},true)
 		})
@@ -128,6 +146,14 @@ gformEditor = function(container){
 			path.push(e.form.get('name'));
 			cb.deactivate();
 			renderBuilder()
+		}.bind(this))
+
+		mygform.on('destroy',function(e){
+			container;
+			if(e.form.get('name') == "" && typeof e.form.get('label') !== 'undefined'){
+				e.form.find('name').set(e.form.get('label').toLowerCase().split(' ').join('_'))
+				container.update(e.form.get(), this);
+			}
 		}.bind(this))
 	}
 }
@@ -220,7 +246,7 @@ Cobler.types.collection = function(container) {
 			{label: 'Range', value: 'range'},
 			// {label: 'Grid', value: 'grid'},
 		]}
-	].concat(baseFields,baseConditions,[
+	].concat(baseFields,baseConditions,_.map([
 		{type: 'fieldset', label: "Format",columns:12, name: 'format',parse:[{type:"requires",name:"format"}], fields:[
 			{name:"label",label:"Label",parse:[{type:"requires",name:"label"}]},
 			{name:"value",label:"Value",parse:[{type:"requires",name:"value"}]},
@@ -256,7 +282,10 @@ Cobler.types.collection = function(container) {
 				// {label: 'Option Type',name:"options"}
 			]
 		}
-	])
+	],function(item){
+		item.target = "#collapseOptions .panel-body";
+		return item;
+	}))
 //{type:"optgroup",label:"stuff",format:{"label":'{{label}}'}, options:[3,4,5,9]},
 	return {
 		fields: fields,
@@ -303,10 +332,13 @@ Cobler.types.bool = function(container) {
 			{label: 'Checkbox', value: 'checkbox'},
 			{label: 'Switch', value: 'switch'}
 		]}
-	].concat(baseFields,baseConditions,[{type: 'fieldset', label: false, array: {min:2,max:2}, name: 'options', fields: [
+	].concat(baseFields,baseConditions,_.map([{type: 'fieldset', label: false, array: {min:2,max:2}, name: 'options', fields: [
 		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Label','name':'label'},
 		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Value','name':'value'},
-	]}])
+	]}],function(item){
+		item.target = "#collapseOptions .panel-body";
+		return item;
+	}))
 	return {
 		fields: fields,
 		render: render,
@@ -373,3 +405,89 @@ return !e.owner.options.nomanage;
 		set: set,
 	}
 }
+
+
+
+
+
+var accordion = `
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+<div class="panel panel-default">
+  <div class="panel-heading" role="tab" id="headingBasic">
+    <h4 class="panel-title">
+      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseBasic" aria-expanded="true" aria-controls="collapseBasic">
+Basic
+      </a>
+    </h4>
+  </div>
+  <div id="collapseBasic" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingBasic">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading" role="tab" id="headingDisplay">
+    <h4 class="panel-title">
+      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseDisplay" aria-expanded="false" aria-controls="collapseDisplay">
+Display
+      </a>
+    </h4>
+  </div>
+  <div id="collapseDisplay" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingDisplay">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+
+
+<div class="panel panel-default">
+  <div class="panel-heading" role="tab" id="headingConditions">
+    <h4 class="panel-title">
+      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseConditions" aria-expanded="false" aria-controls="collapseConditions">
+Conditions
+      </a>
+    </h4>
+  </div>
+  <div id="collapseConditions" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingConditions">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading" role="tab" id="headingValidation">
+    <h4 class="panel-title">
+      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseValidation" aria-expanded="false" aria-controls="collapseValidation">
+Validation
+      </a>
+    </h4>
+  </div>
+  <div id="collapseValidation" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingValidation">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+
+
+<div class="panel panel-default">
+  <div class="panel-heading" role="tab" id="headingOptions">
+    <h4 class="panel-title">
+      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOptions" aria-expanded="false" aria-controls="collapseOptions">
+Options
+      </a>
+    </h4>
+  </div>
+  <div id="collapseOptions" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOptions">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+</div>
+`

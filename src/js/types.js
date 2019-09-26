@@ -18,9 +18,9 @@ gform.types = {
       create: function(){
           var tempEl = document.createElement("span");
           tempEl.setAttribute("id", this.id);
-          if(this.owner.options.clear){
+        //   if(this.owner.options.clear){
             tempEl.setAttribute("class", gform.columnClasses[this.columns]+' '+gform.offsetClasses[this.offset]);
-          }
+        //   }
           tempEl.innerHTML = this.render();
           return tempEl;
       },
@@ -348,7 +348,7 @@ gform.types = {
       },
       initialize: function() {
           //handle rows
-          this.rows = {};
+          this.rows = [];
       },        
       render: function() {
           if(this.section){
@@ -752,7 +752,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
 
           }.bind(this));
           gform.types[this.type].setup.call(this);
-          this.rows = {};
+          this.rows = [];
           this.fields = _.map(this.fields,function(item){item.type='hidden';return item;})
       },
     get: function(){
