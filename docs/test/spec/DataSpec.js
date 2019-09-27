@@ -42,7 +42,6 @@ describe('Data population', function () {
                     ]}
                 ]}
             ]
-            debugger;
         var data = {"label":"Field Label","name":"label","type":"select","value":"","help":"","required":false,"options":[{"label":"Hello","value":"Stuff"}]}
         mygform = new gform({strict:false,fields:fields,data:data}, '#gform')
 
