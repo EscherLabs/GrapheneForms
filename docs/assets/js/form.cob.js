@@ -115,6 +115,7 @@ gformEditor = function(container){
 		}
 		$(opts.formTarget).html(gform.renderString(accordion))
 
+		$('.panelOptions').toggle(!!_.find(formConfig.fields,{name:"options"}));
 		var temp = _.find(formConfig.fields,{name:"name"});
 		temp.placeholder =  formConfig.data['label'].toLowerCase().split(' ').join('_');
 		var mygform = new gform(formConfig,$(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
@@ -185,7 +186,7 @@ Cobler.types.input = function(container) {
 		label: 'Label',
 		editable: true
 	}
-	var fields = [{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
+	var fields = [{target:"#display",type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
 		{label: 'Single Line', value: 'text'},
 		{label: 'Multi-line', value: 'textarea'},
 		{label: 'Phone', value: 'tel'},
@@ -238,7 +239,7 @@ Cobler.types.collection = function(container) {
 		enabled: true
 	}
 	var fields = [
-		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
+		{target:"#display",type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
 			{label: 'Dropdown', value: 'select'},
 			{label: 'List', value: 'radio'},
 			{label: 'Combobox', value: 'smallcombo'},
@@ -328,11 +329,11 @@ Cobler.types.bool = function(container) {
 		editable: true
 	}
 	var fields = [
-		{type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
+		{target:"#display",type: 'select', label: 'Display', name: 'type', value: 'text', 'options': [
 			{label: 'Checkbox', value: 'checkbox'},
 			{label: 'Switch', value: 'switch'}
 		]}
-	].concat(baseFields,baseConditions,_.map([{type: 'fieldset', label: false, array: {min:2,max:2}, name: 'options', fields: [
+	].concat(baseFields,baseConditions,_.map([{type: 'fieldset', label: false, array: {min:2,max:2},columns:12, name: 'options', fields: [
 		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Label','name':'label'},
 		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Value','name':'value'},
 	]}],function(item){
@@ -385,7 +386,7 @@ Cobler.types.section = function(container) {
 		label: 'Label'
 	}
 	var fields = [
-		{type: 'text', required: true, label: 'Fieldset Legend', name: 'label'},
+		{type: 'text', required: true, label: 'Group Label', name: 'label'},
 		{type: 'text', required: true, label: 'Name', name: 'name'},
 		{type: 'switch', label: 'Allow duplication', name: 'array', show:[{name:"type",value:['output'],type:"not_matches"}]},
 		{type: 'fieldset',columns:12, label:false,name:"array",show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}],fields:[
@@ -411,6 +412,7 @@ return !e.owner.options.nomanage;
 
 
 var accordion = `
+<div id="display"></div>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
 <div class="panel panel-default">
@@ -475,7 +477,7 @@ Validation
 
 
 
-<div class="panel panel-default">
+<div class="panel panel-default panelOptions">
   <div class="panel-heading" role="tab" id="headingOptions">
     <h4 class="panel-title">
       <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOptions" aria-expanded="false" aria-controls="collapseOptions">
