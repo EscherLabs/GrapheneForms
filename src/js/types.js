@@ -46,7 +46,6 @@ gform.types = {
             //   this.update({value:this.get()},true);
             //   gform.types[this.type].focus.call(this)
                 gform.types[this.type].setup.call(this);
-// debugger;
               this.parent.trigger(['change'], this,{input:this.value});
               if(input){
                 this.parent.trigger(['input'], this,{input:this.value});
@@ -184,7 +183,11 @@ gform.types = {
 
     base:'collection',
       defaults:{format:{label: '{{{label}}}',  value: function(item){
-		return item.value || (item.label || item.index).toLowerCase().split(' ').join('_');
+          if(item.value !== 'undefined'){
+            return item.value;
+          }else{
+            return (item.label || item.index).toLowerCase().split(' ').join('_');
+          }
 	}}},
       toString: function(){
         if(this.multiple){

@@ -19,6 +19,8 @@ baseFields = _.map([
 	{type: 'text', required: true, title: 'Field Label', name: 'label'},
 	{type: 'text', label: 'Name', name: 'name'},
 	{type: 'text', label: 'Placeholder', name: 'placeholder',show:[{name:"type",value:['radio','checkbox','switch'],type:"not_matches"}]},
+	{type: 'text', label: 'Pre', name: 'pre',parse:[{type:"requires",name:"pre"}],show:[{name:"type",value:['radio','checkbox','switch','color'],type:"not_matches"}]},
+	{type: 'text', label: 'Post', name: 'post',show:[{name:"type",value:['radio','checkbox','switch'],type:"not_matches"}]},
 	{type: 'text', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:['color','number','checkbox','switch'],type:"not_matches"}]},
 	{type: 'color', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:'color',type:"matches"}]},
 	// {type: 'date', label: 'Default value', name: 'value',columns:6,show:[{name:"type",value:'date',type:"matches"}]},
@@ -36,6 +38,8 @@ baseFields = _.map([
 	{type: 'number', label: 'Size', name: 'size',min:1,show:[{name:"type",value:['textarea','select','radio'],type:"matches"}]},
 
 	{type: 'select', label: 'Width', value:"12", name: 'columns', min:1, max:12, format:{label:"{{value}} Column(s)"} },
+	{type: 'checkbox', label: 'Force New Row', name: 'forceRow',show:[{name:"columns",value:['12'],type:"not_matches"}]},
+
 	{name:"horizontal",label:"Horizontal",type:"select",value:"i",parse:[{type:"not_matches",name:"horizontal",value:"i"}],options:[{label:"Inherit",value:"i"},{label:"Yes",value:true},{label:"No",value:false}]},
 	{type: 'switch', label: 'Allow duplication', name: 'array', show:[{name:"type",value:['output'],type:"not_matches"}]},
 	{type: 'fieldset',columns:12, label:false,name:"array",show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}],fields:[
@@ -81,7 +85,8 @@ baseConditions = baseCond.concat(_.map([
 		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
 			return !!field.parent.index;
 		}}]},
-		{name:'type',label:'Type',type:'select',options:['none','matches','date','valid_url','valid_email','length','numeric']},
+		{name:'type',label:'Type',type:'select',options:['none','matches','date','valid_url','valid_email','length','numeric','pattern']},
+		{name:'regex',label:"Regex",show:[{name:"type",value:['pattern'],type:"matches"}]},
 		{name:'name',label:"Name",show:[{name:"type",value:['matches'],type:"matches"}]},
 		{type: 'number', label: 'Minimum', name: 'min',value:1,columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
 		{type: 'number', label: 'Maximum', name: 'max',columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},

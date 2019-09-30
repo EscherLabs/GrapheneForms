@@ -316,7 +316,7 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form
 				{{/sections}}
 				
 			</div>
-			<div class="modal-footer gform-footer"  style="padding-right: 0;padding-left: 0;">
+			<div class="modal-footer gform-footer">
 				{{{footer}}}
 			</div>
 		</div>
@@ -374,10 +374,30 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 		return '<dt>'+this.label+'</dt> <dd><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:'+this.value+';"></span> '+(this.value||'(empty)')+'</dd><hr>'
 },
   initialize: function(){
-	this.onchangeEvent = function(){
-		this.value = this.get();
-		this.parent.trigger(['change','input'], this,{input:this.value});
-	}.bind(this)
+	// this.onchangeEvent = function(){
+	// 	this.value = this.get();
+	// 	this.parent.trigger(['change','input'], this,{input:this.value});
+	// }.bind(this)
+
+
+	this.onchangeEvent = function(input){
+		//   this.input = input;
+		  this.value = this.get();
+		  if(this.el.querySelector('.count') != null){
+			var text = this.value.length;
+			if(this.limit>1){text+='/'+this.limit;}
+			this.el.querySelector('.count').innerHTML = text;
+		  }
+		//   this.update({value:this.get()},true);
+		//   gform.types[this.type].focus.call(this)
+			gform.types[this.type].setup.call(this);
+		  this.parent.trigger(['change'], this,{input:this.value});
+		  if(input){
+			this.parent.trigger(['input'], this,{input:this.value});
+		  }
+	  }.bind(this)
+
+
 	this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
 
 	$(this.el.querySelector('input[name="' + this.name + '"]')).attr('type','text');

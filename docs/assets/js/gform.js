@@ -153,7 +153,7 @@ var gform = function(data, el){
         // _.find(this.fields, {name: name}).set(value);
     }.bind(this),
 
-    this.isActive = true;
+    this.isActive = false;
 
     this.destroy = function() {
         this.isActive = false;
@@ -291,7 +291,8 @@ var gform = function(data, el){
 
     this.el.addEventListener('click', this.listener)
     this.trigger('initialized',this);
-
+    this.isActive = true;
+    this.reflow();
     return this;
                   
 }
@@ -486,8 +487,8 @@ gform.ajax = function(options){
                 options.success(JSON.parse(request.responseText));
             } else {
                 console.log(request.responseText);
-                options.error(request.responseText);
-            } 
+                if(typeof options.error == 'function'){options.error(request.responseText)};
+            }
         }
     }
     request.open(options.verb || 'GET', options.path);
@@ -969,8 +970,7 @@ gform.layout = function(field){
         
         var cRow  = _.findLast(field.operator.rows,search);
  
-        
-        if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > field.owner.options.columns || field.row == true){
+        if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > field.owner.options.columns || field.forceRow == true){
             cRow = search;
             cRow.id =gform.getUID();
             cRow.used = 0;
@@ -1032,7 +1032,33 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                     f.set.call(null,f.derivedValue(e));
                 }.bind(null,field));
                 
-            } else {
+            } else if(typeof field.item.value === 'string' && field.item.value.indexOf('=') === 0) {
+                
+                field.derivedValue = function() {
+
+                    var data = this.owner.get();
+                    field.formula = gform.renderString(this.item.value.substr(1),data)
+                    try {
+                        if(field.formula.length){
+                            if(typeof math !== 'undefined'){
+                                var temp  = math.eval(field.formula, data);
+                                if($.isNumeric(temp)){
+                                    field.formula = temp.toFixed((this.item.precision || 0));
+                                }
+                            }
+                        }
+                    }catch(e){}
+                    return field.formula;
+                };
+                field.value = field.derivedValue();
+                field.owner.on('input', function(f) {
+                    f.set.call(null,f.derivedValue());
+                }.bind(null,field));
+                field.owner.on('initialized', function(f,e) {
+                    f.set.call(null,f.derivedValue());
+                }.bind(null,field));
+
+            }  else {
                 //may need to search deeper in atts?
                 // field.value =  atts[field.name] || field.value || '';
                 field.value = _.defaults({value:atts[field.name],},field,{value:''}).value
@@ -1145,6 +1171,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
 
 gform.reflow = function(){
+    if(this.isActive || (typeof this.owner !== 'undefined' && this.owner.isActive)){
         _.each(this.rows,function(item,i){
             if(typeof item !== 'undefined'){
                 item.container.removeChild(item.ref);
@@ -1155,6 +1182,7 @@ gform.reflow = function(){
         _.each(this.fields,function(field){
             gform.layout.call(this,field)
         }.bind(this))
+    }
 }
 gform.types = {
   'input':{
@@ -1204,7 +1232,6 @@ gform.types = {
             //   this.update({value:this.get()},true);
             //   gform.types[this.type].focus.call(this)
                 gform.types[this.type].setup.call(this);
-// debugger;
               this.parent.trigger(['change'], this,{input:this.value});
               if(input){
                 this.parent.trigger(['input'], this,{input:this.value});
@@ -1342,7 +1369,11 @@ gform.types = {
 
     base:'collection',
       defaults:{format:{label: '{{{label}}}',  value: function(item){
-		return item.value || (item.label || item.index).toLowerCase().split(' ').join('_');
+          if(item.value !== 'undefined'){
+            return item.value;
+          }else{
+            return (item.label || item.index).toLowerCase().split(' ').join('_');
+          }
 	}}},
       toString: function(){
         if(this.multiple){
