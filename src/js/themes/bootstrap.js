@@ -443,12 +443,14 @@ gform.stencils.smallcombo = `
 	{{^label}}
 	<div class="col-md-12">
 	{{/label}}
-    <div class="combobox-container"><div class="input-group"> 
-        <input type="text" name="{{name}}" class="form-control"  autocomplete="off"> 
+	<div class="combobox-container">
+		<div class="input-group"> 
+		{{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
+		<input {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" />
         <ul class="typeahead typeahead-long dropdown-menu"></ul>
+		<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="caret"></span> <span class="fa fa-times"></span> </span> 
+		</div>
 
-        <span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="caret"></span> <span class="fa fa-times"></span> </span> 
-        </div> 
 
         </div>
 		{{>_addons}}

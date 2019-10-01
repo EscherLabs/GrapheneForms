@@ -143,12 +143,16 @@ mainForm = function(){
     })
   }else{
     var temp = new Cobler.types[gform.types[form.type].base]();
+    $("#mainform").html(gform.renderString(accordion))
+
+    $('.panelOptions').toggle(false);
     
     new gform({
       name:"editor",
       nomanage:true,
       data: form,
       actions:[],
+			clear:false,
       fields: temp.fields,
       legend: 'Edit Fieldset',
     }, '#mainform').on('change', function(e){

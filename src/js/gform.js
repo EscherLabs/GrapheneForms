@@ -401,27 +401,29 @@ gform.inflate = function(atts, fieldIn, ind, list) {
     //commented this out because I am not sure what its purpose is 
     // - may need it but it breaks if you have an array following two fields with the same name
     if(fieldIn.array){
-        // debugger;
-        // newList = _.uniqBy(newList,'name');
         newList = _.filter(newList,function(item){return !item.index})
     }
     var field = _.findLast(newList, {name: newList[ind].name});
 
     if(!field.array && field.fields){
-        _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
+        if(!this.options.strict){
+            _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
+        }else{
+            _.each(field.fields, gform.inflate.bind(this, atts[field.name] || {}) );
+        }
         field.reflow()
     }
     if(field.array) {
         var fieldCount = field.array.min||0;
 
-        if(typeof atts[field.name] !== 'object' && typeof field.owner.options.data[field.name] == 'object'){
+        if(!this.options.strict && typeof atts[field.name] !== 'object' && typeof field.owner.options.data[field.name] == 'object'){
             atts = field.owner.options.data;
         }
         if((typeof atts[field.name] == 'object' && atts[field.name].length > 1)){
             if(atts[field.name].length> fieldCount){fieldCount = atts[field.name].length}
         }
-        var initialCount = _.filter(field.parent.fields, 
-            function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
+        var initialCount = _.filter(field.parent.fields,
+            function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array;}
         ).length
         
         for(var i = initialCount; i<fieldCount; i++) {
@@ -985,10 +987,6 @@ gform.layout = function(field){
         }
         cRow.used += parseInt(field.columns, 10);
         cRow.used += parseInt(field.offset, 10);
-
-        if(cRow.used >20){
-            debugger;
-        }
         cRow.ref.appendChild(field.el);
         field.row = cRow.id;
     }
@@ -1040,12 +1038,14 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                         if(field.formula.length){
                             if(typeof math !== 'undefined'){
                                 var temp  = math.eval(field.formula, data);
-                                if($.isNumeric(temp)){
+                                if(_.isFinite(temp)){
                                     field.formula = temp.toFixed((this.item.precision || 0));
+                                }else{
+                                    field.formula = '';
                                 }
                             }
                         }
-                    }catch(e){}
+                    }catch(e){field.formula = '';}
                     return field.formula;
                 };
                 field.value = field.derivedValue();

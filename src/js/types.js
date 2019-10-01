@@ -516,7 +516,9 @@ gform.types = {
 gform.types['text'] = gform.types['password'] = gform.types['color'] = gform.types['input'];
 gform.types['number']= _.extend({}, gform.types['input'],{get:function(){
     return parseInt(this.el.querySelector('input[name="' + this.name + '"]').value,10);
-}});
+}, render: function(){
+    return gform.render(this.type, this).split('value=""').join('value="'+this.value+'"')
+},});
 gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:false},toString: function(){return ''}});
 gform.types['output']   = _.extend({}, gform.types['input'], {
     toString: function(){return ''},
@@ -539,19 +541,6 @@ gform.types['output']   = _.extend({}, gform.types['input'], {
 gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{validate: [{ type:'valid_email' }]}});
 
 gform.types['textarea'] = _.extend({}, gform.types['input'], {
-
-    // initialize: function(){
-    //       this.onchangeEvent = function(){
-    //           this.value = this.get();
-    //           if(this.el.querySelector('.count') != null){
-    //               var text = this.value.length;
-    //               if(this.limit>1){text+='/'+this.limit;}
-    //             this.el.querySelector('.count').innerHTML = text;
-    //           }
-    //           this.parent.trigger(['change:'+this.name,'change','input:'+this.name,'input'], this,{input:this.value});
-    //       }.bind(this)
-    //       this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
-    //   },
       set: function(value) {
           this.el.querySelector('textarea[name="' + this.name + '"]').value = value;
       },
