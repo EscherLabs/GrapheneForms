@@ -9,7 +9,7 @@ myconditions=[
 		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
 			return !!field.parent.index;
 		}}]},
-		{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
+		{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires']},
 		{label: 'Name',name:"name"},
 		{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1}}
 	]}
@@ -19,8 +19,8 @@ baseFields = _.map([
 	{type: 'text', required: true, title: 'Field Label', name: 'label'},
 	{type: 'text', label: 'Name', name: 'name'},
 	{type: 'text', label: 'Placeholder', name: 'placeholder',show:[{name:"type",value:['radio','checkbox','switch'],type:"not_matches"}]},
-	{type: 'text', label: 'Pre', name: 'pre',parse:[{type:"requires",name:"pre"}],show:[{name:"type",value:['radio','checkbox','switch','color'],type:"not_matches"}]},
-	{type: 'text', label: 'Post', name: 'post',show:[{name:"type",value:['radio','checkbox','switch'],type:"not_matches"}]},
+	{type: 'text', label: false, forceRow:true, pre: "Pre", name: 'pre',parse:[{type:"requires",name:"pre"}],show:[{name:"type",value:['radio','checkbox','switch','color'],type:"not_matches"}]},
+	{type: 'text', label: false, post:"Post", name: 'post',show:[{name:"type",value:['radio','checkbox','switch'],type:"not_matches"}]},
 	{type: 'text', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:['color','number','checkbox','switch'],type:"not_matches"}]},
 	{type: 'color', label: 'Default value', name: 'value',columns:12,show:[{name:"type",value:'color',type:"matches"}]},
 	// {type: 'date', label: 'Default value', name: 'value',columns:6,show:[{name:"type",value:'date',type:"matches"}]},
@@ -54,23 +54,23 @@ baseFields = _.map([
 
 )
 baseCond = _.map([
-	{type: 'select',other:true, columns:12, label:"Show", value:true, name:"show",options:		
-		[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Edit',value:'edit'}, {label:"Conditions",value:"other"}]
+	{type: 'select',other:true, columns:12, label:'Show the field <span class="text-muted">("show")</span>', value:true, name:"show",options:		
+		[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Edit"',value:'edit'}, {label:"Conditionally",value:"other"}]
 	},
 	{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"show",fields:myconditions,array:true,show:[{name:"show",value:['other'],type:"matches"}]},
 
-	{type: 'select',other:true, columns:12, label:"Edit", value:true,name:"edit",options:		
-		[{label:'True',value:true},{label:'False',value:false},{label:'Parse',value:'parse'},{label:'Show',value:'show'}, {label:"Conditions",value:"other"}]
+	{type: 'select',other:true, columns:12, label:'Allow the field to be Edited <span class="text-muted">("edit")</span>', value:true,name:"edit",options:		
+		[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Show"',value:'show'}, {label:"Conditionally",value:"other"}]
 	},
 	{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"edit",fields:myconditions,array:true,show:[{name:"edit",value:['other'],type:"matches"}]},
 
-	{type: 'select',other:true, columns:12, label:"Parse", value:'show',name:"parse",options:		
-		[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"other"}]
+	{type: 'select',other:true, columns:12, label:'Include value in results <span class="text-muted">("parse")</span>', value:'show',name:"parse",options:		
+		[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Edit"',value:'edit'},{label:'Use same settings as "Show"',value:'show'}, {label:"Conditionally",value:"other"}]
 	},
 	{type: 'fieldset',columns:11,offset:'1', label:"{{index}}",name:"parse",fields:myconditions,array:true,show:[{name:"parse",value:['other'],type:"matches"}]},
 
 	{type: 'select',other:true, columns:12, label:"Required", value:false, name:"required",options:		
-		[{label:'True',value:true},{label:'False',value:false},{label:'Edit',value:'edit'},{label:'Show',value:'show'}, {label:"Conditions",value:"other"}]
+		[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Show"',value:'show'},{label:'Use same settings as "Edit"',value:'edit'},{label:'Use same settings as "Parse"',value:'show'}, {label:"Conditionally",value:"other"}]
 	},
 	{type: 'fieldset',columns:11,offset:'1', label:"{{index}}", name:"required", fields:myconditions, array:true, show:[{name:"required",value:['other'], type:"matches"}]}
 ],function(item){
