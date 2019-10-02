@@ -45,7 +45,7 @@ var gform = function(data, el){
     //     this.on(event, _.debounce(handler, delay));
     //     return this;
     // }.bind(this);
-
+debugger;
     
     //initalize form
     this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
@@ -77,7 +77,6 @@ var gform = function(data, el){
     this.trigger('initialize',this);
 
     var create = function(){
-
         if(typeof this.el == 'undefined'){
             this.options.renderer = 'modal';
             this.el = gform.create(gform.render(this.options.template || 'modal_container', this.options))
@@ -110,6 +109,7 @@ var gform = function(data, el){
         this.container = this.el.querySelector('form') || this.el;
 
         this.rows = [];
+
         this.fields = _.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
 
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
@@ -441,7 +441,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
     }
 }
 gform.normalizeField = function(fieldIn,parent){
-    var parent = parent || null;
+    var parent = parent || this;
     fieldIn.type = fieldIn.type || this.options.default.type || 'text';
     if(typeof gform.types[fieldIn.type] == 'undefined'){
         console.warn('Field type "'+fieldIn.type+'" not supported - using text instead');
@@ -952,8 +952,8 @@ gform.rows = {
 }
 gform.layout = function(field){
 
-    if(field.columns >0 && field.visible){
-        var search = {};            
+    if(field.columns >0 && field.visible && field.owner.isActive){
+        var search = {};
         var container = field.parent.container;
 
         field.operator = field.parent;
@@ -1038,8 +1038,16 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                         if(field.formula.length){
                             if(typeof math !== 'undefined'){
                                 var temp  = math.eval(field.formula, data);
+                                if(typeof temp == 'object' && temp.entries !== 'undefined'){
+                                    temp = _.last(temp.entries);
+                                    if(typeof temp._data == 'object'){
+                                        temp = temp._data;
+                                    }
+                                }
                                 if(_.isFinite(temp)){
                                     field.formula = temp.toFixed((this.item.precision || 0));
+                                }else if(_.isArray(temp)){
+                                    field.formula = temp;
                                 }else{
                                     field.formula = '';
                                 }
@@ -1190,13 +1198,15 @@ gform.types = {
           gform.types[this.type].setLabel.call(this)
       },
       setLabel:function(){
-        var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
-        if(this.required){
-            label+=this.requiredText+this.suffix;
-        }
-        var labelEl = this.el.querySelector('label');
-        if(labelEl !== null){
-            labelEl.innerHTML = label
+        if(!this.item.label){
+            var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
+            if(this.required){
+                label+=this.requiredText+this.suffix;
+            }
+            var labelEl = this.el.querySelector('label');
+            if(labelEl !== null){
+                labelEl.innerHTML = label
+            }
         }
       },
       create: function(){
@@ -1209,7 +1219,9 @@ gform.types = {
           return tempEl;
       },
       render: function(){
-          return gform.render(this.type, this);
+        //   return gform.render(this.type, this);
+          return gform.render(this.type, this).split('value=""').join('value="'+_.escape(this.value)+'"')
+
       },
       destroy:function(){
           this.el.removeEventListener('change',this.onchangeEvent );		
@@ -1519,14 +1531,15 @@ gform.types = {
 
     base:'section',
     setLabel:function(){
-
-        var label = gform.renderString(this.item.label||this.label, this);
-        if(this.required){
-            label+=this.requiredText+this.suffix;
-          }
-        var labelEl = this.el.querySelector('fieldset#'+this.id+'>legend')
-        if(labelEl !== null){
-            labelEl.innerHTML = label
+        if(!!this.item.label){
+            var label = gform.renderString(this.item.label||this.label, this);
+            if(this.required){
+                label+=this.requiredText+this.suffix;
+            }
+            var labelEl = this.el.querySelector('fieldset#'+this.id+'>legend')
+            if(labelEl !== null){
+                labelEl.innerHTML = label
+            }
         }
       },
       create: function() {
@@ -2234,7 +2247,7 @@ gform.validations =
 	}
 };gform.stencils = {
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
-_container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer row"></div>`,
+_container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
 text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
@@ -2246,7 +2259,7 @@ text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
 	{{/label}}
 		{{#pre}}<div class="input-group col-xs-12"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
     {{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
-		<input {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" />
+		<input {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="" />
 		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
     {{^post}}{{#pre}}</div>{{/pre}}{{/post}}
 		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
@@ -2446,10 +2459,12 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	</div>
 	{{/array}}`,
     _label: `
-    {{^hideLabel}}
+	{{^hideLabel}}
+	
+    {{#label}}
 	<label for="{{name}}" {{^horizontal}}style="text-align:left"{{/horizontal}} class="control-label {{^horizontal}}col-xs-12{{/horizontal}}{{#horizontal}}col-md-4{{/horizontal}}">
   {{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}
-</label>{{#label}}{{/label}}
+</label>{{/label}}
 {{/hideLabel}}
     `,
     _addons:`<span class="help-inline"> {{{help}}}</span>

@@ -32,6 +32,7 @@ renderBuilder = function(){
       mainForm();
     })
     document.getElementById('sortableList').addEventListener('click', function(e) {
+      cb.deactivate();
       cb.collections[0].addItem(e.target.dataset.type);
     })
     cb.on("change", function(){

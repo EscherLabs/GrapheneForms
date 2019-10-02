@@ -6,13 +6,15 @@ gform.types = {
           gform.types[this.type].setLabel.call(this)
       },
       setLabel:function(){
-        var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
-        if(this.required){
-            label+=this.requiredText+this.suffix;
-        }
-        var labelEl = this.el.querySelector('label');
-        if(labelEl !== null){
-            labelEl.innerHTML = label
+        if(!this.item.label){
+            var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
+            if(this.required){
+                label+=this.requiredText+this.suffix;
+            }
+            var labelEl = this.el.querySelector('label');
+            if(labelEl !== null){
+                labelEl.innerHTML = label
+            }
         }
       },
       create: function(){
@@ -25,7 +27,9 @@ gform.types = {
           return tempEl;
       },
       render: function(){
-          return gform.render(this.type, this);
+        //   return gform.render(this.type, this);
+          return gform.render(this.type, this).split('value=""').join('value="'+_.escape(this.value)+'"')
+
       },
       destroy:function(){
           this.el.removeEventListener('change',this.onchangeEvent );		
@@ -335,14 +339,15 @@ gform.types = {
 
     base:'section',
     setLabel:function(){
-
-        var label = gform.renderString(this.item.label||this.label, this);
-        if(this.required){
-            label+=this.requiredText+this.suffix;
-          }
-        var labelEl = this.el.querySelector('fieldset#'+this.id+'>legend')
-        if(labelEl !== null){
-            labelEl.innerHTML = label
+        if(!!this.item.label){
+            var label = gform.renderString(this.item.label||this.label, this);
+            if(this.required){
+                label+=this.requiredText+this.suffix;
+            }
+            var labelEl = this.el.querySelector('fieldset#'+this.id+'>legend')
+            if(labelEl !== null){
+                labelEl.innerHTML = label
+            }
         }
       },
       create: function() {

@@ -45,7 +45,7 @@ var gform = function(data, el){
     //     this.on(event, _.debounce(handler, delay));
     //     return this;
     // }.bind(this);
-
+debugger;
     
     //initalize form
     this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
@@ -77,7 +77,6 @@ var gform = function(data, el){
     this.trigger('initialize',this);
 
     var create = function(){
-
         if(typeof this.el == 'undefined'){
             this.options.renderer = 'modal';
             this.el = gform.create(gform.render(this.options.template || 'modal_container', this.options))
@@ -110,6 +109,7 @@ var gform = function(data, el){
         this.container = this.el.querySelector('form') || this.el;
 
         this.rows = [];
+
         this.fields = _.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
 
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
@@ -441,7 +441,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
     }
 }
 gform.normalizeField = function(fieldIn,parent){
-    var parent = parent || null;
+    var parent = parent || this;
     fieldIn.type = fieldIn.type || this.options.default.type || 'text';
     if(typeof gform.types[fieldIn.type] == 'undefined'){
         console.warn('Field type "'+fieldIn.type+'" not supported - using text instead');
@@ -952,8 +952,8 @@ gform.rows = {
 }
 gform.layout = function(field){
 
-    if(field.columns >0 && field.visible){
-        var search = {};            
+    if(field.columns >0 && field.visible && field.owner.isActive){
+        var search = {};
         var container = field.parent.container;
 
         field.operator = field.parent;
@@ -1038,8 +1038,16 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                         if(field.formula.length){
                             if(typeof math !== 'undefined'){
                                 var temp  = math.eval(field.formula, data);
+                                if(typeof temp == 'object' && temp.entries !== 'undefined'){
+                                    temp = _.last(temp.entries);
+                                    if(typeof temp._data == 'object'){
+                                        temp = temp._data;
+                                    }
+                                }
                                 if(_.isFinite(temp)){
                                     field.formula = temp.toFixed((this.item.precision || 0));
+                                }else if(_.isArray(temp)){
+                                    field.formula = temp;
                                 }else{
                                     field.formula = '';
                                 }
