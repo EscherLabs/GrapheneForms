@@ -83,8 +83,7 @@ switch:`
 	{{#horizontal}}<div class="col-md-8" style="margin:0 0 15px">{{/horizontal}}
 	{{/label}}
 	{{^label}}
-	{{^horizontal}}<div class="col-md-12" style="margin: -10px 0 5px;"">{{/horizontal}}
-	{{#horizontal}}<div class="col-md-8" style="margin: -5px 0 10px">{{/horizontal}}
+	<div class="col-md-12" style="margin: -10px 0 5px;"">
 	{{/label}}
 
 	<span class="falseLabel">{{options.0.label}} </span>
@@ -229,8 +228,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{#horizontal}}<div class="col-md-8" style="margin:0 0 15px">{{/horizontal}}
 	{{/label}}
 	{{^label}}
-	{{^horizontal}}<div class="col-md-12" style="margin: -10px 0 5px;"">{{/horizontal}}
-	{{#horizontal}}<div class="col-md-8" style="margin: -5px 0 10px">{{/horizontal}}
+	<div class="col-md-12" style="margin: -10px 0 5px;"">
 	{{/label}}
 		<div class="checkbox">
 			<label class="{{alt-display}}">
