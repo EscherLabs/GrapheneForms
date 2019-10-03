@@ -55,12 +55,32 @@ gform._rules = function(rules, op){
 
 gform.conditions = {
 	requires: function(field, args) {
-		return field.parent.find(args.name).satisfied();
+		var looker;
+		var matches = field.parent.filter({name:args.name,parsable:true});
+		if(matches.length >0){
+			looker = matches[0];
+		}else if(field.name == args.name){
+			looker = field;
+		}else{
+			return false;
+		}
+		return looker.satisfied();
 	},
 	// valid_previous: function(gform, args) {},
 	not_matches: function(field, args) {
+		var looker;
+		var matches = field.parent.filter({name:args.name,parsable:true});
+		if(matches.length >0){
+			looker = matches[0];
+		}else if(field.name == args.name){
+			looker = field;
+		}else{
+			return false;
+		}
+
+
 		var val = args.value;
-		var localval = (field.parent.find(args.name) || {value:''}).value;
+		var localval = looker.value;
 		if(typeof val== "object" && localval !== null){
 			return (val.indexOf(localval) == -1);
 		}else{
@@ -71,9 +91,18 @@ gform.conditions = {
 		return args.test.call(this, field, args);
 	},
 	contains: function(field, args) {
-		debugger;
+		var looker;
+		var matches = field.parent.filter({name:args.name,parsable:true});
+		if(matches.length >0){
+			looker = matches[0];
+		}else if(field.name == args.name){
+			looker = field;
+		}else{
+			return false;
+		}
+
 		var val = args.value;
-		var targetField = field.parent.find(args.name);
+		var targetField = looker;
 		var localval = null;
 		if(typeof targetField !== 'undefined'){
 			if(targetField.array != false){
@@ -82,7 +111,7 @@ gform.conditions = {
 				localval = targetField.value;
 			}
 		}else{
-			return "Target field "+args.name+" not found!"
+			return false;
 		}
 
 		if(typeof val == "object" && localval !== null){
@@ -96,8 +125,19 @@ gform.conditions = {
 		}
 	},
 	matches: function(field, args) {
+		var looker;
+		var matches = field.parent.filter({name:args.name,parsable:true});
+		if(matches.length >0){
+			looker = matches[0];
+		}else if(field.name == args.name){
+			looker = field;
+		}else {
+			return false;
+		}
+debugger;
+
 		var val = args.value;
-		var localval = (field.parent.find(args.name) || {value:''}).value;
+		var localval = looker.value;
 		if(typeof val== "object" && localval !== null){
 			return (val.indexOf(localval) !== -1);
 		}else{

@@ -45,7 +45,6 @@ var gform = function(data, el){
     //     this.on(event, _.debounce(handler, delay));
     //     return this;
     // }.bind(this);
-debugger;
     
     //initalize form
     this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
@@ -952,7 +951,7 @@ gform.rows = {
 }
 gform.layout = function(field){
 
-    if(field.columns >0 && field.visible && field.owner.isActive){
+    if(field.columns >0 && field.visible){
         var search = {};
         var container = field.parent.container;
 
@@ -1116,6 +1115,9 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     }    
     if(typeof gform.types[field.type].find !== 'undefined'){
         field.find = gform.types[field.type].find.bind(field) || null;
+    }    
+    if(typeof gform.types[field.type].filter !== 'undefined'){
+        field.filter = gform.types[field.type].filter.bind(field) || null;
     }
 
 
@@ -1235,7 +1237,7 @@ gform.types = {
             //   this.input = input;
               this.value = this.get();
               if(this.el.querySelector('.count') != null){
-                var text = this.value.length;
+                var text = (this.value+"").length;
                 if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
@@ -1447,7 +1449,7 @@ gform.types = {
                 })  
             }
             if(this.el.querySelector('.count') != null){
-                var text = this.get().length;
+                var text = (this.get()+"").length;
                 if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
@@ -1463,7 +1465,7 @@ gform.types = {
               (_.find(this.list,{value:this.value})||{selected:null}).selected = true;
 
               if(this.el.querySelector('.count') != null){
-                var text = this.value.length;
+                var text = (this.value+"").length;
                 if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
@@ -1530,6 +1532,9 @@ gform.types = {
   'section':{
 
     base:'section',
+    filter: function(search){
+        return gform.filter.call(this,search);
+    },
     setLabel:function(){
         if(!!this.item.label){
             var label = gform.renderString(this.item.label||this.label, this);
@@ -1806,7 +1811,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
             })  
         }
         if(this.el.querySelector('.count') != null){
-          var text = this.get().length;
+          var text = (this.get()+"").length;
           if(this.limit>1){text+='/'+this.limit;}
           this.el.querySelector('.count').innerHTML = text;
         }
@@ -2043,12 +2048,32 @@ gform._rules = function(rules, op){
 
 gform.conditions = {
 	requires: function(field, args) {
-		return field.parent.find(args.name).satisfied();
+		var looker;
+		var matches = field.parent.filter({name:args.name,parsable:true});
+		if(matches.length >0){
+			looker = matches[0];
+		}else if(field.name == args.name){
+			looker = field;
+		}else{
+			return false;
+		}
+		return looker.satisfied();
 	},
 	// valid_previous: function(gform, args) {},
 	not_matches: function(field, args) {
+		var looker;
+		var matches = field.parent.filter({name:args.name,parsable:true});
+		if(matches.length >0){
+			looker = matches[0];
+		}else if(field.name == args.name){
+			looker = field;
+		}else{
+			return false;
+		}
+
+
 		var val = args.value;
-		var localval = (field.parent.find(args.name) || {value:''}).value;
+		var localval = looker.value;
 		if(typeof val== "object" && localval !== null){
 			return (val.indexOf(localval) == -1);
 		}else{
@@ -2059,9 +2084,18 @@ gform.conditions = {
 		return args.test.call(this, field, args);
 	},
 	contains: function(field, args) {
-		debugger;
+		var looker;
+		var matches = field.parent.filter({name:args.name,parsable:true});
+		if(matches.length >0){
+			looker = matches[0];
+		}else if(field.name == args.name){
+			looker = field;
+		}else{
+			return false;
+		}
+
 		var val = args.value;
-		var targetField = field.parent.find(args.name);
+		var targetField = looker;
 		var localval = null;
 		if(typeof targetField !== 'undefined'){
 			if(targetField.array != false){
@@ -2070,7 +2104,7 @@ gform.conditions = {
 				localval = targetField.value;
 			}
 		}else{
-			return "Target field "+args.name+" not found!"
+			return false;
 		}
 
 		if(typeof val == "object" && localval !== null){
@@ -2084,8 +2118,19 @@ gform.conditions = {
 		}
 	},
 	matches: function(field, args) {
+		var looker;
+		var matches = field.parent.filter({name:args.name,parsable:true});
+		if(matches.length >0){
+			looker = matches[0];
+		}else if(field.name == args.name){
+			looker = field;
+		}else {
+			return false;
+		}
+debugger;
+
 		var val = args.value;
-		var localval = (field.parent.find(args.name) || {value:''}).value;
+		var localval = looker.value;
 		if(typeof val== "object" && localval !== null){
 			return (val.indexOf(localval) !== -1);
 		}else{

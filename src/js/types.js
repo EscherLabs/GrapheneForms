@@ -43,7 +43,7 @@ gform.types = {
             //   this.input = input;
               this.value = this.get();
               if(this.el.querySelector('.count') != null){
-                var text = this.value.length;
+                var text = (this.value+"").length;
                 if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
@@ -255,7 +255,7 @@ gform.types = {
                 })  
             }
             if(this.el.querySelector('.count') != null){
-                var text = this.get().length;
+                var text = (this.get()+"").length;
                 if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
@@ -271,7 +271,7 @@ gform.types = {
               (_.find(this.list,{value:this.value})||{selected:null}).selected = true;
 
               if(this.el.querySelector('.count') != null){
-                var text = this.value.length;
+                var text = (this.value+"").length;
                 if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
@@ -338,6 +338,9 @@ gform.types = {
   'section':{
 
     base:'section',
+    filter: function(search){
+        return gform.filter.call(this,search);
+    },
     setLabel:function(){
         if(!!this.item.label){
             var label = gform.renderString(this.item.label||this.label, this);
@@ -614,7 +617,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
             })  
         }
         if(this.el.querySelector('.count') != null){
-          var text = this.get().length;
+          var text = (this.get()+"").length;
           if(this.limit>1){text+='/'+this.limit;}
           this.el.querySelector('.count').innerHTML = text;
         }

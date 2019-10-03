@@ -45,7 +45,6 @@ var gform = function(data, el){
     //     this.on(event, _.debounce(handler, delay));
     //     return this;
     // }.bind(this);
-debugger;
     
     //initalize form
     this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
@@ -952,7 +951,7 @@ gform.rows = {
 }
 gform.layout = function(field){
 
-    if(field.columns >0 && field.visible && field.owner.isActive){
+    if(field.columns >0 && field.visible){
         var search = {};
         var container = field.parent.container;
 
@@ -1116,6 +1115,9 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     }    
     if(typeof gform.types[field.type].find !== 'undefined'){
         field.find = gform.types[field.type].find.bind(field) || null;
+    }    
+    if(typeof gform.types[field.type].filter !== 'undefined'){
+        field.filter = gform.types[field.type].filter.bind(field) || null;
     }
 
 
