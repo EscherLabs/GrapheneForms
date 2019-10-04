@@ -1167,9 +1167,9 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         this.parsable = result
     })
     if(field.required){
-        gform.processConditions.call(field, field.required, function(result){
+        gform.processConditions.call(field, field.required, function(result,e){
             if(this.required !== result){
-                this.update({required:result});
+                this.update({required:result},(e.field == this));
             }
         })
     }

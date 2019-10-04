@@ -457,7 +457,7 @@ gform.types = {
   'button':{
     base:'button',
     toString: function(){return ''},
-      defaults:{parsable:false, columns:2, target:".gform-footer"},
+      defaults:{parse:false, columns:2, target:".gform-footer"},
       create: function() {
           var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
           tempEl.setAttribute("id", this.id);
@@ -577,16 +577,21 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
             if(this.other||false){
                 this.value = 'other';
             }else{
-                this.value = (this.list[0]||{value:""}).value
+                if(typeof this.placeholder == 'string'){
+                    this.value = '';
+                }else{
+                    this.value = (this.list[0]||{value:""}).value
+                }
             }
         }
         
-        if(typeof this.placeholder == 'string'){
-            this.options.unshift({label:this.placeholder, value:'',editable:false,visible:false,selected:true})
-        }
         if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
             this.options.push({label:"Other", value:'other',})
         }
+        if(typeof this.placeholder == 'string'){
+            this.options.unshift({label:this.placeholder, value:'',editable:false,visible:false,selected:true})
+        }
+
         (_.find(this.list,{selected:true})||{selected:null}).selected = false;
         (_.find(this.list,{value:this.value})||{value:""}).selected = true;
         return gform.render(this.type, this);

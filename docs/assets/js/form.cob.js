@@ -20,15 +20,18 @@ baseFields = _.map([
 	{type: 'text', label: 'Name', name: 'name'},
 	{type: 'text', label: 'Placeholder', name: 'placeholder',parse:[{type:"requires",name:"placeholder"}],show:[{name:"type",value:['radio','checkbox','switch'],type:"not_matches"}]},
 	{type: 'text', label: 'Display', name: 'display',parse:[{type:"requires",name:"details"}],show:[{name:"type",value:['checkbox'],type:"matches"}]},
-	{type: 'text', label: false, forceRow:true, pre: "Pre", name: 'pre',parse:[{type:"requires",name:"pre"}],show:[{name:"type",value:['radio','checkbox','switch','color'],type:"not_matches"}]},
+	{type: 'text', label: false, forceRow:true, pre: "Pre", name: 'pre',parse:[{type:"requires"}],show:[{name:"type",value:['radio','checkbox','switch','color','select'],type:"not_matches"}]},
 	{type: 'text', label: false, post:"Post", name: 'post',parse:[{type:"requires",name:"post"}],show:[{name:"type",value:['radio','checkbox','switch'],type:"not_matches"}]},
-	{type: 'text', label: 'Default value', name: 'value',columns:12,parse:[{type:"requires",name:"value"},{name:"type",value:['color','number','checkbox','switch','textarea'],type:"not_matches"}],show:[{name:"type",value:['color','number','checkbox','switch','textarea'],type:"not_matches"}]},
-	{type: 'textarea', label: 'Default value', name: 'value',columns:12,parse:[{type:"requires",name:"value"},{name:"type",value:'textarea',type:"matches"}],show:[{name:"type",value:'textarea',type:"matches"}]},
-	{type: 'color', label: 'Default value', name: 'value',columns:12,parse:[{type:"requires",name:"value"},{type:"not_matches",name:"value",value:'#000000'},{name:"type",value:'color',type:"matches"}],show:[{name:"type",value:'color',type:"matches"}]},
+
+	{type: 'text', label: 'Default value', name: 'value',columns:12,parse:[{type:"requires"},{name:"type",value:['color','number','checkbox','switch','textarea'],type:"not_matches"}],show:[{name:"type",value:['color','number','checkbox','switch','textarea'],type:"not_matches"}]},
+	{type: 'textarea', label: 'Default value', name: 'value',columns:12,parse:[{type:"requires"},{name:"type",value:'textarea',type:"matches"}],show:[{name:"type",value:'textarea',type:"matches"}]},
+	{type: 'color', label: 'Default value', name: 'value',columns:12,parse:[{type:"requires"},{type:"not_matches",name:"value",value:'#000000'},{name:"type",value:'color',type:"matches"}],show:[{name:"type",value:'color',type:"matches"}]},
 	// {type: 'date', label: 'Default value', name: 'value',columns:6,show:[{name:"type",value:'date',type:"matches"}]},
-	{type: 'number', label: 'Default value', name: 'value',columns:12,parse:[{type:"requires",name:"value"},{name:"type",value:'number',type:"matches"}],show:[{name:"type",value:'number',type:"matches"}]},
+	{type: 'number', label: 'Default value', name: 'value',columns:12,parse:[{type:"requires"},{name:"type",value:'number',type:"matches"}],show:[{name:"type",value:'number',type:"matches"}]},
 	{type: 'checkbox', label: 'Default value', name: 'value',parse:[{type:"not_matches",name:"value",value:false},{type:"matches",name:"type",value:["checkbox","switch"]}],show:[{type:"matches",name:"type",value:["checkbox","switch"]}]},
-	{type: 'textarea',columns:12, label: 'Instructions', name: 'help',parse:[{type:"requires",name:"help"}],show:[{name:"type",value:['output'],type:"not_matches"}]},
+
+
+	{type: 'textarea',columns:12, label: 'Instructions', name: 'help',parse:[{type:"requires"}],show:[{name:"type",value:['output'],type:"not_matches"}]},
 	{type: 'checkbox', label: 'Mupltiple Selections', name: 'multiple',min:1,show:[{name:"type",value:['select','radio'],type:"matches"}]},
 	{type: 'number', label: 'Limit Selections',parse:[{type:"requires",name:"limit"}],placeholder:"No Limit", name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"matches"},{name:"multiple",value:true,type:"matches"}]},
 	{type: 'number', label: 'Limit Length', name: 'limit',min:1,parse:[{type:"requires",name:"limit"}],show:[{name:"type",value:['select','radio'],type:"not_matches"}]}
@@ -118,7 +121,6 @@ gformEditor = function(container){
 		var opts = container.owner.options;
 
 		if(typeof gform.instances.editor !== 'undefined'){
-			// debugger;
 			gform.instances.editor.destroy();
 		}
 		$(opts.formTarget).html(gform.renderString(accordion))
@@ -180,7 +182,7 @@ Cobler.types.input = function(container) {
             data.display = gform.renderString((data.format|| {}).value||'{{{value}}}', data);
         }
         
-        return gform.types[item.type].render.call(_.extend({},(gform.types[item.type]||gform.types['text']).defaults,myform.default,data));
+        return (gform.types[item.type]||gform.types['text']).render.call(_.extend({},(gform.types[item.type]||gform.types['text']).defaults,myform.default,data));
 	}
 	function get() {
 		item.widgetType = 'input';
@@ -212,7 +214,19 @@ Cobler.types.input = function(container) {
 		{label: 'Color', value: 'color'},
 		{label: 'Output', value: 'output'},
 		{label: 'Hidden', value: 'hidden'}
-	]}].concat(baseFields, baseConditions)
+	]}].concat(baseFields, baseConditions,[
+		{target:"#collapseDisplay .panel-body",type: 'fieldset', label: false,columns:12, name: 'format',show:[{type:"matches",name:'type',value:"date"}],parse:[{type:"requires",name:"format"}], fields:[
+			{name:"input",type:"smallcombo",options:[
+				{label:"Datetime",value:"MM/DD/YYYY h:mm A"},
+				{label:"Date",value:"MM/DD/YYYY"},				
+				{label:"Time",value:"h:mm A"},
+				{label:"Month",value:"MM"},
+				{label:"Year",value:"YYYYY"},
+				{label:"Day",value:"MM/DD"}
+
+			],label:"Date Format",parse:[{type:"requires",name:"input"}]}
+		] }
+	])
 	return {
 		fields: fields,
 		render: render,
@@ -227,12 +241,10 @@ Cobler.types.collection = function(container) {
 	function render() {
 		var options = get()
 		
-		var temp = _.find(options.options,{value: options.value}) || (options.options||[])[0]
-		if(typeof temp !== 'undefined') {
-			temp.selected = true;
-		}
-		// options.multiple = (options.limit>1 || options.limit == 0);
-		
+		// var temp = _.find(options.options,{value: options.value}) || (options.options||[])[0]
+		// if(typeof temp !== 'undefined') {
+		// 	temp.selected = true;
+		// }
 		return gform.render(item.type, _.extend({},myform.default,options));
 	}
 	function get() {		
@@ -269,14 +281,12 @@ Cobler.types.collection = function(container) {
 			{name:"display",label:"Display",show:[{type:"matches",value:"smallcombo",name:"type"}]}
 			// {name:"Title",label:"title"}
 		] },
-		{type: 'fieldset', label: false, array: true,columns:12, name: 'options', 
+		{type: 'fieldset', label: false, array: true,columns:12,parse:[{type:"requires"}], name: 'options', 
 			fields: [
 				{label: 'Section Label (optional)', name:"label"},
 				{label: 'Type',type:"select",parse:false, name:"options_type",options:[{label:"External",value:"string"},{label:"Derived",value:"int"},{label:"Manual",value:"object"}],value:function(e){
 					var result = "object";
-					// if(result == 'undefined' && (typeof e.field.parent.get()['max'] !== 'undefined')) {
-					// 	result = 'int';
-					// }
+
 					if(typeof e.field.parent.value['max'] !== 'undefined'){
 						result = "int";
 					}
@@ -288,16 +298,16 @@ Cobler.types.collection = function(container) {
 				}},
 				{name:"type",type:"hidden",value:"optgroup"},
 				{type: 'fieldset', label: false, array: true, name: 'options', fields:[
-					{name:"label",label:"Label",parse:[{type:"requires",name:"label"}]},
-					{name:"value",label:"Value",parse:[{type:"requires",name:"value"}]}
-				],show:[{type:"matches",name:"options_type",value:"object"}]},
+					{name:"label",label:"Label",parse:[{type:"requires"}]},
+					{name:"value",label:"Value",parse:[{type:"requires"}]}
+				],parse:[{type:"requires"}],show:[{type:"matches",name:"options_type",value:"object"}]},
 
 				{type: 'text', label: "Url", name: 'path',show:[{type:"matches",name:"options_type",value:"string"}]},
-				{type: 'number', label: "Min", name: 'min',placeholder:"1",show:[{type:"matches",name:"options_type",value:"int"}]},
+				{type: 'number', label: "Min", name: 'min',placeholder:"0",show:[{type:"matches",name:"options_type",value:"int"}]},
 				{type: 'number', label: "Max", name: 'max',required:true,show:[{type:"matches",name:"options_type",value:"int"}]},
-				{type: 'fieldset', label: "Format",columns:12, name: 'format',parse:[{type:"requires",name:"format"}], fields:[
-					{name:"label",label:"Label",parse:[{type:"requires",name:"label"}]},
-					{name:"value",label:"Value",parse:[{type:"requires",name:"value"}]},
+				{type: 'fieldset', label: "Format",columns:12, name: 'format',parse:[{type:"requires"}], fields:[
+					{name:"label",label:"Label",parse:[{type:"requires"}]},
+					{name:"value",label:"Value",parse:[{type:"requires"}]},
 					{name:"display",label:"Display",show:[{type:"matches",value:"smallcombo",name:"type"}]}
 					// {name:"Title",label:"title"}
 				] }

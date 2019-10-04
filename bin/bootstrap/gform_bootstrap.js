@@ -1167,9 +1167,9 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         this.parsable = result
     })
     if(field.required){
-        gform.processConditions.call(field, field.required, function(result){
+        gform.processConditions.call(field, field.required, function(result,e){
             if(this.required !== result){
-                this.update({required:result});
+                this.update({required:result},(e.field == this));
             }
         })
     }
@@ -1651,7 +1651,7 @@ gform.types = {
   'button':{
     base:'button',
     toString: function(){return ''},
-      defaults:{parsable:false, columns:2, target:".gform-footer"},
+      defaults:{parse:false, columns:2, target:".gform-footer"},
       create: function() {
           var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
           tempEl.setAttribute("id", this.id);
@@ -1771,16 +1771,21 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
             if(this.other||false){
                 this.value = 'other';
             }else{
-                this.value = (this.list[0]||{value:""}).value
+                if(typeof this.placeholder == 'string'){
+                    this.value = '';
+                }else{
+                    this.value = (this.list[0]||{value:""}).value
+                }
             }
         }
         
-        if(typeof this.placeholder == 'string'){
-            this.options.unshift({label:this.placeholder, value:'',editable:false,visible:false,selected:true})
-        }
         if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
             this.options.push({label:"Other", value:'other',})
         }
+        if(typeof this.placeholder == 'string'){
+            this.options.unshift({label:this.placeholder, value:'',editable:false,visible:false,selected:true})
+        }
+
         (_.find(this.list,{selected:true})||{selected:null}).selected = false;
         (_.find(this.list,{value:this.value})||{value:""}).selected = true;
         return gform.render(this.type, this);
@@ -2004,8 +2009,8 @@ gform.processConditions = function(conditions, func) {
 		func.call(this, conditions.call(this))
 	}
 	if (typeof conditions === 'object') {
-		var callback = function(rules,func){
-			func.call(this, gform._rules.call(this, rules))
+		var callback = function(rules,func,e){
+			func.call(this, gform._rules.call(this, rules),e)
 		}.bind(this, conditions, func)
 
 		// for(var i in conditions) {
@@ -2020,10 +2025,10 @@ gform.processConditions = function(conditions, func) {
 
 gform._subscribeByName = function(conditions, callback){
 	for(var i in conditions) {
-		if(typeof conditions[i].name !== 'undefined'){
-			this.owner.on('change:' + conditions[i].name, callback)
-		}else if(typeof conditions[i].conditions == 'object'){
+		if(typeof conditions[i].conditions == 'object'){
 			gform._subscribeByName.call(this, conditions[i].conditions, callback)
+		}else{
+			this.owner.on('change:' + (conditions[i].name||this.name), callback)
 		}
 	}
 }
@@ -2049,31 +2054,44 @@ gform._rules = function(rules, op){
 gform.conditions = {
 	requires: function(field, args) {
 		var looker;
-		var matches = field.parent.filter({name:args.name,parsable:true});
-		if(matches.length >0){
-			looker = matches[0];
-		}else if(field.name == args.name){
-			looker = field;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true});
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name);
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
 		}else{
-			return false;
+			looker = field;
 		}
 		return looker.satisfied();
 	},
 	// valid_previous: function(gform, args) {},
 	not_matches: function(field, args) {
 		var looker;
-		var matches = field.parent.filter({name:args.name,parsable:true});
-		if(matches.length >0){
-			looker = matches[0];
-		}else if(field.name == args.name){
-			looker = field;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true});
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name);
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
 		}else{
-			return false;
+			looker = field;
 		}
 
-
-		var val = args.value;
-		var localval = looker.value;
+		var val = args[args.attribute||'value'];
+		var localval = looker[args.attribute||'value'];
 		if(typeof val== "object" && localval !== null){
 			return (val.indexOf(localval) == -1);
 		}else{
@@ -2085,13 +2103,20 @@ gform.conditions = {
 	},
 	contains: function(field, args) {
 		var looker;
-		var matches = field.parent.filter({name:args.name,parsable:true});
-		if(matches.length >0){
-			looker = matches[0];
-		}else if(field.name == args.name){
-			looker = field;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true});
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name);
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
 		}else{
-			return false;
+			looker = field;
 		}
 
 		var val = args.value;
@@ -2104,7 +2129,10 @@ gform.conditions = {
 				localval = targetField.value;
 			}
 		}else{
-			return false;
+			looker = field.parent.find(args.name);
+			if(typeof looker == 'undefined'){
+				return false;
+			}
 		}
 
 		if(typeof val == "object" && localval !== null){
@@ -2119,18 +2147,24 @@ gform.conditions = {
 	},
 	matches: function(field, args) {
 		var looker;
-		var matches = field.parent.filter({name:args.name,parsable:true});
-		if(matches.length >0){
-			looker = matches[0];
-		}else if(field.name == args.name){
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true});
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name);
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
+		}else{
 			looker = field;
-		}else {
-			return false;
 		}
-debugger;
 
-		var val = args.value;
-		var localval = looker.value;
+		var val = args[args.attribute||'value'];
+		var localval = looker[args.attribute||'value'];
 		if(typeof val== "object" && localval !== null){
 			return (val.indexOf(localval) !== -1);
 		}else{
@@ -2232,6 +2266,7 @@ gform.validations =
 	pattern: function(value, args) {
 		var r = args.regex;
 		if(typeof r == 'string'){
+			debugger;
 			if(typeof gform.regex[r] !== 'undefined'){
 				r = gform.regex[r]
 			}else{

@@ -11,8 +11,8 @@ gform.processConditions = function(conditions, func) {
 		func.call(this, conditions.call(this))
 	}
 	if (typeof conditions === 'object') {
-		var callback = function(rules,func){
-			func.call(this, gform._rules.call(this, rules))
+		var callback = function(rules,func,e){
+			func.call(this, gform._rules.call(this, rules),e)
 		}.bind(this, conditions, func)
 
 		// for(var i in conditions) {
@@ -27,10 +27,10 @@ gform.processConditions = function(conditions, func) {
 
 gform._subscribeByName = function(conditions, callback){
 	for(var i in conditions) {
-		if(typeof conditions[i].name !== 'undefined'){
-			this.owner.on('change:' + conditions[i].name, callback)
-		}else if(typeof conditions[i].conditions == 'object'){
+		if(typeof conditions[i].conditions == 'object'){
 			gform._subscribeByName.call(this, conditions[i].conditions, callback)
+		}else{
+			this.owner.on('change:' + (conditions[i].name||this.name), callback)
 		}
 	}
 }
@@ -56,31 +56,44 @@ gform._rules = function(rules, op){
 gform.conditions = {
 	requires: function(field, args) {
 		var looker;
-		var matches = field.parent.filter({name:args.name,parsable:true});
-		if(matches.length >0){
-			looker = matches[0];
-		}else if(field.name == args.name){
-			looker = field;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true});
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name);
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
 		}else{
-			return false;
+			looker = field;
 		}
 		return looker.satisfied();
 	},
 	// valid_previous: function(gform, args) {},
 	not_matches: function(field, args) {
 		var looker;
-		var matches = field.parent.filter({name:args.name,parsable:true});
-		if(matches.length >0){
-			looker = matches[0];
-		}else if(field.name == args.name){
-			looker = field;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true});
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name);
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
 		}else{
-			return false;
+			looker = field;
 		}
 
-
-		var val = args.value;
-		var localval = looker.value;
+		var val = args[args.attribute||'value'];
+		var localval = looker[args.attribute||'value'];
 		if(typeof val== "object" && localval !== null){
 			return (val.indexOf(localval) == -1);
 		}else{
@@ -92,13 +105,20 @@ gform.conditions = {
 	},
 	contains: function(field, args) {
 		var looker;
-		var matches = field.parent.filter({name:args.name,parsable:true});
-		if(matches.length >0){
-			looker = matches[0];
-		}else if(field.name == args.name){
-			looker = field;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true});
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name);
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
 		}else{
-			return false;
+			looker = field;
 		}
 
 		var val = args.value;
@@ -111,7 +131,10 @@ gform.conditions = {
 				localval = targetField.value;
 			}
 		}else{
-			return false;
+			looker = field.parent.find(args.name);
+			if(typeof looker == 'undefined'){
+				return false;
+			}
 		}
 
 		if(typeof val == "object" && localval !== null){
@@ -126,18 +149,24 @@ gform.conditions = {
 	},
 	matches: function(field, args) {
 		var looker;
-		var matches = field.parent.filter({name:args.name,parsable:true});
-		if(matches.length >0){
-			looker = matches[0];
-		}else if(field.name == args.name){
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true});
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name);
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
+		}else{
 			looker = field;
-		}else {
-			return false;
 		}
-debugger;
 
-		var val = args.value;
-		var localval = looker.value;
+		var val = args[args.attribute||'value'];
+		var localval = looker[args.attribute||'value'];
 		if(typeof val== "object" && localval !== null){
 			return (val.indexOf(localval) !== -1);
 		}else{
