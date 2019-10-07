@@ -275,12 +275,12 @@ Cobler.types.collection = function(container) {
 			// {label: 'Grid', value: 'grid'},
 		]}
 	].concat(baseFields,baseConditions,_.map([
-		{type: 'fieldset', label: "Format",columns:12, name: 'format',parse:[{type:"requires",name:"format"}], fields:[
-			{name:"label",label:"Label",parse:[{type:"requires",name:"label"}]},
-			{name:"value",label:"Value",parse:[{type:"requires",name:"value"}]},
-			{name:"display",label:"Display",show:[{type:"matches",value:"smallcombo",name:"type"}]}
-			// {name:"Title",label:"title"}
-		] },
+		// {type: 'fieldset', label: "Format",columns:12, name: 'format',parse:[{type:"requires",name:"format"}], fields:[
+		// 	{name:"label",label:"Label",parse:[{type:"requires",name:"label"}]},
+		// 	{name:"value",label:"Value",parse:[{type:"requires",name:"value"}]},
+		// 	{name:"display",label:"Display",show:[{type:"matches",value:"smallcombo",name:"type"}]}
+		// 	// {name:"Title",label:"title"}
+		// ] },
 		{type: 'fieldset', label: false, array: true,columns:12,parse:[{type:"requires"}], name: 'options', 
 			fields: [
 				{label: 'Section Label (optional)', name:"label"},
@@ -297,7 +297,7 @@ Cobler.types.collection = function(container) {
 
 				}},
 				{name:"type",type:"hidden",value:"optgroup"},
-				{type: 'fieldset', label: false, array: true, name: 'options', fields:[
+				{type: 'fieldset', label: false, array: {max:100},columns:12, name: 'options', fields:[
 					{name:"label",label:"Label",parse:[{type:"requires"}]},
 					{name:"value",label:"Value",parse:[{type:"requires"}]}
 				],parse:[{type:"requires"}],show:[{type:"matches",name:"options_type",value:"object"}]},
@@ -306,9 +306,9 @@ Cobler.types.collection = function(container) {
 				{type: 'number', label: "Min", name: 'min',placeholder:"0",show:[{type:"matches",name:"options_type",value:"int"}]},
 				{type: 'number', label: "Max", name: 'max',required:true,show:[{type:"matches",name:"options_type",value:"int"}]},
 				{type: 'fieldset', label: "Format",columns:12, name: 'format',parse:[{type:"requires"}], fields:[
-					{name:"label",label:"Label",parse:[{type:"requires"}]},
-					{name:"value",label:"Value",parse:[{type:"requires"}]},
-					{name:"display",label:"Display",show:[{type:"matches",value:"smallcombo",name:"type"}]}
+					{name:"label",label:"Label",horizontal:true,parse:[{type:"requires"}]},
+					{name:"value",label:"Value",horizontal:true,parse:[{type:"requires"}]},
+					{name:"display",label:"Display",horizontal:true,columns:12,show:[{type:"matches",value:"smallcombo",name:"type"}]}
 					// {name:"Title",label:"title"}
 				] }
 				// {label: 'Option Type',name:"options"}
@@ -441,7 +441,7 @@ Cobler.types.section = function(container) {
 
 
 var accordion = `
-<form>
+<form class="form-horizontal">
 <div id="display"></div>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
