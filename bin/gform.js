@@ -953,41 +953,43 @@ gform.layout = function(field){
 
     if(field.columns >0 && field.visible){
         var search = {};
-        var container = field.parent.container;
+        if(typeof field.parent !== 'undefined'){
+            var container = field.parent.container;
 
-        field.operator = field.parent;
+            field.operator = field.parent;
 
-        if(typeof field.item.target == 'function'){
-            field.target = field.item.target.call(field)
-        }
-        if(typeof field.target == 'string'){
-            var temp = field.owner.el.querySelector(field.target);
-            if(typeof temp !== 'undefined' && temp !== null){
-                search ={target:field.target};
-                container = temp;
-                field.operator = field.owner;
+            if(typeof field.target == 'function'){
+                field.target = field.target.call(field)
             }
-        }
-        
-        var cRow  = _.findLast(field.operator.rows,search);
- 
-        if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > field.owner.options.columns || field.forceRow == true){
-            cRow = search;
-            cRow.id =gform.getUID();
-            cRow.used = 0;
-            cRow.ref = document.createElement("div");
-            cRow.ref.setAttribute("id", cRow.id);
-            cRow.ref.setAttribute("class", field.owner.options.rowClass);
-            cRow.ref.setAttribute("style", "margin-bottom:0;");
+            if(typeof field.target == 'string'){
+                var temp = field.owner.el.querySelector(field.target);
+                if(typeof temp !== 'undefined' && temp !== null){
+                    search ={target:field.target};
+                    container = temp;
+                    field.operator = field.owner;
+                }
+            }
+            
+            var cRow  = _.findLast(field.operator.rows,search);
+    
+            if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > field.owner.options.columns || field.forceRow == true){
+                cRow = search;
+                cRow.id =gform.getUID();
+                cRow.used = 0;
+                cRow.ref = document.createElement("div");
+                cRow.ref.setAttribute("id", cRow.id);
+                cRow.ref.setAttribute("class", field.owner.options.rowClass);
+                cRow.ref.setAttribute("style", "margin-bottom:0;");
 
-            field.operator.rows.push(cRow);
-            cRow.container = container;
-            container.appendChild(cRow.ref);
+                field.operator.rows.push(cRow);
+                cRow.container = container;
+                container.appendChild(cRow.ref);
+            }
+            cRow.used += parseInt(field.columns, 10);
+            cRow.used += parseInt(field.offset, 10);
+            cRow.ref.appendChild(field.el);
+            field.row = cRow.id;
         }
-        cRow.used += parseInt(field.columns, 10);
-        cRow.used += parseInt(field.offset, 10);
-        cRow.ref.appendChild(field.el);
-        field.row = cRow.id;
     }
 }
 gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
@@ -1449,7 +1451,7 @@ gform.types = {
                 })  
             }
             if(this.el.querySelector('.count') != null){
-                var text = (this.get()+"").length;
+                var text = this.get().length;
                 if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
@@ -1465,7 +1467,8 @@ gform.types = {
               (_.find(this.list,{value:this.value})||{selected:null}).selected = true;
 
               if(this.el.querySelector('.count') != null){
-                var text = (this.value+"").length;
+                  debugger;
+                var text = this.value.length;
                 if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
               }
@@ -1522,7 +1525,10 @@ gform.types = {
         if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
       },
       focus:function() {
-          this.el.querySelector('[name="'+this.name+'"]').focus();
+
+        var search = this.name;
+        if(this.multiple){search+='[]'}
+          this.el.querySelector('[name="'+search+'"]').focus();
       },edit: function(state) {
         var search = this.name;
         if(this.multiple){search+='[]'}
@@ -1816,7 +1822,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
             })  
         }
         if(this.el.querySelector('.count') != null){
-          var text = (this.get()+"").length;
+          var text = this.get().length;
           if(this.limit>1){text+='/'+this.limit;}
           this.el.querySelector('.count').innerHTML = text;
         }
@@ -2266,7 +2272,6 @@ gform.validations =
 	pattern: function(value, args) {
 		var r = args.regex;
 		if(typeof r == 'string'){
-			debugger;
 			if(typeof gform.regex[r] !== 'undefined'){
 				r = gform.regex[r]
 			}else{
