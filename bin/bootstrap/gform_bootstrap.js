@@ -480,7 +480,7 @@ gform.normalizeField = function(fieldIn,parent){
         array:false,
         columns: this.options.columns||gform.columns,
         offset: this.options.offset||gform.offset||0,
-        ischild:!(parent instanceof gform)        
+        ischild:!(parent instanceof gform)
     }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
     //keep required separate
     // field.validate.required = field.validate.required|| field.required || false;
@@ -1553,7 +1553,9 @@ gform.types = {
         }else{
             var search = _.find(this.list,{value:value});
             if(typeof search !== 'undefined'){
-                this.el.querySelector('select').value = search.index;
+                this.el.querySelector('select').value = search.i;
+            }else{
+                this.el.querySelector('select').value = null;
             }
         }
         if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}

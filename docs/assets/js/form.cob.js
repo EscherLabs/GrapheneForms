@@ -286,7 +286,7 @@ Cobler.types.collection = function(container) {
 				{label: 'Section Label (optional)', name:"label"},
 				{label: 'Type',type:"select",parse:false, name:"options_type",options:[{label:"External",value:"string"},{label:"Derived",value:"int"},{label:"Manual",value:"object"}],value:function(e){
 					var result = "object";
-
+debugger;
 					if(typeof e.field.parent.value['max'] !== 'undefined'){
 						result = "int";
 					}

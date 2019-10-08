@@ -332,7 +332,9 @@ gform.types = {
         }else{
             var search = _.find(this.list,{value:value});
             if(typeof search !== 'undefined'){
-                this.el.querySelector('select').value = search.index;
+                this.el.querySelector('select').value = search.i;
+            }else{
+                this.el.querySelector('select').value = null;
             }
         }
         if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}

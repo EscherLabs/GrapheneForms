@@ -480,7 +480,7 @@ gform.normalizeField = function(fieldIn,parent){
         array:false,
         columns: this.options.columns||gform.columns,
         offset: this.options.offset||gform.offset||0,
-        ischild:!(parent instanceof gform)        
+        ischild:!(parent instanceof gform)
     }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
     //keep required separate
     // field.validate.required = field.validate.required|| field.required || false;
