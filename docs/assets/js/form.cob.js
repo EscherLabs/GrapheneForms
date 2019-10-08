@@ -33,8 +33,8 @@ baseFields = _.map([
 
 	{type: 'textarea',columns:12, label: 'Instructions', name: 'help',parse:[{type:"requires"}],show:[{name:"type",value:['output'],type:"not_matches"}]},
 	{type: 'checkbox', label: 'Mupltiple Selections', name: 'multiple',min:1,show:[{name:"type",value:['select','radio'],type:"matches"}]},
-	{type: 'number', label: 'Limit Selections',parse:[{type:"requires"}],placeholder:"No Limit", name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"matches"},{name:"multiple",value:true,type:"matches"}]},
-	{type: 'number', label: 'Limit Length', name: 'limit',min:1,parse:[{type:"requires"}],show:[{name:"type",value:['select','radio'],type:"not_matches"}]}
+	{type: 'number', label: 'Limit Selections',parse:[{type:"requires"},{name:"type",value:['select','radio'],type:"matches"},{name:"multiple",value:true,type:"matches"}],placeholder:"No Limit", name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"matches"},{name:"multiple",value:true,type:"matches"}]},
+	{type: 'number', label: 'Limit Length', name: 'limit',min:1,parse:[{type:"requires"},{name:"type",value:['select','radio'],type:"not_matches"}],show:[{name:"type",value:['select','radio'],type:"not_matches"}]}
 ],function(item){
 	item.target = "#collapseBasic .panel-body";
 	return item;
@@ -46,7 +46,7 @@ baseFields = _.map([
 	{type: 'checkbox', label: 'Force New Row', name: 'forceRow',show:[{name:"columns",value:["12"],type:"not_matches"},{name:"columns",type:"requires"}]},
 
 	{name:"horizontal",label:"Horizontal",type:"select",value:"i",parse:[{type:"not_matches",name:"horizontal",value:"i"}],options:[{label:"Inherit",value:"i"},{label:"Yes",value:true},{label:"No",value:false}]},
-	{type: 'switch', label: 'Allow duplication', name: 'array',parse:[{type:"not_matches",name:"array",value:false}], show:[{name:"type",value:['output'],type:"not_matches"}]},
+	{type: 'switch',format:{label:""}, label: 'Allow duplication', name: 'array',parse:[{type:"not_matches",name:"array",value:false}], show:[{name:"type",value:['output'],type:"not_matches"}]},
 	{type: 'fieldset',columns:12, label:false,name:"array",show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}],fields:[
 		{type: 'number', label: 'Minimum', name: 'min',value:1,placeholder:1},
 		{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
@@ -85,7 +85,7 @@ baseCond = _.map([
 
 
 baseConditions = baseCond.concat(_.map([
-	{type: 'switch', label: 'Validate', name: 'validate',parse:[{type:"not_matches",name:"validate",value:false}]},
+	{type: 'switch',format:{label:""}, label: 'Validate', name: 'validate',parse:[{type:"not_matches",name:"validate",value:false}]},
 	{type: 'fieldset',columns:12, label:"{{index}}{{^index}}Validations{{/index}}", show:[{name:"validate",value:true,type:"matches"}],name:"validate",fields:[
 		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
 			return !!field.parent.index;
@@ -419,7 +419,7 @@ Cobler.types.section = function(container) {
 	var fields = [
 		{target: "#collapseBasic .panel-body", type: 'text', required: true, label: 'Group Label', name: 'label'},
 		{target: "#collapseBasic .panel-body", type: 'text', required: true, label: 'Name', name: 'name'},
-		{target: "#collapseBasic .panel-body", type: 'switch', label: 'Allow duplication', name: 'array', show:[{name:"type",value:['output'],type:"not_matches"}]},
+		{target: "#collapseBasic .panel-body", type: 'switch',format:{label:""}, label: 'Allow duplication', name: 'array', show:[{name:"type",value:['output'],type:"not_matches"}]},
 		{target: "#collapseBasic .panel-body", type: 'fieldset',columns:12, label:false,name:"array",show:[{name:"array",value:true,type:"matches"},{name:"type",value:['output'],type:"not_matches"}],fields:[
 			{type: 'number', label: 'Minimum', name: 'min',value:1,placeholder:1},
 			{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
