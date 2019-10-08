@@ -1496,7 +1496,6 @@ gform.types = {
               (_.find(this.list,{value:this.value})||{selected:null}).selected = true;
 
               if(this.el.querySelector('.count') != null){
-                  debugger;
                 var text = this.value.length;
                 if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
@@ -1904,7 +1903,10 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       if(this.multiple){
 
         var that = this;
-          return _.transform(this.el.querySelectorAll('[type="checkbox"]:checked'),function(value,item){value.push(_.find(that.list,{index:item.value}).value)},[])
+          return _.transform(this.el.querySelectorAll('[type="checkbox"]:checked'),function(value,item){
+            //   debugger;
+              value.push(_.find(that.list,{i:parseInt(item.value)}).value).bind
+            },[])
       }else{
         return (_.find(this.list,{i:parseInt((this.el.querySelector('[type="radio"]:checked')||{value:null}).value)}) ||{value:''}).value;
         // return (this.el.querySelector('[type="radio"]:checked')||{value:''}).value; 
