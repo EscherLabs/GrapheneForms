@@ -249,7 +249,7 @@ _.mixin({
         return(score);
       }
     }
-    return(0.0);
-      // return( result );
+    // return(0.0);
+      return( result );
   }
 })

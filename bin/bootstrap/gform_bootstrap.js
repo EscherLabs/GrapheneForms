@@ -467,7 +467,6 @@ gform.normalizeField = function(fieldIn,parent){
     }
     //work gform.default in here
     var field = _.assignIn({
-        name: (gform.renderString(fieldIn.label || fieldIn.title)||'').toLowerCase().split(' ').join('_'), 
         id: gform.getUID(), 
         // type: 'text', 
         label: fieldIn.legend || fieldIn.title || (gform.types[fieldIn.type]||gform.types['text']).defaults.label || fieldIn.name,
@@ -488,9 +487,12 @@ gform.normalizeField = function(fieldIn,parent){
     {
         field.multiple = true;
     }
+    field.name = field.name || (gform.renderString(fieldIn.label || fieldIn.title)||'').toLowerCase().split(' ').join('_');
 
     // if(typeof field.validate.required == 'undefined'){field.validate.required = false}
-    if(field.name == ''){field.name = field.id;}
+    if(field.name == ''){
+        field.name = field.id;
+    }
     // if((typeof fieldIn.label == 'undefined' || fieldIn.label == '') && (field.label == '' || typeof field.label == 'undefined') ){fieldIn.label = field.name;}
     field.item = _.extend(fieldIn,{});
     return field;
@@ -555,15 +557,15 @@ gform.eventBus = function(options, owner){
     }.bind(this))
 
 	this.dispatch = function (e,f,a) {
-		var a = a || {};
+		a = a || {};
 		a[this.options.owner] = this.owner;
 		if(typeof f !== 'undefined'){
 		    a[this.options.item] = f;
 		}
         a.default = true;
         a.continue = true;
-        a.preventDefault = function(){this.a.default = false;}.bind(this)
-        a.stopPropagation = function(){this.a.continue = false;}.bind(this)
+        a.preventDefault = function(){this.default = false;}.bind(a)
+        a.stopPropagation = function(){this.continue = false;}.bind(a)
 		var events = [];
 		if(typeof e == 'string'){
 		    events.push(e)
@@ -2831,79 +2833,78 @@ gform.stencils.smallcombo = `
 		`;
 		
 gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
-		toString: function(){
-			if(typeof this.combo !== 'undefined'){
-				return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
-			}else{
-				return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
-			}
-		},
+	toString: function(){
+		if(typeof this.combo !== 'undefined'){
+			return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
+		}else{
+			return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
+		}
+	},
     render: function() {
         if(typeof this.mapOptions == 'undefined'){
-          this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
-          this.mapOptions.on('change',function(){
-              this.options = this.mapOptions.getoptions()
-							// this.update();
-							if(typeof this.value !== 'undefined'){
-								gform.types[this.type].set.call(this, this.value);
-							}
-          }.bind(this))
+          	this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
+          	this.mapOptions.on('change',function(){
+            	this.options = this.mapOptions.getoptions()
+				// this.update();
+				if(typeof this.value !== 'undefined'){
+					gform.types[this.type].set.call(this, this.value);
+				}
+          	}.bind(this))
         }
-				this.options = this.mapOptions.getoptions();
-				
+		this.options = this.mapOptions.getoptions();
         this.value = this.value || "";
-
         return gform.render('smallcombo', this);
-    },      
+    },
     get: function() {
-				//   return this.el.querySelector('input[name="' + this.name + '"]').value;
-			if(this.strict){
-				return (_.find(this.options,{value:this.value})||{value:""}).value;
-			}else{
-				return this.value;
-			}
+		//   return this.el.querySelector('input[name="' + this.name + '"]').value;
+		if(this.strict){
+			return (_.find(this.options,{value:this.value})||{value:""}).value;
+		}else{
+			return this.value;
+		}
     },
     set: function(value,silent) {				
         // this.el.querySelector('input[name="' + this.name + '"]').value = value;
-				var item = _.find(this.options,{value:value})
-				if(typeof item !== 'undefined') {
-						this.combo.value =  item.label;
-						this.value = item.value;
-						gform.addClass(this.el.querySelector('.combobox-container'), 'combobox-selected');
-				}else{
-					if(typeof value !== 'undefined') {
-						this.combo.value =  value||"";
-						this.value = value||"";
-					}
-					gform.toggleClass(this.el.querySelector('.combobox-container'), 'combobox-selected', this.value!=="");
-				}
-				gform.types[this.type].setLabel.call(this);
-				if(!silent) {
-					this.parent.trigger(['change'], this);
-				}
+		var item = _.find(this.options,{value:value})
+		if(typeof item !== 'undefined') {
+			this.combo.value =  item.label;
+			this.value = item.value;
+			gform.addClass(this.el.querySelector('.combobox-container'), 'combobox-selected');
+		}else{
+			if(typeof value !== 'undefined') {
+				this.combo.value =  value||"";
+				this.value = value||"";
+			}
+			gform.toggleClass(this.el.querySelector('.combobox-container'), 'combobox-selected', this.value!=="");
+		}
+		gform.types[this.type].setLabel.call(this);
+		if(!silent) {
+			this.parent.trigger(['change'], this);
+		}
     },
     initialize: function(){
         this.onchangeEvent = function(input){
-						this.set(this.combo.value)
-						_.throttle(this.renderMenu,100).call(this);
+			_.throttle(this.renderMenu,100).call(this);
+			this.set(this.combo.value)
+
             this.parent.trigger(['input'], this, {input:this.value});
-				}.bind(this)
-				this.processOptions = function(item){
-					if(typeof item.optgroup !== 'undefined'){
-						if(typeof item.optgroup.options !== 'undefined' && item.optgroup.options.length){
-							_.each(item.optgroup.options,this.processOptions.bind(this))
-						}
-					}else{
-						if(this.filter !== false && (this.combo.value == ""  || _.score(item.label.toLowerCase(), this.combo.value.toLowerCase())>.1)){
-							var li = document.createElement("li");
-							li.innerHTML = gform.renderString('<a href="javaScript:void(0);" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
-							this.menu.appendChild(li);
-							item.filter = true;
-						}else{
-							item.filter = false;
-						}
-					}
+		}.bind(this)
+		this.processOptions = function(item){
+			if(typeof item.optgroup !== 'undefined'){
+				if(typeof item.optgroup.options !== 'undefined' && item.optgroup.options.length){
+					_.each(item.optgroup.options,this.processOptions.bind(this))
 				}
+			}else{
+				if(this.filter !== false && (this.combo.value == ""  || _.score(item.label.toLowerCase(), this.combo.value.toLowerCase())>.6)){
+					var li = document.createElement("li");
+					li.innerHTML = gform.renderString('<a href="javaScript:void(0);" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
+					this.menu.appendChild(li);
+					item.filter = true;
+				}else{
+					item.filter = false;
+				}
+			}
+		}
         this.renderMenu = function(){
 					this.menu.style.display = 'none';
 					this.shown = false;
@@ -2911,9 +2912,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 					
 					// if(typeof this.search !== 'string'){
 						this.options = this.mapOptions.getoptions();
-
 						_.each(this.options,this.processOptions.bind(this))
-
 						var first = this.menu.querySelector('li');
 						if(first !== null){
 							gform.addClass(first,'active')

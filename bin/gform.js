@@ -467,7 +467,6 @@ gform.normalizeField = function(fieldIn,parent){
     }
     //work gform.default in here
     var field = _.assignIn({
-        name: (gform.renderString(fieldIn.label || fieldIn.title)||'').toLowerCase().split(' ').join('_'), 
         id: gform.getUID(), 
         // type: 'text', 
         label: fieldIn.legend || fieldIn.title || (gform.types[fieldIn.type]||gform.types['text']).defaults.label || fieldIn.name,
@@ -488,9 +487,12 @@ gform.normalizeField = function(fieldIn,parent){
     {
         field.multiple = true;
     }
+    field.name = field.name || (gform.renderString(fieldIn.label || fieldIn.title)||'').toLowerCase().split(' ').join('_');
 
     // if(typeof field.validate.required == 'undefined'){field.validate.required = false}
-    if(field.name == ''){field.name = field.id;}
+    if(field.name == ''){
+        field.name = field.id;
+    }
     // if((typeof fieldIn.label == 'undefined' || fieldIn.label == '') && (field.label == '' || typeof field.label == 'undefined') ){fieldIn.label = field.name;}
     field.item = _.extend(fieldIn,{});
     return field;
@@ -555,15 +557,15 @@ gform.eventBus = function(options, owner){
     }.bind(this))
 
 	this.dispatch = function (e,f,a) {
-		var a = a || {};
+		a = a || {};
 		a[this.options.owner] = this.owner;
 		if(typeof f !== 'undefined'){
 		    a[this.options.item] = f;
 		}
         a.default = true;
         a.continue = true;
-        a.preventDefault = function(){this.a.default = false;}.bind(this)
-        a.stopPropagation = function(){this.a.continue = false;}.bind(this)
+        a.preventDefault = function(){this.default = false;}.bind(a)
+        a.stopPropagation = function(){this.continue = false;}.bind(a)
 		var events = [];
 		if(typeof e == 'string'){
 		    events.push(e)
