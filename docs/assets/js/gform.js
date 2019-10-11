@@ -396,8 +396,10 @@ gform.toString = function(name){
     }
     var obj = "";
     _.each(this.fields, function(field) {
+        if(field.visible){
             var fieldString = field.toString();
             obj += fieldString;
+        }
     })
     return obj;
 }
@@ -1508,7 +1510,7 @@ gform.types = {
 
           }.bind(this));
 
-          gform.types[this.type].setup.call(this);
+          gform.types[this.type].set.call(this,this.value);
       },
       get: function() {
           var value = this.el.querySelector('select').value;

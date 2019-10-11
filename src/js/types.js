@@ -285,7 +285,7 @@ gform.types = {
 
           }.bind(this));
 
-          gform.types[this.type].setup.call(this);
+          gform.types[this.type].set.call(this,this.value);
       },
       get: function() {
           var value = this.el.querySelector('select').value;

@@ -396,8 +396,10 @@ gform.toString = function(name){
     }
     var obj = "";
     _.each(this.fields, function(field) {
+        if(field.visible){
             var fieldString = field.toString();
             obj += fieldString;
+        }
     })
     return obj;
 }

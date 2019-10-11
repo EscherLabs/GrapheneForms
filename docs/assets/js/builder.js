@@ -106,7 +106,7 @@ mainForm = function(){
           {name:"horizontal",label:"Horizontal",type:"checkbox"}
         ]},
         {name:"horizontal",label:"Horizontal",value:true,type:"checkbox",show:false,parse:true},
-        {type: 'switch', label: 'Custom Actions', name: 'actions',parse:false, show:[{name:"type",value:['output'],type:"not_matches"}]},
+        {type: 'switch',format:{label:""}, label: 'Custom Actions', name: 'actions', show:[{name:"type",value:['output'],type:"not_matches"}],parse:[{type:"not_matches",name:"actions",value:false}]},
         {type: 'fieldset',columns:12,array:true, label:false,name:"actions",parse:'show', show:[{name:"actions",value:true,type:"matches"}],fields:[
           
           {name:"type",columns:6,label:"Type",type:"smallcombo",options:["cancel","save"]},
@@ -131,9 +131,9 @@ mainForm = function(){
       }
     }).on('input', _.throttle(function(e){
       form = _.extend(form,e.form.get());
-      if(typeof e.form.get().actions == 'undefined'){
-        delete form.actions;
-      }
+      // if(typeof e.form.get().actions == 'undefined'){
+      //   delete form.actions;
+      // }
       $.jStorage.set('form', JSON.stringify(myform, undefined, "\t"));
       // if(typeof e.field !== 'undefined' && e.field.name == 'horizontal'){
       //   renderBuilder()
