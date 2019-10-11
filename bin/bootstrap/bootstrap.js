@@ -460,6 +460,7 @@ gform.stencils.smallcombo = `
 		`;
 		
 gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
+	base:"collection",
 	toString: function(){
 		if(typeof this.combo !== 'undefined'){
 			return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
@@ -490,13 +491,15 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 			return this.value;
 		}
     },
-    set: function(value,silent) {				
+    set: function(value,silent,input) {				
         // this.el.querySelector('input[name="' + this.name + '"]').value = value;
 		var item = _.find(this.options,{value:value})
 		if(typeof item !== 'undefined') {
-			this.combo.value =  item.label;
+			if(!input){
+				this.combo.value =  item.label;
+				gform.addClass(this.el.querySelector('.combobox-container'), 'combobox-selected');
+			}
 			this.value = item.value;
-			gform.addClass(this.el.querySelector('.combobox-container'), 'combobox-selected');
 		}else{
 			if(typeof value !== 'undefined') {
 				this.combo.value =  value||"";
@@ -512,7 +515,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
     initialize: function(){
         this.onchangeEvent = function(input){
 			_.throttle(this.renderMenu,100).call(this);
-			this.set(this.combo.value)
+			this.set(this.combo.value,false,true)
 
             this.parent.trigger(['input'], this, {input:this.value});
 		}.bind(this)

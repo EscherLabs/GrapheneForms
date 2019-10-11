@@ -250,6 +250,6 @@ _.mixin({
       }
     }
     // return(0.0);
-      return( result );
+      return(false);
   }
 })
