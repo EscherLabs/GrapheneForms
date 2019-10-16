@@ -370,8 +370,13 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 		elType: 'text',
 		value:"#000000"
 	},
-	toString: function(){
-		return '<dt>'+this.label+'</dt> <dd><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:'+this.value+';"></span> '+(this.value||'(empty)')+'</dd><hr>'
+	toString: function(name,display){
+		if(!display){
+			return '<dt>'+this.label+'</dt> <dd><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:'+this.value+';"></span> '+(this.value||'(empty)')+'</dd><hr>'
+		}else{
+              return this.value
+		}
+		  
 },
   initialize: function(){
 	// this.onchangeEvent = function(){
@@ -461,12 +466,22 @@ gform.stencils.smallcombo = `
 		
 gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 	base:"collection",
-	toString: function(){
-		if(typeof this.combo !== 'undefined'){
-			return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
-		}else{
-			return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
-		}
+	toString: function(name,display){
+		if(!display){
+			if(typeof this.combo !== 'undefined'){
+				return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
+			}else{
+				return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
+			}
+          }else{
+			if(typeof this.combo !== 'undefined'){
+				return this.combo.value
+			}else{
+				return this.get()
+			}
+		  }
+		  
+
 	},
     render: function() {
         if(typeof this.mapOptions == 'undefined'){

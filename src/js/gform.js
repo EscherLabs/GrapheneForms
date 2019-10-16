@@ -389,19 +389,39 @@ gform.toJSON = function(name) {
     }.bind(this))
     return obj;
 }
-gform.toString = function(name){
-    if(typeof name == 'string' && name.length>0) {
-        name = name.split('.');
-        return _.find(this.fields, {name: name.shift()}).toString(name.join('.'));
-    }
-    var obj = "";
-    _.each(this.fields, function(field) {
-        if(field.visible){
-            var fieldString = field.toString();
-            obj += fieldString;
+gform.toString = function(name,display){
+    if(!display){
+        if(typeof name == 'string' && name.length>0) {
+            name = name.split('.');
+            return _.find(this.fields, {name: name.shift()}).toString(name.join('.'));
         }
-    })
-    return obj;
+        var obj = "";
+        _.each(this.fields, function(field) {
+            if(field.visible){
+                // var fieldString = field.toString();
+                obj += field.toString();
+            }
+        })
+        return obj;
+    }else{
+        if(typeof name == 'string' && name.length>0) {
+            debugger;
+            name = name.split('.');
+            return _.find(this.fields, {name: name.shift()}).toString(name.join('.'),display);
+        }
+        var obj = {};
+        _.each(this.fields, function(field) {
+            if(field.visible){
+                if(field.isArray){
+                    obj[field.name] = obj[field.name]||[];
+                    obj[field.name].push(field.toString(name,true))
+                }else{
+                    obj[field.name] = field.toString(name,true);
+                }
+            }
+        })
+        return obj;
+    }
 }
 gform.m = function (l,a,m,c){function h(a,b){b=b.pop?b:b.split(".");a=a[b.shift()]||"";return 0 in b?h(a,b):a}var k=gform.m,e="";a=_.isArray(a)?a:a?[a]:[];a=c?0 in a?[]:[1]:a;for(c=0;c<a.length;c++){var d="",f=0,n,b="object"==typeof a[c]?a[c]:{},b=_.assign({},m,b);b[""]={"":a[c]};l.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(a,c,l,m,p,q,g){f?d+=f&&!p||1<f?a:c:(e+=c.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(a,c,e,f,g,d){return c?h(b,c):f?h(b,d):g?k(h(b,d),b):e?"":(new Option(h(b,d))).innerHTML}),n=q);p?--f||(g=h(b,g),e=/^f/.test(typeof g)?e+g.call(b,d,function(a){return k(a,b)}):e+k(d,g,b,n),d=""):++f})}return e}
 

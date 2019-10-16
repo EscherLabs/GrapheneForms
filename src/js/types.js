@@ -115,8 +115,12 @@ gform.types = {
       set: function(value) {
           this.el.querySelector('input[name="' + this.name + '"]').value = value;
       },
-      toString: function(){
-          return '<dt>'+this.label+'</dt> <dd>'+(this.value||'(empty)')+'</dd><hr>'
+      toString: function(name,display){
+          if(!display){
+            return '<dt>'+this.label+'</dt> <dd>'+(this.value||'(empty)')+'</dd><hr>'
+          }else{
+              return this.value
+          }
       },
       satisfied: function(value) {
           value = value||this.value;
@@ -197,21 +201,37 @@ gform.types = {
             return (item.label || item.index).toLowerCase().split(' ').join('_');
           }
 	}}},
-      toString: function(){
-        if(this.multiple){
-            if(this.value.length){
-                return _.reduce(this.value,function(returnVal,item){
-                    var lookup = _.find(this.list,{value:item});
-                    if(typeof lookup !== 'undefined'){
-                        returnVal+='<dd>'+lookup.label+'</dd>'                        
-                    }
-                    return returnVal;
-                }.bind(this),'<dt>'+this.label+'</dt> ')+'<hr>'
+      toString: function(name,display){
+        if(!display){
+            if(this.multiple){
+                if(this.value.length){
+                    return _.reduce(this.value,function(returnVal,item){
+                        var lookup = _.find(this.list,{value:item});
+                        if(typeof lookup !== 'undefined'){
+                            returnVal+='<dd>'+lookup.label+'</dd>'                        
+                        }
+                        return returnVal;
+                    }.bind(this),'<dt>'+this.label+'</dt> ')+'<hr>'
+                }else{
+                    return '<dt>'+this.label+'</dt> <dd>(no selection)</dd><hr>';
+                }
             }else{
-                return '<dt>'+this.label+'</dt> <dd>(no selection)</dd><hr>';
+                return '<dt>'+this.label+'</dt> <dd>'+((_.find(this.list,{value:this.value})||{label:""}).label||'(no selection)')+'</dd><hr>';
             }
         }else{
-            return '<dt>'+this.label+'</dt> <dd>'+((_.find(this.list,{value:this.value})||{label:""}).label||'(no selection)')+'</dd><hr>';
+            if(this.multiple){
+                if(this.value.length){
+                    return _.reduce(this.value,function(returnVal,item){
+                        var lookup = _.find(this.list,{value:item});
+                        returnVal.push(lookup.label)
+                        return returnVal;
+                    }.bind(this),[])+'<hr>'
+                }else{
+                    return '';
+                }
+            }else{
+                return (_.find(this.list,{value:this.value})||{label:""}).label;
+            } 
         }
       },
       render: function() {
@@ -415,8 +435,12 @@ gform.types = {
       get: function(name) {
           return gform.toJSON.call(this, name)
       },
-      toString: function(name) {
-          return '<h4>'+this.label+'</h4><hr><dl style="margin-left:10px">'+gform.toString.call(this, name)+'</dl>';
+      toString: function(name, display) {
+          if(!display){
+            return '<h4>'+this.label+'</h4><hr><dl style="margin-left:10px">'+gform.toString.call(this, name)+'</dl>';
+          }else{
+            return gform.toString.call(this, name,display);
+          }
       },
       set: function(value){
         if(value == null || value == ''){
@@ -581,6 +605,18 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
           this.mapOptions.on('change', function(){
               this.options = this.mapOptions.getobject()
               this.list = this.mapOptions.getoptions()
+
+              if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
+                this.options.push({label:"Other", value:'other'})
+                this.list.push({label:"Other", value:'other'})
+                }
+        
+                if(typeof this.placeholder == 'string'){
+                    // this.value = this.value || -1
+                    this.options.unshift({label:this.placeholder, value:'',i:-1,editable:false,visible:false,selected:true})
+                    this.list.unshift({label:this.placeholder, value:'',i:-1,editable:false,visible:false,selected:true})
+                }
+
               this.update();
           }.bind(this))
         }
@@ -601,10 +637,14 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
         }
         
         if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
-            this.options.push({label:"Other", value:'other',})
+            this.options.push({label:"Other", value:'other'})
+            this.list.push({label:"Other", value:'other'})
         }
+
         if(typeof this.placeholder == 'string'){
-            this.options.unshift({label:this.placeholder, value:'',editable:false,visible:false,selected:true})
+            // this.value = this.value || -1
+            this.options.unshift({label:this.placeholder, value:'',i:-1,editable:false,visible:false,selected:true})
+            this.list.unshift({label:this.placeholder, value:'',i:-1,editable:false,visible:false,selected:true})
         }
 
         (_.find(this.list,{selected:true})||{selected:null}).selected = false;
