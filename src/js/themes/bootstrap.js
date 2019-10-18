@@ -194,7 +194,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 </div>`,
     _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
-<div data-name="{{name}}" class="btn-group hidden-print actions">
+<div data-name="{{name}}" data-ref="{{ref}}" class="btn-group hidden-print actions">
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}"  class="fa gform-minus fa-minus text-danger"></i></div>
 	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}"  class="gform-add fa fa-plus text-success"></i></div>
 </div>
@@ -205,7 +205,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,
 	_actions: `{{#array}}
-	<div data-name="{{name}}" class="btn-group hidden-print actions pull-right">
+	<div data-name="{{name}}" data-ref="{{ref}}" class="btn-group hidden-print actions pull-right">
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}" class="gform-minus fa fa-minus text-danger"></i></div>
 	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}" class="gform-add fa fa-plus text-success"></i></div>
 	</div>
@@ -451,7 +451,7 @@ gform.stencils.smallcombo = `
 	<div class="combobox-container">
 		<div class="input-group"> 
 		{{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
-		<input {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" />
+		<div {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" contentEditable type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
         <ul class="typeahead typeahead-long dropdown-menu"></ul>
 		<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="caret"></span> <span class="fa fa-times"></span> </span> 
 		</div>
@@ -469,13 +469,13 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 	toString: function(name,display){
 		if(!display){
 			if(typeof this.combo !== 'undefined'){
-				return '<dt>'+this.label+'</dt> <dd>'+(this.combo.value||'(empty)')+'</dd><hr>'
+				return '<dt>'+this.label+'</dt> <dd>'+(this.combo.innerText||'(empty)')+'</dd><hr>'
 			}else{
 				return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
 			}
           }else{
 			if(typeof this.combo !== 'undefined'){
-				return this.combo.value
+				return this.combo.innerText
 			}else{
 				return this.get()
 			}
@@ -511,13 +511,13 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 		var item = _.find(this.options,{value:value})
 		if(typeof item !== 'undefined') {
 			if(!input){
-				this.combo.value =  item.label;
+				this.combo.innerText =  item.label;
 				gform.addClass(this.el.querySelector('.combobox-container'), 'combobox-selected');
 			}
 			this.value = item.value;
 		}else{
 			if(typeof value !== 'undefined') {
-				this.combo.value =  value||"";
+				this.combo.innerText =  value||"";
 				this.value = value||"";
 			}
 			gform.toggleClass(this.el.querySelector('.combobox-container'), 'combobox-selected', this.value!=="");
@@ -530,7 +530,8 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
     initialize: function(){
         this.onchangeEvent = function(input){
 			_.throttle(this.renderMenu,100).call(this);
-			this.set(this.combo.value,false,true)
+			debugger;
+			this.set(this.combo.innerText,false,true)
 
             this.parent.trigger(['input'], this, {input:this.value});
 		}.bind(this)
@@ -540,7 +541,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 					_.each(item.optgroup.options,this.processOptions.bind(this))
 				}
 			}else{
-				if(this.filter !== false && (this.combo.value == ""  || _.score(item.label.toLowerCase(), this.combo.value.toLowerCase())>.6)){
+				if(this.filter !== false && (this.combo.innerText == ""  || _.score(item.label.toLowerCase(), this.combo.innerText.toLowerCase())>.6)){
 					var li = document.createElement("li");
 					li.innerHTML = gform.renderString('<a href="javaScript:void(0);" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
 					this.menu.appendChild(li);
@@ -566,7 +567,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 						}
 						// else{
 							if(typeof this.search == 'string'){
-								gform.ajax({path: gform.renderString(this.search,{search:this.combo.value}), success:function(data) {
+								gform.ajax({path: gform.renderString(this.search,{search:this.combo.innerText}), success:function(data) {
 									// this.menu.innerHTML = "";
 									index = this.options.length;
 									this.options = this.options.concat( _.map(data,function(option){
@@ -582,7 +583,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 												option.value = gform.renderString(this.format.value,option);
 											}
 										}
-										if(!this.filter || this.combo.value == ""  || _.score(option.label.toLowerCase(), this.combo.value.toLowerCase())>.1){
+										if(!this.filter || this.combo.innerText == ""  || _.score(option.label.toLowerCase(), this.combo.innerText.toLowerCase())>.1){
 
 											var li = document.createElement("li");
 											li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>', option);
@@ -610,7 +611,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.shown = false;
         this.input = this.input || false;
         this.menu = this.el.querySelector('ul')
-        this.combo = this.el.querySelector('input');
+        this.combo = this.el.querySelector('.form-control');
 		// this.combo.addEventListener('focus',function(){
 		// 	this.renderMenu();
 		// }.bind(this))
@@ -632,7 +633,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
             if(e.target.nodeName == "SPAN" && this.editable){
                 if(this.el.querySelector('.combobox-selected') !== null){
                     // this.selected = false;
-                    // this.combo.value = "";
+                    // this.combo.innerText = "";
 					this.set("");			
 					this.renderMenu();
 
@@ -756,7 +757,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 						if(list.length == 1){
 							this.set(list[0].value);
 						}else{
-							list = _.filter(this.options,{label:this.combo.value});
+							list = _.filter(this.options,{label:this.combo.innerText});
 							if(list.length){
 								this.set(list[0].value);
 							}
@@ -767,7 +768,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 						this.parent.trigger(['input'], this, {input:this.value});
 					}
 				// if(this.el.querySelector('.combobox-selected') == null){
-					this.set(this.value||this.combo.value)
+					this.set(this.value||this.combo.innerText)
 
 					this.set(gform.types[this.type].get.call(this))
 					// }
@@ -794,7 +795,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 									}
 								}
 
-								if(this.combo.value == ""  || _.score(option.label.toLowerCase(),this.combo.value.toLowerCase())>.1){
+								if(this.combo.innerText == ""  || _.score(option.label.toLowerCase(),this.combo.innerText.toLowerCase())>.1){
 									var li = document.createElement("li");
 									li.innerHTML = gform.renderString('<a href="#" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
 									this.menu.appendChild(li);

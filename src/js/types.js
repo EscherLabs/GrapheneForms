@@ -6,7 +6,7 @@ gform.types = {
           gform.types[this.type].setLabel.call(this)
       },
       setLabel:function(){
-        if(!this.item.label){
+        // if(!this.item.label){
             var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
             if(this.required){
                 label+=this.requiredText+this.suffix;
@@ -15,7 +15,7 @@ gform.types = {
             if(labelEl !== null){
                 labelEl.innerHTML = label
             }
-        }
+        // }
       },
       create: function(){
           var tempEl = document.createElement("span");
@@ -443,18 +443,58 @@ gform.types = {
           }
       },
       set: function(value){
+
         if(value == null || value == ''){
             gform.each.call(this, function(field) {
                 field.set('');
             })
         }else{
             _.each(value,function(item,index){
-                var temp = this.find(index);
-                if(typeof temp !== 'undefined'){
-                    temp.set(item);
+                var field = this.find(index);
+                if(field.array && _.isArray(item)){
+                    var list = this.filter({array:{ref:field.array.ref}})
+
+                    if(list.length > 1){
+                        _.each(list.slice(1),function(field){
+                            var index = _.findIndex(field.parent.fields,{id:field.id});
+                            field.parent.fields.splice(index, 1);
+                        })
+                    }
+
+                    var testFunc = function(selector,status, button){
+                        gform.toggleClass(button.querySelector(selector),'hidden', status)
+                    }
+                    if(_.isArray(item)){
+                        field.set(item[0]);
+                    }
+
+                    // if(!this.owner.options.strict){
+                        // _.each(field.fields, gform.inflate.bind(this.owner, atts[field.name]|| field.owner.options.data[field.name] || {}) );
+                    // }else{
+                        var attr = {};
+                        attr[field.name] = item;
+                        gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
+                    // }
+
+                    var fieldCount = this.filter({array:{ref:field.array.ref}}).length
+
+                    _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
+                    _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
+         
+                    field.operator.reflow();
+
+
+
+                }else{
+                    // gform.inflate.bind(this, this.options.data||{})
+                    if(typeof field !== 'undefined'){
+                        field.set(item);
+                    }
                 }
             }.bind(this))
         }
+        return true;
+
       },
       find: function(name) {
           return gform.find.call(this, name)

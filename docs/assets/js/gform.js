@@ -137,9 +137,46 @@ var gform = function(optionsIn, el){
         }
         if(typeof name == 'object'){
             _.each(name,function(item,index){
-                var temp = this.find(index);
-                if(typeof temp !== 'undefined'){
-                    temp.set(item);
+                var field = this.find(index);
+                if(field.array && _.isArray(item)){
+                    var list = this.filter({array:{ref:field.array.ref}})
+
+                    if(list.length > 1){
+                        _.each(list.slice(1),function(field){
+                            var index = _.findIndex(field.parent.fields,{id:field.id});
+                            field.parent.fields.splice(index, 1);
+                        })
+                    }
+
+                    if(_.isArray(item)){
+                        field.set(item[0]);
+                    }
+
+                    // if(!this.owner.options.strict){
+                        // _.each(field.fields, gform.inflate.bind(this.owner, atts[field.name]|| field.owner.options.data[field.name] || {}) );
+                    // }else{
+                        var attr = {};
+                        attr[field.name] = item;
+                        gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
+                    // }
+
+                    var fieldCount = this.filter({array:{ref:field.array.ref}}).length
+
+                    var testFunc = function(selector,status, button){
+                        gform.toggleClass(button.querySelector(selector),'hidden', status)
+                    }
+                    _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
+                    _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
+         
+                    field.operator.reflow();
+
+
+
+                }else{
+                    // gform.inflate.bind(this, this.options.data||{})
+                    if(typeof field !== 'undefined'){
+                        field.set(item);
+                    }
                 }
             }.bind(this))
         }
@@ -247,8 +284,8 @@ var gform = function(optionsIn, el){
            var testFunc = function(selector,status, button){
             gform.toggleClass(button.querySelector(selector),'hidden', status)
            }
-           _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-name="'+field.name+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
-           _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-name="'+field.name+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
+           _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
+           _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
 
        }
        if(e.target.classList.contains('gform-minus')){
@@ -262,6 +299,7 @@ var gform = function(optionsIn, el){
                field.parent.fields.splice(index, 1);
                field.operator.reflow();
             //    if(!field.target) {
+                debugger;
                    _.each(_.filter(field.parent.fields, 
                        function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
                    ),function(item,index){
@@ -286,15 +324,15 @@ var gform = function(optionsIn, el){
         //    var testFunc = function(status, button){
         //        gform.toggleClass(button,'hidden', status)
         //    }
-        //    _.each(field.operator.container.querySelectorAll('[data-name="'+field.name+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
+        //    _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
 
-        //    _.each(field.operator.container.querySelectorAll('[data-name="'+field.name+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
+        //    _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
 
            var testFunc = function(selector,status, button){
             gform.toggleClass(button.querySelector(selector),'hidden', status)
            }
-           _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-name="'+field.name+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
-           _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-name="'+field.name+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
+           _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
+           _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
 
        }
    }.bind(this)
@@ -467,15 +505,16 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         //     gform.toggleClass(button,'hidden', status)
         // }
         // if(field.name == "options")debugger;
-        // _.each(field.operator.container.querySelectorAll('[data-name="'+field.name+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
+        // _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
 
-        // _.each(field.operator.container.querySelectorAll('[data-name="'+field.name+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
-     
+        // _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
+        var fieldCount = field.operator.filter({array:{ref:field.array.ref}}).length
+
         var testFunc = function(selector,status, button){
             gform.toggleClass(button.querySelector(selector),'hidden', status)
         }
-        _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-name="'+field.name+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
-        _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-name="'+field.name+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
+        _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
+        _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
 
 
     }
@@ -504,6 +543,13 @@ gform.normalizeField = function(fieldIn,parent){
         ischild:!(parent instanceof gform)
     }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
     //keep required separate
+    if(field.array){
+        if(typeof field.array !== 'object'){
+            field.array = {};
+        }
+        field.array.ref = field.array.ref || gform.getUID();
+    }
+    
     // field.validate.required = field.validate.required|| field.required || false;
     if(typeof field.multiple == 'undefined' && typeof field.limit !== 'undefined' && field.limit>1)
     {
@@ -607,10 +653,11 @@ gform.eventBus = function(options, owner){
 	}.bind(this)
 	this.on = function (event, handler) {
 		var events = event.split(' ');
-		if (typeof this.handlers[event] !== 'object') {
-		this.handlers[event] = [];
-		}
+		// if (typeof this.handlers[event] !== 'object') {
+		// this.handlers[event] = [];
+		// }
 		_.each(events,function(event){
+            this.handlers[event] = this.handlers[event] ||[];
             if(typeof handler == 'function'){
                 this.handlers[event].push(handler);
             }else{
@@ -1251,7 +1298,7 @@ gform.types = {
           gform.types[this.type].setLabel.call(this)
       },
       setLabel:function(){
-        if(!this.item.label){
+        // if(!this.item.label){
             var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
             if(this.required){
                 label+=this.requiredText+this.suffix;
@@ -1260,7 +1307,7 @@ gform.types = {
             if(labelEl !== null){
                 labelEl.innerHTML = label
             }
-        }
+        // }
       },
       create: function(){
           var tempEl = document.createElement("span");
@@ -1688,18 +1735,58 @@ gform.types = {
           }
       },
       set: function(value){
+
         if(value == null || value == ''){
             gform.each.call(this, function(field) {
                 field.set('');
             })
         }else{
             _.each(value,function(item,index){
-                var temp = this.find(index);
-                if(typeof temp !== 'undefined'){
-                    temp.set(item);
+                var field = this.find(index);
+                if(field.array && _.isArray(item)){
+                    var list = this.filter({array:{ref:field.array.ref}})
+
+                    if(list.length > 1){
+                        _.each(list.slice(1),function(field){
+                            var index = _.findIndex(field.parent.fields,{id:field.id});
+                            field.parent.fields.splice(index, 1);
+                        })
+                    }
+
+                    var testFunc = function(selector,status, button){
+                        gform.toggleClass(button.querySelector(selector),'hidden', status)
+                    }
+                    if(_.isArray(item)){
+                        field.set(item[0]);
+                    }
+
+                    // if(!this.owner.options.strict){
+                        // _.each(field.fields, gform.inflate.bind(this.owner, atts[field.name]|| field.owner.options.data[field.name] || {}) );
+                    // }else{
+                        var attr = {};
+                        attr[field.name] = item;
+                        gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
+                    // }
+
+                    var fieldCount = this.filter({array:{ref:field.array.ref}}).length
+
+                    _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
+                    _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
+         
+                    field.operator.reflow();
+
+
+
+                }else{
+                    // gform.inflate.bind(this, this.options.data||{})
+                    if(typeof field !== 'undefined'){
+                        field.set(item);
+                    }
                 }
             }.bind(this))
         }
+        return true;
+
       },
       find: function(name) {
           return gform.find.call(this, name)

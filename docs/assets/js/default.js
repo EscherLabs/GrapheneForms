@@ -174,7 +174,7 @@ grid: `
 `,
 _actions: `      
     {{#array}}
-    <div data-name="{{name}}" class="noprint" style="float:right">
+    <div data-name="{{name}}" data-ref="{{ref}}" class="noprint" style="float:right">
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:green;color:green;float:right;margin:0 5px" class="gform-add button button-outline" type="button" value="+">
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:red;color:red;float:right;margin:0 5px" class="gform-minus button button-outline" type="button" value="-">
     </div>
