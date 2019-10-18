@@ -451,7 +451,7 @@ gform.stencils.smallcombo = `
 	<div class="combobox-container">
 		<div class="input-group"> 
 		{{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
-		<div {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" contentEditable type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
+		<div style="overflow: hidden;white-space: nowrap;" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" contentEditable type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
         <ul class="typeahead typeahead-long dropdown-menu"></ul>
 		<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="caret"></span> <span class="fa fa-times"></span> </span> 
 		</div>
@@ -482,6 +482,32 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 		  }
 		  
 
+	},
+	focus:function() {
+
+
+		var node = this.el,
+    textNode = node.firstChild,
+    caret = textNode.length,
+    range = document.createRange(),
+    sel = window.getSelection();
+
+node.focus();
+
+range.setStart(textNode, caret);
+range.setEnd(textNode, caret);
+
+sel.removeAllRanges();
+sel.addRange(range);
+
+
+	//   //   debugger;
+	// 	this.el.focus();
+	//   //   this.el.querySelector('[name="'+this.name+'"]').focus();
+	// 	var temp = this.value;
+	// 	this.set('');
+	// 	this.set(temp);
+	//   //   this.el.querySelector('[name="'+this.name+'"]').select();
 	},
     render: function() {
         if(typeof this.mapOptions == 'undefined'){
@@ -516,7 +542,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 			}
 			this.value = item.value;
 		}else{
-			if(typeof value !== 'undefined') {
+			if(typeof value !== 'undefined' && this.combo.innerText !== value) {
 				this.combo.innerText =  value||"";
 				this.value = value||"";
 			}
@@ -530,7 +556,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
     initialize: function(){
         this.onchangeEvent = function(input){
 			_.throttle(this.renderMenu,100).call(this);
-			debugger;
 			this.set(this.combo.innerText,false,true)
 
             this.parent.trigger(['input'], this, {input:this.value});
@@ -623,7 +648,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
             this.menu.style.display = 'none';
             this.shown = false;
-            this.combo.focus();
+            gform.types.smallcombo.focus.call(this);
 				}
 				$(this.el).on('click',".dropdown-item",function(e){
 					this.select(e.currentTarget.dataset.index);   
@@ -645,7 +670,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                         this.renderMenu();
                     }
                 }
-				this.combo.focus();
+            gform.types.smallcombo.focus.call(this);
 				
             }
         }.bind(this))
@@ -735,7 +760,8 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                 break;
             }
 
-            e.stopPropagation();
+			e.stopPropagation();
+
         }.bind(this))
 
         $(this.menu).on('mouseenter','li',function(e){
