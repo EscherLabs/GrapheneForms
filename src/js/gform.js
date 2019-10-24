@@ -1,7 +1,9 @@
 var gform = function(optionsIn, el){
     "use strict";
-    //event management
+    //event management        
+
     var data = _.merge({},optionsIn)
+
     this.methods = data.methods||{};
 
     this.eventBus = new gform.eventBus({owner:'form',item:'field',handlers:data.events||{}}, this)
@@ -48,6 +50,9 @@ var gform = function(optionsIn, el){
     
     //initalize form
     this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
+    if(typeof this.options.onSet == 'function'){
+        data = this.options.onSet(data)
+    }
     this.options.fields = this.options.fields.concat(this.options.actions)
     if (typeof this.options.data == 'string') {
         if(typeof window.location[this.options.data] !== 'undefined'){
