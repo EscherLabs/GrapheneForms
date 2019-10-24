@@ -50,7 +50,9 @@ var gform = function(optionsIn, el){
     this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
     this.options.fields = this.options.fields.concat(this.options.actions)
     if (typeof this.options.data == 'string') {
-        this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
+        if(typeof window.location[this.options.data] !== 'undefined'){
+            this.options.data = window.location[this.options.data].substr(1).split('&').map(function(val){return val.split('=');}).reduce(function ( total, current ) {total[ current[0] ] = decodeURIComponent(current[1]);return total;}, {});
+        }
     }
 
     //set flag on all root fieldsets as a section
@@ -125,13 +127,23 @@ var gform = function(optionsIn, el){
     }
 
     this.restore = create.bind(this);
-    this.get = this.toJSON = gform.toJSON.bind(this);
+    this.toJSON = gform.toJSON.bind(this);
+    if(typeof this.options.onGet == 'function'){
+        this.get = function(){
+            return this.options.onGet(this.toJSON());
+        }.bind(this)
+    }else{
+        this.get = this.toJSON;
+    }
     this.toString = gform.toString.bind(this)
     this.reflow = gform.reflow.bind(this)
     this.find = gform.find.bind(this)
     this.filter = gform.filter.bind(this)
 
     this.set = function(name, value) {
+        if(typeof this.options.onSet == 'function'){
+            value = this.options.onSet(value)
+        }
         if(typeof name == 'string'){
             this.find(name).set(value)
         }

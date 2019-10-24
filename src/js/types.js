@@ -689,7 +689,7 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
 
         (_.find(this.list,{selected:true})||{selected:null}).selected = false;
         (_.find(this.list,{value:this.value})||{value:""}).selected = true;
-        return gform.render(this.type, this);
+        return gform.render('select', this);
     }
 });
 gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collection'],{
