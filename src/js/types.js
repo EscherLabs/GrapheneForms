@@ -167,6 +167,17 @@ gform.types = {
           return gform.render(this.type, this);
 
       },
+      setLabel:function(){
+        var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
+        if(this.required){
+            label+=this.requiredText+this.suffix;
+        }
+        var labelEl = this.el.querySelector('label[for='+this.name+']');
+        if(labelEl !== null){
+            labelEl.innerHTML = label
+        }
+          
+      },
       initialize: function(){
           this.onchangeEvent = function(input){
               this.value = this.get();
@@ -235,33 +246,59 @@ gform.types = {
         }
       },
       render: function() {
+
         if(typeof this.mapOptions == 'undefined'){
             this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
             this.mapOptions.on('change', function(){
+                debugger;
+
                 this.options = this.mapOptions.getobject()
                 this.list = this.mapOptions.getoptions();
+                if(this.multiple){
+                    if(!_.isArray(this.value)){
+                        this.value = [this.value]
+                      }
+                    // (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                    _.each(this.value,function(value){
+                        (_.find(this.list,{value:value})||{selected:null}).selected = true;
+                    }.bind(this))
+    
+                }else{
+                    (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                    (_.find(this.list,{value:this.value})||{value:""}).selected = true;    
+                }
                 this.update();
             }.bind(this))
             }
             this.options = this.mapOptions.getobject();
             this.list = this.mapOptions.getoptions();
-            
 
 
-            var search = _.find(this.list,{value:this.value});
-            if(typeof search == 'undefined'){
-                if(this.other||false){
-                    this.value = 'other';
-                }else{
-                    this.value = (this.list[0]||{value:""}).value
+            if(this.multiple){
+                if(!_.isArray(this.value)){
+                    this.value = [this.value]
+                  }
+                (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                _.each(this.value,function(value){
+                    (_.find(this.list,{value:value})||{selected:null}).selected = true;
+                }.bind(this))
+
+            }else{
+                var search = _.find(this.list,{value:this.value});
+                if(typeof search == 'undefined'){
+                    if(this.other||false){
+                        this.value = 'other';
+                    }else{
+                        // this.value = ""
+                    }
                 }
+                if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
+                    this.options.push({label:"Other", value:'other',})
+                }
+    
+                (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                (_.find(this.list,{value:this.value})||{value:""}).selected = true;    
             }
-            if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
-                this.options.push({label:"Other", value:'other',})
-            }
-
-            (_.find(this.list,{selected:true})||{selected:null}).selected = false;
-            (_.find(this.list,{value:this.value})||{value:""}).selected = true;
             return gform.render(this.type, this);        
       },
       setup:function(){
@@ -287,12 +324,28 @@ gform.types = {
           gform.types[this.type].setLabel.call(this)
       },
       initialize: function() {       
+        //   debugger;
         //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
           this.el.addEventListener('change', function(){
               this.value =  this.get();
 
-              (_.find(this.list,{selected:true})||{selected:null}).selected = false;
-              (_.find(this.list,{value:this.value})||{selected:null}).selected = true;
+            //   (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+            //   (_.find(this.list,{value:this.value})||{selected:null}).selected = true;
+
+              if(this.multiple){
+                if(!_.isArray(this.value)){
+                    this.value = [this.value]
+                  }
+                // (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                _.each(this.value,function(value){
+                    (_.find(this.list,{value:value})||{selected:null}).selected = true;
+                }.bind(this))
+
+            }else{
+                (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                (_.find(this.list,{value:this.value})||{value:""}).selected = true;    
+            }
+
 
               if(this.el.querySelector('.count') != null){
                 var text = this.value.length;
@@ -306,6 +359,8 @@ gform.types = {
           }.bind(this));
 
           gform.types[this.type].set.call(this,this.value);
+        //   gform.types[this.type].setup.call(this);
+
       },
       get: function() {
           var value = this.el.querySelector('select').value;
@@ -325,7 +380,7 @@ gform.types = {
             var that = this;
             value = _.transform(this.el.querySelector('select').options,function(orig,opt){
                 if(opt.selected){
-                    var option = _.find(that.list,{index:parseInt(opt.value)});
+                    var option = _.find(that.list,{i:parseInt(opt.value)});
                     if(typeof option !== 'undefined'){
                         orig.push(option.value)
                     }
@@ -346,7 +401,9 @@ gform.types = {
             }
           if(typeof this.limit !== 'undefinded' && (value.length > this.limit)){return true}
           _.each(this.el.querySelector('select').options, function(option){
-             option.selected = (value.indexOf(option.value)>=0)
+            //  option.selected = (value.indexOf(option.value)>=0)
+             var search = _.find(this.list,{i:parseInt(option.value)})
+             option.selected =  (typeof search !== 'undefined' && value.indexOf(search.value)>=0);
           }.bind(this))
         }else{
             var search = _.find(this.list,{value:value});
@@ -357,6 +414,7 @@ gform.types = {
             }
         }
         if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
+        
       },
       focus:function() {
 
@@ -643,43 +701,58 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
         if(typeof this.mapOptions == 'undefined'){
           this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.on('change', function(){
-              this.options = this.mapOptions.getobject()
-              this.list = this.mapOptions.getoptions()
 
-              if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
+            this.options = this.mapOptions.getobject()
+            this.list = this.mapOptions.getoptions()
+
+            if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
                 this.options.push({label:"Other", value:'other'})
                 this.list.push({label:"Other", value:'other'})
-                }
-        
-                if(typeof this.placeholder == 'string'){
-                    // this.value = this.value || -1
-                    this.options.unshift({label:this.placeholder, value:'',i:-1,editable:false,visible:false,selected:true})
-                    this.list.unshift({label:this.placeholder, value:'',i:-1,editable:false,visible:false,selected:true})
-                }
+            }
+    
+            if(typeof this.placeholder == 'string'){
+                // this.value = this.value || -1
+                this.options.unshift({label:this.placeholder, value:'',i:-1,editable:false,visible:false,selected:true})
+                this.list.unshift({label:this.placeholder, value:'',i:-1,editable:false,visible:false,selected:true})
+            }
 
+            if(this.multiple){
+
+                if(!_.isArray(this.value)){
+                    this.value = [this.value]
+                  }
+                // (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                _.each(this.value,function(value){
+                    (_.find(this.list,{value:value})||{selected:null}).selected = true;
+                }.bind(this))
+
+            }else{
+                (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                (_.find(this.list,{value:this.value})||{value:""}).selected = true;    
+            }
               this.update();
           }.bind(this))
         }
         this.options = this.mapOptions.getobject();
         this.list = this.mapOptions.getoptions()
 
-        var search = _.find(this.list,{value:this.value});
-        if(typeof search == 'undefined'){
-            if(this.other||false){
-                this.value = 'other';
-            }else{
-                if(typeof this.placeholder == 'string'){
-                    this.value = '';
-                }else{
-                    this.value = (this.list[0]||{value:""}).value
-                }
-            }
-        }
+        // var search = _.find(this.list,{value:this.value});
+        // if(typeof search == 'undefined'){
+        //     if(this.other||false){
+        //         this.value = 'other';
+        //     }else{
+        //         if(typeof this.placeholder == 'string'){
+        //             this.value = '';
+        //         }else{
+        //             this.value = (this.list[0]||{value:""}).value
+        //         }
+        //     }
+        // }
         
-        if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
-            this.options.push({label:"Other", value:'other'})
-            this.list.push({label:"Other", value:'other'})
-        }
+        // if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
+        //     this.options.push({label:"Other", value:'other'})
+        //     this.list.push({label:"Other", value:'other'})
+        // }
 
         if(typeof this.placeholder == 'string'){
             // this.value = this.value || -1
@@ -687,8 +760,35 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
             this.list.unshift({label:this.placeholder, value:'',i:-1,editable:false,visible:false,selected:true})
         }
 
-        (_.find(this.list,{selected:true})||{selected:null}).selected = false;
-        (_.find(this.list,{value:this.value})||{value:""}).selected = true;
+        // (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+        // (_.find(this.list,{value:this.value})||{value:""}).selected = true;
+        if(this.multiple){
+            if(!_.isArray(this.value)){
+                this.value = [this.value]
+              }
+            (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+            _.each(this.value,function(value){
+                (_.find(this.list,{value:value})||{selected:null}).selected = true;
+            }.bind(this))
+
+        }else{
+            var search = _.find(this.list,{value:this.value});
+            debugger;
+            if(typeof search == 'undefined'){
+                if(this.other||false){
+                    this.value = 'other';
+                }else{
+                    // this.value = ""
+                }
+            }
+            if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
+                this.options.push({label:"Other", value:'other'})
+                this.list.push({label:"Other", value:'other'})
+            }
+
+            (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+            (_.find(this.list,{value:this.value})||{value:""}).selected = true;    
+        }
         return gform.render('select', this);
     }
 });
@@ -703,7 +803,6 @@ gform.types['range']   = _.extend({}, gform.types['input'], gform.types['collect
 
 gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collection'], {
   setup: function(){
-
     if(this.multiple && typeof this.limit !== 'undefinded'){        
         if(this.get().length>= this.limit){
             this.maxSelected = true;
@@ -735,30 +834,53 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
             this.mapOptions.on('change', function(){
                 this.options = this.mapOptions.getoptions()
                 this.list = this.mapOptions.getoptions()
+                if(this.multiple){
+                    if(!_.isArray(this.value)){
+                        this.value = [this.value]
+                      }
+                    // (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                    _.each(this.value,function(value){
+                        (_.find(this.list,{value:value})||{selected:null}).selected = true;
+                    }.bind(this))
+    
+                }else{
+                    (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                    (_.find(this.list,{value:this.value})||{value:""}).selected = true;    
+                }
                 this.update();
             }.bind(this))
             }
             this.options = this.mapOptions.getoptions();
             this.list = this.mapOptions.getoptions()
-    
-            var search = _.find(this.list,{value:this.value});
-            if(typeof search == 'undefined'){
-                if(this.other||false){
-                    this.value = 'other';
-                }else{
-                    this.value = ""
+            if(this.multiple){
+                if(!_.isArray(this.value)){
+                    this.value = [this.value]
+                  }
+                (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                _.each(this.value,function(value){
+                    (_.find(this.list,{value:value})||{selected:null}).selected = true;
+                }.bind(this))
+
+            }else{
+                var search = _.find(this.list,{value:this.value});
+                if(typeof search == 'undefined'){
+                    if(this.other||false){
+                        this.value = 'other';
+                    }else{
+                        // this.value = ""
+                    }
                 }
-            }
-            if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
-                this.options.push({label:"Other", value:'other',})
+                if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
+                    this.options.push({label:"Other", value:'other',})
+                }
+    
+                (_.find(this.list,{selected:true})||{selected:null}).selected = false;
+                (_.find(this.list,{value:this.value})||{value:""}).selected = true;    
             }
 
-            (_.find(this.list,{selected:true})||{selected:null}).selected = false;
-            (_.find(this.list,{value:this.value})||{value:""}).selected = true;
             return gform.render(this.type, this);        
       },
   get: function(){
-
       if(this.multiple){
 
         var that = this;
@@ -778,7 +900,11 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         }
         if(typeof this.limit !== 'undefinded' && (value.length > this.limit)){return true}
         _.each(this.el.querySelectorAll('[type=checkbox]'), function(option){
-           option.checked = (value.indexOf(option.value)>=0)
+        //    option.checked = (value.indexOf(option.value)>=0)
+           var search = _.find(this.list,{i:parseInt(option.value)})
+           option.selected =  (typeof search !== 'undefined' && value.indexOf(search.value)>=0);
+
+           
         }.bind(this))
       
       }else{
@@ -808,6 +934,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
         if(typeof this.mapOptions == 'undefined'){
 
             this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
+            
             this.mapOptions.on('change',function(){
                 this.options = this.mapOptions.getobject()
                 this.list = this.mapOptions.getoptions()

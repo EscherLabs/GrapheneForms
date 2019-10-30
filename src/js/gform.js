@@ -135,7 +135,7 @@ var gform = function(optionsIn, el){
     this.toJSON = gform.toJSON.bind(this);
     if(typeof this.options.onGet == 'function'){
         this.get = function(){
-            return this.options.onGet(this.toJSON());
+            return this.options.onGet(this.toJSON(null, arguments));
         }.bind(this)
     }else{
         this.get = this.toJSON;
@@ -316,7 +316,7 @@ var gform = function(optionsIn, el){
                field.parent.fields.splice(index, 1);
                field.operator.reflow();
             //    if(!field.target) {
-                debugger;
+                // debugger;
                    _.each(_.filter(field.parent.fields, 
                        function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
                    ),function(item,index){
@@ -460,14 +460,13 @@ gform.toString = function(name,display){
         return obj;
     }else{
         if(typeof name == 'string' && name.length>0) {
-            debugger;
             name = name.split('.');
             return _.find(this.fields, {name: name.shift()}).toString(name.join('.'),display);
         }
         var obj = {};
         _.each(this.fields, function(field) {
             if(field.visible){
-                if(field.isArray){
+                if(field.array){
                     obj[field.name] = obj[field.name]||[];
                     obj[field.name].push(field.toString(name,true))
                 }else{
@@ -880,7 +879,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
                         }
                     }
                 }
-                if(option.value == value || (/*this.multiple && */typeof value !=='undefined' && value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
+                if(option.value == value || (/*this.multiple && */typeof value !=='undefined' && value !== null && value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
 
                 count+=1;
                 option.i = count;
@@ -933,10 +932,11 @@ gform.mapOptions = function(optgroup, value, count,collections){
         if(typeof this.collections.get(this.optgroup.path) === 'undefined'){
             this.collections.add(this.optgroup.path,[])
             gform.ajax({path: this.optgroup.path, success:function(data) {
-                
+                // debugger;
+
                 this.collections.update(this.optgroup.path,data)
                 // this.optgroup.options = pArray.call(this.optgroup.map, data);
-                // this.eventBus.dispatch('change')
+                this.eventBus.dispatch('change')
             }.bind(this)})
         }else{
             this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));

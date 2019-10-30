@@ -451,12 +451,10 @@ gform.stencils.smallcombo = `
 	<div class="combobox-container">
 		<div class="input-group"> 
 		{{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
-		<div style="overflow: hidden;white-space: nowrap;" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" contentEditable type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
+		<div style="overflow: hidden;white-space: nowrap" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" contentEditable type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
         <ul class="typeahead typeahead-long dropdown-menu"></ul>
-		<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="caret"></span> <span class="fa fa-times"></span> </span> 
+		<span class="input-group-addon dropdown-toggle" style="height: 34px;" data-dropdown="dropdown"> <span class="caret"></span> <span class="fa fa-times"></span> </span> 
 		</div>
-
-
         </div>
 		{{>_addons}}
 		{{>_actions}}
@@ -515,6 +513,9 @@ sel.addRange(range);
           	this.mapOptions.on('change',function(){
             	this.options = this.mapOptions.getoptions()
 				// this.update();
+				if(this.shown){
+					this.renderMenu();
+				}
 				if(typeof this.value !== 'undefined'){
 					gform.types[this.type].set.call(this, this.value);
 				}
@@ -636,7 +637,10 @@ sel.addRange(range);
         this.shown = false;
         this.input = this.input || false;
         this.menu = this.el.querySelector('ul')
-        this.combo = this.el.querySelector('.form-control');
+		this.combo = this.el.querySelector('.form-control');
+		// this.combo.style.width = this.combo.clientWidth+'px';
+
+
 		// this.combo.addEventListener('focus',function(){
 		// 	this.renderMenu();
 		// }.bind(this))
