@@ -155,44 +155,46 @@ var gform = function(optionsIn, el){
         if(typeof name == 'object'){
             _.each(name,function(item,index){
                 var field = this.find(index);
-                if(field.array && _.isArray(item)){
-                    var list = this.filter({array:{ref:field.array.ref}})
+                if(typeof field !== 'undefined'){
+                    if(field.array && _.isArray(item)){
+                        var list = this.filter({array:{ref:field.array.ref}})
 
-                    if(list.length > 1){
-                        _.each(list.slice(1),function(field){
-                            var index = _.findIndex(field.parent.fields,{id:field.id});
-                            field.parent.fields.splice(index, 1);
-                        })
-                    }
+                        if(list.length > 1){
+                            _.each(list.slice(1),function(field){
+                                var index = _.findIndex(field.parent.fields,{id:field.id});
+                                field.parent.fields.splice(index, 1);
+                            })
+                        }
 
-                    if(_.isArray(item)){
-                        field.set(item[0]);
-                    }
+                        if(_.isArray(item)){
+                            field.set(item[0]);
+                        }
 
-                    // if(!this.owner.options.strict){
-                        // _.each(field.fields, gform.inflate.bind(this.owner, atts[field.name]|| field.owner.options.data[field.name] || {}) );
-                    // }else{
-                        var attr = {};
-                        attr[field.name] = item;
-                        gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
-                    // }
+                        // if(!this.owner.options.strict){
+                            // _.each(field.fields, gform.inflate.bind(this.owner, atts[field.name]|| field.owner.options.data[field.name] || {}) );
+                        // }else{
+                            var attr = {};
+                            attr[field.name] = item;
+                            gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
+                        // }
 
-                    var fieldCount = this.filter({array:{ref:field.array.ref}}).length
+                        var fieldCount = this.filter({array:{ref:field.array.ref}}).length
 
-                    var testFunc = function(selector,status, button){
-                        gform.toggleClass(button.querySelector(selector),'hidden', status)
-                    }
-                    _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
-                    _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
-         
-                    field.operator.reflow();
+                        var testFunc = function(selector,status, button){
+                            gform.toggleClass(button.querySelector(selector),'hidden', status)
+                        }
+                        _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
+                        _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
+            
+                        field.operator.reflow();
 
 
 
-                }else{
-                    // gform.inflate.bind(this, this.options.data||{})
-                    if(typeof field !== 'undefined'){
-                        field.set(item);
+                    }else{
+                        // gform.inflate.bind(this, this.options.data||{})
+                        if(typeof field !== 'undefined'){
+                            field.set(item);
+                        }
                     }
                 }
             }.bind(this))
@@ -444,15 +446,15 @@ gform.toJSON = function(name) {
     }.bind(this))
     return obj;
 }
-gform.toString = function(name,display){
-    if(!display){
+gform.toString = function(name,report){
+    if(!report){
         if(typeof name == 'string' && name.length>0) {
             name = name.split('.');
             return _.find(this.fields, {name: name.shift()}).toString(name.join('.'));
         }
         var obj = "";
         _.each(this.fields, function(field) {
-            if(field.visible){
+            if(field.reportable){
                 // var fieldString = field.toString();
                 obj += field.toString();
             }
@@ -461,7 +463,7 @@ gform.toString = function(name,display){
     }else{
         if(typeof name == 'string' && name.length>0) {
             name = name.split('.');
-            return _.find(this.fields, {name: name.shift()}).toString(name.join('.'),display);
+            return _.find(this.fields, {name: name.shift()}).toString(name.join('.'),report);
         }
         var obj = {};
         _.each(this.fields, function(field) {
@@ -550,6 +552,7 @@ gform.normalizeField = function(fieldIn,parent){
         validate: [],
         valid: true,
         parsable:true,
+        reportable:true,
         visible:true,
         editable:true,
         parent: parent,
@@ -1252,7 +1255,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         if(field.array && typeof (atts[field.name]|| field.owner.options.data[field.name]) == 'object'){
             newatts =  (atts[field.name]|| field.owner.options.data[field.name])[index||0] || {};
         }else{
-            newatts = atts[field.name]|| field.owner.options.data[field.name] ||{};
+            newatts = atts[field.name]|| (field.owner.options.data||{})[field.name] ||{};
         }
         field.fields = _.map(field.fields, gform.createField.bind(this, field, newatts, null, null) );
         if(field.array) {
@@ -1281,6 +1284,12 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     gform.processConditions.call(field, field.parse, function(result){
         this.parsable = result
     })
+    if(typeof field.report == 'undefined'){
+        field.report = field.show;
+    }
+    gform.processConditions.call(field, field.report, function(result){
+        this.reportable = result
+    })
     if(field.required){
         gform.processConditions.call(field, field.required, function(result,e){
             if(this.required !== result){
@@ -1297,7 +1306,7 @@ gform.reflow = function(){
     if(this.isActive || (typeof this.owner !== 'undefined' && this.owner.isActive)){
         _.each(this.rows,function(item,i){
             if(typeof item !== 'undefined'){
-                item.container.removeChild(item.ref);
+                try{item.container.removeChild(item.ref);}catch(e){}
             }
             // delete this.rows[i];
         }.bind(this))    

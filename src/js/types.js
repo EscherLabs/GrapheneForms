@@ -115,8 +115,8 @@ gform.types = {
       set: function(value) {
           this.el.querySelector('input[name="' + this.name + '"]').value = value;
       },
-      toString: function(name,display){
-          if(!display){
+      toString: function(name,report){
+          if(!report){
             return '<dt>'+this.label+'</dt> <dd>'+(this.value||'(empty)')+'</dd><hr>'
           }else{
               return this.value
@@ -124,6 +124,7 @@ gform.types = {
       },
       satisfied: function(value) {
           value = value||this.value;
+          if(_.isArray(value)){return !!value.length;}
           return (typeof value !== 'undefined' && value !== null && value !== '' && !(typeof value == 'number' && isNaN(value)));            
       },
       edit: function(state) {
@@ -212,8 +213,8 @@ gform.types = {
             return (item.label || item.index).toLowerCase().split(' ').join('_');
           }
 	}}},
-      toString: function(name,display){
-        if(!display){
+      toString: function(name,report){
+        if(!report){
             if(this.multiple){
                 if(this.value.length){
                     return _.reduce(this.value,function(returnVal,item){
@@ -493,11 +494,11 @@ gform.types = {
       get: function(name) {
           return gform.toJSON.call(this, name)
       },
-      toString: function(name, display) {
-          if(!display){
+      toString: function(name, report) {
+          if(!report){
             return '<h4>'+this.label+'</h4><hr><dl style="margin-left:10px">'+gform.toString.call(this, name)+'</dl>';
           }else{
-            return gform.toString.call(this, name,display);
+            return gform.toString.call(this, name,report);
           }
       },
       set: function(value){
@@ -728,7 +729,20 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
 
             }else{
                 (_.find(this.list,{selected:true})||{selected:null}).selected = false;
-                (_.find(this.list,{value:this.value})||{value:""}).selected = true;    
+                // (_.find(this.list,{value:this.value})||{value:""}).selected = true;    
+                var search = _.find(this.list,{value:this.value});
+                if(typeof search == 'undefined'){
+                    if(typeof this.placeholder == 'string'){
+                        this.value = '';
+                    }else{
+                        this.value = (this.list[0]||{value:""}).value
+                        if(this.list.length){
+                        this.list[0].selected = true;
+                        }
+                    }
+                }else{
+                    search.selected = true;
+                }
             }
               this.update();
           }.bind(this))
@@ -772,22 +786,30 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
             }.bind(this))
 
         }else{
-            var search = _.find(this.list,{value:this.value});
-            debugger;
-            if(typeof search == 'undefined'){
-                if(this.other||false){
-                    this.value = 'other';
-                }else{
-                    // this.value = ""
-                }
-            }
+ 
             if((this.other||false) && typeof _.find(this.list,{value:'other'}) == 'undefined'){
                 this.options.push({label:"Other", value:'other'})
                 this.list.push({label:"Other", value:'other'})
             }
-
             (_.find(this.list,{selected:true})||{selected:null}).selected = false;
-            (_.find(this.list,{value:this.value})||{value:""}).selected = true;    
+
+            var search = _.find(this.list,{value:this.value});
+            if(typeof search == 'undefined'){
+                if(this.other||false){
+                    this.value = 'other';
+                }else{
+                    if(typeof this.placeholder == 'string'){
+                        this.value = '';
+                    }else{
+                        this.value = (this.list[0]||{value:""}).value
+                        if(this.list.length){
+                        this.list[0].selected = true;
+                        }
+                    }
+                }
+            }else{
+                search.selected = true;
+            }
         }
         return gform.render('select', this);
     }

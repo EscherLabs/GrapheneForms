@@ -495,8 +495,8 @@ node.focus();
 range.setStart(textNode, caret);
 range.setEnd(textNode, caret);
 
-sel.removeAllRanges();
-sel.addRange(range);
+// sel.removeAllRanges();
+// sel.addRange(range);
 
 
 	//   //   debugger;
