@@ -221,10 +221,11 @@ Cobler.types.input = function(container) {
 				{label:"Date",value:"MM/DD/YYYY"},				
 				{label:"Time",value:"h:mm A"},
 				{label:"Month",value:"MM"},
-				{label:"Year",value:"YYYYY"},
+				{label:"Year",value:"YYYY"},
+				{label:"Month/Year",value:"MM/YYYY"},
 				{label:"Day",value:"MM/DD"}
 
-			],label:"Date Format",parse:[{type:"requires",name:"input"}]}
+			],label:"Date Format",parse:[{type:"requires",name:"input"}],format:{title:'Date Format <span class="pull-right" style="font-weight:normal">{{value}}</span>'}}
 		] }
 	])
 	return {

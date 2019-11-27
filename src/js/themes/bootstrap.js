@@ -484,7 +484,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 	focus:function() {
 
 
-		var node = this.el,
+	var node = this.el,
     textNode = node.firstChild,
     caret = textNode.length,
     range = document.createRange(),
