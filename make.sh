@@ -2,10 +2,10 @@
 cat src/js/gform.js src/js/types.js src/js/conditions.js src/js/validate.js > bin/gform.js
 minify src/js/gform.js src/js/types.js src/js/conditions.js src/js/validate.js > bin/gform.engine.min.js 
 minify bin/gform.engine.min.js src/js/themes/default.js > bin/default/gform.min.js 
-minify bin/gform.engine.min.js src/js/themes/bootstrap.js > bin/bootstrap/gform_bootstrap.min.js 
+# minify bin/gform.engine.min.js src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/gform_bootstrap.min.js 
 minify src/js/themes/default.js > bin/default/default.theme.min.js
-minify src/js/themes/bootstrap.js > bin/bootstrap/bootstrap.theme.min.js
-cat bin/gform.js src/js/themes/bootstrap.js > bin/bootstrap/gform_bootstrap.js 
+cat bin/gform.js src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/gform_bootstrap.js 
+minify src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/bootstrap.theme.min.js
 
 # minify bin/gform.engine.min.js src/js/themes/bulma.js > bin/gform_bulma.min.js 
 # minify bin/gform.engine.min.js src/js/themes/skeleton.js> bin/gform_skeleton.min.js 
@@ -16,6 +16,7 @@ cat bin/gform.js src/js/themes/bootstrap.js > bin/bootstrap/gform_bootstrap.js
 
 # cp src/js/themes/* bin/
 cp src/js/themes/bootstrap.js bin/bootstrap/
+cp src/js/types/smallcombo.js bin/bootstrap/
 cp src/js/themes/default.js bin/default/
 cp bin/* docs/assets/js/
 cp bin/default/* docs/assets/js/

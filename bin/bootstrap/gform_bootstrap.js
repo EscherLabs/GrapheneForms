@@ -1018,6 +1018,12 @@ gform.render = function(template, options) {
     }
     // return elem;
   };
+  gform.hasClass = function(elem, classes) {
+    if(typeof classes !== 'undefined' && classes.length && typeof elem !== 'undefined'&& !!elem){
+       return  (elem.className.indexOf(classes) !== -1);
+    }
+    // return elem;
+  };
   gform.removeClass = function(elem, classes){
     if(typeof classes !== 'undefined' && classes.length && typeof elem !== 'undefined'&& !!elem){
         elem.className = _.chain(elem.className).split(/[\s]+/).difference(classes.split(' ')).join(' ').value();
@@ -3132,425 +3138,6 @@ gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section
 
 
 
-
-
-gform.stencils.smallcombo = `
-<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
-	{{>_label}}
-	{{#label}}
-	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
-	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
-	{{/label}}
-	{{^label}}
-	<div class="col-md-12">
-	{{/label}}
-	<div class="combobox-container">
-		<div class="input-group"> 
-		{{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
-		<div style="overflow: hidden;white-space: nowrap" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" contentEditable type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
-        <ul class="typeahead typeahead-long dropdown-menu"></ul>
-		<span class="input-group-addon dropdown-toggle" style="height: 34px;" data-dropdown="dropdown"> <span class="caret"></span> <span class="fa fa-times"></span> </span> 
-		</div>
-        </div>
-		{{>_addons}}
-		{{>_actions}}
-	</div>
-</div>
-		`;
-		
-gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
-	base:"collection",
-	toString: function(name,display){
-		if(!display){
-			if(typeof this.combo !== 'undefined'){
-				return '<dt>'+this.label+'</dt> <dd>'+(this.combo.innerText||'(empty)')+'</dd><hr>'
-			}else{
-				return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
-			}
-          }else{
-			if(typeof this.combo !== 'undefined'){
-				return this.combo.innerText
-			}else{
-				return this.get()
-			}
-		  }
-		  
-
-	},
-	focus:function() {
-
-
-		var node = this.el,
-    textNode = node.firstChild,
-    caret = textNode.length,
-    range = document.createRange(),
-    sel = window.getSelection();
-
-node.focus();
-
-range.setStart(textNode, caret);
-range.setEnd(textNode, caret);
-
-// sel.removeAllRanges();
-// sel.addRange(range);
-
-
-	//   //   debugger;
-	// 	this.el.focus();
-	//   //   this.el.querySelector('[name="'+this.name+'"]').focus();
-	// 	var temp = this.value;
-	// 	this.set('');
-	// 	this.set(temp);
-	//   //   this.el.querySelector('[name="'+this.name+'"]').select();
-	},
-    render: function() {
-        if(typeof this.mapOptions == 'undefined'){
-          	this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
-          	this.mapOptions.on('change',function(){
-            	this.options = this.mapOptions.getoptions()
-				// this.update();
-				if(this.shown){
-					this.renderMenu();
-				}
-				if(typeof this.value !== 'undefined'){
-					gform.types[this.type].set.call(this, this.value);
-				}
-          	}.bind(this))
-        }
-		this.options = this.mapOptions.getoptions();
-        this.value = this.value || "";
-        return gform.render('smallcombo', this);
-    },
-    get: function() {
-		//   return this.el.querySelector('input[name="' + this.name + '"]').value;
-		if(this.strict){
-			return (_.find(this.options,{value:this.value})||{value:""}).value;
-		}else{
-			return this.value;
-		}
-    },
-    set: function(value,silent,input) {				
-        // this.el.querySelector('input[name="' + this.name + '"]').value = value;
-		var item = _.find(this.options,{value:value})
-		if(typeof item !== 'undefined') {
-			if(!input){
-				this.combo.innerText =  item.label;
-				gform.addClass(this.el.querySelector('.combobox-container'), 'combobox-selected');
-			}
-			this.value = item.value;
-		}else{
-			if(typeof value !== 'undefined' && this.combo.innerText !== value) {
-				this.combo.innerText =  value||"";
-				this.value = value||"";
-			}
-			gform.toggleClass(this.el.querySelector('.combobox-container'), 'combobox-selected', this.value!=="");
-		}
-		gform.types[this.type].setLabel.call(this);
-		if(!silent) {
-			this.parent.trigger(['change'], this);
-		}
-    },
-    initialize: function(){
-        this.onchangeEvent = function(input){
-			_.throttle(this.renderMenu,100).call(this);
-			this.set(this.combo.innerText,false,true)
-
-            this.parent.trigger(['input'], this, {input:this.value});
-		}.bind(this)
-		this.processOptions = function(item){
-			if(typeof item.optgroup !== 'undefined'){
-				if(typeof item.optgroup.options !== 'undefined' && item.optgroup.options.length){
-					_.each(item.optgroup.options,this.processOptions.bind(this))
-				}
-			}else{
-				if(this.filter !== false && (this.combo.innerText == ""  || _.score(item.label.toLowerCase(), this.combo.innerText.toLowerCase())>.6)){
-					var li = document.createElement("li");
-					li.innerHTML = gform.renderString('<a href="javaScript:void(0);" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
-					this.menu.appendChild(li);
-					item.filter = true;
-				}else{
-					item.filter = false;
-				}
-			}
-		}
-        this.renderMenu = function(){
-					this.menu.style.display = 'none';
-					this.shown = false;
-					this.menu.innerHTML = "";
-					
-					// if(typeof this.search !== 'string'){
-						this.options = this.mapOptions.getoptions();
-						_.each(this.options,this.processOptions.bind(this))
-						var first = this.menu.querySelector('li');
-						if(first !== null){
-							gform.addClass(first,'active')
-							this.menu.style.display = 'block';
-							this.shown = true;
-						}
-						// else{
-							if(typeof this.search == 'string'){
-								gform.ajax({path: gform.renderString(this.search,{search:this.combo.innerText}), success:function(data) {
-									// this.menu.innerHTML = "";
-									index = this.options.length;
-									this.options = this.options.concat( _.map(data,function(option){
-									option.i = (option.i||(++index));
-										if(typeof this.format !== 'undefined'){
-											if(typeof this.format.label !== 'undefined' ){
-												option.label = gform.renderString(this.format.label,option);
-											}
-											if(typeof this.format.display !== 'undefined' ){
-												option.display = gform.renderString(this.format.display,option);
-											}
-											if(typeof this.format.value !== 'undefined' ){
-												option.value = gform.renderString(this.format.value,option);
-											}
-										}
-										if(!this.filter || this.combo.innerText == ""  || _.score(option.label.toLowerCase(), this.combo.innerText.toLowerCase())>.1){
-
-											var li = document.createElement("li");
-											li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>', option);
-											this.menu.appendChild(li);
-											option.filter = true;
-										}
-										return option;
-									}.bind(this)))
-									var first = this.menu.querySelector('li');
-									if(first !== null){
-										gform.addClass(first,'active')
-										this.menu.style.display = 'block';
-										this.shown = true;
-									}else{
-										// gform.removeClass(this.el.querySelector('.combobox-container'),'combobox-selected');
-										this.value = null;
-									}
-									this.parent.trigger(['change'], this, {input:this.value});
-								}.bind(this)})
-							}
-						// }
-					// }else{
-
-        }
-        this.shown = false;
-        this.input = this.input || false;
-        this.menu = this.el.querySelector('ul')
-		this.combo = this.el.querySelector('.form-control');
-		// this.combo.style.width = this.combo.clientWidth+'px';
-
-
-		// this.combo.addEventListener('focus',function(){
-		// 	this.renderMenu();
-		// }.bind(this))
-				this.set = gform.types[this.type].set.bind(this)
-        this.select = function(index){
-            var item = _.find(this.options,{i:parseInt(index)})
-						this.set(item.value);
-						this.parent.trigger(['input'], this, {input:this.value});
-
-            this.menu.style.display = 'none';
-            this.shown = false;
-            gform.types.smallcombo.focus.call(this);
-				}
-				$(this.el).on('click',".dropdown-item",function(e){
-					this.select(e.currentTarget.dataset.index);   
-					e.stopPropagation();
-				}.bind(this))
-        this.el.addEventListener('click',function(e){
-            if(e.target.nodeName == "SPAN" && this.editable){
-                if(this.el.querySelector('.combobox-selected') !== null){
-                    // this.selected = false;
-                    // this.combo.innerText = "";
-					this.set("");			
-					this.renderMenu();
-
-                }else{
-                    if(this.shown){
-                        this.menu.style.display = 'none';
-                        this.shown = false;
-                    }else{
-                        this.renderMenu();
-                    }
-                }
-            gform.types.smallcombo.focus.call(this);
-				
-            }
-        }.bind(this))
-
-        this.el.addEventListener('keydown',function(e){
-					if (!this.shown) {
-						if(e.keyCode == 40){this.renderMenu();}                
-						return;
-					}
-
-          switch(e.keyCode) {
-            case 9: // tab
-            case 13: // enter
-							e.preventDefault();
-							this.select(this.menu.querySelector('li.active a').dataset.index);   
-							break;
-            case 27: // escape
-                e.preventDefault();
-                this.menu.style.display = 'none';
-                this.shown = false;
-                break;
-
-            case 38: // up arrow
-                e.preventDefault();
-                var active = this.menu.querySelector('.active');
-                gform.removeClass(active,'active');
-                // var active = $(this.menu).find('.active').removeClass('active')
-                //     , prev = active.prev();
-                            
-                prev = active.previousElementSibling;
-
-                if (!prev) {
-                    var list = this.menu.querySelectorAll('li');
-                    prev =  list[list.length-1];
-                }
-                            
-                gform.addClass(prev,'active')
-
-                // prev.addClass('active');
-                // this.prev();
-                // this.fixMenuScroll();
-
-                var active = $(this.menu).find('.active');
-                //fixscroll
-                if(active.length){
-                    var top = active.position().top;
-                    var bottom = top + active.height();
-                    var scrollTop = $(this.menu).scrollTop();
-                    var menuHeight = $(this.menu).height();
-                    if(bottom > menuHeight){
-                        $(this.menu).scrollTop(scrollTop + bottom - menuHeight);
-                    } else if(top < 0){
-                        $(this.menu).scrollTop(scrollTop + top);
-                    }
-                }
-                break;
-
-            case 40: // down arrow
-                e.preventDefault();
-                var active = this.menu.querySelector('.active');
-                gform.removeClass(active,'active');
-                // var active = $(this.menu).find('.active').removeClass('active')
-                //     , next = active.next();
-                next = active.nextElementSibling;
-                if (!next) {
-                    next = this.menu.querySelector('li')
-                    // nedxt = $($(this.menu).find('li')[0]);
-                }
-                gform.addClass(next,'active')
-                // next.addClass('active');
-
-                var active = $(this.menu.querySelector('.active'));
-                //fixscroll
-                if(active.length){
-                    var top = active.position().top;
-                    var bottom = top + active.height();
-                    var scrollTop = $(this.menu).scrollTop();
-                    var menuHeight = $(this.menu).height();
-                    if(bottom > menuHeight){
-                        $(this.menu).scrollTop(scrollTop + bottom - menuHeight);
-                    } else if(top < 0){
-                        $(this.menu).scrollTop(scrollTop + top);
-                    }
-                }
-                // this.next();
-                // this.fixMenuScroll();
-                break;
-            }
-
-			e.stopPropagation();
-
-        }.bind(this))
-
-        $(this.menu).on('mouseenter','li',function(e){
-					this.mousedover = true;
-					if(this.menu.querySelector('.active') !== null){
-						gform.removeClass(this.menu.querySelector('.active'),'active')
-					}
-					gform.addClass(e.currentTarget,'active')            
-        }.bind(this))
-
-        $(this.menu).on('mouseleave','li',function(e){
-          this.mousedover = false;            
-        }.bind(this))
-
-        this.combo.addEventListener('blur',function(e){
-
-					if(this.shown ){
-						var list = _.filter(this.options,{filter:true});
-						if(list.length == 1){
-							this.set(list[0].value);
-						}else{
-							list = _.filter(this.options,{label:this.combo.innerText});
-							if(list.length){
-								this.set(list[0].value);
-							}
-						}
-						if (!this.mousedover && this.shown) {setTimeout(function () { 
-							this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);
-						}								
-						this.parent.trigger(['input'], this, {input:this.value});
-					}
-				// if(this.el.querySelector('.combobox-selected') == null){
-					this.set(this.value||this.combo.innerText)
-
-					this.set(gform.types[this.type].get.call(this))
-					// }
-				}.bind(this))
-				this.options = this.mapOptions.getoptions();
-				// debugger;
-					if(typeof this.search == 'string'){
-						gform.ajax({path: gform.renderString(this.search,{value:this.value}), success:function(data) {
-							index = this.options.length;
-		
-							this.options = this.options.concat( _.map(data,function(option){
-		
-							// this.options = _.map(data,function(option,index){
-							option.index = (option.index||(++index))+"";
-								if(typeof this.format !== 'undefined'){
-									if(typeof this.format.label !== 'undefined' ){
-										option.label = gform.renderString(this.format.label,option);
-									}
-									if(typeof this.format.display !== 'undefined' ){
-										option.display = gform.renderString(this.format.display,option);
-									}
-									if(typeof this.format.value !== 'undefined' ){
-										option.value = gform.renderString(this.format.value,option);
-									}
-								}
-
-								if(this.combo.innerText == ""  || _.score(option.label.toLowerCase(),this.combo.innerText.toLowerCase())>.1){
-									var li = document.createElement("li");
-									li.innerHTML = gform.renderString('<a href="#" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
-									this.menu.appendChild(li);
-								}
-								return option;
-							}.bind(this)))
-						if(typeof this.value !== 'undefined'){
-							this.set(this.value);
-						}
-						// this.parent.trigger('change')
-						// this.parent.trigger(['change:'+this.name,'change'], this, {input:this.value});
-
-					}.bind(this)}
-					)}else{
-						if(typeof this.value !== 'undefined'){
-							this.set(this.value);
-						}
-					}
-
-        this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
-
-        // this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
-    }
-});
-
-
-
-
-
 gform.THEME = {'bootstrap':'0.0.4.2'}
 
 gform.types['datetime'] = _.extend({}, gform.types['input'], {
@@ -3589,3 +3176,372 @@ gform.prototype.modal = function(data){
 	$(this.el).modal(data)
 	return this;
 }
+gform.stencils.smallcombo = `
+<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
+	{{>_label}}
+	{{#label}}
+	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
+	{{/label}}
+	{{^label}}
+	<div class="col-md-12">
+	{{/label}}
+	<div class="combobox-container">
+		<div class="input-group"> 
+		{{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
+		<div style="overflow: hidden;white-space: nowrap" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" contentEditable type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
+        <ul class="typeahead typeahead-long dropdown-menu"></ul>
+		<span class="input-group-addon dropdown-toggle" style="height: 34px;" data-dropdown="dropdown"> <span class="caret"></span> <span data-dropdown="" class="fa fa-times"></span> </span> 
+		</div>
+        </div>
+		{{>_addons}}
+		{{>_actions}}
+	</div>
+</div>`;
+		
+gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
+	base:"collection",
+	toString: function(name,display){
+		if(!display){
+			if(typeof this.combo !== 'undefined'){
+				return '<dt>'+this.label+'</dt> <dd>'+(this.combo.innerText||'(empty)')+'</dd><hr>'
+			}else{
+				return '<dt>'+this.label+'</dt> <dd>'+(this.get()||'(empty)')+'</dd><hr>'
+			}
+          }else{
+			if(typeof this.combo !== 'undefined'){
+				return this.combo.innerText
+			}else{
+				return this.get()
+			}
+		  }
+	},
+	focus:function() {
+        var node = this.el.querySelector('[type=smallcombo]');
+        // textNode = node.firstChild,
+        // caret = textNode.length,
+        // range = document.createRange(),
+        // sel = window.getSelection();
+
+        node.focus();
+
+        // range.setStart(textNode, caret);
+        // range.setEnd(textNode, caret);
+	},
+    render: function() {
+        if(typeof this.mapOptions == 'undefined'){
+        	this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
+        	this.mapOptions.on('change', function(){
+            	this.options = this.mapOptions.getoptions()
+				if(this.shown){
+					this.renderMenu();
+				}
+				if(typeof this.value !== 'undefined'){
+					gform.types[this.type].set.call(this, this.value);
+				}
+          	}.bind(this))
+        }
+		this.options = this.mapOptions.getoptions();
+        this.value = this.value || "";
+        return gform.render('smallcombo', this);
+    },
+    get: function() {
+		if(this.strict){
+			return (_.find(this.options,{value:this.value})||{value:""}).value;
+		}else{
+			return this.value;
+		}
+    },
+    set: function(value,silent,input) {
+		var item = _.find(this.options,{value:value})
+		if(typeof item !== 'undefined') {
+			if(!input){
+				this.combo.innerText = item.label;
+				gform.addClass(this.el.querySelector('.combobox-container'), 'combobox-selected');
+			}
+			this.value = item.value;
+		}else{
+            
+			if(typeof value == 'undefined' || (typeof value !== 'undefined' && this.combo.innerText !== value)) {
+				this.combo.innerText =  value||"";
+            }
+            
+			this.value = value||"";
+			gform.toggleClass(this.el.querySelector('.combobox-container'), 'combobox-selected', this.value!=="");
+		}
+		gform.types[this.type].setLabel.call(this);
+		if(!silent) {
+			this.parent.trigger(['change'], this);
+		}
+    },
+    initialize: function(){
+        this.onchangeEvent = function(input){
+			_.throttle(this.renderMenu,100).call(this);
+            this.set(this.combo.innerText,false,true);
+            this.parent.trigger(['input'], this, {input:this.value});
+		}.bind(this)
+		this.processOptions = function(item){
+			if(typeof item.optgroup !== 'undefined'){
+				if(typeof item.optgroup.options !== 'undefined' && item.optgroup.options.length){
+					_.each(item.optgroup.options,this.processOptions.bind(this))
+				}
+			}else{
+				if(this.filter !== false && (this.combo.innerText == ""  || _.score(item.label.toLowerCase(), this.combo.innerText.toLowerCase())>.6)){
+					var li = document.createElement("li");
+					li.innerHTML = gform.renderString('<a href="javaScript:void(0);" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
+					this.menu.appendChild(li);
+					item.filter = true;
+				}else{
+					item.filter = false;
+				}
+			}
+		}
+        this.renderMenu = function(){
+            this.menu.style.display = 'none';
+            this.shown = false;
+            this.menu.innerHTML = "";
+            
+            this.options = this.mapOptions.getoptions();
+            _.each(this.options,this.processOptions.bind(this))
+
+            var first = this.menu.querySelector('li');
+            if(first !== null){
+                gform.addClass(first,'active')
+                this.menu.style.display = 'block';
+                this.shown = true;
+            }
+            if(typeof this.search == 'string'){
+                gform.ajax({path: gform.renderString(this.search,{search:this.combo.innerText}), success:function(data) {
+                    index = this.options.length;
+                    this.options = this.options.concat( _.map(data,function(option){
+                    option.i = (option.i||(++index));
+                        if(typeof this.format !== 'undefined'){
+                            if(typeof this.format.label !== 'undefined' ){
+                                option.label = gform.renderString(this.format.label,option);
+                            }
+                            if(typeof this.format.display !== 'undefined' ){
+                                option.display = gform.renderString(this.format.display,option);
+                            }
+                            if(typeof this.format.value !== 'undefined' ){
+                                option.value = gform.renderString(this.format.value,option);
+                            }
+                        }
+                        if(!this.filter || this.combo.innerText == ""  || _.score(option.label.toLowerCase(), this.combo.innerText.toLowerCase())>.1){
+
+                            var li = document.createElement("li");
+                            li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>', option);
+                            this.menu.appendChild(li);
+                            option.filter = true;
+                        }
+                        return option;
+                    }.bind(this)))
+                    var first = this.menu.querySelector('li');
+                    if(first !== null){
+                        gform.addClass(first,'active')
+                        this.menu.style.display = 'block';
+                        this.shown = true;
+                    }else{
+                        this.value = null;
+                    }
+                    this.parent.trigger(['change'], this, {input:this.value});
+                }.bind(this)})
+            }
+        }
+        this.shown = false;
+        this.input = this.input || false;
+        this.menu = this.el.querySelector('ul')
+		this.combo = this.el.querySelector('.form-control');
+        this.set = gform.types[this.type].set.bind(this);
+        
+        this.select = function(index){
+            var item = _.find(this.options,{i:parseInt(index)})
+            this.set(item.value);
+            this.parent.trigger(['input'], this, {input:this.value});
+
+            this.menu.style.display = 'none';
+            this.shown = false;
+            gform.types.smallcombo.focus.call(this);
+		}
+        $(this.el).on('click',".dropdown-item",function(e){
+            debugger;
+            this.select(e.currentTarget.dataset.index);   
+            e.stopPropagation();
+        }.bind(this))
+
+        this.el.addEventListener('click',function(e){
+            if(typeof e.target.dataset.dropdown !== "undefined" && this.editable){
+                if(this.el.querySelector('.combobox-selected') !== null){
+					this.set();
+					this.renderMenu();
+                }else{
+                    if(this.shown){
+                        this.menu.style.display = 'none';
+                        this.shown = false;
+                    }else{
+                        this.renderMenu();
+                    }
+                }
+                gform.types.smallcombo.focus.call(this);
+            }
+        }.bind(this))
+
+        this.el.addEventListener('keydown',function(e){
+            if (!this.shown) {
+                if(e.keyCode == 40){this.renderMenu();}                
+                if(e.keyCode == 13){e.preventDefault();}                
+                return;
+            }
+            switch(e.keyCode) {
+                case 9: // tab
+                case 13: // enter
+                    e.preventDefault();
+                    this.select(this.menu.querySelector('li.active a').dataset.index);   
+                    break;
+                case 27: // escape
+                    e.preventDefault();
+                    this.menu.style.display = 'none';
+                    this.shown = false;
+                    break;
+
+                case 38: // up arrow
+                    e.preventDefault();
+                    var active = this.menu.querySelector('.active');
+                    gform.removeClass(active,'active');
+
+                    prev = active.previousElementSibling;
+
+                    if (!prev) {
+                        var list = this.menu.querySelectorAll('li');
+                        prev =  list[list.length-1];
+                    }
+                                
+                    gform.addClass(prev,'active')
+
+                    var active = $(this.menu).find('.active');
+                    //fixscroll
+                    if(active.length){
+                        var top = active.position().top;
+                        var bottom = top + active.height();
+                        var scrollTop = $(this.menu).scrollTop();
+                        var menuHeight = $(this.menu).height();
+                        if(bottom > menuHeight){
+                            $(this.menu).scrollTop(scrollTop + bottom - menuHeight);
+                        } else if(top < 0){
+                            $(this.menu).scrollTop(scrollTop + top);
+                        }
+                    }
+                    break;
+
+                case 40: // down arrow
+                    e.preventDefault();
+                    var active = this.menu.querySelector('.active');
+                    gform.removeClass(active,'active');
+                    next = active.nextElementSibling;
+                    if (!next) {
+                        next = this.menu.querySelector('li')
+                    }
+                    gform.addClass(next,'active')
+                    var active = $(this.menu.querySelector('.active'));
+                    //fixscroll
+                    if(active.length){
+                        var top = active.position().top;
+                        var bottom = top + active.height();
+                        var scrollTop = $(this.menu).scrollTop();
+                        var menuHeight = $(this.menu).height();
+                        if(bottom > menuHeight){
+                            $(this.menu).scrollTop(scrollTop + bottom - menuHeight);
+                        } else if(top < 0){
+                            $(this.menu).scrollTop(scrollTop + top);
+                        }
+                    }
+                    break;
+            }
+			e.stopPropagation();
+        }.bind(this))
+
+        $(this.menu).on('mouseenter', 'li', function(e){
+					this.mousedover = true;
+					if(this.menu.querySelector('.active') !== null){
+						gform.removeClass(this.menu.querySelector('.active'),'active')
+					}
+					gform.addClass(e.currentTarget,'active')            
+        }.bind(this))
+
+        $(this.menu).on('mouseleave','li',function(e){
+          this.mousedover = false;            
+        }.bind(this))
+
+        this.combo.addEventListener('blur',function(e){
+            // debugger;
+            if(!(gform.hasClass(e.relatedTarget,'dropdown-item') || gform.hasClass(e.relatedTarget,'dropdown-toggle'))){
+            // console.log('blur');
+            if(this.shown ){
+                var list = _.filter(this.options,{filter:true});
+                if(this.strict){
+                    if(list.length == 1){
+                        this.set(list[0].value);
+                    }else{
+                        list = _.filter(this.options,{label:this.combo.innerText});
+                        if(list.length){
+                            this.set(list[0].value);
+                        }
+                    }
+                }else{
+                    this.set(this.combo.innerText)
+                }
+                if (!this.mousedover && this.shown) {setTimeout(function () { 
+                    this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);
+                }								
+                this.parent.trigger(['input'], this, {input:this.value});
+                this.menu.style.display = 'none';
+                this.shown = false;
+            }
+            if(this.strict){
+            this.set(this.value||this.combo.innerText)
+
+            this.set(gform.types[this.type].get.call(this))
+            }
+            }
+        }.bind(this))
+		this.options = this.mapOptions.getoptions();
+
+        if(typeof this.search == 'string'){
+            gform.ajax({path: gform.renderString(this.search,{value:this.value}), success:function(data) {
+                index = this.options.length;
+    
+                this.options = this.options.concat( _.map(data,function(option){
+
+                    option.index = (option.index||(++index))+"";
+                    if(typeof this.format !== 'undefined'){
+                        if(typeof this.format.label !== 'undefined' ){
+                            option.label = gform.renderString(this.format.label,option);
+                        }
+                        if(typeof this.format.display !== 'undefined' ){
+                            option.display = gform.renderString(this.format.display,option);
+                        }
+                        if(typeof this.format.value !== 'undefined' ){
+                            option.value = gform.renderString(this.format.value,option);
+                        }
+                    }
+
+                    if(this.combo.innerText == ""  || _.score(option.label.toLowerCase(),this.combo.innerText.toLowerCase())>.1){
+                        var li = document.createElement("li");
+                        li.innerHTML = gform.renderString('<a href="#" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
+                        this.menu.appendChild(li);
+                    }
+                    return option;
+                }.bind(this)))
+                if(typeof this.value !== 'undefined'){
+                    this.set(this.value);
+                }
+
+            }.bind(this)})
+        }else{
+            if(typeof this.value !== 'undefined'){
+                this.set(this.value);
+            }
+        }
+
+        this.el.addEventListener('input', this.onchangeEvent.bind(null, true));
+    }
+});

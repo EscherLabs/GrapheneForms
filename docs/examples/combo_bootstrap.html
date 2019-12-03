@@ -33,6 +33,7 @@
       <!-- <script src='../assets/js/gform_bootstrap.min.js'></script>  -->
       <script src='../assets/js/gform.js'></script> 
       <script src='../assets/js/bootstrap.js'></script> 
+      <script src='../assets/js/smallcombo.js'></script> 
 
       <script src='../assets/vendor/js/moment.js'></script>
       <!-- <script src='../assets/vendor/js/colorpicker.min.js'></script>  -->
@@ -56,7 +57,7 @@
     <script>
 
 gform.types['states']= _.extend({}, gform.types['smallcombo'], {
-  defaults:{options:[{name:"Originator",index:"{{user.originator}}"},{name:"Second"}],search:"../data/states.json",format:{title:'{{{title}}} <span class="text-success pull-right">{{value}}</span>',label:"{{name}}",value:"{{index}}", display:'{{name}}<span style="float:right">{{index}}</span>'}}
+  defaults:{strict:false,options:[{name:"Originator",value:"{{user.originator}}"},{name:"Second",value:1}],search:"../data/states.json",format:{title:'{{{title}}} <span class="text-success pull-right">{{value}}</span>',label:"{{name}}",value:"{{value}}", display:'{{name}}<span style="float:right">{{value}}</span>'}}
 })
 // myEvent = function(e){
 //             debugger;
@@ -66,7 +67,7 @@ gform.types['states']= _.extend({}, gform.types['smallcombo'], {
         // events:{'input:text':'myEvent'},
         // data:{text:"08/20/2019"},
         fields:[
-        {title: 'Text', name: "text", type: 'states'},
+        {title: 'Text', name: "text",strict:false, type: 'states'},
         // {title: 'Text', name: "text", type: 'date'},
 //             {label: 'Hidden', type: 'hidden', value:'hidden field'},
 //             {label: 'Number', type: 'number'},

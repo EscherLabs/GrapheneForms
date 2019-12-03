@@ -1018,6 +1018,12 @@ gform.render = function(template, options) {
     }
     // return elem;
   };
+  gform.hasClass = function(elem, classes) {
+    if(typeof classes !== 'undefined' && classes.length && typeof elem !== 'undefined'&& !!elem){
+       return  (elem.className.indexOf(classes) !== -1);
+    }
+    // return elem;
+  };
   gform.removeClass = function(elem, classes){
     if(typeof classes !== 'undefined' && classes.length && typeof elem !== 'undefined'&& !!elem){
         elem.className = _.chain(elem.className).split(/[\s]+/).difference(classes.split(' ')).join(' ').value();
