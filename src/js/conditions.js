@@ -94,7 +94,8 @@ gform.conditions = {
 
 		var val = args[args.attribute||'value'];
 		var localval = looker[args.attribute||'value'];
-		if(typeof val== "object" && localval !== null){
+
+		if(typeof val== "object" && val !== null && localval !== null){
 			return (val.indexOf(localval) == -1);
 		}else{
 			return (val !== localval);
@@ -137,7 +138,7 @@ gform.conditions = {
 			}
 		}
 
-		if(typeof val == "object" && localval !== null){
+		if(typeof val == "object" && val !== null && localval !== null){
 			if(typeof localval == 'object'){
 				return (_.intersection(val,localval).length >0)
 			}else if(typeof localval == 'string'){
@@ -167,7 +168,7 @@ gform.conditions = {
 
 		var val = args[args.attribute||'value'];
 		var localval = looker[args.attribute||'value'];
-		if(typeof val== "object" && localval !== null){
+		if(typeof val== "object" && val !== null && localval !== null){
 			return (val.indexOf(localval) !== -1);
 		}else{
 			return (val == localval);

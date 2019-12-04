@@ -1040,7 +1040,7 @@ gform.render = function(template, options) {
     // return elem
   };
   
-gform.VERSION = '0.0.1.0';
+gform.VERSION = '0.0.1.1';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
@@ -2468,7 +2468,8 @@ gform.conditions = {
 
 		var val = args[args.attribute||'value'];
 		var localval = looker[args.attribute||'value'];
-		if(typeof val== "object" && localval !== null){
+
+		if(typeof val== "object" && val !== null && localval !== null){
 			return (val.indexOf(localval) == -1);
 		}else{
 			return (val !== localval);
@@ -2511,7 +2512,7 @@ gform.conditions = {
 			}
 		}
 
-		if(typeof val == "object" && localval !== null){
+		if(typeof val == "object" && val !== null && localval !== null){
 			if(typeof localval == 'object'){
 				return (_.intersection(val,localval).length >0)
 			}else if(typeof localval == 'string'){
@@ -2541,7 +2542,7 @@ gform.conditions = {
 
 		var val = args[args.attribute||'value'];
 		var localval = looker[args.attribute||'value'];
-		if(typeof val== "object" && localval !== null){
+		if(typeof val== "object" && val !== null && localval !== null){
 			return (val.indexOf(localval) !== -1);
 		}else{
 			return (val == localval);

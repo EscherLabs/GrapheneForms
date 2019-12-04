@@ -1040,7 +1040,7 @@ gform.render = function(template, options) {
     // return elem
   };
   
-gform.VERSION = '0.0.1.0';
+gform.VERSION = '0.0.1.1';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);

@@ -2,7 +2,7 @@
 cat src/js/gform.js src/js/types.js src/js/conditions.js src/js/validate.js > bin/gform.js
 minify src/js/gform.js src/js/types.js src/js/conditions.js src/js/validate.js > bin/gform.engine.min.js 
 minify bin/gform.engine.min.js src/js/themes/default.js > bin/default/gform.min.js 
-# minify bin/gform.engine.min.js src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/gform_bootstrap.min.js 
+minify bin/gform.engine.min.js src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/gform_bootstrap.min.js 
 minify src/js/themes/default.js > bin/default/default.theme.min.js
 cat bin/gform.js src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/gform_bootstrap.js 
 minify src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/bootstrap.theme.min.js

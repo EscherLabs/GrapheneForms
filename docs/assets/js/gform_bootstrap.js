@@ -1040,7 +1040,7 @@ gform.render = function(template, options) {
     // return elem
   };
   
-gform.VERSION = '0.0.1.0';
+gform.VERSION = '0.0.1.1';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
@@ -2468,7 +2468,8 @@ gform.conditions = {
 
 		var val = args[args.attribute||'value'];
 		var localval = looker[args.attribute||'value'];
-		if(typeof val== "object" && localval !== null){
+
+		if(typeof val== "object" && val !== null && localval !== null){
 			return (val.indexOf(localval) == -1);
 		}else{
 			return (val !== localval);
@@ -2511,7 +2512,7 @@ gform.conditions = {
 			}
 		}
 
-		if(typeof val == "object" && localval !== null){
+		if(typeof val == "object" && val !== null && localval !== null){
 			if(typeof localval == 'object'){
 				return (_.intersection(val,localval).length >0)
 			}else if(typeof localval == 'string'){
@@ -2541,7 +2542,7 @@ gform.conditions = {
 
 		var val = args[args.attribute||'value'];
 		var localval = looker[args.attribute||'value'];
-		if(typeof val== "object" && localval !== null){
+		if(typeof val== "object" && val !== null && localval !== null){
 			return (val.indexOf(localval) !== -1);
 		}else{
 			return (val == localval);
@@ -3187,7 +3188,7 @@ gform.stencils.smallcombo = `
 	<div class="col-md-12">
 	{{/label}}
 	<div class="combobox-container">
-		<div class="input-group"> 
+		<div class="input-group" contentEditable="false"> 
 		{{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
 		<div style="overflow: hidden;white-space: nowrap" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" contentEditable type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
         <ul class="typeahead typeahead-long dropdown-menu"></ul>
@@ -3222,8 +3223,9 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         // caret = textNode.length,
         // range = document.createRange(),
         // sel = window.getSelection();
-
-        node.focus();
+        if(node !== null){
+            node.focus();
+        }
 
         // range.setStart(textNode, caret);
         // range.setEnd(textNode, caret);
@@ -3350,7 +3352,11 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.shown = false;
         this.input = this.input || false;
         this.menu = this.el.querySelector('ul')
-		this.combo = this.el.querySelector('.form-control');
+        this.combo = this.el.querySelector('.form-control');
+        // this.owner.container.onresize = function(){
+        //     this.combo.style.width = this.combo.offsetWidth+'px'
+        // };
+        // this.combo.style.width = this.combo.offsetWidth+'px'
         this.set = gform.types[this.type].set.bind(this);
         
         this.select = function(index){
@@ -3363,7 +3369,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
             gform.types.smallcombo.focus.call(this);
 		}
         $(this.el).on('click',".dropdown-item",function(e){
-            debugger;
             this.select(e.currentTarget.dataset.index);   
             e.stopPropagation();
         }.bind(this))
@@ -3471,10 +3476,8 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
           this.mousedover = false;            
         }.bind(this))
 
-        this.combo.addEventListener('blur',function(e){
-            // debugger;
+        this.combo.addEventListener('blur', function(e){
             if(!(gform.hasClass(e.relatedTarget,'dropdown-item') || gform.hasClass(e.relatedTarget,'dropdown-toggle'))){
-            // console.log('blur');
             if(this.shown ){
                 var list = _.filter(this.options,{filter:true});
                 if(this.strict){
