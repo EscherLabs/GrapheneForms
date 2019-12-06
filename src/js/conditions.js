@@ -3,24 +3,23 @@ gform.processConditions = function(conditions, func) {
 		if(conditions === 'show' || conditions === 'edit'  || conditions === 'parse') {
 			conditions = this.item[conditions];
 		}
+		if(typeof conditions !== 'undefined' && conditions.indexOf('method:') == 0){
+			if(typeof this.owner.methods !== 'undefined' && typeof this.owner.methods[conditions.split('method:')[1]] == 'function'){
+				func.call(this, this.owner.methods[conditions.split('method:')[1]].call(this),{form:this.owner,field:this})
+			}
+		}
 	}
 	if (typeof conditions === 'boolean') {
-		func.call(this, conditions)
+		func.call(this, conditions,{form:this.owner,field:this})
 	}
 	if (typeof conditions === 'function') {
-		func.call(this, conditions.call(this))
+		func.call(this, conditions.call(this),{form:this.owner,field:this})
 	}
 	if (typeof conditions === 'object') {
 		var callback = function(rules,func,e){
 			func.call(this, gform._rules.call(this, rules),e)
 		}.bind(this, conditions, func)
-
-		// for(var i in conditions) {
-		// 	this.owner.sub('change:' + conditions[i].name, callback)
-		// }
 		gform._subscribeByName.call(this, conditions, callback)
-		// debugger;
-		// func.call(this, gform._rules.call(this, conditions));
 	}
 	return true;
 };
