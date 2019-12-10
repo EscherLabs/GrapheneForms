@@ -102,7 +102,16 @@ gform.validations =
 		return r.pattern(value) || value === '' ? false : args.message;
 	},
 	custom: function(value, args) {
-		return args.test.call(this, value, args);
+
+		if(typeof args.test === 'function' || (typeof args.test === 'string' && typeof this.owner.methods[args.test] == 'function') ) {
+			args.test = this.owner.methods[args.test] || args.test;
+		}
+		// return args.test.call(this, value, args);
+		args.field = this;
+		args.form = this.owner;
+		args.value = value
+		return args.test.call(null, args);
+
 	},
 	matches:function(value, args) {
 		var temp = this.parent.find(args.name);
