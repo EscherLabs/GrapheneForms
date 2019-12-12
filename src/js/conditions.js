@@ -5,7 +5,7 @@ gform.processConditions = function(conditions, func) {
 		}
 		if(typeof conditions !== 'undefined' && conditions.indexOf('method:') == 0){
 			if(typeof this.owner.methods !== 'undefined' && typeof this.owner.methods[conditions.split('method:')[1]] == 'function'){
-				func.call(this, this.owner.methods[conditions.split('method:')[1]].call(this),{form:this.owner,field:this})
+				func.call(this, this.owner.methods[conditions.split('method:')[1]].call(null,{form:this.owner,field:this}),{form:this.owner,field:this})
 			}
 		}
 	}
@@ -13,7 +13,7 @@ gform.processConditions = function(conditions, func) {
 		func.call(this, conditions,{form:this.owner,field:this})
 	}
 	if (typeof conditions === 'function') {
-		func.call(this, conditions.call(this),{form:this.owner,field:this})
+		func.call(this, conditions.call(null,{form:this.owner,field:this}),{form:this.owner,field:this})
 	}
 	if (typeof conditions === 'object') {
 		var callback = function(rules,func,e){
@@ -40,7 +40,6 @@ gform._rules = function(rules, op){
 		var s;
 		if(typeof rule.conditions !== 'undefined'){
 			s = gform._rules.call(this, rule.conditions,rule.op);
-			console.log(s);
 		}else{
 			s = gform.conditions[rule.type](this, rule);
 		}
