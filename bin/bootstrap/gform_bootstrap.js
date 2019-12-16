@@ -245,9 +245,11 @@ var gform = function(optionsIn, el){
             }
         }.bind(this))
     }
-    if((this.options.autoFocus || gform.options.autoFocus) && this.fields.length){
-
-     gform.types[this.fields[0].type].focus.call(this.fields[0])
+    if(typeof this.options.autoFocus == 'undefined'){
+        this.options.autoFocus = gform.options.autoFocus;
+    }
+    if(this.options.autoFocus && this.fields.length){
+        gform.types[this.fields[0].type].focus.call(this.fields[0])
     }
 
 
@@ -2222,6 +2224,9 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         gform.types[this.type].setLabel.call(this)
     },      
     render: function() {
+        if(typeof this.item.size !== 'undefined'){
+            this.size = Math.floor(((gform.columns || 12)/this.item.size))
+        }
         if(typeof this.mapOptions == 'undefined'){
             this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
             this.mapOptions.on('change', function(){
@@ -2935,12 +2940,12 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 
 			{{#options}}
 			{{#multiple}}
-			<div class="checkbox">
+			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}">
 					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{label}}</label>
 			</div>
 			{{/multiple}}
 			{{^multiple}}
-			<div class="radio">
+			<div class="radio {{#size}}col-md-{{size}}{{/size}}">
 					<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
 			</div>
 			{{/multiple}}

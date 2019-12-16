@@ -177,12 +177,12 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 
 			{{#options}}
 			{{#multiple}}
-			<div class="checkbox">
+			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}">
 					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{label}}</label>
 			</div>
 			{{/multiple}}
 			{{^multiple}}
-			<div class="radio">
+			<div class="radio {{#size}}col-md-{{size}}{{/size}}">
 					<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
 			</div>
 			{{/multiple}}

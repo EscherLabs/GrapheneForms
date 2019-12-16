@@ -851,6 +851,9 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         gform.types[this.type].setLabel.call(this)
     },      
     render: function() {
+        if(typeof this.item.size !== 'undefined'){
+            this.size = Math.floor(((gform.columns || 12)/this.item.size))
+        }
         if(typeof this.mapOptions == 'undefined'){
             this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
             this.mapOptions.on('change', function(){

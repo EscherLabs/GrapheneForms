@@ -245,9 +245,11 @@ var gform = function(optionsIn, el){
             }
         }.bind(this))
     }
-    if((this.options.autoFocus || gform.options.autoFocus) && this.fields.length){
-
-     gform.types[this.fields[0].type].focus.call(this.fields[0])
+    if(typeof this.options.autoFocus == 'undefined'){
+        this.options.autoFocus = gform.options.autoFocus;
+    }
+    if(this.options.autoFocus && this.fields.length){
+        gform.types[this.fields[0].type].focus.call(this.fields[0])
     }
 
 
