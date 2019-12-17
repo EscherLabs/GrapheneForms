@@ -621,20 +621,23 @@ gform.eventBus = function(options, owner){
 	this.options = options || {owner:'form',item:'field'};
     this.owner = owner||this;
     this.on = function (event, handler) {
-		var events = event.split(' ');
-		// if (typeof this.handlers[event] !== 'object') {
-		// this.handlers[event] = [];
-		// }
-		_.each(events,function(event){
-            this.handlers[event] = this.handlers[event] ||[];
-            // if(typeof handler == 'function'){
-                this.handlers[event].push(handler);
-            // }else{
-            //     if(typeof this[handler] == 'function'){
-            //         this.handlers[event].push(this[handler]);
-            //     }
+        if(typeof event != 'undefined'){
+
+            var events = event.split(' ');
+            // if (typeof this.handlers[event] !== 'object') {
+            // this.handlers[event] = [];
             // }
-		}.bind(this))
+            _.each(events,function(event){
+                this.handlers[event] = this.handlers[event] ||[];
+                // if(typeof handler == 'function'){
+                    this.handlers[event].push(handler);
+                // }else{
+                //     if(typeof this[handler] == 'function'){
+                //         this.handlers[event].push(this[handler]);
+                //     }
+                // }
+            }.bind(this))
+        }
 		return this.owner;
 	}.bind(this);
     if(_.isArray(options.handlers)){
@@ -1142,7 +1145,7 @@ gform.layout = function(field){
                 cRow.ref.setAttribute("id", cRow.id);
                 cRow.ref.setAttribute("class", field.owner.options.rowClass);
                 cRow.ref.setAttribute("style", "margin-bottom:0;");
-
+                field.operator.rows = field.operator.rows || [];
                 field.operator.rows.push(cRow);
                 cRow.container = container;
                 container.appendChild(cRow.ref);
@@ -1177,10 +1180,11 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         }
     }
 
-    if(field.item.value !== 0){
-        if(field.array && typeof atts[field.name] == 'object'){
-            if(field.fillable){field.value =  atts[field.name][index||0];}
-        }else{
+    if(field.array && typeof atts[field.name] == 'object'){
+        if(field.fillable){field.value =  atts[field.name][index||0];}
+    }else{
+
+        // if(field.item.value !== 0){
             if(typeof field.item.value === 'function' || (typeof field.item.method === 'string' && typeof field.owner.methods[field.item.method] == 'function') ) {
                 //uncomment this when ready to test function as value for input
                 field.valueFunc = field.owner.methods[field.item.method] || field.item.value;
@@ -1239,10 +1243,12 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                 // field.value =  atts[field.name] || field.value || '';
                 if(field.fillable){field.value = _.defaults({value:atts[field.name],},field,{value:''}).value;}
             }
-        }
-    } else {
-        if(field.fillable){field.value = 0;}
+        // } else {
+        //     field.value = 0;
+        // }
     }
+
+
     field.index = field.index||instance||0;
     field.label = gform.renderString(field.item.label||field.label,field);
     // field.index = ;
@@ -2929,23 +2935,23 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
     radio: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
-	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
+	{{^horizontal}}<div class="col-md-12" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
 	{{/label}}
 	{{^label}}
-	<div class="col-md-12">
+	<div class="col-md-12" {{#size}}style="padding-top: 5px;"{{/size}}>
 	{{/label}}
 	{{#limit}}{{#multiple}}<small class="count text-muted" style="display:block;text-align:left">0/{{limit}}</small>{{/multiple}}{{/limit}}
 
 
 			{{#options}}
 			{{#multiple}}
-			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}">
+			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
 					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{label}}</label>
 			</div>
 			{{/multiple}}
 			{{^multiple}}
-			<div class="radio {{#size}}col-md-{{size}}{{/size}}">
+			<div class="radio {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
 					<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
 			</div>
 			{{/multiple}}
@@ -3279,28 +3285,17 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 	},
 	focus:function() {
         var node = this.el.querySelector('[type='+this.type+']');
-        // textNode = node.firstChild,
-        // caret = textNode.length,
-        // range = document.createRange(),
-        // sel = window.getSelection();
         if(node !== null){
             node.focus();
-
-            let sel = window.getSelection();
-            // let offset = sel.focusOffset;
-            let focus = sel.focusNode;
-        
-            // focus.textContent += "\""; //setting div's innerText directly creates new
-            //nodes, which invalidate our selections, so we modify the focusNode directly
-        
-            let range = document.createRange();
-            range.selectNode(focus);
-            // range.setStart(focus, offset);
-        
-            range.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(range);
-
+            var sel = window.getSelection();
+            var focus = sel.focusNode;
+            if(focus !== null){
+                var range = document.createRange();
+                range.selectNode(focus);            
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
         }
 
 	},

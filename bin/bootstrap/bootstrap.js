@@ -166,23 +166,23 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
     radio: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
-	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
+	{{^horizontal}}<div class="col-md-12" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
 	{{/label}}
 	{{^label}}
-	<div class="col-md-12">
+	<div class="col-md-12" {{#size}}style="padding-top: 5px;"{{/size}}>
 	{{/label}}
 	{{#limit}}{{#multiple}}<small class="count text-muted" style="display:block;text-align:left">0/{{limit}}</small>{{/multiple}}{{/limit}}
 
 
 			{{#options}}
 			{{#multiple}}
-			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}">
+			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
 					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{label}}</label>
 			</div>
 			{{/multiple}}
 			{{^multiple}}
-			<div class="radio {{#size}}col-md-{{size}}{{/size}}">
+			<div class="radio {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
 					<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
 			</div>
 			{{/multiple}}

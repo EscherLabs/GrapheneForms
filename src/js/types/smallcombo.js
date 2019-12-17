@@ -40,28 +40,17 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 	},
 	focus:function() {
         var node = this.el.querySelector('[type='+this.type+']');
-        // textNode = node.firstChild,
-        // caret = textNode.length,
-        // range = document.createRange(),
-        // sel = window.getSelection();
         if(node !== null){
             node.focus();
-
-            let sel = window.getSelection();
-            // let offset = sel.focusOffset;
-            let focus = sel.focusNode;
-        
-            // focus.textContent += "\""; //setting div's innerText directly creates new
-            //nodes, which invalidate our selections, so we modify the focusNode directly
-        
-            let range = document.createRange();
-            range.selectNode(focus);
-            // range.setStart(focus, offset);
-        
-            range.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(range);
-
+            var sel = window.getSelection();
+            var focus = sel.focusNode;
+            if(focus !== null){
+                var range = document.createRange();
+                range.selectNode(focus);            
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
         }
 
 	},

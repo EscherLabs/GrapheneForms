@@ -621,20 +621,23 @@ gform.eventBus = function(options, owner){
 	this.options = options || {owner:'form',item:'field'};
     this.owner = owner||this;
     this.on = function (event, handler) {
-		var events = event.split(' ');
-		// if (typeof this.handlers[event] !== 'object') {
-		// this.handlers[event] = [];
-		// }
-		_.each(events,function(event){
-            this.handlers[event] = this.handlers[event] ||[];
-            // if(typeof handler == 'function'){
-                this.handlers[event].push(handler);
-            // }else{
-            //     if(typeof this[handler] == 'function'){
-            //         this.handlers[event].push(this[handler]);
-            //     }
+        if(typeof event != 'undefined'){
+
+            var events = event.split(' ');
+            // if (typeof this.handlers[event] !== 'object') {
+            // this.handlers[event] = [];
             // }
-		}.bind(this))
+            _.each(events,function(event){
+                this.handlers[event] = this.handlers[event] ||[];
+                // if(typeof handler == 'function'){
+                    this.handlers[event].push(handler);
+                // }else{
+                //     if(typeof this[handler] == 'function'){
+                //         this.handlers[event].push(this[handler]);
+                //     }
+                // }
+            }.bind(this))
+        }
 		return this.owner;
 	}.bind(this);
     if(_.isArray(options.handlers)){
@@ -1142,7 +1145,7 @@ gform.layout = function(field){
                 cRow.ref.setAttribute("id", cRow.id);
                 cRow.ref.setAttribute("class", field.owner.options.rowClass);
                 cRow.ref.setAttribute("style", "margin-bottom:0;");
-
+                field.operator.rows = field.operator.rows || [];
                 field.operator.rows.push(cRow);
                 cRow.container = container;
                 container.appendChild(cRow.ref);
@@ -1177,10 +1180,11 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         }
     }
 
-    if(field.item.value !== 0){
-        if(field.array && typeof atts[field.name] == 'object'){
-            if(field.fillable){field.value =  atts[field.name][index||0];}
-        }else{
+    if(field.array && typeof atts[field.name] == 'object'){
+        if(field.fillable){field.value =  atts[field.name][index||0];}
+    }else{
+
+        // if(field.item.value !== 0){
             if(typeof field.item.value === 'function' || (typeof field.item.method === 'string' && typeof field.owner.methods[field.item.method] == 'function') ) {
                 //uncomment this when ready to test function as value for input
                 field.valueFunc = field.owner.methods[field.item.method] || field.item.value;
@@ -1239,10 +1243,12 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                 // field.value =  atts[field.name] || field.value || '';
                 if(field.fillable){field.value = _.defaults({value:atts[field.name],},field,{value:''}).value;}
             }
-        }
-    } else {
-        if(field.fillable){field.value = 0;}
+        // } else {
+        //     field.value = 0;
+        // }
     }
+
+
     field.index = field.index||instance||0;
     field.label = gform.renderString(field.item.label||field.label,field);
     // field.index = ;
