@@ -2703,10 +2703,10 @@ gform.validations =
 			if(typeof gform.regex[r] !== 'undefined'){
 				r = gform.regex[r]
 			}else{
-				r = new RegExp(jsonObject.regex, 'i');
+				r = new RegExp(args.regex, 'i');
 			}
 		}
-		return r.pattern(value) || value === '' ? false : args.message;
+		return r.test(value) || value === '' ? false : args.message;
 	},
 	custom: function(value, args) {
 

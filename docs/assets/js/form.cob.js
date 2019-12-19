@@ -92,6 +92,8 @@ baseConditions = baseCond.concat(_.map([
 		}}]},
 		{name:'type',label:'Type',type:'select',options:['none','matches','date','valid_url','valid_email','length','numeric','pattern']},
 		{name:'regex',label:"Regex",show:[{name:"type",value:['pattern'],type:"matches"}]},
+		{name:'message',columns:12,label:"Message",show:[{name:"type",value:['pattern'],type:"matches"}]},
+
 		{name:'name',label:"Name",show:[{name:"type",value:['matches'],type:"matches"}]},
 		{type: 'number', label: 'Minimum', name: 'min',value:1,columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
 		{type: 'number', label: 'Maximum', name: 'max',columns:3,show:[{name:"type",value:['numeric','length'],type:"matches"}]},
