@@ -857,7 +857,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
                     //         op[i].disabled = !result;
                     //     }
                     // }
-                    _.find(this.optgroup.options,{id:id}).edit = result
+                    _.find(this.optgroup.options,{id:id}).editable = result
 
                     this.eventBus.dispatch('change')
 
@@ -1358,6 +1358,43 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             }
         })
     }
+    if(_.isArray(field.meta)){
+        _.each(field.meta,function(i){
+            if(typeof field[i.key] == 'undefined'){
+                Object.defineProperty(field, i.key,{
+                    get: function(key,field){
+                        return _.find(field.meta,{key:key}).value;
+                    }.bind(null,i.key,field),
+                    set: function(key,field,value){
+                        _.find(field.meta,{key:key}).value = value;
+                        field.parent.trigger(i.key,field);
+                    }.bind(null,i.key,field),
+                    configurable: true,
+                    writable: true
+                });
+            }
+        })
+    }
+    Object.defineProperty(field, "path",{
+        get: function(){
+
+            var path = '';
+            if(this.ischild) {
+                path = this.parent.path + '.';
+                // if(this.parent.array){
+                //     path += this.parent.index + '.';
+                // }
+            }
+            path += this.name
+            if(this.index){
+                path+='.'+this.index
+            }
+
+
+            return path;
+            // return _.find(field.meta,{key:key}).value;
+        }
+    });
     return field;
 }
 
@@ -2703,7 +2740,8 @@ gform.validations =
 			if(typeof gform.regex[r] !== 'undefined'){
 				r = gform.regex[r]
 			}else{
-				r = new RegExp(args.regex, 'i');
+				
+				r = new RegExp(args.regex, args.flags);
 			}
 		}
 		return r.test(value) || value === '' ? false : args.message;
@@ -2845,7 +2883,7 @@ grid: `
     </fieldset>
 `,
 switch:`
-<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
@@ -2880,7 +2918,7 @@ switch:`
 //     {{>_actions}}
 // </div>`,
 hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
-    textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+    textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/horizontal}}
@@ -2990,7 +3028,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
     `,
     _addons:`<span class="help-inline"> {{{help}}}</span>
 <span class="font-xs text-danger" style="display:block;"></span>`,
-    checkbox:`<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+    checkbox:`<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}

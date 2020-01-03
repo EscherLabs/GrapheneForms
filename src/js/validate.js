@@ -96,7 +96,8 @@ gform.validations =
 			if(typeof gform.regex[r] !== 'undefined'){
 				r = gform.regex[r]
 			}else{
-				r = new RegExp(args.regex, 'i');
+				
+				r = new RegExp(args.regex, args.flags);
 			}
 		}
 		return r.test(value) || value === '' ? false : args.message;

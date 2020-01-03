@@ -857,7 +857,7 @@ gform.mapOptions = function(optgroup, value, count,collections){
                     //         op[i].disabled = !result;
                     //     }
                     // }
-                    _.find(this.optgroup.options,{id:id}).edit = result
+                    _.find(this.optgroup.options,{id:id}).editable = result
 
                     this.eventBus.dispatch('change')
 
@@ -1358,6 +1358,43 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             }
         })
     }
+    if(_.isArray(field.data)){
+        _.each(field.data,function(i){
+            if(typeof field[i.key] == 'undefined'){
+                Object.defineProperty(field, i.key,{
+                    get: function(key,field){
+                        return _.find(field.data,{key:key}).value;
+                    }.bind(null,i.key,field),
+                    set: function(key,field,value){
+                        _.find(field.data,{key:key}).value = value;
+                        field.parent.trigger(i.key,field);
+                    }.bind(null,i.key,field),
+                    configurable: true,
+                    writable: true
+                });
+            }
+        })
+    }
+    Object.defineProperty(field, "path",{
+        get: function(){
+
+            var path = '';
+            if(this.ischild) {
+                path = this.parent.path + '.';
+                // if(this.parent.array){
+                //     path += this.parent.index + '.';
+                // }
+            }
+            path += this.name
+            if(this.index){
+                path+='.'+this.index
+            }
+
+
+            return path;
+            // return _.find(field.meta,{key:key}).value;
+        }
+    });
     return field;
 }
 
