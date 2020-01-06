@@ -29,7 +29,22 @@ gform._subscribeByName = function(conditions, callback){
 		if(typeof conditions[i].conditions == 'object'){
 			gform._subscribeByName.call(this, conditions[i].conditions, callback)
 		}else{
-			this.owner.on('change:' + (conditions[i].name||this.name), callback)
+			var temp = this.parent.find(conditions[i].name);
+			if((conditions[i].name||this.name).indexOf('/')!==0 && typeof temp !== 'undefined'){
+
+				
+				// if(typeof temp !== "undefined"){
+					temp.eventlist = temp.eventlist||[];
+					// debugger;
+
+					this.owner.on('change:' + temp.path, callback, temp.eventlist)
+
+				// }else{
+				// 	this.owner.on('change:' + (this.parent.find(conditions[i].name||this.name)||this.parent).path||(conditions[i].name||this.name), callback)
+				// }
+			}else{
+				this.owner.on('change:' + (conditions[i].name||this.name), callback)
+			}
 		}
 	}
 }
@@ -74,6 +89,7 @@ gform.conditions = {
 	// valid_previous: function(gform, args) {},
 	not_matches: function(field, args) {
 		var looker;
+		console.log('here')
 		if(typeof args.name !== 'undefined' && !!args.name ){
 			var matches = field.parent.filter({name:args.name,parsable:true});
 			if(matches.length >0){

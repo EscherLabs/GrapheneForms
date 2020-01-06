@@ -19,6 +19,8 @@ var gform = function(optionsIn, el){
             _.each(a, function(item){
                 if(item.indexOf(':') == '-1'){
                     events.unshift(item+':'+b.name)
+                    events.unshift(item+':'+b.path)
+                    events.unshift(item+':'+b.relative)
                 }
             })
         }
@@ -32,7 +34,7 @@ var gform = function(optionsIn, el){
     // }.bind(this))
     this.on('reset', function(e){
         e.form.set(e.form.options.data);
-    });          
+    });
     this.on('clear', function(e){
         e.form.set();
     });
@@ -118,10 +120,12 @@ var gform = function(optionsIn, el){
         this.fields = _.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
 
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
+
         this.reflow()
         // _.each(this.fields, function(field) {
         //     field.owner.trigger('change:' + field.name,field.owner, field);
         // })
+        gform.each.call(this, gform.addConditions)
         gform.each.call(this, function(field) {
             field.owner.trigger('change:' + field.name, field);
         })
@@ -275,6 +279,9 @@ var gform = function(optionsIn, el){
                atts[field.name] = [field.item.value || null];
                var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null,fieldCount);
                field.parent.fields.splice(index+1, 0, newField)
+               gform.addConditions.call(this,newField);
+               gform.each.call(newField, gform.addConditions)
+
                field.operator.reflow();
                _.each(_.filter(field.parent.fields, 
                    function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
@@ -315,6 +322,10 @@ var gform = function(optionsIn, el){
                function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
            ).length;
            if(field.editable && fieldCount > (field.array.min || 1)) {
+               debugger;
+               _.each(field.owner.eventBus.handlers,function(i,b){
+debugger;
+               })
                var index = _.findIndex(field.parent.fields,{id:field.id});
                field.parent.fields.splice(index, 1);
                field.operator.reflow();
@@ -364,6 +375,45 @@ var gform = function(optionsIn, el){
     return this;
                   
 }
+gform.addConditions = function(field) {
+
+    gform.processConditions.call(field, field.show, function(result){
+        var events = (this.visible !== result);
+        this.el.style.display = result ? "block" : "none";
+        this.visible = result;
+    
+        if(events){
+            this.operator.reflow();
+            this.parent.trigger('change', this);
+        }
+
+    })
+    gform.processConditions.call(field, field.edit, function(result){
+        this.editable = result;        
+        gform.types[this.type].edit.call(this,this.editable);
+    })
+    if(typeof field.parse == 'undefined'){
+        field.parse = field.show;
+    }
+    gform.processConditions.call(field, field.parse, function(result){
+        this.parsable = result
+    })
+    if(typeof field.report == 'undefined'){
+        field.report = field.show;
+    }
+    gform.processConditions.call(field, field.report, function(result){
+        this.reportable = result
+    })
+    if(field.required){
+        gform.processConditions.call(field, field.required, function(result,e){
+            if(this.required !== result){
+                this.update({required:result},(e.field == this));
+            }
+        })
+    }
+
+
+}
 gform.each = function(func){
     _.each(this.fields, function(field){
         func(field);
@@ -408,6 +458,10 @@ gform.findByID = function(id){
 
 gform.filter = function(search){
     var temp = [];
+    if(typeof search == 'string'){
+        search = {name: search}
+    }
+    // debugger;
 
     _.each(this.fields, function(field){
         if(_.isMatch(field, search)){
@@ -620,23 +674,27 @@ gform.prototype.opts = {
 gform.eventBus = function(options, owner){
 	this.options = options || {owner:'form',item:'field'};
     this.owner = owner||this;
-    this.on = function (event, handler) {
+    this.on = function (event, handler, ref) {
         if(typeof event != 'undefined'){
 
             var events = event.split(' ');
             // if (typeof this.handlers[event] !== 'object') {
             // this.handlers[event] = [];
             // }
-            _.each(events,function(event){
+            _.each(events,function(ref,event){
                 this.handlers[event] = this.handlers[event] ||[];
                 // if(typeof handler == 'function'){
                     this.handlers[event].push(handler);
+                    if(typeof ref == 'object'){
+                        ref.push(handler);
+
+                    }
                 // }else{
                 //     if(typeof this[handler] == 'function'){
                 //         this.handlers[event].push(this[handler]);
                 //     }
                 // }
-            }.bind(this))
+            }.bind(this,ref))
         }
 		return this.owner;
 	}.bind(this);
@@ -1310,7 +1368,41 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
     gform.types[field.type].initialize.call(field);
     field.isActive = true;
+    Object.defineProperty(field, "path",{
+        get: function(){
+// debugger;
+            var path = '/';
+            if(this.ischild) {
+                path = this.parent.path + '.';
+                // if(this.parent.array){
+                //     path += this.parent.index + '.';
+                // }
+            }
+            path += this.name
+            if(this.array){
+                path+='.'+this.id
+            }
 
+
+            return path;
+            // return _.find(field.meta,{key:key}).value;
+        }
+    });
+    Object.defineProperty(field, "relative",{
+        get: function(){
+// debugger;
+            var path = '/';
+            if(this.ischild) {
+                path = this.parent.relative + '.';
+                // if(this.parent.array){
+                //     path += this.parent.index + '.';
+                // }
+            }
+            path += this.name
+            return path;
+            // return _.find(field.meta,{key:key}).value;
+        }
+    });
     if(field.fields){
         var newatts = {};
         if(field.array && typeof (atts[field.name]|| field.owner.options.data[field.name]) == 'object'){
@@ -1324,40 +1416,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             field.reflow()
         }
     }
-    gform.processConditions.call(field, field.show, function(result){
-        var events = (this.visible !== result);
-        this.el.style.display = result ? "block" : "none";
-        this.visible = result;
-    
-        if(events){
-            this.operator.reflow();
-            this.parent.trigger('change', this);
-        }
 
-    })
-    gform.processConditions.call(field, field.edit, function(result){
-        this.editable = result;        
-        gform.types[this.type].edit.call(this,this.editable);
-    })
-    if(typeof field.parse == 'undefined'){
-        field.parse = field.show;
-    }
-    gform.processConditions.call(field, field.parse, function(result){
-        this.parsable = result
-    })
-    if(typeof field.report == 'undefined'){
-        field.report = field.show;
-    }
-    gform.processConditions.call(field, field.report, function(result){
-        this.reportable = result
-    })
-    if(field.required){
-        gform.processConditions.call(field, field.required, function(result,e){
-            if(this.required !== result){
-                this.update({required:result},(e.field == this));
-            }
-        })
-    }
     if(_.isArray(field.data)){
         _.each(field.data,function(i){
             if(typeof field[i.key] == 'undefined'){
@@ -1375,26 +1434,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             }
         })
     }
-    Object.defineProperty(field, "path",{
-        get: function(){
 
-            var path = '';
-            if(this.ischild) {
-                path = this.parent.path + '.';
-                // if(this.parent.array){
-                //     path += this.parent.index + '.';
-                // }
-            }
-            path += this.name
-            if(this.index){
-                path+='.'+this.index
-            }
-
-
-            return path;
-            // return _.find(field.meta,{key:key}).value;
-        }
-    });
     return field;
 }
 

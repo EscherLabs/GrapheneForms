@@ -7,5 +7,7 @@ myform.on('input',function(e){
         document.querySelector('#result code').innerHTML = 'myform.get();<br> => '+JSON.stringify(e.form,null,2);
         PR.prettyPrint();
 })
-
+// myform.on('change:',function(e){
+//  debugger;
+// })
 myform.trigger('input')
