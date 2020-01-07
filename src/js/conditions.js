@@ -34,10 +34,10 @@ gform._subscribeByName = function(conditions, callback){
 
 				
 				// if(typeof temp !== "undefined"){
-					temp.eventlist = temp.eventlist||[];
+					this.eventlist = this.eventlist||[];
 					// debugger;
 
-					this.owner.on('change:' + temp.path, callback, temp.eventlist)
+					this.owner.on('change:' + temp.path, callback, this.eventlist)
 
 				// }else{
 				// 	this.owner.on('change:' + (this.parent.find(conditions[i].name||this.name)||this.parent).path||(conditions[i].name||this.name), callback)

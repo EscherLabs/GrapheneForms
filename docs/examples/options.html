@@ -32,21 +32,22 @@
     options = {
         legend: 'Options Array',
         fields:[
-        {label: 'Select Field Array', name: 'array', type:'select', options:[
-            {"label":"First","value":1},
-            {"label":"Second","value":2},
-            {"label":"Third","value":3}
-        ]},       
-        {label: 'Select Field Simple Array', name: 'simple', type:'select', options:[
-            {type:"optgroup",options:['0','1','2']}
-        ]},
-        {label: 'Checkbox Simple Array', name: 'checkbox', type:'checkbox', options:[
-            'no','yes'
-        ]},
-        {label: '<span style="color:{{value}}">Select Field function</span>',placeholder:'Choose a color', name: 'function', type:'select', options: function(){
-            return["Red","Green","Blue"];
-        }},
-        {label: 'Select Field (url string)', name: 'url', type:'select', options:[{type:'optgroup', path:'../data/days.json'}]}
+        // {label: 'Select Field Array', name: 'array', type:'select', options:[
+        //     {"label":"First","value":1},
+        //     {"label":"Second","value":2},
+        //     {"label":"Third","value":3}
+        // ]},       
+        // {label: 'Select Field Simple Array', name: 'simple', type:'select', options:[
+        //     {type:"optgroup",options:['0','1','2']}
+        // ]},
+        // {label: 'Checkbox Simple Array', name: 'checkbox', type:'checkbox', options:[
+        //     'no','yes'
+        // ]},
+        // {label: '<span style="color:{{value}}">Select Field function</span>',placeholder:'Choose a color', name: 'function', type:'select', options: function(){
+        //     return["Red","Green","Blue"];
+        // }},
+        {label: 'Select Field (url string)', name: 'url', type:'select', options:[{type:'optgroup', path:'../data/days.json'},{type:'optgroup', path:'../data/countries.json'}]},
+        {label: 'Select Field (url string)', name: 'countries', type:'select', options:[{type:'optgroup', path:'../data/countries.json'}]}
         ]
     }
     </script>
