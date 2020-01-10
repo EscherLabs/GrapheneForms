@@ -128,7 +128,7 @@ gform.types = {
           return (typeof value !== 'undefined' && value !== null && value !== '' && !(typeof value == 'number' && isNaN(value)));            
       },
       edit: function(state) {
-          this.el.querySelector('[name="'+this.name+'"]').disabled = !state;            
+          this.el.querySelector('[name="'+this.name+'"]').disabled = !state;
       },find:function() {
           return this;
       },
@@ -251,7 +251,6 @@ gform.types = {
         if(typeof this.mapOptions == 'undefined'){
             this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
             this.mapOptions.on('change', function(){
-                debugger;
 
                 this.options = this.mapOptions.getobject()
                 this.list = this.mapOptions.getoptions();
@@ -270,6 +269,9 @@ gform.types = {
                 }
                 this.update();
             }.bind(this))
+            this.mapOptions.on('collection',function(e){
+                console.log(this.mapOptions.waiting)
+            })
             }
             this.options = this.mapOptions.getobject();
             this.list = this.mapOptions.getoptions();
@@ -425,7 +427,16 @@ gform.types = {
       },edit: function(state) {
         var search = this.name;
         if(this.multiple){search+='[]'}
-        this.el.querySelector('[name="'+search+'"]').disabled = !state;            
+
+        this.isEditable = state||this.isEditable||true;
+
+        if(typeof this.mapOptions !== 'undefined' && this.mapOptions.waiting){
+          this.el.querySelector('[name="'+search+'"]').disabled = true;
+
+        }else{
+          this.el.querySelector('[name="'+search+'"]').disabled = !this.isEditable;
+
+        }
       }
   },
   'section':{
@@ -745,6 +756,9 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
                 }
             }
               this.update();
+          }.bind(this))
+          this.mapOptions.on('collection',function(e){
+            console.log(this.mapOptions.waiting)
           }.bind(this))
         }
         this.options = this.mapOptions.getobject();

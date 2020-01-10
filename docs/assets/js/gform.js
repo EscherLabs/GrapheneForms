@@ -127,7 +127,7 @@ var gform = function(optionsIn, el){
         // })
         gform.each.call(this, gform.addConditions)
         gform.each.call(this, function(field) {
-            field.owner.trigger('change:' + field.name, field);
+            field.owner.trigger('change', field);
         })
         if(!this.options.private){
             gform.instances[this.options.name] = this;
@@ -295,7 +295,7 @@ var gform = function(optionsIn, el){
                })
 
                gform.each.call(field.owner, function(field) {
-                   field.owner.trigger('change:' + field.name, field);
+                   field.owner.trigger('change', field);
                })
 
                gform.types[newField.type].focus.call(newField);
@@ -898,7 +898,9 @@ gform.eventBus = function(options, owner){
 
 
 
-gform.mapOptions = function(optgroup, value, count,collections){
+gform.mapOptions = function(optgroup, value, count,collections,waitlist){
+    waitlist = waitlist||[];
+
     if(optgroup.owner instanceof gform){
         this.field = optgroup;
     }
@@ -907,15 +909,16 @@ gform.mapOptions = function(optgroup, value, count,collections){
     this.optgroup = _.extend({},optgroup);
     count = count||0;
     var format = this.optgroup.format;
-    this.waiting = [];
+
+    
     function pArray(opts){
         return _.map(opts,function(item){
-
             if(typeof item === 'object' && item.type == 'optgroup'){
-                item.map = new gform.mapOptions(_.extend({format:format},item),value,count,this.collections);
+                item.map = new gform.mapOptions(_.extend({format:format},item),value,count,this.collections,waitlist);
                 item.map.on('*',function(e){
-                    this.eventBus.dispatch(e.event)
+                    this.eventBus.dispatch(e.event);
                 }.bind(this))
+
                 item.id = gform.getUID();
 
                 gform.processConditions.call(this.field, item.edit, function(id, result,e){
@@ -990,7 +993,6 @@ gform.mapOptions = function(optgroup, value, count,collections){
                               }
                         }
                     }
-                    
                 }
                 if(option.value == value || (/*this.multiple && */typeof value !=='undefined' && value !== null && value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
 
@@ -1000,8 +1002,6 @@ gform.mapOptions = function(optgroup, value, count,collections){
             }
         }.bind(this))
     }
-
-
 
     this.optgroup.options = this.optgroup.options || [];
     // optgroup.options = optgroup.options || optgroup.path || optgroup.action;
@@ -1015,7 +1015,6 @@ gform.mapOptions = function(optgroup, value, count,collections){
             this.optgroup.action = this.optgroup.options;
             this.optgroup.options = []
         break;
-
     }
 
     // If max is set on the field, assume a number set is desired. 
@@ -1044,31 +1043,29 @@ gform.mapOptions = function(optgroup, value, count,collections){
 
         if(typeof this.collections.get(this.optgroup.path) === 'undefined'){
             this.collections.add(this.optgroup.path,[])
-            this.waiting.push(this.optgroup.path);
-            console.log(this.waiting.length)
-
+            if( waitlist.indexOf(this.optgroup.path)){
+                waitlist.push(this.optgroup.path);
+                console.log(waitlist.length);
+            }
             gform.ajax({path: this.optgroup.path, success:function(data) {
-
                 this.collections.update(this.optgroup.path,data)
-                this.waiting = _.uniq(this.waiting);
-                if(this.waiting.indexOf(this.optgroup.path) >= 0){
-                    delete this.waiting[this.waiting.indexOf(this.optgroup.path)]
-                    this.waiting = _.compact(this.waiting);
+                if( waitlist.indexOf(this.optgroup.path) >= 0){
+                    delete  waitlist[ waitlist.indexOf(this.optgroup.path)];
+                    // waitlist = 
                 }
-                console.log(this.waiting.length)
-                this.eventBus.dispatch('collection')
 
-                // this.optgroup.options = pArray.call(this.optgroup.map, data);
-                this.eventBus.dispatch('change')
+                this.eventBus.dispatch('collection');
+                this.eventBus.dispatch('change');
+
             }.bind(this)})
         }else{
             this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
         }
-
     }
 
 
-    return {getobject:function(){
+
+    var response = {getobject:function(){
         var temp = {};
         temp = _.map(this.optgroup.options,function(item){
             if(typeof item.map !== 'undefined'){
@@ -1093,11 +1090,15 @@ gform.mapOptions = function(optgroup, value, count,collections){
             return _.find(temp,search)
         }
         return temp;
-    }.bind(this),on:this.eventBus.on,handlers:this.handlers,optgroup:this.optgroup};
+    }.bind(this),on:this.eventBus.on,handlers:this.handlers,optgroup:this.optgroup}
 
-
-
-
+    Object.defineProperty(response, "waiting",{
+        get: function(){
+            // return true;
+            return _.compact(waitlist).length;
+        }
+    });
+    return response;
 }
 // gform.mapOptions.prototype.handlers = {initialize: []}
 // gform.mapOptions.prototype.on = gform.prototype.sub;
@@ -1428,6 +1429,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             // return _.find(field.meta,{key:key}).value;
         }
     });
+
     if(field.fields){
         var newatts = {};
         if(field.array && typeof (atts[field.name]|| field.owner.options.data[field.name]) == 'object'){
@@ -1609,7 +1611,7 @@ gform.types = {
           return (typeof value !== 'undefined' && value !== null && value !== '' && !(typeof value == 'number' && isNaN(value)));            
       },
       edit: function(state) {
-          this.el.querySelector('[name="'+this.name+'"]').disabled = !state;            
+          this.el.querySelector('[name="'+this.name+'"]').disabled = !state;
       },find:function() {
           return this;
       },
@@ -1732,7 +1734,6 @@ gform.types = {
         if(typeof this.mapOptions == 'undefined'){
             this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
             this.mapOptions.on('change', function(){
-                debugger;
 
                 this.options = this.mapOptions.getobject()
                 this.list = this.mapOptions.getoptions();
@@ -1751,6 +1752,9 @@ gform.types = {
                 }
                 this.update();
             }.bind(this))
+            this.mapOptions.on('collection',function(e){
+                console.log(this.mapOptions.waiting)
+            })
             }
             this.options = this.mapOptions.getobject();
             this.list = this.mapOptions.getoptions();
@@ -1906,7 +1910,16 @@ gform.types = {
       },edit: function(state) {
         var search = this.name;
         if(this.multiple){search+='[]'}
-        this.el.querySelector('[name="'+search+'"]').disabled = !state;            
+
+        this.isEditable = state||this.isEditable||true;
+
+        if(typeof this.mapOptions !== 'undefined' && this.mapOptions.waiting){
+          this.el.querySelector('[name="'+search+'"]').disabled = true;
+
+        }else{
+          this.el.querySelector('[name="'+search+'"]').disabled = !this.isEditable;
+
+        }
       }
   },
   'section':{
@@ -2226,6 +2239,9 @@ gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collec
                 }
             }
               this.update();
+          }.bind(this))
+          this.mapOptions.on('collection',function(e){
+            console.log(this.mapOptions.waiting)
           }.bind(this))
         }
         this.options = this.mapOptions.getobject();
@@ -2611,7 +2627,7 @@ gform.conditions = {
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name);
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -2624,7 +2640,6 @@ gform.conditions = {
 	// valid_previous: function(gform, args) {},
 	not_matches: function(field, args) {
 		var looker;
-		console.log('here')
 		if(typeof args.name !== 'undefined' && !!args.name ){
 			var matches = field.parent.filter({name:args.name,parsable:true});
 			if(matches.length >0){
@@ -2632,7 +2647,7 @@ gform.conditions = {
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name);
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -2662,7 +2677,7 @@ gform.conditions = {
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name);
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -2681,7 +2696,7 @@ gform.conditions = {
 				localval = targetField.value;
 			}
 		}else{
-			looker = field.parent.find(args.name);
+			looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
 			if(typeof looker == 'undefined'){
 				return false;
 			}
@@ -2706,7 +2721,7 @@ gform.conditions = {
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name);
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
