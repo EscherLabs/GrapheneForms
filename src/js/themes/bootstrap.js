@@ -330,8 +330,8 @@ modal_fieldset:`{{>_fieldset}}`
 
 gform.columns = 12;
 
-gform.columnClasses = _.map(new Array(13),function(item, i){return 'col-xs-'+i})
-gform.offsetClasses = _.map(new Array(13),function(item, i){return 'col-xs-offset-'+i})
+gform.columnClasses = _.map(new Array(13),function(item, i){return 'col-xs-12 col-sm-'+i})
+gform.offsetClasses = _.map(new Array(13),function(item, i){return 'col-xs-offset-0 col-sm-offset-'+i})
 gform.default.inline = true;
 gform.default.columns = 12;
 

@@ -626,6 +626,8 @@ gform.normalizeField = function(fieldIn,parent){
         offset: this.options.offset||gform.offset||0,
         ischild:!(parent instanceof gform)
     }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
+    if(typeof field.value == "function" || (typeof field.value == "string" && field.value.indexOf('=') === 0))delete field.value;
+
     //keep required separate
     if(field.array){
         if(typeof field.array !== 'object'){
@@ -1095,7 +1097,7 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
     Object.defineProperty(response, "waiting",{
         get: function(){
             // return true;
-            return _.compact(waitlist).length;
+            return _.compact(waitlist).length>0;
         }
     });
     return response;
@@ -1276,7 +1278,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                     return e.initial.valueFunc.call(null, e);
                 };
                 // field.item.value = field.item.value;// = field.derivedValue({form:field.owner,field:field});
-                delete field.value;
+                field.value =  field.valueFunc.call(null, {form:this.owner,field:field,initial:field});
+
                 field.owner.on('initialized', function(f,e) {
                     e.field = e.initial = f;
                     f.set.call(null,f.derivedValue.call(null,e));
