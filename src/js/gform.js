@@ -1360,7 +1360,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     }
     if(_.isArray(field.data)){
         _.each(field.data,function(i){
-            if(typeof field[i.key] == 'undefined'){
+            if(typeof i.key == 'string' && i.key !== "" && typeof field[i.key] == 'undefined'){
                 Object.defineProperty(field, i.key,{
                     get: function(key,field){
                         return _.find(field.data,{key:key}).value;
@@ -1369,8 +1369,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                         _.find(field.data,{key:key}).value = value;
                         field.parent.trigger(i.key,field);
                     }.bind(null,i.key,field),
-                    configurable: true,
-                    writable: true
+                    configurable: true
                 });
             }
         })

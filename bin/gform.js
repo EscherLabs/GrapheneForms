@@ -1358,19 +1358,18 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             }
         })
     }
-    if(_.isArray(field.meta)){
-        _.each(field.meta,function(i){
-            if(typeof field[i.key] == 'undefined'){
+    if(_.isArray(field.data)){
+        _.each(field.data,function(i){
+            if(typeof i.key == 'string' && i.key !== "" && typeof field[i.key] == 'undefined'){
                 Object.defineProperty(field, i.key,{
                     get: function(key,field){
-                        return _.find(field.meta,{key:key}).value;
+                        return _.find(field.data,{key:key}).value;
                     }.bind(null,i.key,field),
                     set: function(key,field,value){
-                        _.find(field.meta,{key:key}).value = value;
+                        _.find(field.data,{key:key}).value = value;
                         field.parent.trigger(i.key,field);
                     }.bind(null,i.key,field),
-                    configurable: true,
-                    writable: true
+                    configurable: true
                 });
             }
         })
@@ -1617,7 +1616,14 @@ gform.types = {
 
         value = value||this.value;
         return value == this.options[1].value;
-      }
+      },
+      toString: function(name,report){
+        if(!report){
+          return '<dt>'+this.label||this.display||this.name+'</dt> <dd>'+(this.value||'(empty)')+'</dd><hr>'
+        }else{
+            return this.value
+        }
+    }
   },
   'collection':{
 

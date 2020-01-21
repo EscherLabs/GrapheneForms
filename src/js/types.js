@@ -201,7 +201,14 @@ gform.types = {
 
         value = value||this.value;
         return value == this.options[1].value;
-      }
+      },
+      toString: function(name,report){
+        if(!report){
+          return '<dt>'+this.label||this.display||this.name+'</dt> <dd>'+(this.value||'(empty)')+'</dd><hr>'
+        }else{
+            return this.value
+        }
+    }
   },
   'collection':{
 
