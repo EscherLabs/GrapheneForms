@@ -21,12 +21,13 @@
       <script src='../assets/vendor/js/jquery.js'></script>
 
       <script src="../assets/js/lodash.min.js"></script>    
-      <!-- <script src='../assets/js/gform_bootstrap.min.js'></script>  -->
+	  <!-- <script src='../assets/js/gform_bootstrap.min.js'></script>  -->
+	  <script src='../assets/js/summernote.min.js'></script> 
+
       <script src='../assets/js/gform.js'></script> 
       <script src='../assets/js/bootstrap.js'></script> 
       <script src='../assets/js/bootstrap.min.js'></script> 
-      <script src='../assets/js/summernote.min.js'></script> 
-      <script src='../assets/js/gform.summernote.js'></script> 
+      <!-- <script src='../assets/js/gform.summernote.js'></script>  -->
 
       <!-- <script src='../assets/vendor/js/colorpicker.min.js'></script>  -->
 
@@ -37,115 +38,12 @@
     
 
 
-gform.stencils['summernote'] = `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
-	{{>_label}}
-	{{#label}}
-	{{^horizontal}}<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/horizontal}}
-	{{#horizontal}}<div class="col-md-8" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/horizontal}}
-	{{/label}}
-	{{^label}}
-	<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>
-	{{/label}}
-
-		<div class="formcontrol" style="height:auto"><div placeholder="{{placeholder}}" style="outline:none;border:solid 1px #cbd5dd;{{^unstyled}}background:#fff;padding:10px{{/unstyled}}" name="{{name}}">{{content}}{{value}}</div></div>
-		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
-		{{>_addons}}
-			{{>_actions}}
-	</div>
-</div>`,
-
-gform.types['summernote'] = _.extend({}, gform.types['input'], {
-      set: function(value) {
-        //   this.el.querySelector('textarea[name="' + this.name + '"]').value = value;
-
-
-          	// if(typeof this.lastSaved === 'undefined'){
-			// 	this.lastSaved = value;
-			// }
-			// this.editor.setContent(value)
-			this.$el.summernote('code', value)
-			this.value = value;
-			// this.$el.html(value)
-
-			return this.$el;
-      },
-      get: function() {
-        //   return this.el.querySelector('textarea[name="' + this.name + '"]').value;
-        return this.$el.summernote('code')
-
-      },
-
-		// type: 'contenteditable',
-		// create: function() {
-		// 		return b.render('berry_contenteditable', this);
-		// 	},
-		initialize: function() {
-this.$el = $(this.el).find('.formcontrol > div');
-			this.$el.off();
-			if(this.onchange !== undefined) {
-				this.$el.on('input', this.onchange);
-			}
-			// this.$el.on('input', $.proxy(function(){this.trigger('change');},this));
-			this.$el.summernote({
-				disableDragAndDrop: true,
-		    dialogsInBody: true,
-				toolbar: [
-					// [groupName, [list of button]]
-					['style', ['bold', 'italic', 'underline', 'clear']],
-			        ['link', ['linkDialogShow', 'unlink']],
-					['font', ['strikethrough', 'superscript', 'subscript']],
-					['fontsize', ['fontsize']],
-					['color', ['color']],
-					['para', ['ul', 'ol', 'paragraph']],
-					['height', ['height']],
-					['view', ['fullscreen']]
-				]
-			});
-			this.$el.on('summernote.change', function(){
-        debugger;
-        this.owner.trigger('input',this);
-      }.bind(this)
-      
-      );
-		},
-		setValue: function(value){
-			if(typeof this.lastSaved === 'undefined'){
-				this.lastSaved = value;
-			}
-			// this.editor.setContent(value)
-			this.$el.summernote('code', value)
-			this.value = value;
-			// this.$el.html(value)
-
-			return this.$el;
-		},
-		getValue: function(){
-			return this.$el.summernote('code')
-			// return this.editor.getContent()
-			// return this.$el.html();
-		},satisfied: function(){
-			this.value = this.get()
-			return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '' && this.value !== "<p><br></p>");
-		},	
-        destroy: function() {
-            this.$el.summernote('destroy');
-            if(this.$el){
-                this.$el.off();
-            }
-        }
-
-  });
-
-
-
-
 
 
 
     options = {
         fields:[
-          {title: 'Text', name: "text", type: 'summernote'},
-
+          {title: 'Text', name: "text", type: 'custom_radio',options:["hello","second"]}//,options:[{label:"first",value:"1"},{label:"second",value:"2"}]},
         ]
     }
 

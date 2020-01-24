@@ -1687,7 +1687,14 @@ gform.types = {
 
         value = value||this.value;
         return value == this.options[1].value;
-      }
+      },
+        toString: function(name,report){
+        if(!report){
+            return '<dt>'+this.label||this.display||this.name+'</dt> <dd>'+(this.value||'(empty)')+'</dd><hr>'
+        }else{
+            return this.value
+        }
+    }
   },
   'collection':{
 
@@ -1825,7 +1832,7 @@ gform.types = {
             //   (_.find(this.list,{selected:true})||{selected:null}).selected = false;
             //   (_.find(this.list,{value:this.value})||{selected:null}).selected = true;
 
-              if(this.multiple){
+            if(this.multiple){
                 if(!_.isArray(this.value)){
                     this.value = [this.value]
                   }
@@ -1840,14 +1847,14 @@ gform.types = {
             }
 
 
-              if(this.el.querySelector('.count') != null){
+            if(this.el.querySelector('.count') != null){
                 var text = this.value.length;
                 if(this.limit>1){text+='/'+this.limit;}
                 this.el.querySelector('.count').innerHTML = text;
-              }
+            }
 
-              gform.types[this.type].setup.call(this);
-              this.parent.trigger(['change','input'], this,{input:this.value});
+            gform.types[this.type].setup.call(this);
+            this.parent.trigger(['change','input'], this,{input:this.value});
 
           }.bind(this));
 
@@ -2563,6 +2570,36 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
         this.el.querySelector('[name="'+this.fields[0].id+'"]').focus();
     }
 });
+
+
+
+gform.types['custom_radio'] = _.extend({}, gform.types['input'], gform.types['collection'], {
+    set: function(value) {
+        // this.$el.children('[data-value="'+value+'"]').click();
+        this.el.querySelector('[data-value="'+value+'"]').click();
+    },		
+    defaults: {
+        selectedClass: 'btn btn-success',
+        defaultClass: 'btn btn-default',
+    },
+    get: function() {
+        return (this.el.querySelector('.' +  this.selectedClass.split(' ').join('.'))||({dataset:{value:""}})).dataset.value;
+    },
+    initialize: function() {
+        this.$el = $(this.el.querySelector('.custom-group'));
+        this.$el.children('a').off();
+        this.$el.children('a').on('click', function(e){
+            debugger;
+            this.$el.children('.' + this.selectedClass.split(' ').join('.')).toggleClass(this.selectedClass + ' ' + this.defaultClass);
+            $(e.target).closest('a').toggleClass(this.selectedClass + ' ' + this.defaultClass);
+
+
+            this.owner.trigger('change', this);
+            this.owner.trigger('input', this);
+        }.bind(this));
+    }
+  });
+
 
 
 //tags
