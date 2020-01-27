@@ -1163,12 +1163,21 @@ gform.render = function(template, options) {
     // return elem
   };
   gform.toggleClass = function(elem, classes, status){
-      if(status){
-        gform.addClass(elem,classes)
-      }else{
-        gform.removeClass(elem,classes)
-
-      }
+    //   if(typeof status == 'undefined'){
+    //       if(typeof classes == 'string'){
+    //           classes = classes.split(' ');
+    //       }
+    //       debugger;
+    //     _.each(classes,function(c){
+    //         gform.toggleClass(elem,!gform.hasClass(elem,c))
+    //     })
+    //   }else{
+        if(status){
+            gform.addClass(elem,classes)
+        }else{
+            gform.removeClass(elem,classes)
+        }
+    //  }
     // return elem
   };
   
@@ -2575,7 +2584,6 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
 
 gform.types['custom_radio'] = _.extend({}, gform.types['input'], gform.types['collection'], {
     set: function(value) {
-        // this.$el.children('[data-value="'+value+'"]').click();
         this.el.querySelector('[data-value="'+value+'"]').click();
     },		
     defaults: {
@@ -2585,20 +2593,53 @@ gform.types['custom_radio'] = _.extend({}, gform.types['input'], gform.types['co
     get: function() {
         return (this.el.querySelector('.' +  this.selectedClass.split(' ').join('.'))||({dataset:{value:""}})).dataset.value;
     },
+    toggle:function(e){
+        var elem = this.el.querySelector('.' + this.selectedClass.split(' ').join('.'));
+        gform.toggleClass(elem, this.selectedClass, false)
+        gform.toggleClass(elem, this.defaultClass, true)
+        gform.toggleClass(e.target, this.defaultClass, false)
+        gform.toggleClass(e.target, this.selectedClass, true)
+        this.owner.trigger('change', this);
+        this.owner.trigger('input', this);
+    },
     initialize: function() {
-        this.$el = $(this.el.querySelector('.custom-group'));
-        this.$el.children('a').off();
-        this.$el.children('a').on('click', function(e){
-            debugger;
-            this.$el.children('.' + this.selectedClass.split(' ').join('.')).toggleClass(this.selectedClass + ' ' + this.defaultClass);
-            $(e.target).closest('a').toggleClass(this.selectedClass + ' ' + this.defaultClass);
-
-
-            this.owner.trigger('change', this);
-            this.owner.trigger('input', this);
-        }.bind(this));
+        var anchors = this.el.querySelectorAll('a');
+        for (const anchor of anchors) {
+            anchor.removeEventListener('click', gform.types[this.type].toggle.bind(this));
+            anchor.addEventListener('click', gform.types[this.type].toggle.bind(this));
+            
+          }
+        // this.el.querySelectorAll('a').removeEventListener('click', gform.types[this.type].toggle.bind(this));
+        
     }
   });
+
+//   gform.types['custom_check'] = _.extend({}, gform.types['input'], gform.types['bool'], {
+//     set: function(value) {
+//         this.el.querySelector('[data-value="'+value+'"]').click();
+//     },		
+//     defaults: {
+//         selectedClass: 'btn btn-success ',
+//         defaultClass: 'btn btn-default',
+//     },
+//     get: function() {
+//         return (this.el.querySelector('.' +  this.selectedClass.split(' ').join('.'))||({dataset:{value:""}})).dataset.value;
+//     },
+//     initialize: function() {
+//         this.$el = $(this.el.querySelector('.custom-group'));
+//         this.$el.children('a').off();
+//         // this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+
+//         this.$el.children('a').on('click', function(e){
+//             this.$el.children('.' + this.selectedClass.split(' ').join('.')).toggleClass(this.selectedClass + ' ' + this.defaultClass);
+//             $(e.target).closest('a').toggleClass(this.selectedClass + ' ' + this.defaultClass);
+
+
+//             this.owner.trigger('change', this);
+//             this.owner.trigger('input', this);
+//         }.bind(this));
+//     }
+//   });
 
 
 

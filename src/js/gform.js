@@ -1163,12 +1163,21 @@ gform.render = function(template, options) {
     // return elem
   };
   gform.toggleClass = function(elem, classes, status){
-      if(status){
-        gform.addClass(elem,classes)
-      }else{
-        gform.removeClass(elem,classes)
-
-      }
+    //   if(typeof status == 'undefined'){
+    //       if(typeof classes == 'string'){
+    //           classes = classes.split(' ');
+    //       }
+    //       debugger;
+    //     _.each(classes,function(c){
+    //         gform.toggleClass(elem,!gform.hasClass(elem,c))
+    //     })
+    //   }else{
+        if(status){
+            gform.addClass(elem,classes)
+        }else{
+            gform.removeClass(elem,classes)
+        }
+    //  }
     // return elem
   };
   

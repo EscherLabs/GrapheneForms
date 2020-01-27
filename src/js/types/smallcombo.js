@@ -148,8 +148,10 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                             if(typeof this.format.display !== 'undefined' ){
                                 option.display = gform.renderString(this.format.display,option);
                             }
-                            if(typeof this.format.value !== 'undefined' ){
+                            if(typeof this.format.value == 'string' ){
                                 option.value = gform.renderString(this.format.value,option);
+                            }else if(typeof this.format.value == 'function' ){
+                                option.value = this.format.value.call(this,option)
                             }
                         }
                         if(!this.filter || this.combo.innerText == ""  || _.score(option.label.toLowerCase(), this.combo.innerText.toLowerCase())>.1){
@@ -349,9 +351,24 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
             gform.ajax({path: gform.renderString(this.search,{value:this.value}), success:function(data) {
                 index = this.options.length;
     
+
+
+                
                 this.options = this.options.concat( _.map(data,function(option){
 
                     option.index = (option.index||(++index))+"";
+                    // if(typeof this.format !== 'undefined'){
+                    //     if(typeof this.format.label !== 'undefined' ){
+                    //         option.label = gform.renderString(this.format.label,option);
+                    //     }
+                    //     if(typeof this.format.display !== 'undefined' ){
+                    //         option.display = gform.renderString(this.format.display,option);
+                    //     }
+                    //     if(typeof this.format.value !== 'undefined' ){
+                    //         option.value = gform.renderString(this.format.value,option);
+                    //     }
+                    // }
+
                     if(typeof this.format !== 'undefined'){
                         if(typeof this.format.label !== 'undefined' ){
                             option.label = gform.renderString(this.format.label,option);
@@ -359,8 +376,10 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                         if(typeof this.format.display !== 'undefined' ){
                             option.display = gform.renderString(this.format.display,option);
                         }
-                        if(typeof this.format.value !== 'undefined' ){
+                        if(typeof this.format.value == 'string' ){
                             option.value = gform.renderString(this.format.value,option);
+                        }else if(typeof this.format.value == 'function' ){
+                            option.value = this.format.value.call(this,option)
                         }
                     }
 
