@@ -907,3 +907,23 @@ img {
 .hidden {
   display: none !important;
 }
+
+.loading {
+  display: inline-block;
+  border: 3px solid #f4f5f6;
+  border-radius: 50%;
+  border-top-color: #1690d8;
+  animation: spin 1s ease-in-out infinite;
+  -webkit-animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}

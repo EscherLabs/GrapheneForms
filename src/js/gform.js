@@ -19,6 +19,8 @@ var gform = function(optionsIn, el){
             _.each(a, function(item){
                 if(item.indexOf(':') == '-1'){
                     events.unshift(item+':'+b.name)
+                    events.unshift(item+':'+b.path)
+                    events.unshift(item+':'+b.relative)
                 }
             })
         }
@@ -32,7 +34,7 @@ var gform = function(optionsIn, el){
     // }.bind(this))
     this.on('reset', function(e){
         e.form.set(e.form.options.data);
-    });          
+    });
     this.on('clear', function(e){
         e.form.set();
     });
@@ -118,12 +120,14 @@ var gform = function(optionsIn, el){
         this.fields = _.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
 
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
+
         this.reflow()
         // _.each(this.fields, function(field) {
         //     field.owner.trigger('change:' + field.name,field.owner, field);
         // })
+        gform.each.call(this, gform.addConditions)
         gform.each.call(this, function(field) {
-            field.owner.trigger('change:' + field.name, field);
+            field.owner.trigger('change', field);
         })
         if(!this.options.private){
             gform.instances[this.options.name] = this;
@@ -275,6 +279,9 @@ var gform = function(optionsIn, el){
                atts[field.name] = [field.item.value || null];
                var newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null,fieldCount);
                field.parent.fields.splice(index+1, 0, newField)
+               gform.addConditions.call(this,newField);
+               gform.each.call(newField, gform.addConditions)
+
                field.operator.reflow();
                _.each(_.filter(field.parent.fields, 
                    function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
@@ -288,7 +295,7 @@ var gform = function(optionsIn, el){
                })
 
                gform.each.call(field.owner, function(field) {
-                   field.owner.trigger('change:' + field.name, field);
+                   field.owner.trigger('change', field);
                })
 
                gform.types[newField.type].focus.call(newField);
@@ -315,11 +322,24 @@ var gform = function(optionsIn, el){
                function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
            ).length;
            if(field.editable && fieldCount > (field.array.min || 1)) {
+
+                // Clean up events this field created as part of conditionals
+                if(typeof field.eventlist !== 'undefined'){
+                    _.each(field.owner.eventBus.handlers,function(event,index,events){
+                        _.each(event,function(handler,a,b,c){
+                            _.each(field.eventlist,function(a,b,search){
+                                if(handler == search){
+                                    delete b[a];
+                                }
+                            }.bind(null,a,b))
+                        })
+                        events[index] =_.compact(events[index])
+                    })
+                }
                var index = _.findIndex(field.parent.fields,{id:field.id});
                field.parent.fields.splice(index, 1);
                field.operator.reflow();
             //    if(!field.target) {
-                // debugger;
                    _.each(_.filter(field.parent.fields, 
                        function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
                    ),function(item,index){
@@ -363,6 +383,45 @@ var gform = function(optionsIn, el){
     this.reflow();
     return this;
                   
+}
+gform.addConditions = function(field) {
+
+    gform.processConditions.call(field, field.show, function(result){
+        var events = (this.visible !== result);
+        this.el.style.display = result ? "block" : "none";
+        this.visible = result;
+    
+        if(events){
+            this.operator.reflow();
+            this.parent.trigger('change', this);
+        }
+
+    })
+    gform.processConditions.call(field, field.edit, function(result){
+        this.editable = result;        
+        gform.types[this.type].edit.call(this,this.editable);
+    })
+    if(typeof field.parse == 'undefined'){
+        field.parse = field.show;
+    }
+    gform.processConditions.call(field, field.parse, function(result){
+        this.parsable = result
+    })
+    if(typeof field.report == 'undefined'){
+        field.report = field.show;
+    }
+    gform.processConditions.call(field, field.report, function(result){
+        this.reportable = result
+    })
+    if(field.required){
+        gform.processConditions.call(field, field.required, function(result,e){
+            if(this.required !== result){
+                this.update({required:result},(e.field == this));
+            }
+        })
+    }
+
+
 }
 gform.each = function(func){
     _.each(this.fields, function(field){
@@ -408,6 +467,10 @@ gform.findByID = function(id){
 
 gform.filter = function(search){
     var temp = [];
+    if(typeof search == 'string'){
+        search = {name: search}
+    }
+    // debugger;
 
     _.each(this.fields, function(field){
         if(_.isMatch(field, search)){
@@ -563,6 +626,8 @@ gform.normalizeField = function(fieldIn,parent){
         offset: this.options.offset||gform.offset||0,
         ischild:!(parent instanceof gform)
     }, this.opts, gform.default,this.options.default,(gform.types[fieldIn.type]||gform.types['text']).defaults, fieldIn)
+    if(typeof field.value == "function" || (typeof field.value == "string" && field.value.indexOf('=') === 0))delete field.value;
+
     //keep required separate
     if(field.array){
         if(typeof field.array !== 'object'){
@@ -620,23 +685,27 @@ gform.prototype.opts = {
 gform.eventBus = function(options, owner){
 	this.options = options || {owner:'form',item:'field'};
     this.owner = owner||this;
-    this.on = function (event, handler) {
+    this.on = function (event, handler, ref) {
         if(typeof event != 'undefined'){
 
             var events = event.split(' ');
             // if (typeof this.handlers[event] !== 'object') {
             // this.handlers[event] = [];
             // }
-            _.each(events,function(event){
+            _.each(events,function(ref,event){
                 this.handlers[event] = this.handlers[event] ||[];
                 // if(typeof handler == 'function'){
                     this.handlers[event].push(handler);
+                    if(typeof ref == 'object'){
+                        ref.push(handler);
+
+                    }
                 // }else{
                 //     if(typeof this[handler] == 'function'){
                 //         this.handlers[event].push(this[handler]);
                 //     }
                 // }
-            }.bind(this))
+            }.bind(this,ref))
         }
 		return this.owner;
 	}.bind(this);
@@ -831,7 +900,9 @@ gform.eventBus = function(options, owner){
 
 
 
-gform.mapOptions = function(optgroup, value, count,collections){
+gform.mapOptions = function(optgroup, value, count,collections,waitlist){
+    waitlist = waitlist||[];
+
     if(optgroup.owner instanceof gform){
         this.field = optgroup;
     }
@@ -840,14 +911,16 @@ gform.mapOptions = function(optgroup, value, count,collections){
     this.optgroup = _.extend({},optgroup);
     count = count||0;
     var format = this.optgroup.format;
+
+    
     function pArray(opts){
         return _.map(opts,function(item){
-
             if(typeof item === 'object' && item.type == 'optgroup'){
-                item.map = new gform.mapOptions(_.extend({format:format},item),value,count,this.collections);
+                item.map = new gform.mapOptions(_.extend({format:format},item),value,count,this.collections,waitlist);
                 item.map.on('*',function(e){
-                    this.eventBus.dispatch(e.event)
+                    this.eventBus.dispatch(e.event);
                 }.bind(this))
+
                 item.id = gform.getUID();
 
                 gform.processConditions.call(this.field, item.edit, function(id, result,e){
@@ -922,7 +995,6 @@ gform.mapOptions = function(optgroup, value, count,collections){
                               }
                         }
                     }
-                    
                 }
                 if(option.value == value || (/*this.multiple && */typeof value !=='undefined' && value !== null && value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
 
@@ -932,8 +1004,6 @@ gform.mapOptions = function(optgroup, value, count,collections){
             }
         }.bind(this))
     }
-
-
 
     this.optgroup.options = this.optgroup.options || [];
     // optgroup.options = optgroup.options || optgroup.path || optgroup.action;
@@ -947,7 +1017,6 @@ gform.mapOptions = function(optgroup, value, count,collections){
             this.optgroup.action = this.optgroup.options;
             this.optgroup.options = []
         break;
-
     }
 
     // If max is set on the field, assume a number set is desired. 
@@ -976,20 +1045,29 @@ gform.mapOptions = function(optgroup, value, count,collections){
 
         if(typeof this.collections.get(this.optgroup.path) === 'undefined'){
             this.collections.add(this.optgroup.path,[])
+            if( waitlist.indexOf(this.optgroup.path)){
+                waitlist.push(this.optgroup.path);
+                console.log(waitlist.length);
+            }
             gform.ajax({path: this.optgroup.path, success:function(data) {
-
                 this.collections.update(this.optgroup.path,data)
-                // this.optgroup.options = pArray.call(this.optgroup.map, data);
-                this.eventBus.dispatch('change')
+                if( waitlist.indexOf(this.optgroup.path) >= 0){
+                    delete  waitlist[ waitlist.indexOf(this.optgroup.path)];
+                    // waitlist = 
+                }
+
+                this.eventBus.dispatch('collection');
+                this.eventBus.dispatch('change');
+
             }.bind(this)})
         }else{
             this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
         }
-
     }
 
 
-    return {getobject:function(){
+
+    var response = {getobject:function(){
         var temp = {};
         temp = _.map(this.optgroup.options,function(item){
             if(typeof item.map !== 'undefined'){
@@ -1014,7 +1092,15 @@ gform.mapOptions = function(optgroup, value, count,collections){
             return _.find(temp,search)
         }
         return temp;
-    }.bind(this),on:this.eventBus.on,handlers:this.handlers,optgroup:this.optgroup};
+    }.bind(this),on:this.eventBus.on,handlers:this.handlers,optgroup:this.optgroup}
+
+    Object.defineProperty(response, "waiting",{
+        get: function(){
+            // return true;
+            return _.compact(waitlist).length>0;
+        }
+    });
+    return response;
 }
 // gform.mapOptions.prototype.handlers = {initialize: []}
 // gform.mapOptions.prototype.on = gform.prototype.sub;
@@ -1077,12 +1163,21 @@ gform.render = function(template, options) {
     // return elem
   };
   gform.toggleClass = function(elem, classes, status){
-      if(status){
-        gform.addClass(elem,classes)
-      }else{
-        gform.removeClass(elem,classes)
-
-      }
+    //   if(typeof status == 'undefined'){
+    //       if(typeof classes == 'string'){
+    //           classes = classes.split(' ');
+    //       }
+    //       debugger;
+    //     _.each(classes,function(c){
+    //         gform.toggleClass(elem,!gform.hasClass(elem,c))
+    //     })
+    //   }else{
+        if(status){
+            gform.addClass(elem,classes)
+        }else{
+            gform.removeClass(elem,classes)
+        }
+    //  }
     // return elem
   };
   
@@ -1192,7 +1287,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                     return e.initial.valueFunc.call(null, e);
                 };
                 // field.item.value = field.item.value;// = field.derivedValue({form:field.owner,field:field});
-                delete field.value;
+                field.value =  field.valueFunc.call(null, {form:this.owner,field:field,initial:field});
+
                 field.owner.on('initialized', function(f,e) {
                     e.field = e.initial = f;
                     f.set.call(null,f.derivedValue.call(null,e));
@@ -1310,6 +1406,41 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
     gform.types[field.type].initialize.call(field);
     field.isActive = true;
+    Object.defineProperty(field, "path",{
+        get: function(){
+// debugger;
+            var path = '/';
+            if(this.ischild) {
+                path = this.parent.path + '.';
+                // if(this.parent.array){
+                //     path += this.parent.index + '.';
+                // }
+            }
+            path += this.name
+            if(this.array){
+                path+='.'+this.id
+            }
+
+
+            return path;
+            // return _.find(field.meta,{key:key}).value;
+        }
+    });
+    Object.defineProperty(field, "relative",{
+        get: function(){
+// debugger;
+            var path = '/';
+            if(this.ischild) {
+                path = this.parent.relative + '.';
+                // if(this.parent.array){
+                //     path += this.parent.index + '.';
+                // }
+            }
+            path += this.name
+            return path;
+            // return _.find(field.meta,{key:key}).value;
+        }
+    });
 
     if(field.fields){
         var newatts = {};
@@ -1324,40 +1455,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             field.reflow()
         }
     }
-    gform.processConditions.call(field, field.show, function(result){
-        var events = (this.visible !== result);
-        this.el.style.display = result ? "block" : "none";
-        this.visible = result;
-    
-        if(events){
-            this.operator.reflow();
-            this.parent.trigger('change', this);
-        }
 
-    })
-    gform.processConditions.call(field, field.edit, function(result){
-        this.editable = result;        
-        gform.types[this.type].edit.call(this,this.editable);
-    })
-    if(typeof field.parse == 'undefined'){
-        field.parse = field.show;
-    }
-    gform.processConditions.call(field, field.parse, function(result){
-        this.parsable = result
-    })
-    if(typeof field.report == 'undefined'){
-        field.report = field.show;
-    }
-    gform.processConditions.call(field, field.report, function(result){
-        this.reportable = result
-    })
-    if(field.required){
-        gform.processConditions.call(field, field.required, function(result,e){
-            if(this.required !== result){
-                this.update({required:result},(e.field == this));
-            }
-        })
-    }
     if(_.isArray(field.data)){
         _.each(field.data,function(i){
             if(typeof i.key == 'string' && i.key !== "" && typeof field[i.key] == 'undefined'){
@@ -1374,26 +1472,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             }
         })
     }
-    Object.defineProperty(field, "path",{
-        get: function(){
 
-            var path = '';
-            if(this.ischild) {
-                path = this.parent.path + '.';
-                // if(this.parent.array){
-                //     path += this.parent.index + '.';
-                // }
-            }
-            path += this.name
-            if(this.index){
-                path+='.'+this.index
-            }
-
-
-            return path;
-            // return _.find(field.meta,{key:key}).value;
-        }
-    });
     return field;
 }
 

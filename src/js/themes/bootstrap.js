@@ -126,6 +126,23 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 			{{>_actions}}
 	</div>
 </div>`,
+
+contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
+	{{>_label}}
+	{{#label}}
+	{{^horizontal}}<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/horizontal}}
+	{{/label}}
+	{{^label}}
+	<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>
+	{{/label}}
+
+		<div class="formcontrol" style="height:auto"><div placeholder="{{placeholder}}" style="outline:none;border:solid 1px #cbd5dd;{{^unstyled}}background:#fff;padding:10px{{/unstyled}}" name="{{name}}">{{content}}{{value}}</div></div>
+		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
+		{{>_addons}}
+			{{>_actions}}
+	</div>
+</div>`,
     select: `<div class="row clearfix form-group {{modifiers}} {{#size}}size={{size}}{{/size}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
@@ -137,9 +154,10 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{/label}}		
 	{{#limit}}{{#multiple}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/multiple}}{{/limit}}
 
-		{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
+		{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}} 
 		{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
-			<select class="form-control test" {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
+		{{#mapOptions.waiting}}<i class="fa fa-spinner fa-spin" style="font-size:20px;position:absolute;top:7px;left:22px;color:#666"></i>{{/mapOptions.waiting}}
+			<select class="form-control test"  {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
 			{{#options}}
 			{{^optgroup}}
 			<option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}} value="{{i}}">{{{label}}}</option>
@@ -191,6 +209,34 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 		{{>_addons}}
 		{{>_actions}}
 	</div>
+</div>`,
+custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.duplicate}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/multiple.duplicate}}" name="{{name}}" data-type="{{type}}">
+{{>_label}}
+{{#multiple.duplicate}}
+<div class="duplicate add btn btn-default"><i class="fa fa-plus"></i></div>
+<div class="btn btn-default remove"><i class="fa fa-minus"></i></div>
+{{/multiple.duplicate}}
+{{#label}}
+{{#inline}}<div class="col-md-12">{{/inline}}
+{{^inline}}<div class="col-md-8">{{/inline}}
+{{/label}}
+{{^label}}
+<div class="col-md-12">
+{{/label}}
+	{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
+	{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
+		<div class="custom-group"  name="{{name}}" style="max-height:200px;overflow-y:scroll;">
+		{{#options}}
+			<a href="javascript:void(0);" class="{{^selected}} {{defaultClass}}{{/selected}}{{#selected}} {{selectedClass}}{{/selected}}" data-value="{{value}}">
+				{{{label}}}
+			</a>&nbsp;
+		{{/options}}
+		</div>
+	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
+	{{^post}}{{#pre}}</div>{{/pre}}{{/post}}
+	{{>_addons}}
+	{{>_actions}}
+</div>
 </div>`,
     _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
@@ -329,8 +375,8 @@ modal_fieldset:`{{>_fieldset}}`
 
 gform.columns = 12;
 
-gform.columnClasses = _.map(new Array(13),function(item, i){return 'col-xs-'+i})
-gform.offsetClasses = _.map(new Array(13),function(item, i){return 'col-xs-offset-'+i})
+gform.columnClasses = _.map(new Array(13),function(item, i){return 'col-xs-12 col-sm-'+i})
+gform.offsetClasses = _.map(new Array(13),function(item, i){return 'col-xs-offset-0 col-sm-offset-'+i})
 gform.default.inline = true;
 gform.default.columns = 12;
 
@@ -415,6 +461,88 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 
   }
 });
+
+gform.types['contentEditable'] = gform.types['summernote'] = _.extend({}, gform.types['input'], {
+	render: function(){
+        //   return gform.render(this.type, this);
+          return gform.render('contenteditable', this).split('value=""').join('value="'+_.escape(this.value)+'"')
+      },
+      set: function(value) {
+        //   this.el.querySelector('textarea[name="' + this.name + '"]').value = value;
+
+
+          	// if(typeof this.lastSaved === 'undefined'){
+			// 	this.lastSaved = value;
+			// }
+			// this.editor.setContent(value)
+			this.$el.summernote('code', value)
+			// this.value = value;
+			// this.$el.html(value)
+
+			// return this.$el;
+      },
+      get: function() {
+        //   return this.el.querySelector('textarea[name="' + this.name + '"]').value;
+        return this.$el.summernote('code')
+
+      },
+		initialize: function() {
+			this.$el = $(this.el).find('.formcontrol > div');
+			this.$el.off();
+			if(this.onchange !== undefined) {
+				this.$el.on('input', this.onchange);
+			}
+			this.$el.summernote({
+				disableDragAndDrop: true,
+		    	dialogsInBody: true,
+				toolbar: this.item.toolbar||[
+					// [groupName, [list of button]]
+					['style', ['bold', 'italic', 'underline', 'clear']],
+			        ['link', ['linkDialogShow', 'unlink']],
+					['font', ['strikethrough', 'superscript', 'subscript']],
+					['fontsize', ['fontsize']],
+					['color', ['color']],
+					['para', ['ul', 'ol', 'paragraph']],
+					['height', ['height']],
+					['view', ['fullscreen']]
+				]
+			});
+			this.$el.on('summernote.change', function(){
+				this.owner.trigger('change',this);
+
+				this.owner.trigger('input',this);
+			}.bind(this)
+      );
+		},satisfied: function(value){
+			this.value = this.get()
+			return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '' && this.value !== "<p><br></p>");
+		},	
+        destroy: function() {
+            this.$el.summernote('destroy');
+            if(this.$el){
+                this.$el.off();
+            }
+        }
+
+  });
+
+
+  $(document).on('focusin', function(e) {
+    if ($(e.target).closest(".note-editable").length) {
+        e.stopImmediatePropagation();
+			
+    }
+});
+$(document).on('click', function(e) {
+    if ($(e.target).hasClass(".note-editor")) {
+        e.stopImmediatePropagation();
+
+			$(e.target).find('.open').removeClass('open')
+    }
+});
+
+
+
 gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-envelope"></i>', validate: [{ type:'valid_email' }]}});
 gform.types['url'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-link"></i>', validate: [{ type:'valid_url' }]}});
 gform.types['tel'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-phone"></i>', placeholder: '+1'}});

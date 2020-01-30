@@ -29,7 +29,22 @@ gform._subscribeByName = function(conditions, callback){
 		if(typeof conditions[i].conditions == 'object'){
 			gform._subscribeByName.call(this, conditions[i].conditions, callback)
 		}else{
-			this.owner.on('change:' + (conditions[i].name||this.name), callback)
+			var temp = this.parent.find(conditions[i].name);
+			if((conditions[i].name||this.name).indexOf('/')!==0 && typeof temp !== 'undefined'){
+
+				
+				// if(typeof temp !== "undefined"){
+					this.eventlist = this.eventlist||[];
+					// debugger;
+
+					this.owner.on('change:' + temp.path, callback, this.eventlist)
+
+				// }else{
+				// 	this.owner.on('change:' + (this.parent.find(conditions[i].name||this.name)||this.parent).path||(conditions[i].name||this.name), callback)
+				// }
+			}else{
+				this.owner.on('change:' + (conditions[i].name||this.name), callback)
+			}
 		}
 	}
 }
@@ -61,7 +76,7 @@ gform.conditions = {
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name);
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -81,7 +96,7 @@ gform.conditions = {
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name);
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -111,7 +126,7 @@ gform.conditions = {
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name);
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -130,7 +145,7 @@ gform.conditions = {
 				localval = targetField.value;
 			}
 		}else{
-			looker = field.parent.find(args.name);
+			looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
 			if(typeof looker == 'undefined'){
 				return false;
 			}
@@ -155,7 +170,7 @@ gform.conditions = {
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name);
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}

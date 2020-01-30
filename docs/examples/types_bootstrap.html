@@ -109,6 +109,7 @@ input:checked + .slider:before {
             {label: 'Textarea', type: 'textarea'},
             {label: 'Checkbox', type: 'checkbox',  "container": "span",
 },            {label: 'Switch', type: 'switch'},
+{label: 'Select Field (url string)', name: 'url', type:'select', options:[{type:'optgroup', path:'../data/months.json'},{type:'optgroup', path:'../data/states.json'},{type:'optgroup', path:'../data/days.json'},{type:'optgroup', path:'https://www.binghamton.edu/maps/data/buildings.json',format:{label:"{{name}}",value:"{{code}}"}}]},
 
             {label: 'Select', type: 'select', options:[1,2,3]},
             {label: 'Radio', type: 'radio', options:[1,2,3],multiple:true},

@@ -56,9 +56,13 @@ textarea: `
 </div>
 </div> `,
 select: `
-    {{>_label}}    
-    <select {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
-        {{#options}}
+    {{>_label}}
+    {{#mapOptions.waiting}}<div style="position:relative;height:0">    <i class="loading" style="width: 30px;height: 30px;position:absolute;top:5px;left:5px"></i>
+    </div>{{/mapOptions.waiting}}
+
+    <select {{#multiple}}multiple=multiple{{/multiple}}  {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
+
+    {{#options}}
             {{^optgroup}}
             <option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{i}}">{{{label}}}</option>
             {{/optgroup}}
