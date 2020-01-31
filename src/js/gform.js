@@ -465,7 +465,7 @@ gform.findByID = function(id){
 }
 
 
-gform.filter = function(search){
+gform.filter = function(search,depth){
     var temp = [];
     if(typeof search == 'string'){
         search = {name: search}
@@ -476,7 +476,7 @@ gform.filter = function(search){
         if(_.isMatch(field, search)){
             temp.push(field)
         }
-        if(typeof field.fields !== 'undefined'){
+        if(!depth && typeof field.fields !== 'undefined'){
             temp = temp.concat(gform.filter.call(field,search));
         }
     })
@@ -501,7 +501,6 @@ gform.toJSON = function(name) {
                 if(!Array.isArray(obj[field.name])){
                     obj[field.name] = [];
                 }
-                
                 obj[field.name].push(field.get());
             }else{
                 obj[field.name] = field.get();
@@ -1408,7 +1407,6 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.isActive = true;
     Object.defineProperty(field, "path",{
         get: function(){
-// debugger;
             var path = '/';
             if(this.ischild) {
                 path = this.parent.path + '.';
@@ -1428,7 +1426,6 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     });
     Object.defineProperty(field, "relative",{
         get: function(){
-// debugger;
             var path = '/';
             if(this.ischild) {
                 path = this.parent.relative + '.';
@@ -1441,7 +1438,11 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             // return _.find(field.meta,{key:key}).value;
         }
     });
-
+    Object.defineProperty(field, "count",{
+        get: function(){
+            return (this.index||0)+1;
+        }
+    });
     if(field.fields){
         var newatts = {};
         if(field.array && typeof (atts[field.name]|| field.owner.options.data[field.name]) == 'object'){

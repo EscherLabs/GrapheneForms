@@ -76,7 +76,7 @@ grid: `
     </fieldset>
 `,
 switch:`
-<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
+<div class="row clearfix{{#horizontal}} form-horizontal{{/horizontal}} {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
@@ -583,6 +583,7 @@ gform.types['datetime'] = _.extend({}, gform.types['input'], {
 
 		// $el.attr('type','text');
 	  $el.datetimepicker({format: this.format.input})
+	//   $el.data("DateTimePicker").minDate(moment("1/1/1900"));
 	  $el.on("dp.change", this.onchangeEvent.bind(null,true));
   },
 });

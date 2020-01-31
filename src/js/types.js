@@ -534,7 +534,7 @@ gform.types = {
             _.each(value,function(item,index){
                 var field = this.find(index);
                 if(field.array && _.isArray(item)){
-                    var list = this.filter({array:{ref:field.array.ref}})
+                    var list = this.filter({array:{ref:field.array.ref}},1)
 
                     if(list.length > 1){
                         _.each(list.slice(1),function(field){
@@ -558,7 +558,7 @@ gform.types = {
                         gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
                     // }
 
-                    var fieldCount = this.filter({array:{ref:field.array.ref}}).length
+                    var fieldCount = this.filter({array:{ref:field.array.ref}},1).length
 
                     _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
                     _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))

@@ -465,7 +465,7 @@ gform.findByID = function(id){
 }
 
 
-gform.filter = function(search){
+gform.filter = function(search,depth){
     var temp = [];
     if(typeof search == 'string'){
         search = {name: search}
@@ -476,7 +476,7 @@ gform.filter = function(search){
         if(_.isMatch(field, search)){
             temp.push(field)
         }
-        if(typeof field.fields !== 'undefined'){
+        if(!depth && typeof field.fields !== 'undefined'){
             temp = temp.concat(gform.filter.call(field,search));
         }
     })
@@ -501,7 +501,6 @@ gform.toJSON = function(name) {
                 if(!Array.isArray(obj[field.name])){
                     obj[field.name] = [];
                 }
-                
                 obj[field.name].push(field.get());
             }else{
                 obj[field.name] = field.get();
@@ -1408,7 +1407,6 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.isActive = true;
     Object.defineProperty(field, "path",{
         get: function(){
-// debugger;
             var path = '/';
             if(this.ischild) {
                 path = this.parent.path + '.';
@@ -1428,7 +1426,6 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     });
     Object.defineProperty(field, "relative",{
         get: function(){
-// debugger;
             var path = '/';
             if(this.ischild) {
                 path = this.parent.relative + '.';
@@ -1441,7 +1438,11 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             // return _.find(field.meta,{key:key}).value;
         }
     });
-
+    Object.defineProperty(field, "count",{
+        get: function(){
+            return (this.index||0)+1;
+        }
+    });
     if(field.fields){
         var newatts = {};
         if(field.array && typeof (atts[field.name]|| field.owner.options.data[field.name]) == 'object'){
@@ -2028,7 +2029,7 @@ gform.types = {
             _.each(value,function(item,index){
                 var field = this.find(index);
                 if(field.array && _.isArray(item)){
-                    var list = this.filter({array:{ref:field.array.ref}})
+                    var list = this.filter({array:{ref:field.array.ref}},1)
 
                     if(list.length > 1){
                         _.each(list.slice(1),function(field){
@@ -2052,7 +2053,7 @@ gform.types = {
                         gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
                     // }
 
-                    var fieldCount = this.filter({array:{ref:field.array.ref}}).length
+                    var fieldCount = this.filter({array:{ref:field.array.ref}},1).length
 
                     _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
                     _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
@@ -3076,7 +3077,7 @@ grid: `
     </fieldset>
 `,
 switch:`
-<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
+<div class="row clearfix{{#horizontal}} form-horizontal{{/horizontal}} {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
@@ -3583,6 +3584,7 @@ gform.types['datetime'] = _.extend({}, gform.types['input'], {
 
 		// $el.attr('type','text');
 	  $el.datetimepicker({format: this.format.input})
+	//   $el.data("DateTimePicker").minDate(moment("1/1/1900"));
 	  $el.on("dp.change", this.onchangeEvent.bind(null,true));
   },
 });
