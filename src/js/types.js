@@ -454,8 +454,8 @@ gform.types = {
   'section':{
 
     base:'section',
-    filter: function(search){
-        return gform.filter.call(this,search);
+    filter: function(search,depth){
+        return gform.filter.call(this,search,depth);
     },
     setLabel:function(){
         if(!!this.item.label){
@@ -470,7 +470,7 @@ gform.types = {
         }
       },
       create: function() {
-          var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
+          var tempEl = gform.create(this.render());
           gform.addClass(tempEl,gform.columnClasses[this.columns])
           gform.addClass(tempEl,gform.offsetClasses[this.offset])
           gform.toggleClass(tempEl,'gform_isArray',!!this.array)
@@ -620,7 +620,7 @@ gform.types = {
     toString: function(){return ''},
       defaults:{parse:false, columns:2, target:".gform-footer"},
       create: function() {
-          var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
+          var tempEl = gform.create(this.render());
           tempEl.setAttribute("id", this.id);
           // tempEl.setAttribute("class", tempEl.className+' '+gform.columnClasses[this.columns]);
           return tempEl;

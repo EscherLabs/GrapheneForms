@@ -160,7 +160,7 @@ var gform = function(optionsIn, el){
                 var field = this.find(index);
                 if(typeof field !== 'undefined' && field.fillable){
                     if(field.array && _.isArray(item)){
-                        var list = this.filter({array:{ref:field.array.ref}})
+                        var list = this.filter({array:{ref:field.array.ref}},1)
 
                         if(list.length > 1){
                             _.each(list.slice(1),function(field){
@@ -181,7 +181,7 @@ var gform = function(optionsIn, el){
                             gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
                         // }
 
-                        var fieldCount = this.filter({array:{ref:field.array.ref}}).length
+                        var fieldCount = this.filter({array:{ref:field.array.ref}},1).length
 
                         var testFunc = function(selector,status, button){
                             gform.toggleClass(button.querySelector(selector),'hidden', status)
@@ -470,16 +470,18 @@ gform.filter = function(search,depth){
     if(typeof search == 'string'){
         search = {name: search}
     }
+    var depth = (depth||1);
+    depth = depth--;
     // debugger;
 
-    _.each(this.fields, function(field){
+    _.each(this.fields, function(depth,field){
         if(_.isMatch(field, search)){
             temp.push(field)
         }
         if(!depth && typeof field.fields !== 'undefined'){
-            temp = temp.concat(gform.filter.call(field,search));
+            temp = temp.concat(gform.filter.call(field,search,depth));
         }
-    })
+    }.bind(null,depth))
     return temp;
 }
 
@@ -589,7 +591,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         // _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
 
         // _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
-        var fieldCount = field.operator.filter({array:{ref:field.array.ref}}).length
+        var fieldCount = field.operator.filter({array:{ref:field.array.ref}},1).length
 
         var testFunc = function(selector,status, button){
             gform.toggleClass(button.querySelector(selector),'hidden', status)
@@ -1135,12 +1137,11 @@ gform.render = function(template, options) {
     return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))
   }
   gform.create = function(text) {
-   return document.createRange().createContextualFragment(text).firstElementChild;
+   return document.createRange().createContextualFragment(text).firstChild;
   }
   gform.renderString = function(string,options) {
     return gform.m(string || '', options || {})
   }
-  
   
   // add some classes. Eg. 'nav' and 'nav header'
   gform.addClass = function(elem, classes) {

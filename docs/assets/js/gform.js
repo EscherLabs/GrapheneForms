@@ -160,7 +160,7 @@ var gform = function(optionsIn, el){
                 var field = this.find(index);
                 if(typeof field !== 'undefined' && field.fillable){
                     if(field.array && _.isArray(item)){
-                        var list = this.filter({array:{ref:field.array.ref}})
+                        var list = this.filter({array:{ref:field.array.ref}},1)
 
                         if(list.length > 1){
                             _.each(list.slice(1),function(field){
@@ -181,7 +181,7 @@ var gform = function(optionsIn, el){
                             gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
                         // }
 
-                        var fieldCount = this.filter({array:{ref:field.array.ref}}).length
+                        var fieldCount = this.filter({array:{ref:field.array.ref}},1).length
 
                         var testFunc = function(selector,status, button){
                             gform.toggleClass(button.querySelector(selector),'hidden', status)
@@ -470,16 +470,18 @@ gform.filter = function(search,depth){
     if(typeof search == 'string'){
         search = {name: search}
     }
+    var depth = (depth||1);
+    depth = depth--;
     // debugger;
 
-    _.each(this.fields, function(field){
+    _.each(this.fields, function(depth,field){
         if(_.isMatch(field, search)){
             temp.push(field)
         }
         if(!depth && typeof field.fields !== 'undefined'){
-            temp = temp.concat(gform.filter.call(field,search));
+            temp = temp.concat(gform.filter.call(field,search,depth));
         }
-    })
+    }.bind(null,depth))
     return temp;
 }
 
@@ -589,7 +591,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         // _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
 
         // _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
-        var fieldCount = field.operator.filter({array:{ref:field.array.ref}}).length
+        var fieldCount = field.operator.filter({array:{ref:field.array.ref}},1).length
 
         var testFunc = function(selector,status, button){
             gform.toggleClass(button.querySelector(selector),'hidden', status)
@@ -1135,12 +1137,11 @@ gform.render = function(template, options) {
     return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))
   }
   gform.create = function(text) {
-   return document.createRange().createContextualFragment(text).firstElementChild;
+   return document.createRange().createContextualFragment(text).firstChild;
   }
   gform.renderString = function(string,options) {
     return gform.m(string || '', options || {})
   }
-  
   
   // add some classes. Eg. 'nav' and 'nav header'
   gform.addClass = function(elem, classes) {
@@ -1949,8 +1950,8 @@ gform.types = {
   'section':{
 
     base:'section',
-    filter: function(search){
-        return gform.filter.call(this,search);
+    filter: function(search,depth){
+        return gform.filter.call(this,search,depth);
     },
     setLabel:function(){
         if(!!this.item.label){
@@ -1965,7 +1966,7 @@ gform.types = {
         }
       },
       create: function() {
-          var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
+          var tempEl = gform.create(this.render());
           gform.addClass(tempEl,gform.columnClasses[this.columns])
           gform.addClass(tempEl,gform.offsetClasses[this.offset])
           gform.toggleClass(tempEl,'gform_isArray',!!this.array)
@@ -2115,7 +2116,7 @@ gform.types = {
     toString: function(){return ''},
       defaults:{parse:false, columns:2, target:".gform-footer"},
       create: function() {
-          var tempEl = document.createRange().createContextualFragment(this.render()).firstElementChild;
+          var tempEl = gform.create(this.render());
           tempEl.setAttribute("id", this.id);
           // tempEl.setAttribute("class", tempEl.className+' '+gform.columnClasses[this.columns]);
           return tempEl;
@@ -2719,7 +2720,7 @@ gform.conditions = {
 	requires: function(field, args) {
 		var looker;
 		if(typeof args.name !== 'undefined' && !!args.name ){
-			var matches = field.parent.filter({name:args.name,parsable:true});
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
 			if(matches.length >0){
 				looker = matches[0];
 			}else if(field.name == args.name){
@@ -2739,7 +2740,7 @@ gform.conditions = {
 	not_matches: function(field, args) {
 		var looker;
 		if(typeof args.name !== 'undefined' && !!args.name ){
-			var matches = field.parent.filter({name:args.name,parsable:true});
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
 			if(matches.length >0){
 				looker = matches[0];
 			}else if(field.name == args.name){
@@ -2769,7 +2770,7 @@ gform.conditions = {
 	contains: function(field, args) {
 		var looker;
 		if(typeof args.name !== 'undefined' && !!args.name ){
-			var matches = field.parent.filter({name:args.name,parsable:true});
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
 			if(matches.length >0){
 				looker = matches[0];
 			}else if(field.name == args.name){
@@ -2794,7 +2795,7 @@ gform.conditions = {
 				localval = targetField.value;
 			}
 		}else{
-			looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+			looker = field.parent.find(args.name)||field.owner.filter({path:args.name},args.depth)[0];
 			if(typeof looker == 'undefined'){
 				return false;
 			}
@@ -2813,7 +2814,7 @@ gform.conditions = {
 	matches: function(field, args) {
 		var looker;
 		if(typeof args.name !== 'undefined' && !!args.name ){
-			var matches = field.parent.filter({name:args.name,parsable:true});
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
 			if(matches.length >0){
 				looker = matches[0];
 			}else if(field.name == args.name){
