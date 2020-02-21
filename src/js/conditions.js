@@ -186,5 +186,54 @@ gform.conditions = {
 		}else{
 			return (val == localval);
 		}
+	},
+
+	matches_bool: function(field, args) {
+		var looker;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
+		}else{
+			looker = field;
+		}
+
+		var val = args[args.attribute||'value'];
+		var localval = looker[args.attribute||'value'];
+		return (val == "false" || !val) == (localval == "false" || !localval)
+	},
+	matches_numeric: function(field, args) {
+		var looker;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
+		}else{
+			looker = field;
+		}
+
+		var val = args[args.attribute||'value'];
+		var localval = parseInt(looker[args.attribute||'value']);
+		if(typeof val== "object" && val !== null && localval !== null){
+			return (_.map(val,function(vals){return parseInt(vals);}).indexOf(localval) !== -1);
+		}else{
+			return (parseInt(val) == localval);
+		}
 	}
 }; 

@@ -461,7 +461,7 @@ gform.find = function(oname){
     }
 }
 gform.findByID = function(id){
-    return  gform.filter.call(this, {id:id})[0] || false;
+    return  gform.filter.call(this, {id:id},10)[0] || false;
 }
 
 
@@ -471,14 +471,14 @@ gform.filter = function(search,depth){
         search = {name: search}
     }
     var depth = (depth||1);
-    depth = depth--;
+    depth--;
     // debugger;
 
     _.each(this.fields, function(depth,field){
         if(_.isMatch(field, search)){
             temp.push(field)
         }
-        if(!depth && typeof field.fields !== 'undefined'){
+        if(!!depth && typeof field.fields !== 'undefined'){
             temp = temp.concat(gform.filter.call(field,search,depth));
         }
     }.bind(null,depth))
@@ -1048,7 +1048,6 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
             this.collections.add(this.optgroup.path,[])
             if( waitlist.indexOf(this.optgroup.path)){
                 waitlist.push(this.optgroup.path);
-                console.log(waitlist.length);
             }
             gform.ajax({path: this.optgroup.path, success:function(data) {
                 this.collections.update(this.optgroup.path,data)
@@ -1381,7 +1380,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.render = field.render || gform.types[field.type].render.bind(field);
     
     field.el = gform.types[field.type].create.call(field);
-
+debugger;
     field.container =  field.el.querySelector('fieldset')|| field.el || null;
     if(typeof gform.types[field.type].reflow !== 'undefined'){
         field.reflow = gform.types[field.type].reflow.bind(field) || null;

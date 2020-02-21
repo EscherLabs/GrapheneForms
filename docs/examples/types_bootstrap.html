@@ -114,6 +114,11 @@ input:checked + .slider:before {
             {label: 'Select', type: 'select', options:[1,2,3]},
             {label: 'Radio', type: 'radio', options:[1,2,3],multiple:true},
             {label: 'Combobox', type: 'combo', options:[1,2,3]},
+            {label: 'Grid', type: 'grid',options:[1,2,3],
+            fields:[
+                {label: 'Fieldset Text 1', name: 'text1'},
+                {label: 'Fieldset Text 2', name: 'text2'}
+            ]},
             {label: 'Fieldset', type: 'fieldset', fields:[
                 {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
                 {label: 'Fieldset Text 2', name: 'text2', type: 'text'}

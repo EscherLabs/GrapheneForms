@@ -127,17 +127,15 @@ scale: `
 
     {{>_error}}
     {{>_actions}}`,
-    _fieldset: `
-    <fieldset id="{{id}}" name="{{name}}">
+    _fieldset: `<div><fieldset id="{{id}}" name="{{name}}">
     {{>_error}}
     {{#array}}<hr style="margin: 0 0 10px;">{{/array}}
     <div class="row row-wrap">
     {{^section}}<legend class="column" for="{{name}}"><h5>{{{label}}}</h5></legend>{{/section}}
     {{>_actions}}
-    </div>   
-    </fieldset>
-`,
-grid: `
+    </div>
+    </fieldset></div>`,
+grid: `<div class="row row-wrap">
 <fieldset id="{{id}}" name="{{name}}">
 
     {{>_label}}
@@ -175,7 +173,7 @@ grid: `
     {{>_actions}}
 
     </fieldset>
-`,
+</div>`,
 _actions: `      
     {{#array}}
     <div data-name="{{name}}" data-ref="{{ref}}" class="noprint" style="float:right">

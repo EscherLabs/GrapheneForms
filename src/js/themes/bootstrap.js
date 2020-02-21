@@ -35,48 +35,43 @@ output: `
     </div>
     </div>
 `,
-grid: `
+grid: `<div class="row">
 <fieldset id="{{id}}" name="{{name}}" class="row"  style="margin-bottom:20px">
-
     {{>_label}}
-		<div class="col-xs-12">
-    <table class="table table-striped" style="margin-bottom:0">
-    <thead>
-        <tr>
-            <th></th>
-            {{#options}}
-            <th><label>{{label}}</label></th>
-            {{/options}}
-            
-        </tr>
-    </thead>
-    <tbody>
-    {{#fields}}
-        <tr>
-            <td><label style="font-weight: 500;" for="{{id}}">{{{label}}}</label></td>
-            {{#options}}
-            <td>
-            {{#multiple}}
-                <div><input name="{{id}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/>
-            {{/multiple}}
-            {{^multiple}}
-                <input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
-            {{/multiple}}
-            </td>
-            {{/options}}
-        </tr>
-        {{/fields}}
-    </tbody>
+	<div class="col-xs-12">
+    	<table class="table table-striped" style="margin-bottom:0">
+			<thead>
+				<tr>
+					<th></th>
+					{{#options}}
+					<th><label>{{label}}</label></th>
+					{{/options}}
+				</tr>
+			</thead>
+			<tbody>
+			{{#fields}}
+				<tr>
+					<td><label style="font-weight: 500;" for="{{id}}">{{{label}}}</label></td>
+					{{#options}}
+					<td>
+					{{#multiple}}
+						<div><input name="{{id}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/>
+					{{/multiple}}
+					{{^multiple}}
+						<input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
+					{{/multiple}}
+					</td>
+					{{/options}}
+				</tr>
+				{{/fields}}
+			</tbody>
 		</table>
-		
-{{>_addons}}
-{{>_actions}}
-</div>
-
-    </fieldset>
-`,
-switch:`
-<div class="row clearfix{{#horizontal}} form-horizontal{{/horizontal}} {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
+		{{>_addons}}
+		{{>_actions}}
+	</div>
+</fieldset>
+</div>`,
+switch:`<div class="row clearfix{{#horizontal}} form-horizontal{{/horizontal}} {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
@@ -453,8 +448,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 
 	$(this.el.querySelector('input[name="' + this.name + '"]')).attr('type','text');
 		this.el.querySelector('i').style.backgroundColor = this.get()
-
-	$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex'}).on('changeColor', function(ev){
+	$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex',container:$(this.el).find('.input-group')}).on('changeColor', function(ev){
 		this.el.querySelector('i').style.backgroundColor = this.get()
 		this.parent.trigger('change',this);
 	}.bind(this));

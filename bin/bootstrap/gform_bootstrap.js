@@ -461,7 +461,7 @@ gform.find = function(oname){
     }
 }
 gform.findByID = function(id){
-    return  gform.filter.call(this, {id:id})[0] || false;
+    return  gform.filter.call(this, {id:id},10)[0] || false;
 }
 
 
@@ -471,14 +471,14 @@ gform.filter = function(search,depth){
         search = {name: search}
     }
     var depth = (depth||1);
-    depth = depth--;
+    depth--;
     // debugger;
 
     _.each(this.fields, function(depth,field){
         if(_.isMatch(field, search)){
             temp.push(field)
         }
-        if(!depth && typeof field.fields !== 'undefined'){
+        if(!!depth && typeof field.fields !== 'undefined'){
             temp = temp.concat(gform.filter.call(field,search,depth));
         }
     }.bind(null,depth))
@@ -1048,7 +1048,6 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
             this.collections.add(this.optgroup.path,[])
             if( waitlist.indexOf(this.optgroup.path)){
                 waitlist.push(this.optgroup.path);
-                console.log(waitlist.length);
             }
             gform.ajax({path: this.optgroup.path, success:function(data) {
                 this.collections.update(this.optgroup.path,data)
@@ -1381,7 +1380,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.render = field.render || gform.types[field.type].render.bind(field);
     
     field.el = gform.types[field.type].create.call(field);
-
+debugger;
     field.container =  field.el.querySelector('fieldset')|| field.el || null;
     if(typeof gform.types[field.type].reflow !== 'undefined'){
         field.reflow = gform.types[field.type].reflow.bind(field) || null;
@@ -2836,6 +2835,55 @@ gform.conditions = {
 		}else{
 			return (val == localval);
 		}
+	},
+
+	matches_bool: function(field, args) {
+		var looker;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
+		}else{
+			looker = field;
+		}
+
+		var val = args[args.attribute||'value'];
+		var localval = looker[args.attribute||'value'];
+		return (val == "false" || !val) == (localval == "false" || !localval)
+	},
+	matches_numeric: function(field, args) {
+		var looker;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
+		}else{
+			looker = field;
+		}
+
+		var val = args[args.attribute||'value'];
+		var localval = parseInt(looker[args.attribute||'value']);
+		if(typeof val== "object" && val !== null && localval !== null){
+			return (_.map(val,function(vals){return parseInt(vals);}).indexOf(localval) !== -1);
+		}else{
+			return (parseInt(val) == localval);
+		}
 	}
 }; gform.prototype.errors = {};
 gform.prototype.validate = function(force){
@@ -3037,48 +3085,43 @@ output: `
     </div>
     </div>
 `,
-grid: `
+grid: `<div class="row">
 <fieldset id="{{id}}" name="{{name}}" class="row"  style="margin-bottom:20px">
-
     {{>_label}}
-		<div class="col-xs-12">
-    <table class="table table-striped" style="margin-bottom:0">
-    <thead>
-        <tr>
-            <th></th>
-            {{#options}}
-            <th><label>{{label}}</label></th>
-            {{/options}}
-            
-        </tr>
-    </thead>
-    <tbody>
-    {{#fields}}
-        <tr>
-            <td><label style="font-weight: 500;" for="{{id}}">{{{label}}}</label></td>
-            {{#options}}
-            <td>
-            {{#multiple}}
-                <div><input name="{{id}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/>
-            {{/multiple}}
-            {{^multiple}}
-                <input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
-            {{/multiple}}
-            </td>
-            {{/options}}
-        </tr>
-        {{/fields}}
-    </tbody>
+	<div class="col-xs-12">
+    	<table class="table table-striped" style="margin-bottom:0">
+			<thead>
+				<tr>
+					<th></th>
+					{{#options}}
+					<th><label>{{label}}</label></th>
+					{{/options}}
+				</tr>
+			</thead>
+			<tbody>
+			{{#fields}}
+				<tr>
+					<td><label style="font-weight: 500;" for="{{id}}">{{{label}}}</label></td>
+					{{#options}}
+					<td>
+					{{#multiple}}
+						<div><input name="{{id}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/>
+					{{/multiple}}
+					{{^multiple}}
+						<input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{value}}" type="radio">
+					{{/multiple}}
+					</td>
+					{{/options}}
+				</tr>
+				{{/fields}}
+			</tbody>
 		</table>
-		
-{{>_addons}}
-{{>_actions}}
-</div>
-
-    </fieldset>
-`,
-switch:`
-<div class="row clearfix{{#horizontal}} form-horizontal{{/horizontal}} {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
+		{{>_addons}}
+		{{>_actions}}
+	</div>
+</fieldset>
+</div>`,
+switch:`<div class="row clearfix{{#horizontal}} form-horizontal{{/horizontal}} {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
@@ -3455,8 +3498,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 
 	$(this.el.querySelector('input[name="' + this.name + '"]')).attr('type','text');
 		this.el.querySelector('i').style.backgroundColor = this.get()
-
-	$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex'}).on('changeColor', function(ev){
+	$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex',container:$(this.el).find('.input-group')}).on('changeColor', function(ev){
 		this.el.querySelector('i').style.backgroundColor = this.get()
 		this.parent.trigger('change',this);
 	}.bind(this));
