@@ -2,6 +2,9 @@ gform.types = {
   'input':{
       base:'input',
       defaults:{},
+      row:function(){
+        return '<div></div>';
+      },
       setup:function(){
           gform.types[this.type].setLabel.call(this)
       },
@@ -153,7 +156,6 @@ gform.types = {
         if(!this.strict && this.options[0]==false && this.options[1]==true){
             this.value = (!!this.value);
         }
-
         if(typeof this.mapOptions == 'undefined'){
 
           this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
@@ -525,7 +527,6 @@ gform.types = {
           }
       },
       set: function(value){
-
         if(value == null || value == ''){
             gform.each.call(this, function(field) {
                 field.set('');
@@ -557,7 +558,6 @@ gform.types = {
                         attr[field.name] = item;
                         gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
                     // }
-
                     var fieldCount = this.filter({array:{ref:field.array.ref}},1).length
 
                     _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
@@ -1086,6 +1086,141 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
     }
 });
 
+gform.types['template'] = _.extend({}, gform.types['input'], gform.types['section'],{
+    row:function(){
+        return gform.m('<div>{{label}}</div>', _.extend({}, gform.stencils, this));                
+      },
+    render: function() {
+        return gform.m('<div class="list-group-item">{{>_actions}}</span><div class="gform-template_container">'+this.format.template+'</div></div>', _.extend({}, gform.stencils, this));                
+    },     
+    create: function() {
+
+        Object.defineProperty(this, "sibling",{
+            get: function(){
+                var types = this.owner.filter({array:{ref:this.array.ref}},1);
+                return (types.length && types[0] !== this );
+            }
+        });
+        var tempEl = gform.create(this.render());
+        gform.addClass(tempEl,gform.columnClasses[this.columns])
+        gform.addClass(tempEl,gform.offsetClasses[this.offset])
+        gform.toggleClass(tempEl,'gform_isArray',!!this.array)
+        this.container = gform.create('<fieldset></fieldset>');
+
+            tempEl.addEventListener('click', function(e){
+                if(!e.target.classList.contains('gform-minus') && !e.target.classList.contains('gform-add') && (this.el.querySelector('.gform-edit') == null || (this.el.querySelector('.gform-edit') && e.target.classList.contains('gform-edit') || this.el.querySelector('.gform-edit').contains(e.target)))){
+
+                    this.modal = $(gform.render("modal_container",{footer:'<div class="btn btn-success"><i class="fa fa-check-o"></i>Done</div>',legend:this.label,name:"preview"})).modal().on('hidden.bs.modal', function (e) {
+                        this.modal.querySelector('.modal-body').removeChild(this.container);
+                        this.value = this.get();
+
+                        this.update();
+        
+                        this.owner.trigger('done', this);                
+                        this.modal.remove();
+                    }.bind(this))[0];
+                    this.modal.querySelector('.modal-body').appendChild(this.container);
+        
+                    this.modal.querySelector('.btn-success').addEventListener('click', function(){
+                        $(this.modal).modal('hide');
+                    }.bind(this));
+                }
+            }.bind(this))
+
+        return tempEl;
+    },
+    update: function(item, silent) {
+        if(typeof item === 'object') {
+            _.extend(this.item,item);
+        }
+        this.label = gform.renderString((item||{}).label||this.item.label, this);
+        this.el.querySelector('.gform-template_container').innerHTML = gform.m(this.format.template, _.extend({}, gform.stencils, this))
+        if(!silent) {
+            this.parent.trigger(['change'], this);
+        }
+    }
+});
+
+gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section'],{
+    row:function(){
+
+        return gform.m('<div><h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div>', _.extend({labels:this.fields}, gform.stencils, this));                
+      },
+      rowSelector:"tbody",
+
+    render: function() {
+        debugger;
+    },     
+    create: function() {
+
+        Object.defineProperty(this, "sibling",{
+            get: function(){
+                var types = this.owner.filter({array:{ref:this.array.ref}},1);
+                return (types.length && types[0] !== this );
+            }
+        });
+
+        var tempEl = document.createElement("tr");
+        debugger;
+        // var labels = _.map(this.fields,'value');
+        _.each(this.fields,function(field){
+            var cell = document.createElement("td");
+            var cellText = document.createTextNode(this.value[field.name]||field.value||"");
+            cell.appendChild(cellText);
+            tempEl.appendChild(cell);
+        }.bind(this))
+        // var tempEl = document.createElement("tr");
+          tempEl.setAttribute("id", this.id);
+        //   gform.addClass(tempEl,gform.columnClasses[this.columns])
+        //   gform.addClass(tempEl,gform.offsetClasses[this.offset])
+          gform.toggleClass(tempEl,'gform_isArray',!!this.array)
+
+
+        this.container = gform.create('<fieldset></fieldset>');
+
+            tempEl.addEventListener('click', function(e){
+                if(!e.target.classList.contains('gform-minus') && !e.target.classList.contains('gform-add') && (this.el.querySelector('.gform-edit') == null || (this.el.querySelector('.gform-edit') && e.target.classList.contains('gform-edit') || this.el.querySelector('.gform-edit').contains(e.target)))){
+
+                    this.modal = $(gform.render("modal_container",{footer:'<div class="btn btn-success"><i class="fa fa-check-o"></i>Done</div>',legend:this.label,name:"preview"})).modal().on('hidden.bs.modal', function (e) {
+                        this.modal.querySelector('.modal-body').removeChild(this.container);
+                        this.value = this.get();
+
+                        this.update();
+        
+                        this.owner.trigger('done', this);                
+                        this.modal.remove();
+                    }.bind(this))[0];
+                    this.modal.querySelector('.modal-body').appendChild(this.container);
+        
+                    this.modal.querySelector('.btn-success').addEventListener('click', function(){
+                        $(this.modal).modal('hide');
+                    }.bind(this));
+                }
+            }.bind(this))
+
+        return tempEl;
+    },
+    update: function(item, silent) {
+        debugger;
+        if(typeof item === 'object') {
+            _.extend(this.item,item);
+        }
+        this.label = gform.renderString((item||{}).label||this.item.label, this);
+        // debugger;
+        this.el.innerHTML = ""
+        var labels = _.map(this.fields,'value');
+        _.each(labels,function(label){
+            var cell = document.createElement("td");
+            var cellText = document.createTextNode(label);
+            cell.appendChild(cellText);
+            this.el.appendChild(cell);
+        }.bind(this))
+        // this.el.querySelector('.gform-template_container').innerHTML = gform.m(this.format.template, _.extend({}, gform.stencils, this))
+        if(!silent) {
+            this.parent.trigger(['change'], this);
+        }
+    }
+});
 
 
 gform.types['custom_radio'] = _.extend({}, gform.types['input'], gform.types['collection'], {

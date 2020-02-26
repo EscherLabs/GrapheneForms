@@ -70,13 +70,13 @@ gform.conditions = {
 	requires: function(field, args) {
 		var looker;
 		if(typeof args.name !== 'undefined' && !!args.name ){
-			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth||10);
 			if(matches.length >0){
 				looker = matches[0];
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name},args.depth||10)[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -90,13 +90,13 @@ gform.conditions = {
 	not_matches: function(field, args) {
 		var looker;
 		if(typeof args.name !== 'undefined' && !!args.name ){
-			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth||10);
 			if(matches.length >0){
 				looker = matches[0];
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name},args.depth||10)[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -120,13 +120,13 @@ gform.conditions = {
 	contains: function(field, args) {
 		var looker;
 		if(typeof args.name !== 'undefined' && !!args.name ){
-			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth||10);
 			if(matches.length >0){
 				looker = matches[0];
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name},args.depth||10)[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -145,7 +145,7 @@ gform.conditions = {
 				localval = targetField.value;
 			}
 		}else{
-			looker = field.parent.find(args.name)||field.owner.filter({path:args.name},args.depth)[0];
+			looker = field.parent.find(args.name)||field.owner.filter({path:args.name},args.depth||10)[0];
 			if(typeof looker == 'undefined'){
 				return false;
 			}
@@ -164,13 +164,13 @@ gform.conditions = {
 	matches: function(field, args) {
 		var looker;
 		if(typeof args.name !== 'undefined' && !!args.name ){
-			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth||10);
 			if(matches.length >0){
 				looker = matches[0];
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name},args.depth||10)[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -191,13 +191,13 @@ gform.conditions = {
 	matches_bool: function(field, args) {
 		var looker;
 		if(typeof args.name !== 'undefined' && !!args.name ){
-			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth||10);
 			if(matches.length >0){
 				looker = matches[0];
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name},args.depth||10)[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}
@@ -213,13 +213,13 @@ gform.conditions = {
 	matches_numeric: function(field, args) {
 		var looker;
 		if(typeof args.name !== 'undefined' && !!args.name ){
-			var matches = field.parent.filter({name:args.name,parsable:true},args.depth);
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth||10);
 			if(matches.length >0){
 				looker = matches[0];
 			}else if(field.name == args.name){
 				looker = field;
 			}else{
-				looker = field.parent.find(args.name)||field.owner.filter({path:args.name})[0];
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name},args.depth||10)[0];
 				if(typeof looker == 'undefined'){
 					return false;
 				}

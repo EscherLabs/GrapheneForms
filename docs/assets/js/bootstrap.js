@@ -378,13 +378,17 @@ gform.default.columns = 12;
 gform.prototype.opts.suffix = "";
 
 gform.handleError = function(field){
+	var error_container = field.el.querySelector('.font-xs.text-danger')
+
 	if(!field.valid){
 		field.el.classList.add('has-error');
-		field.el.querySelector('.font-xs.text-danger').innerHTML = field.errors;
+		if(!!error_container)error_container.innerHTML = field.errors;
 	}else{
 		field.el.classList.remove('has-error');
 		// field.el.classList.add('has-success')
-		field.el.querySelector('.font-xs.text-danger').innerHTML = '';
+		// field.el.querySelector('.font-xs.text-danger').innerHTML = '';
+		if(!!error_container)error_container.innerHTML = '';
+
 	}
 }
 
