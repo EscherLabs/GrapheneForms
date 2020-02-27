@@ -7,7 +7,7 @@
     <meta name="author" content="Adam Smallcomb">
     <link rel="icon" href="../assets/favicon.png">
 
-    <title>Example:Template - Graphene:Forms</title>
+    <title>Example:Table - Graphene:Forms</title>
 	  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
     <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
     <link rel="stylesheet" type='text/css' href="../assets/vendor/css/combobox.css">
@@ -17,7 +17,7 @@
   </head>
   <body>
     <div style="padding:20px">
-    <h4><a href="./">Examples</a> - Template</h4>
+    <h4><a href="./">Examples</a> - Table</h4>
       <div class="container ">
           <div class="row ">
                 <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
@@ -40,10 +40,10 @@
 
     <script>
       options = {
-          legend: 'Bootstrap - Template',
+          legend: 'Bootstrap - Table',
           data:{label:[{color:"red"},{color:"blue"}]},
           fields:[
-            {item:"",label: 'Template stuff',array:{}, name: 'label', type: 'template', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+            {item:"",label: 'Table stuff',array:{}, name: 'label', type: 'table', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
             {name:"Name"},
             {name:"color",type:"color"},
               {name:"Choose",max:10,type:"select"}

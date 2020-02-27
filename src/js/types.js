@@ -1209,12 +1209,19 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         // debugger;
         this.el.innerHTML = ""
         var labels = _.map(this.fields,'value');
-        _.each(labels,function(label){
+        // _.each(labels,function(label){
+        //     var cell = document.createElement("td");
+        //     var cellText = document.createTextNode(label);
+        //     cell.appendChild(cellText);
+        //     this.el.appendChild(cell);
+        // }.bind(this))
+        _.each(this.fields,function(field){
             var cell = document.createElement("td");
-            var cellText = document.createTextNode(label);
+            var cellText = document.createTextNode(this.value[field.name]||field.value||"");
             cell.appendChild(cellText);
             this.el.appendChild(cell);
         }.bind(this))
+
         // this.el.querySelector('.gform-template_container').innerHTML = gform.m(this.format.template, _.extend({}, gform.stencils, this))
         if(!silent) {
             this.parent.trigger(['change'], this);
