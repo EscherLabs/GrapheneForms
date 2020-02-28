@@ -46,7 +46,12 @@
             {item:"",label: 'Table stuff',array:{}, name: 'label', type: 'table', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
             {name:"Name"},
             {name:"color",type:"color"},
+              {name:"Choose",max:10,type:"select"},
+              {item:"",label: 'Template stuff',array:{}, name: 'label', type: 'fieldset', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+            {name:"Name"},
+            {name:"color",type:"color"},
               {name:"Choose",max:10,type:"select"}
+            ]}
             ]}
           ]
       }

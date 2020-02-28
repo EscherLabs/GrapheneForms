@@ -117,7 +117,8 @@ var gform = function(optionsIn, el){
 
         this.rows = [];
 
-        this.fields = _.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
+        this.fields = [];
+        this.fields =_.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
 
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
 
@@ -261,12 +262,12 @@ var gform = function(optionsIn, el){
 
 
     this.listener = function(e){
+
         var field;
         if(e.target.dataset.id){
            field = gform.findByID.call(this,e.target.dataset.id)
         }
        if(e.target.classList.contains('gform-add')){
-
            e.stopPropagation();
            // var fieldCount =  _.countBy(field.parent.fields, {name: field.name,array: true}).true;
            var fieldCount = _.filter(field.parent.fields, 
@@ -377,7 +378,6 @@ var gform = function(optionsIn, el){
 
        }
    }.bind(this)
-
     this.el.addEventListener('click', this.listener)
     this.trigger('initialized',this);
     this.isActive = true;
@@ -1233,8 +1233,9 @@ gform.layout = function(field){
         if(field.sibling){
             search.id = field.parent.filter({array:{ref:field.array.ref}},1)[0].row;
         }
+        // debugger;
         var cRow  = _.findLast(field.operator.rows,search);
-        if(!field.sibling ){
+        if(!field.sibling || typeof search.id == 'undefined' || typeof cRow == 'undefined'){
             if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > field.owner.options.columns || field.forceRow == true){
                 cRow = search;
                 cRow.id =gform.getUID();
@@ -1391,7 +1392,11 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
     field.get = field.get || gform.types[field.type].get.bind(field);
     field.toString = gform.types[field.type].toString.bind(field);
-
+    Object.defineProperty(field, "display", {
+        get: (gform.types[field.type].display||function(){
+            return this.toString();
+        })
+    });
     field.render = field.render || gform.types[field.type].render.bind(field);
     
     field.el = gform.types[field.type].create.call(field);

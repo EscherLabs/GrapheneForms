@@ -416,6 +416,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 		value:"#000000"
 	},
 	toString: function(name,display){
+		this.value = this.get();//shouldn't need this here - but we do for now
 		if(!display){
 			return '<dt>'+this.label+'</dt> <dd><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:'+this.value+';"></span> '+(this.value||'(empty)')+'</dd><hr>'
 		}else{
@@ -441,9 +442,10 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 		//   this.update({value:this.get()},true);
 		//   gform.types[this.type].focus.call(this)
 			gform.types[this.type].setup.call(this);
-		  this.parent.trigger(['change'], this,{input:this.value});
+		  this.owner.trigger('change', this,{input:this.value});
+
 		  if(input){
-			this.parent.trigger(['input'], this,{input:this.value});
+			this.owner.trigger('input', this,{input:this.value});
 		  }
 	  }.bind(this)
 
@@ -455,6 +457,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 	$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex',container:$(this.el).find('.input-group')}).on('changeColor', function(ev){
 		this.el.querySelector('i').style.backgroundColor = this.get()
 		this.parent.trigger('change',this);
+		this.parent.trigger('input',this);
 	}.bind(this));
 
   }
