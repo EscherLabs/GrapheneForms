@@ -201,15 +201,16 @@ tab_container: `
     </ul></form>
 	<div class="footer"></div>`,
 tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
-modal_container:`<div class="modal">
+modal_container:`<div class="modal modal-hide">
 <div class="modal-background"></div>
 <div class="modal-card">
-  <header class="modal-card-head">
-    <legend class="modal-card-title">{{#legend}}{{{legend}}}{{/legend}}
+  <header class="modal-card-head {{modal.header_class}}">
+    <legend class="modal-card-title">{{{title}}}{{{legend}}}
     </legend>
     <span class="button button-outline close" aria-label="close" style="padding:0 1.5rem;margin:0">X</span>
   </header>
   <section class="modal-card-body">
+    {{{body}}}
     {{^sections}}
     <form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}></form>
     {{/sections}}
@@ -227,11 +228,13 @@ modal_container:`<div class="modal">
     {{/sections}}
   </section>
   <footer class="modal-card-foot">
-  <div class="footer" style="width:100%"></div>
+  <div class="footer gform-footer" style="width:100%">{{{footer}}}</div>
+  
 
   </footer>
 </div>
-</div>`
+</div>`,
+template_item:`<div class="" style="overflow:hidden;padding:4px;margin:2px 0;border:solid 1px #ccc;border-radius:5px"><div style="">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`
 };
 
 gform.columns = 12;

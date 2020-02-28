@@ -364,7 +364,9 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form
 	</div>
 </div>
 `,
-modal_fieldset:`{{>_fieldset}}`
+modal_fieldset:`{{>_fieldset}}`,
+template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`
+
 };
 
 
@@ -418,7 +420,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 	toString: function(name,display){
 		this.value = this.get();//shouldn't need this here - but we do for now
 		if(!display){
-			return '<dt>'+this.label+'</dt> <dd><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:'+this.value+';"></span> '+(this.value||'(empty)')+'</dd><hr>'
+			return '<dt>'+this.label+'</dt> <dd><div style="white-space:nowrap"><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:'+this.value+';"></span> '+(this.value||'(empty)')+'</div></dd><hr>'
 		}else{
               return this.value
 		}

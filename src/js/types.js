@@ -9,24 +9,21 @@ gform.types = {
           gform.types[this.type].setLabel.call(this)
       },
       setLabel:function(){
-        // if(!this.item.label){
-            var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
-            if(this.required){
-                label+=this.requiredText+this.suffix;
-            }
-            var labelEl = this.el.querySelector('label');
-            if(labelEl !== null){
-                labelEl.innerHTML = label
-            }
-        // }
+        var label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
+        if(this.required){
+            label+=this.requiredText+this.suffix;
+        }
+        var labelEl = this.el.querySelector('label');
+        if(labelEl !== null){
+            labelEl.innerHTML = label
+        }
       },
       create: function(){
-          var tempEl = document.createElement("span");
-          tempEl.setAttribute("id", this.id);
-          gform.addClass(tempEl,gform.columnClasses[this.columns])
-          gform.addClass(tempEl,gform.offsetClasses[this.offset])
-          gform.toggleClass(tempEl,'gform_isArray',!!this.array)
-
+        var tempEl = document.createElement("span");
+        tempEl.setAttribute("id", this.id);
+        gform.addClass(tempEl,gform.columnClasses[this.columns])
+        gform.addClass(tempEl,gform.offsetClasses[this.offset])
+        gform.toggleClass(tempEl,'gform_isArray',!!this.array)
         //   if(this.owner.options.clear){
             // tempEl.setAttribute("class", gform.columnClasses[this.columns]+' '+gform.offsetClasses[this.offset]);
         //   }
@@ -546,8 +543,13 @@ gform.types = {
             return gform.toString.call(this, name,report);
           }
       },
-      display: function() {
-        return gform.toString.call(this, name);
+    //   display: function() {
+    //     return gform.toString.call(this, name);
+    //   },
+
+    display: function() {
+        debugger;
+        return '<div class="list-group-item ">'+gform.toString.call(this, name)+'</div>';              
       },
       set: function(value){
         if(value == null || value == ''){
@@ -1113,24 +1115,27 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
 
 gform.types['template'] = _.extend({}, gform.types['input'], gform.types['section'],{
     row:function(){
-        return gform.m('<div><div class="col-md-12"><legend>{{label}}</legend><div class="col-md-12 list-group gform-template_row"></div></div></div>', _.extend({}, gform.stencils, this));                
+        debugger;
+        return gform.m('<div><div class="'+gform.columnClasses[gform.columns]+'"><legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>', _.extend({}, gform.stencils, this));                
       },
       rowSelector:".gform-template_row",
 
       display: function() {
-        return '<div class="list-group-item ">'+gform.toString.call(this, name)+'</div>';              
+        return '<dl class="dl-horizontal">'+gform.toString.call(this, name)+'</dl>';              
       },
     render: function() {
-        return gform.m('<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">'+this.format.template+'</div></div>', _.extend({}, gform.stencils, this));                
+        debugger;
+        return gform.m(gform.render('template_item',this),this)
+        // return gform.m('<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">'+this.format.template+'</div></div>', _.extend({}, gform.stencils, this));                
     },     
     create: function() {
 
-        Object.defineProperty(this, "sibling",{
-            get: function(){
-                var types = this.parent.filter({array:{ref:this.array.ref}},1);
-                return (types.length && types[0] !== this );
-            }
-        });
+        // Object.defineProperty(this, "sibling",{
+        //     get: function(){
+        //         var types = this.parent.filter({array:{ref:this.array.ref}},1);
+        //         return (types.length && types[0] !== this );
+        //     }
+        // });
         var tempEl = gform.create(this.render());
         // gform.addClass(tempEl,gform.columnClasses[this.columns])
         // gform.addClass(tempEl,gform.offsetClasses[this.offset])
@@ -1141,24 +1146,47 @@ gform.types['template'] = _.extend({}, gform.types['input'], gform.types['sectio
 
             if(!e.target.classList.contains('gform-minus') && !e.target.classList.contains('gform-add') && (this.el.querySelector('.gform-edit') == null || (this.el.querySelector('.gform-edit') && e.target.classList.contains('gform-edit') || this.el.querySelector('.gform-edit').contains(e.target)))){
 
-                this.modal = $(gform.render("modal_container",{footer:'<div class="btn btn-success"><i class="fa fa-check-o"></i>Done</div>',legend:this.label,name:"preview"})).modal().on('hidden.bs.modal', function (e) {
-                    this.modal.querySelector('.modal-body').removeChild(this.container);
+                e.preventDefault();
+
+                // this.modal = $(gform.render("modal_container",{footer:'<div class="btn btn-success"><i class="fa fa-check-o"></i>Done</div>',legend:this.label,name:"preview"})).modal().on('hidden.bs.modal', function (e) {
+                //     this.modal.querySelector('.modal-body').removeChild(this.container);
+                //     this.container.removeEventListener('click', this.owner.listener)
+
+                //     this.value = this.get();
+
+                //     this.update();
+    
+                //     this.owner.trigger('done', this);                
+                //     this.modal.remove();
+                // }.bind(this))[0];
+                // this.container.addEventListener('click', this.owner.listener)
+
+                // this.modal.querySelector('.modal-body').appendChild(this.container);
+    
+                // this.modal.querySelector('.btn-success').addEventListener('click', function(){
+                //     $(this.modal).modal('hide');
+                // }.bind(this));
+
+
+                this.modal = gform.create(gform.render("modal_container",{body:'<div class="gform-modal_body"></div>',footer:gform.render('button',{label:'<i class="fa fa-check-o"></i>Done',modifiers:"button-outline gform-done"}),legend:this.label,name:"preview"}))
+                document.body.appendChild(this.modal);
+                this.container.addEventListener('click', this.owner.listener)
+                gform.removeClass(this.modal,'modal-hide');
+
+                this.modal.querySelector('.gform-modal_body').appendChild(this.container);
+    
+                this.modal.querySelector('.gform-footer .gform-done').addEventListener('click', function(){
+                    gform.addClass(this.modal,'modal-hide');
+
+                    this.modal.querySelector('.gform-modal_body').removeChild(this.container);
                     this.container.removeEventListener('click', this.owner.listener)
 
                     this.value = this.get();
-
                     this.update();
-    
                     this.owner.trigger('done', this);                
-                    this.modal.remove();
-                }.bind(this))[0];
-                this.container.addEventListener('click', this.owner.listener)
-
-                this.modal.querySelector('.modal-body').appendChild(this.container);
-    
-                this.modal.querySelector('.btn-success').addEventListener('click', function(){
-                    $(this.modal).modal('hide');
                 }.bind(this));
+
+
             }
         }.bind(this))
 
@@ -1179,21 +1207,16 @@ gform.types['template'] = _.extend({}, gform.types['input'], gform.types['sectio
 gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section'],{
     row:function(){
 
-        return gform.m('<div><h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead><th></th>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div>', _.extend({labels:this.fields}, gform.stencils, this));                
+        return gform.m('<div class="'+gform.columnClasses[gform.columns]+'"><div style="overflow:scroll"><h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead><th></th>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>', _.extend({labels:this.fields}, gform.stencils, this));                
       },
       rowSelector:"tbody",
 
     render: function(el) {
         el = el||this.el;
         el.innerHTML = ""
-
-
-
-        // var labels = _.map(this.fields,'value');
         var cell = document.createElement("td");
         
-
-        var cellText = gform.create('<button class="btn btn-info gform-edit"><i class="fa fa-pencil"></i> Edit</button>');
+        var cellText = gform.create('<button class="btn btn-info btn-xs gform-edit"><i class="fa fa-pencil"></i> Edit</button>');
         cell.appendChild(cellText);
 
     
@@ -1201,12 +1224,10 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
         _.each(this.fields,function(field){
 
-
             if(typeof field.display !== 'undefined'){
                 var cellText = gform.create(field.display);
             }else{
                 var cellText = document.createTextNode(this.value[field.name]||field.value||"");
-
             }
 
             if(field.sibling){
@@ -1216,6 +1237,7 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
                 if(typeof field.array !== 'undefined'){
                     cell.setAttribute("id", field.array.ref);
                 }
+
                 cell.appendChild(cellText);
 
                 el.appendChild(cell);
@@ -1228,76 +1250,51 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
            return this.toString();
     },
     create: function() {
-
-        Object.defineProperty(this, "sibling",{
-            get: function(){
-                var types = this.parent.filter({array:{ref:this.array.ref}},1);
-                return (types.length && types[0] !== this );
-            }
-        });
-
         var tempEl = document.createElement("tr");
-
-
-        
+        gform.addClass(tempEl,'gform-edit');
         this.render(tempEl);
-        // var labels = _.map(this.fields,'value');
-        // var cell = document.createElement("td");
-        
-
-        // var cellText = gform.create('<button class="btn btn-info gform-edit"><i class="fa fa-pencil"></i> Edit</button>');
-        // cell.appendChild(cellText);
-
-    
-        // tempEl.appendChild(cell);
-
-        // _.each(this.fields,function(field){
-        //     var cell = document.createElement("td");
-        //     if(typeof field.display !== 'undefined'){
-        //         var cellText = gform.create('<div>'+field.display+'</div>');
-        //         cell.appendChild(cellText);
-        //     }else{
-        //         var cellText = document.createTextNode(this.value[field.name]||field.value||"");
-        //         cell.appendChild(cellText);
-
-        //     }
-        //     tempEl.appendChild(cell);
-        // }.bind(this))
-
-
-
-        
-        // var tempEl = document.createElement("tr");
-          tempEl.setAttribute("id", this.id);
-        //   gform.addClass(tempEl,gform.columnClasses[this.columns])
-        //   gform.addClass(tempEl,gform.offsetClasses[this.offset])
-          gform.toggleClass(tempEl,'gform_isArray',!!this.array)
-
-
+        tempEl.setAttribute("id", this.id);
+        gform.toggleClass(tempEl,'gform_isArray',!!this.array)
         this.container = gform.create('<fieldset></fieldset>');
-
         tempEl.addEventListener('click', function(e){
+            if(
+                !e.target.classList.contains('gform-minus') && 
+                !e.target.classList.contains('gform-add')
+            ){
+                e.preventDefault();
+                //  && 
+                // (this.el.querySelector('.gform-edit') == null || (this.el.querySelector('.gform-edit')&& (e.target.classList.contains('gform-edit') || this.el.querySelector('.gform-edit').contains(e.target) || this.el.classList.contains('gform-edit')  )))){
 
-            if(!e.target.classList.contains('gform-minus') && !e.target.classList.contains('gform-add') && (this.el.querySelector('.gform-edit') == null || (this.el.querySelector('.gform-edit') && e.target.classList.contains('gform-edit') || this.el.querySelector('.gform-edit').contains(e.target)))){
+                // this.modal = $(gform.render("modal_container",{footer:'<div class="btn btn-success"><i class="fa fa-check-o"></i>Done</div>',legend:this.label,name:"preview"})).modal().on('hidden.bs.modal', function (e) {
+                //     this.modal.querySelector('.modal-body,.modal-card-body').removeChild(this.container);
+                //     this.container.removeEventListener('click', this.owner.listener)
 
-                this.modal = $(gform.render("modal_container",{footer:'<div class="btn btn-success"><i class="fa fa-check-o"></i>Done</div>',legend:this.label,name:"preview"})).modal().on('hidden.bs.modal', function (e) {
-                    this.modal.querySelector('.modal-body').removeChild(this.container);
+                //     this.value = this.get();
+
+                //     this.update();
+    
+                //     this.owner.trigger('done', this);                
+                //     this.modal.remove();
+                // }.bind(this))[0];
+
+                this.modal = gform.create(gform.render("modal_container",{body:'<div class="gform-modal_body"></div>',footer:gform.render('button',{label:'<i class="fa fa-check-o"></i>Done',modifiers:"button-outline gform-done"}),legend:this.label,name:"preview"}))
+                document.body.appendChild(this.modal);
+                this.container.addEventListener('click', this.owner.listener)
+                gform.removeClass(this.modal,'modal-hide');
+
+                this.modal.querySelector('.gform-modal_body').appendChild(this.container);
+    
+                this.modal.querySelector('.gform-footer .gform-done').addEventListener('click', function(){
+                    gform.addClass(this.modal,'modal-hide');
+
+                    this.modal.querySelector('.gform-modal_body').removeChild(this.container);
                     this.container.removeEventListener('click', this.owner.listener)
 
                     this.value = this.get();
-
                     this.update();
-    
                     this.owner.trigger('done', this);                
-                    this.modal.remove();
-                }.bind(this))[0];
-                this.container.addEventListener('click', this.owner.listener)
-
-                this.modal.querySelector('.modal-body').appendChild(this.container);
-    
-                this.modal.querySelector('.btn-success').addEventListener('click', function(){
-                    $(this.modal).modal('hide');
                 }.bind(this));
+
             }
         }.bind(this))
 
@@ -1309,28 +1306,6 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         }
         this.label = gform.renderString((item||{}).label||this.item.label, this);
         this.render();
-        // this.el.innerHTML = ""
-        // // var labels = _.map(this.fields,'value');
-        // // _.each(labels,function(label){
-        // //     var cell = document.createElement("td");
-        // //     var cellText = document.createTextNode(label);
-        // //     cell.appendChild(cellText);
-        // //     this.el.appendChild(cell);
-        // // }.bind(this))
-        // _.each(this.fields,function(field){
-        //     var cell = document.createElement("td");
-        //     if(typeof field.display !== 'undefined'){
-        //         var cellText = gform.create('<div>'+field.display+'</div>');
-        //         cell.appendChild(cellText);
-        //     }else{
-        //         var cellText = document.createTextNode(this.value[field.name]||field.value||"");
-        //         cell.appendChild(cellText);
-
-        //     }
-        //     this.el.appendChild(cell);
-        // }.bind(this))
-
-        // this.el.querySelector('.gform-template_container').innerHTML = gform.m(this.format.template, _.extend({}, gform.stencils, this))
         if(!silent) {
             this.parent.trigger(['change'], this);
         }

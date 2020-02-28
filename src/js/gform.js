@@ -269,7 +269,7 @@ var gform = function(optionsIn, el){
         }
        if(e.target.classList.contains('gform-add')){
            e.stopPropagation();
-           // var fieldCount =  _.countBy(field.parent.fields, {name: field.name,array: true}).true;
+
            var fieldCount = _.filter(field.parent.fields, 
                function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
            ).length
@@ -287,12 +287,8 @@ var gform = function(optionsIn, el){
                _.each(_.filter(field.parent.fields, 
                    function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
                ),function(item,index){
-                   // item.update({index:index})
                    item.index = index;
-                   // item.label = gform.renderString(item.item.label, item);
-                   // item.el.querySelector('label').innerHTML = item.label
                    gform.types[item.type].setLabel.call(item)
-
                })
 
                gform.each.call(field.owner, function(field) {
@@ -305,10 +301,6 @@ var gform = function(optionsIn, el){
                fieldCount++;
            }
 
-        //    var testFunc = function(status, button){
-        //        gform.toggleClass(button,'hidden', status)
-        //    }
-
            var testFunc = function(selector,status, button){
             gform.toggleClass(button.querySelector(selector),'hidden', status)
            }
@@ -318,12 +310,11 @@ var gform = function(optionsIn, el){
        }
        if(e.target.classList.contains('gform-minus')){
            e.stopPropagation();
-           // var fieldCount =  _.countBy(field.parent.fields, {name: field.name,array: true}).true;
+
            var fieldCount =  _.filter(field.parent.fields, 
                function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
            ).length;
            if(field.editable && fieldCount > (field.array.min || 1)) {
-
                 // Clean up events this field created as part of conditionals
                 if(typeof field.eventlist !== 'undefined'){
                     _.each(field.owner.eventBus.handlers,function(event,index,events){
@@ -341,35 +332,18 @@ var gform = function(optionsIn, el){
                field.parent.fields.splice(index, 1);
                 
                field.operator.reflow();
-            //    if(!field.target) {
-                   _.each(_.filter(field.parent.fields, 
-                       function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
-                   ),function(item,index){
-                       // item.update({index:index})
-                       item.index = index;
-   
-                       // item.label = gform.renderString(item.item.label, item);
-                       // item.el.querySelector('label').innerHTML = item.label
-                       gform.types[item.type].setLabel.call(item)
+                _.each(_.filter(field.parent.fields, 
+                    function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
+                ),function(item,index){
+                    item.index = index;
+                    gform.types[item.type].setLabel.call(item)
 
-                   })
-
-            //    }else{
-            //        this.container.querySelector(field.target ).removeChild(field.el);
-            //    }
+                })
                 field.parent.trigger(['change','input','removed'],field)
                 fieldCount--;
            }else{
                if(field.editable)field.set(null);
            }           
-
-        //    var testFunc = function(status, button){
-        //        gform.toggleClass(button,'hidden', status)
-        //    }
-        //    _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
-
-        //    _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
-
            var testFunc = function(selector,status, button){
             gform.toggleClass(button.querySelector(selector),'hidden', status)
            }
@@ -1433,6 +1407,12 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
     gform.types[field.type].initialize.call(field);
     field.isActive = true;
+    Object.defineProperty(field, "sibling",{
+        get: function(){
+            var types = this.parent.filter({array:{ref:this.array.ref}},1);
+            return (types.length && types[0] !== this );
+        }
+    });
     Object.defineProperty(field, "path",{
         get: function(){
             var path = '/';

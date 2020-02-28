@@ -7,16 +7,25 @@
   right: 0;
   top: 0;
   align-items: center;
-  display: none;
+  // display: none;
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
   position: fixed;
   z-index: 2;
+
+  visibility: visible;
+  transition: visibility 0s linear 0.33s, opacity 0.33s linear;
+
+  opacity: 1;
   // Modifiers
   &.active {
     display: flex;
   }
+}
+.modal-hide{
+  visibility: hidden;
+  opacity: 0;
 }
 .modal-background {
   position: absolute;
@@ -28,14 +37,14 @@
 }
 .modal-content,
 .modal-card {
-  margin: 0;
+  margin: 50px 0 0;
   max-height: 100vh;
   overflow: auto;
   position: relative;
   width: 100%;
   // Responsiveness
   @media (min-width: 40.0rem) { // Safari desktop has a bug using `rem`, but Safari mobile works
-    margin: 0 auto;
+    margin: 50px auto 0;
     max-height: calc(100vh - 4rem);
     width: 64rem;
   }

@@ -21,6 +21,8 @@ cp src/js/themes/default.js bin/default/
 cp bin/* docs/assets/js/
 cp bin/default/* docs/assets/js/
 cp bin/bootstrap/* docs/assets/js/
+cp bin/default/gform.min.js docs/assets/js/gform_default.min
+
 
 sass src/scss/gform.scss > docs/assets/css/gform.css 
 minify docs/assets/css/gform.css > docs/assets/css/gform.min.css 

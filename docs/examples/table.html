@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>    
+      <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Adam Smallcomb">
+    <link rel="icon" href="../assets/favicon.png">
+
+    <title>Example:Table - Graphene:Forms</title>
+    <link rel="stylesheet" href="../assets/css/normalize.css">    
+    <link rel="stylesheet" href="../assets/css/gform.css">
+    </head>
+    <body>
+      <div style="padding:20px">
+      <h4><a href="./">Examples</a> - Table</h4>
+      <div class="container ">
+          <div class="row ">
+                <div class="column noprint" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
+                <div class="column column-40" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>
+                <div class="column noprint" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
+              </div>
+          </div>
+      </div>
+      <script src="../assets/js/lodash.min.js"></script>    
+
+      <script src='../assets/js/gform.js'></script> 
+      <script src='../assets/js/default.js'></script> 
+      <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+
+    <script>
+      options = {
+          data:{label:[{color:"red"},{color:"blue"}]},
+          fields:[
+            {item:"",label: 'Table stuff',array:{}, name: 'label', type: 'table', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+            {name:"Name"},
+              {name:"Choose",max:10,type:"select",format:{label:"Name&nbsp;{{value}}&nbsp;-&nbsp;{{index}}"}},
+              {label: 'Template stuff',array:{}, name: 'label', type: 'template', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+            {name:"Name"},
+            {name:"color",type:"color"},
+              {name:"Choose",max:10,type:"select"}
+            ]}
+            ]}
+          ]
+      }
+    </script>
+    <script src="../assets/js/example.js"></script>   
+   </body>
+</html>
