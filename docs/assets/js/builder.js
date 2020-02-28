@@ -61,7 +61,7 @@ renderBuilder = function(){
         case "radio":
         case "scale":
         case "range":
-        case "grid":
+        // case "grid":
         case "smallcombo":
           temp.fields[i].widgetType = 'collection';
           break;
@@ -71,6 +71,8 @@ renderBuilder = function(){
           break;
         case "fieldset":
         case "grid":
+        case "template":
+        case "table":
           temp.fields[i].widgetType = 'section';
           break;
         default:
