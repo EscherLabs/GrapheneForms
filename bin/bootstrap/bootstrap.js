@@ -365,8 +365,11 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form
 </div>
 `,
 modal_fieldset:`{{>_fieldset}}`,
-template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`
+template:'<div><div class="col-xs-12"><button data-ref="{{array.ref}}" class="gform-append btn btn-info btn-xs pull-right"><i class="fa fa-plus"></i> Add</button><legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
+template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`,
+child_modal_footer:`<button class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
+table:'<div class="col-xs-12"><div style="overflow:scroll"><button data-ref="{{array.ref}}" class="gform-append btn btn-info pull-right">Add</button><h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
 };
 
 
@@ -603,6 +606,42 @@ gform.types['time']= _.extend({}, gform.types['datetime'], {
 	}
 })
 gform.prototype.modal = function(data){
-	$(this.el).modal(data)
+	// var el = this.modalEl||this.el;
+
+	// if(!document.body.contains(el)){
+    //     document.body.appendChild(el);
+    //     this.modalEl.querySelector('.close').addEventListener('click', function(){
+    //         this.modal('hide');
+    //         (this.owner||this).trigger("modal:close");
+    //     }.bind(this));
+    // }
+
+
+
+
+	// $(this.modalEl||this.el).modal(data)
+	// return this;
+
+
+	var el = this.modalEl||this.el;
+    if(!document.body.contains(el)){
+        document.body.appendChild(el);
+        el.querySelector('.close').addEventListener('click', function(){
+			// gform.prototype.modal.call(this,'hide');
+			(this.owner||this).trigger('close',this);
+        }.bind(this));
+    }
+
+    switch(data){
+        case "hide":
+            // if(typeof this.type !== 'undefined'){
+            //     this.owner.trigger("close_child",this);
+            // }else{
+            //     this.trigger("close",this);
+            // }
+        default:
+            $(el).modal(data)
+    }
+	// $(this.el).modal(data)
 	return this;
 }

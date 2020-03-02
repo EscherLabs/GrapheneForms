@@ -88,19 +88,23 @@ var gform = function(optionsIn, el){
             this.options.renderer = 'modal';
             this.el = gform.create(gform.render(this.options.template || 'modal_container', this.options))
             // document.querySelector('body').appendChild(this.el)
-            gform.addClass(this.el, 'active')
+            // gform.addClass(this.el, 'active')
 
-            this.on('close', function(e){e.form.modal('hide')});
+            this.on('close', function(e){
+                if(typeof e.field == 'undefined'){
+                    e.form.modal('hide')
+                }
+            });
             // this.sub('cancel', function(e){
             //     gform.removeClass(e.form.el, 'active')
             //     // e.form.destroy();
             //     // document.body.removeChild(e.form.el);
             //     // delete this.el;
             // });
-            this.on('save', function(e){
-                // console.log(e.form.toJSON())
-                gform.removeClass(e.form.el, 'active')
-            });
+            // this.on('save', function(e){
+            //     // console.log(e.form.toJSON())
+            //     gform.removeClass(e.form.el, 'active')
+            // });
             this.el.querySelector('.close').addEventListener('click', function(e){
                 this.trigger('cancel', this)}.bind(this)
             )
@@ -285,6 +289,7 @@ var gform = function(optionsIn, el){
 
             // field = 
             // debugger;
+            debugger;
             var field = gform.addField.call(this,
              _.last(this.filter({array:{ref:e.target.dataset.ref}},10))
             )
@@ -577,6 +582,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         ).length
         
         for(var i = initialCount; i<fieldCount; i++) {
+            debugger;
             var newfield = gform.createField.call(this, field.parent, atts, field.el, i, field.item, null, null,i);
             field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
             field = newfield;

@@ -4,6 +4,9 @@
 table {
 	border-spacing: 0;
 	width: 100%;
+	tbody {
+		vertical-align: top;
+	}
 }
 td,
 th {
@@ -43,7 +46,6 @@ th {
 			display: flex;
 			overflow-x: auto;
 			white-space: nowrap;
-
 			tr {
 				border-right: solid .1rem $color-quinary;
 
