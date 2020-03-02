@@ -35,7 +35,7 @@
             {item:"",label: 'Table stuff',array:{}, name: 'label', type: 'table', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
             {name:"Name"},
               {name:"Choose",max:10,type:"select",format:{label:"Name&nbsp;{{value}}&nbsp;-&nbsp;{{index}}"}},
-              {label: 'Template stuff',array:{}, name: 'label', type: 'template', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+              {label: 'Template stuff',array:{}, name: 'label', type: 'fieldset', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
             {name:"Name"},
             {name:"color",type:"color"},
               {name:"Choose",max:10,type:"select"}

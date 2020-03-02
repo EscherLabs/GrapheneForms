@@ -234,7 +234,7 @@ modal_container:`<div class="modal modal-hide">
   </footer>
 </div>
 </div>`,
-template_item:`<div class="" style="overflow:hidden;padding:4px;margin:2px 0;border:solid 1px #ccc;border-radius:5px"><div style="">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`
+template_item:`<div class="input-template">{{>_actions}}<div class="gform-template_container">{{{format.template}}}</div></div>`
 };
 
 gform.columns = 12;

@@ -218,6 +218,7 @@ input[type=week],
 input[type=datetime],
 input[type=datetime-local],
 input:not([type]),
+div.input-template,
 textarea,
 select {
   -moz-appearance: none;
@@ -246,6 +247,7 @@ input[type=week]:focus,
 input[type=datetime]:focus,
 input[type=datetime-local]:focus,
 input:not([type]):focus,
+div.input-template:focus,
 textarea:focus,
 select:focus {
   border-color: #1690d8;
@@ -314,6 +316,12 @@ input:checked + label .trueLabel {
 
 input:checked + label .falseLabel {
   display: none;
+}
+
+div.input-template {
+  height: auto;
+  overflow: hidden;
+  margin: 10px 0;
 }
 
 /* The switch - the box around the slider */
@@ -748,7 +756,7 @@ ul.unstyled {
 }
 
 dl {
-  border: 3px double #ccc;
+  border: 1px solid #ccc;
   padding: 0.5em;
 }
 
