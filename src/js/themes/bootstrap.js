@@ -369,7 +369,7 @@ template:'<div><div class="col-xs-12"><button data-ref="{{array.ref}}" class="gf
 
 template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`,
 child_modal_footer:`<button class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
-table:'<div class="col-xs-12"><div style="overflow:scroll"><button data-ref="{{array.ref}}" class="gform-append btn btn-info pull-right">Add</button><h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
+table:'<div class="col-xs-12"><div style="overflow:scroll"><button data-ref="{{array.ref}}" class="gform-append btn btn-info pull-right">Add</button><h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead>{{#fields}}<th>{{label}}</th>{{/fields}}</thead><tbody></tbody></table></div></div>'
 };
 
 

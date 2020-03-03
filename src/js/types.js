@@ -1243,6 +1243,10 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
                 e.field.value = e.field.get();
                 e.field.update();
+                if(typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
+                    $.bootstrapSortable({ applyLast: true });
+                }
+
                 e.form.trigger('done', this);   
             }
         }.bind(null,this.id));

@@ -633,7 +633,13 @@ gform.normalizeField = function(fieldIn,parent){
     if(typeof field.value == "function" || (typeof field.value == "string" && field.value.indexOf('=') === 0))delete field.value;
 
     //keep required separate
-
+    if(field.array){
+        if(typeof field.array !== 'object'){
+            field.array = {};
+        }
+        field.array.ref = field.array.ref || gform.getUID();
+    }
+    
     // field.validate.required = field.validate.required|| field.required || false;
     if(typeof field.multiple == 'undefined' && typeof field.limit !== 'undefined' && field.limit>1)
     {
@@ -647,13 +653,6 @@ gform.normalizeField = function(fieldIn,parent){
     }
     // if((typeof fieldIn.label == 'undefined' || fieldIn.label == '') && (field.label == '' || typeof field.label == 'undefined') ){fieldIn.label = field.name;}
     field.item = _.extend(fieldIn,{});
-    if(field.array){
-        if(typeof field.array !== 'object'){
-            field.array = {};
-        }
-        field.array.ref = field.array.ref || gform.getUID();
-    }
-    
     return field;
 }
 
@@ -2787,6 +2786,10 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
                 e.field.value = e.field.get();
                 e.field.update();
+                if(typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
+                    $.bootstrapSortable({ applyLast: true });
+                }
+
                 e.form.trigger('done', this);   
             }
         }.bind(null,this.id));

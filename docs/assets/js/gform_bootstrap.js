@@ -633,7 +633,13 @@ gform.normalizeField = function(fieldIn,parent){
     if(typeof field.value == "function" || (typeof field.value == "string" && field.value.indexOf('=') === 0))delete field.value;
 
     //keep required separate
-
+    if(field.array){
+        if(typeof field.array !== 'object'){
+            field.array = {};
+        }
+        field.array.ref = field.array.ref || gform.getUID();
+    }
+    
     // field.validate.required = field.validate.required|| field.required || false;
     if(typeof field.multiple == 'undefined' && typeof field.limit !== 'undefined' && field.limit>1)
     {
@@ -647,13 +653,6 @@ gform.normalizeField = function(fieldIn,parent){
     }
     // if((typeof fieldIn.label == 'undefined' || fieldIn.label == '') && (field.label == '' || typeof field.label == 'undefined') ){fieldIn.label = field.name;}
     field.item = _.extend(fieldIn,{});
-    if(field.array){
-        if(typeof field.array !== 'object'){
-            field.array = {};
-        }
-        field.array.ref = field.array.ref || gform.getUID();
-    }
-    
     return field;
 }
 
@@ -2787,6 +2786,10 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
                 e.field.value = e.field.get();
                 e.field.update();
+                if(typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
+                    $.bootstrapSortable({ applyLast: true });
+                }
+
                 e.form.trigger('done', this);   
             }
         }.bind(null,this.id));
@@ -3723,7 +3726,7 @@ template:'<div><div class="col-xs-12"><button data-ref="{{array.ref}}" class="gf
 
 template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`,
 child_modal_footer:`<button class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
-table:'<div class="col-xs-12"><div style="overflow:scroll"><button data-ref="{{array.ref}}" class="gform-append btn btn-info pull-right">Add</button><h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
+table:'<div class="col-xs-12"><div style="overflow:scroll"><button data-ref="{{array.ref}}" class="gform-append btn btn-info pull-right">Add</button><h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead>{{#fields}}<th>{{label}}</th>{{/fields}}</thead><tbody></tbody></table></div></div>'
 };
 
 

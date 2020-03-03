@@ -237,7 +237,7 @@ modal_container:`<div class="modal modal-hide">
 template:'<div><div class="column column-100"><button data-ref="{{array.ref}}" class="gform-append float-right">Add</button><legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 template_item:`<div class="input-template"><div class="gform-template_container">{{{format.template}}}</div></div>`,
 child_modal_footer:`<button class="hidden-print button-outline gform-minus float-left" style="margin:0 15px">X Delete</button><button class="float-right hidden-print done" style="margin:0 15px"><i class="fa fa-check-o"></i>Done</button>`,
-table:'<div class="column column-100"><div style="overflow:scroll" class="column column-100"><button data-ref="{{array.ref}}" class="gform-append float-right">Add</button><h3>{{label}}</h3><hr style="margin: 15px 0 0;"><table class="sortable"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
+table:'<div class="column column-100"><div style="overflow:scroll" class="column column-100"><button data-ref="{{array.ref}}" class="gform-append float-right">Add</button><h3>{{label}}</h3><table class="sortable"><thead>{{#fields}}<th>{{label}}</th>{{/fields}}</thead><tbody></tbody></table></div></div>'
 
 
 };
