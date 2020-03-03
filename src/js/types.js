@@ -754,7 +754,14 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
       }
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
-gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section']);
+gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section'],{
+    row:function(){
+        if(this.array){
+            return gform.render('fieldset_array',this);
+        }
+    },
+    rowSelector:".gform-template_row"
+});
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
@@ -1125,8 +1132,8 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
 gform.types['template'] = _.extend({}, gform.types['input'], gform.types['section'],{
     row:function(){
         return gform.render('template',this);
-      },
-      rowSelector:".gform-template_row",
+    },
+    rowSelector:".gform-template_row",
     initialize: function() {
         this.rows = [];
         this.owner.on('appended', function(id,e){
@@ -1154,7 +1161,10 @@ gform.types['template'] = _.extend({}, gform.types['input'], gform.types['sectio
         return gform.m(gform.render('template_item',this),this)
     },
     edit: function(e){
-        if(!e.target.classList.contains('gform-minus') && !e.target.classList.contains('gform-add') && (this.el.querySelector('.gform-edit') == null || (this.el.querySelector('.gform-edit') && e.target.classList.contains('gform-edit') || this.el.querySelector('.gform-edit').contains(e.target)))){
+        if(e.target.classList.value.indexOf('gform-')<0 && e.target.parentElement.classList.value.indexOf('gform-')>=0){
+            target = e.target.parentElement;
+        }
+        if(!target.classList.contains('gform-minus') && !target.classList.contains('gform-add') && (this.el.querySelector('.gform-edit') == null || (this.el.querySelector('.gform-edit') && target.classList.contains('gform-edit') || this.el.querySelector('.gform-edit').contains(target)))){
             e.preventDefault();
 
 

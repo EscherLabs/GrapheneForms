@@ -54,6 +54,22 @@ dd {
     padding: 2px 4px;
     border-bottom: 1px solid #333;
   } */
+  .gform_isArray > fieldset:before {
+  content: "";
+  border: dashed 1px #102e7946;
+  border-right:0px;
+  width:10px;
+  position: absolute;
+  bottom: 5px;
+  left: 7px;
+  top: 0px;
+}
+fieldset .gform_isArray > fieldset:before {
+  left: 15px;
+}
+fieldset .gform_isArray > fieldset{
+  padding-left:10px
+}
 </style>
 
   </head>
@@ -84,12 +100,42 @@ dd {
     <script>
       options = {
           legend: 'Bootstrap - Table',
-          data:{label:[{color:"red"},{color:"blue"}]},
+          data:{
+  "label": [
+    {
+      "Name": "",
+      "Choose": "0",
+      "label": [
+        {
+          "Name": "",
+          "color": "#000000",
+          "Choose": "0"
+        },
+        {
+          "Name": "",
+          "color": "#000000",
+          "Choose": "0"
+        }
+      ]
+    },
+    {
+      "Name": "",
+      "Choose": "0",
+      "label": [
+        {
+          "Name": "",
+          "color": "#000000",
+          "Choose": "0"
+        }
+      ]
+    }
+  ]
+},
           fields:[
-            {item:"",label: 'Table stuff',array:{}, name: 'label', type: 'table', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+            {item:"",label: 'Table stuff',array:{}, name: 'label', type: 'fieldset', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
             {name:"Name"},
               {name:"Choose",max:10,type:"select",format:{label:"Name&nbsp;{{value}}&nbsp;-&nbsp;{{index}}"}},
-              {label: 'Template stuff',array:{}, name: 'label', type: 'template', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+              {label: 'Template stuff',array:{}, name: 'label', type: 'fieldset', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
             {name:"Name"},
             {name:"color",type:"color"},
               {name:"Choose",max:10,type:"select"}

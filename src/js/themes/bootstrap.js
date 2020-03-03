@@ -233,7 +233,9 @@ custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.dup
 	{{>_actions}}
 </div>
 </div>`,
-    _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
+fieldset_array:'<div><div class="col-xs-12">{{#append.enable}}<button data-ref="{{array.ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
+
+_fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
 <div data-name="{{name}}" data-ref="{{ref}}" class="btn-group hidden-print actions">
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}"  class="fa gform-minus fa-minus text-danger"></i></div>
@@ -241,14 +243,21 @@ custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.dup
 </div>
 {{/array}}
 {{^hideLabel}}
+{{^sibling}}
 {{#label}}<legend>{{{label}}}</legend>{{/label}}
+{{/sibling}}
 {{/hideLabel}}
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,
 	_actions: `{{#array}}
-	<div data-name="{{name}}" data-ref="{{ref}}" class="btn-group hidden-print actions pull-right">
-	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}" class="gform-minus fa fa-minus text-danger"></i></div>
-	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}" class="gform-add fa fa-plus text-success"></i></div>
+	<div data-name="{{name}}" data-ref="{{ref}}" data-parent="{{parent.id}}" class="btn-group hidden-print actions pull-right">
+	{{#remove.enable}}
+	<div data-id="{{id}}" class="btn btn-white gform-minus">{{remove.label}}{{^remove.label}}<i class="fa fa-minus text-danger"></i>{{/remove.label}}</div>
+	{{/remove.enable}}
+	{{#duplicate.enable}}
+	<div data-id="{{id}}" class="gform-add btn btn-white">{{duplicate.label}}{{^duplicate.label}}<i class="fa fa-plus text-success"></i>{{/duplicate.label}}</div>
+	{{/duplicate.enable}}
+
 	</div>
 	{{/array}}`,
     _label: `
@@ -365,11 +374,11 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form
 </div>
 `,
 modal_fieldset:`{{>_fieldset}}`,
-template:'<div><div class="col-xs-12"><button data-ref="{{array.ref}}" class="gform-append btn btn-info btn-xs pull-right"><i class="fa fa-plus"></i> Add</button><legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
+template:'<div><div class="col-xs-12">{{#append.enable}}<button data-ref="{{array.ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
 template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`,
 child_modal_footer:`<button class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
-table:'<div class="col-xs-12"><div style="overflow:scroll"><button data-ref="{{array.ref}}" class="gform-append btn btn-info pull-right">Add</button><h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead>{{#fields}}<th>{{label}}</th>{{/fields}}</thead><tbody></tbody></table></div></div>'
+table:'<div class="col-xs-12"><div style="overflow:scroll">{#append.enable}}<button data-ref="{{array.ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add{{/append.label}}</button>{{/append.enable}}<h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead>{{#fields}}<th>{{label}}</th>{{/fields}}</thead><tbody></tbody></table></div></div>'
 };
 
 
