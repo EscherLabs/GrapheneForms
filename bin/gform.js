@@ -2,6 +2,7 @@ var gform = function(optionsIn, el){
     "use strict";
     //event management        
     this.updateActions = function(field){
+        debugger;
         var fieldCount = field.parent.filter({array:{ref:field.array.ref}},1).length
 
         var testFunc = function(selector,status, button){
@@ -307,7 +308,7 @@ var gform = function(optionsIn, el){
             e.stopPropagation();
             e.preventDefault();
             var field = gform.addField.call(this,
-                _.last(this.find({id:target.dataset.parent}).filter({array:{ref:target.dataset.ref}},10))
+                _.last((this.find({id:target.dataset.parent}) || this).filter({array:{ref:target.dataset.ref}},10))
             )
             this.trigger('appended', field);
         }
@@ -652,7 +653,7 @@ gform.normalizeField = function(fieldIn,parent){
         if(typeof field.array !== 'object'){
             field.array = {};
         }
-        field.array = _.defaultsDeep(field.array,{max:5,min:1,duplicate:{enable:'auto',label:""},remove:{enable:'auto',label:""},append:{enable:true,label:"Add"}})
+        field.array = _.defaultsDeep(field.array,(gform.types[field.type]||{}).array,{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:true}})
         field.array.ref = field.array.ref || gform.getUID();
     }
     
@@ -1249,7 +1250,7 @@ gform.layout = function(field){
             }
         }
         if(field.sibling){
-            search.id = field.parent.filter({array:{ref:field.array.ref}},1)[0].row;
+            search.id = field.operator.filter({array:{ref:field.array.ref}},1)[0].row;
         }
         // debugger;
         var cRow  = _.findLast(field.operator.rows,search);
@@ -1269,8 +1270,8 @@ gform.layout = function(field){
 
                 if(typeof gform.types[field.type].rowSelector == 'string'){
                     cRow.appender = cRow.ref.querySelector(gform.types[field.type].rowSelector);
-                    debugger;
-                }else{
+                }
+                if(typeof cRow.appender == 'undefined' || cRow.appender == null){
                     cRow.appender = cRow.ref;
                 }
                 field.operator.rows = field.operator.rows || [];
@@ -2314,14 +2315,7 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
       }
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
-gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section'],{
-    row:function(){
-        if(this.array){
-            return gform.render('fieldset_array',this);
-        }
-    },
-    rowSelector:".gform-template_row"
-});
+
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
@@ -2688,12 +2682,24 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
         this.el.querySelector('[name="'+this.fields[0].id+'"]').focus();
     }
 });
-
+gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section'],{
+    // row:function(){
+    //     if(this.array){
+    //         return gform.render('fieldset_array',this);
+    //     }
+    // },
+    // rowSelector:".gform-template_row",
+    // array:{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:false}}
+    
+});
 gform.types['template'] = _.extend({}, gform.types['input'], gform.types['section'],{
     row:function(){
         return gform.render('template',this);
     },
     rowSelector:".gform-template_row",
+    array:
+        {max:5,min:1,duplicate:{enable:false},remove:{enable:true},append:{enable:true}}
+    ,
     initialize: function() {
         this.rows = [];
         this.owner.on('appended', function(id,e){
@@ -2794,9 +2800,13 @@ gform.types['template'] = _.extend({}, gform.types['input'], gform.types['sectio
 
 gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section'],{
     row:function(){
-        return gform.render('table',this);                
+        this.labels =_.filter(this.fields,function(item){
+            return !item.sibling
+        });//_.uniq(_.map(this.fields,'label'))
+        return gform.render('table',this);
     },
     rowSelector:"tbody",
+    array:{max:5,min:1,duplicate:{enable:false},remove:{enable:false},append:{enable:true},sortable:{enable:true}},
     initialize: function() {
         this.rows = [];
         this.owner.on('appended', function(id,e){
@@ -2813,7 +2823,8 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
                 e.field.value = e.field.get();
                 e.field.update();
-                if(typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
+                // debugger
+                if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
                     $.bootstrapSortable({ applyLast: true });
                 }
 

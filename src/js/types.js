@@ -754,14 +754,7 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
       }
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
-gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section'],{
-    row:function(){
-        if(this.array){
-            return gform.render('fieldset_array',this);
-        }
-    },
-    rowSelector:".gform-template_row"
-});
+
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
@@ -1128,12 +1121,24 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
         this.el.querySelector('[name="'+this.fields[0].id+'"]').focus();
     }
 });
-
+gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section'],{
+    // row:function(){
+    //     if(this.array){
+    //         return gform.render('fieldset_array',this);
+    //     }
+    // },
+    // rowSelector:".gform-template_row",
+    // array:{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:false}}
+    
+});
 gform.types['template'] = _.extend({}, gform.types['input'], gform.types['section'],{
     row:function(){
         return gform.render('template',this);
     },
     rowSelector:".gform-template_row",
+    array:
+        {max:5,min:1,duplicate:{enable:false},remove:{enable:true},append:{enable:true}}
+    ,
     initialize: function() {
         this.rows = [];
         this.owner.on('appended', function(id,e){
@@ -1234,9 +1239,13 @@ gform.types['template'] = _.extend({}, gform.types['input'], gform.types['sectio
 
 gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section'],{
     row:function(){
-        return gform.render('table',this);                
+        this.labels =_.filter(this.fields,function(item){
+            return !item.sibling
+        });//_.uniq(_.map(this.fields,'label'))
+        return gform.render('table',this);
     },
     rowSelector:"tbody",
+    array:{max:5,min:1,duplicate:{enable:false},remove:{enable:false},append:{enable:true},sortable:{enable:true}},
     initialize: function() {
         this.rows = [];
         this.owner.on('appended', function(id,e){
@@ -1253,7 +1262,8 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
                 e.field.value = e.field.get();
                 e.field.update();
-                if(typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
+                // debugger
+                if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
                     $.bootstrapSortable({ applyLast: true });
                 }
 

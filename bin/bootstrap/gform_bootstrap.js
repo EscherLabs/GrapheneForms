@@ -2,6 +2,7 @@ var gform = function(optionsIn, el){
     "use strict";
     //event management        
     this.updateActions = function(field){
+        debugger;
         var fieldCount = field.parent.filter({array:{ref:field.array.ref}},1).length
 
         var testFunc = function(selector,status, button){
@@ -307,7 +308,7 @@ var gform = function(optionsIn, el){
             e.stopPropagation();
             e.preventDefault();
             var field = gform.addField.call(this,
-                _.last(this.find({id:target.dataset.parent}).filter({array:{ref:target.dataset.ref}},10))
+                _.last((this.find({id:target.dataset.parent}) || this).filter({array:{ref:target.dataset.ref}},10))
             )
             this.trigger('appended', field);
         }
@@ -652,7 +653,7 @@ gform.normalizeField = function(fieldIn,parent){
         if(typeof field.array !== 'object'){
             field.array = {};
         }
-        field.array = _.defaultsDeep(field.array,{max:5,min:1,duplicate:{enable:'auto',label:""},remove:{enable:'auto',label:""},append:{enable:true,label:"Add"}})
+        field.array = _.defaultsDeep(field.array,(gform.types[field.type]||{}).array,{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:true}})
         field.array.ref = field.array.ref || gform.getUID();
     }
     
@@ -1249,7 +1250,7 @@ gform.layout = function(field){
             }
         }
         if(field.sibling){
-            search.id = field.parent.filter({array:{ref:field.array.ref}},1)[0].row;
+            search.id = field.operator.filter({array:{ref:field.array.ref}},1)[0].row;
         }
         // debugger;
         var cRow  = _.findLast(field.operator.rows,search);
@@ -1269,8 +1270,8 @@ gform.layout = function(field){
 
                 if(typeof gform.types[field.type].rowSelector == 'string'){
                     cRow.appender = cRow.ref.querySelector(gform.types[field.type].rowSelector);
-                    debugger;
-                }else{
+                }
+                if(typeof cRow.appender == 'undefined' || cRow.appender == null){
                     cRow.appender = cRow.ref;
                 }
                 field.operator.rows = field.operator.rows || [];
@@ -2314,14 +2315,7 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
       }
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
-gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section'],{
-    row:function(){
-        if(this.array){
-            return gform.render('fieldset_array',this);
-        }
-    },
-    rowSelector:".gform-template_row"
-});
+
 gform.types['select']   = _.extend({}, gform.types['input'], gform.types['collection'],{
     render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
@@ -2688,12 +2682,24 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
         this.el.querySelector('[name="'+this.fields[0].id+'"]').focus();
     }
 });
-
+gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['section'],{
+    // row:function(){
+    //     if(this.array){
+    //         return gform.render('fieldset_array',this);
+    //     }
+    // },
+    // rowSelector:".gform-template_row",
+    // array:{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:false}}
+    
+});
 gform.types['template'] = _.extend({}, gform.types['input'], gform.types['section'],{
     row:function(){
         return gform.render('template',this);
     },
     rowSelector:".gform-template_row",
+    array:
+        {max:5,min:1,duplicate:{enable:false},remove:{enable:true},append:{enable:true}}
+    ,
     initialize: function() {
         this.rows = [];
         this.owner.on('appended', function(id,e){
@@ -2794,9 +2800,13 @@ gform.types['template'] = _.extend({}, gform.types['input'], gform.types['sectio
 
 gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section'],{
     row:function(){
-        return gform.render('table',this);                
+        this.labels =_.filter(this.fields,function(item){
+            return !item.sibling
+        });//_.uniq(_.map(this.fields,'label'))
+        return gform.render('table',this);
     },
     rowSelector:"tbody",
+    array:{max:5,min:1,duplicate:{enable:false},remove:{enable:false},append:{enable:true},sortable:{enable:true}},
     initialize: function() {
         this.rows = [];
         this.owner.on('appended', function(id,e){
@@ -2813,7 +2823,8 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
                 e.field.value = e.field.get();
                 e.field.update();
-                if(typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
+                // debugger
+                if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
                     $.bootstrapSortable({ applyLast: true });
                 }
 
@@ -3617,7 +3628,7 @@ custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.dup
 	{{>_actions}}
 </div>
 </div>`,
-fieldset_array:'<div><div class="col-xs-12">{{#append.enable}}<button data-ref="{{array.ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
+fieldset_array:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
 _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
@@ -3625,11 +3636,13 @@ _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{nam
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}"  class="fa gform-minus fa-minus text-danger"></i></div>
 	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}"  class="gform-add fa fa-plus text-success"></i></div>
 </div>
+{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}
 {{/array}}
 {{^hideLabel}}
-{{^sibling}}
+{{^array}}
 {{#label}}<legend>{{{label}}}</legend>{{/label}}
-{{/sibling}}
+{{/array}}
+
 {{/hideLabel}}
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,
@@ -3758,11 +3771,11 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form
 </div>
 `,
 modal_fieldset:`{{>_fieldset}}`,
-template:'<div><div class="col-xs-12">{{#append.enable}}<button data-ref="{{array.ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
+template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
 template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`,
 child_modal_footer:`<button class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
-table:'<div class="col-xs-12"><div style="overflow:scroll">{#append.enable}}<button data-ref="{{array.ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add{{/append.label}}</button>{{/append.enable}}<h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead>{{#fields}}<th>{{label}}</th>{{/fields}}</thead><tbody></tbody></table></div></div>'
+table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right" style="top: 22px;position: relative;">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
 };
 
 

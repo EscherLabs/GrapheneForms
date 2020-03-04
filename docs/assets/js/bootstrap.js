@@ -233,7 +233,7 @@ custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.dup
 	{{>_actions}}
 </div>
 </div>`,
-fieldset_array:'<div><div class="col-xs-12">{{#append.enable}}<button data-ref="{{array.ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
+fieldset_array:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
 _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
@@ -241,11 +241,13 @@ _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{nam
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}"  class="fa gform-minus fa-minus text-danger"></i></div>
 	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}"  class="gform-add fa fa-plus text-success"></i></div>
 </div>
+{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}
 {{/array}}
 {{^hideLabel}}
-{{^sibling}}
+{{^array}}
 {{#label}}<legend>{{{label}}}</legend>{{/label}}
-{{/sibling}}
+{{/array}}
+
 {{/hideLabel}}
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,
@@ -374,11 +376,11 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form
 </div>
 `,
 modal_fieldset:`{{>_fieldset}}`,
-template:'<div><div class="col-xs-12">{{#append.enable}}<button data-ref="{{array.ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
+template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
 template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`,
 child_modal_footer:`<button class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
-table:'<div class="col-xs-12"><div style="overflow:scroll">{#append.enable}}<button data-ref="{{array.ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add{{/append.label}}</button>{{/append.enable}}<h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed sortable"><thead>{{#fields}}<th>{{label}}</th>{{/fields}}</thead><tbody></tbody></table></div></div>'
+table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right" style="top: 22px;position: relative;">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
 };
 
 
