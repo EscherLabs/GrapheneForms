@@ -191,7 +191,7 @@ contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}is
 			{{#options}}
 			{{#multiple}}
 			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
-					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{label}}</label>
+					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
 			</div>
 			{{/multiple}}
 			{{^multiple}}
@@ -378,7 +378,7 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form
 modal_fieldset:`{{>_fieldset}}`,
 template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
-template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}</div></div>`,
+template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{value}}}{{/format.template}}</div></div>`,
 child_modal_footer:`<button class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
 table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right" style="top: 22px;position: relative;">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
 };
@@ -434,7 +434,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 	toString: function(name,display){
 		this.value = this.get();//shouldn't need this here - but we do for now
 		if(!display){
-			return '<dt>'+this.label+'</dt> <dd><div style="white-space:nowrap"><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:'+this.value+';"></span> '+(this.value||'(empty)')+'</div></dd><hr>'
+			return '<dt>'+this.label+'</dt> <dd><div style="white-space:nowrap"><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:'+this.value+';"></span> '+(this.value||'<span class="text-muted">(empty)</span>')+'</div></dd><hr>'
 		}else{
               return this.value
 		}

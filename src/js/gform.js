@@ -320,16 +320,19 @@ var gform = function(optionsIn, el){
     return this;
 }
 gform.addField = function(field){
+debugger;
+    // var fieldCount = _.filter(field.parent.fields, 
+    //     function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
+    // ).length
+    var fieldCount = field.parent.filter({array:{ref:field.array.ref}}).length
 
-    var fieldCount = _.filter(field.parent.fields, 
-        function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
-    ).length
     var newField;
     if(field.editable && fieldCount < (field.array.max || 5)){
         var index = _.findIndex(field.parent.fields, {id: field.id});
         var atts = {};
         atts[field.name] = [field.item.value || null];
-        newField = gform.createField.call(this, field.parent, atts, field.el ,null, field.item,null,null,fieldCount);
+        
+        newField = gform.createField.call(this, field.parent, atts, field.el ,null, _.extend({},field.item,{array:field.array}),null,null,fieldCount);
         field.parent.fields.splice(index+1, 0, newField)
         gform.addConditions.call(this,newField);
         gform.each.call(newField, gform.addConditions)
@@ -360,9 +363,11 @@ gform.addField = function(field){
     return newField;
 }
 gform.removeField = function(field){
-    var fieldCount =  _.filter(field.parent.fields, 
-        function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
-    ).length;
+    // var fieldCount =  _.filter(field.parent.fields, 
+    //     function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
+    // ).length;
+    var fieldCount = field.parent.filter({array:{ref:field.array.ref}}).length
+
     if(field.editable && fieldCount > (field.array.min || 1)) {
         // Clean up events this field created as part of conditionals
         if(typeof field.eventlist !== 'undefined'){
@@ -597,7 +602,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         ).length
         
         for(var i = initialCount; i<fieldCount; i++) {
-            var newfield = gform.createField.call(this, field.parent, atts, field.el, i, field.item, null, null,i);
+            var newfield = gform.createField.call(this, field.parent, atts, field.el, i, _.extend({},field.item,{array:field.array}), null, null,i);
             field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
             field = newfield;
         }
@@ -653,6 +658,7 @@ gform.normalizeField = function(fieldIn,parent){
         if(typeof field.array !== 'object'){
             field.array = {};
         }
+        debugger;
         field.array = _.defaultsDeep(field.array,(gform.types[field.type]||{}).array,{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:true}})
         field.array.ref = field.array.ref || gform.getUID();
     }
@@ -1417,7 +1423,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             return this.toString();
         })
     });
-        Object.defineProperty(field, "sibling",{
+    Object.defineProperty(field, "sibling",{
         get: function(){
             var types = this.parent.filter({array:{ref:this.array.ref}},1);
             return (types.length && types[0] !== this );

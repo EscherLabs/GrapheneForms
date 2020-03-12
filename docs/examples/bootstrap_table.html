@@ -214,6 +214,26 @@ fieldset .gform_isArray > fieldset{
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
+      myconditions=[
+	{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
+		return true;
+	}}]},
+	{type: 'fieldset',label:false,name:"conditions",columns:12,fields:
+	[
+		{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
+		{label: 'Name',name:"name",show:[{type:'matches',name:"type",value:["matches","not_matches","contains","requires"]}]},
+		{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1},show:[{type:'matches',name:"type",value:["matches","not_matches","contains"]}]},
+		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:'matches',name:"type",value:"conditions"}]},
+		{label:'Condition',name:'conditions',columns:10,offset:1,type:'fieldset',array:true,show:[{type:'matches',name:"type",value:"conditions"}],fields:[
+			{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires']},
+			{label: 'Name',name:"name"},
+			{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1}}
+		]}
+	]
+	,array:true},
+
+	
+]
       options = {
           legend: 'Bootstrap - Table',
           data:{
@@ -247,18 +267,20 @@ fieldset .gform_isArray > fieldset{
     }
   ]
 },
-          fields:[
-            {item:"",label: 'Table stuff',array:{}, name: 'label', type: 'fieldset', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
-            {name:"Name"},
-              {name:"Choose",max:10,type:"select",format:{label:"Name&nbsp;{{value}}&nbsp;-&nbsp;{{index}}"}},
-              {label: 'Template stuff',array:{}, name: 'label', type: 'fieldset', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
-            {name:"Name"},
-            {name:"color",type:"color"},
-              {name:"Choose",max:10,type:"select"}
-            ]}
-            ]}
-          ]
+          // fields:[
+          //   {item:"",label: 'Table stuff',array:{}, name: 'label', type: 'table', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+          //   {name:"Name"},
+          //     {name:"Choose",max:10,type:"select",format:{label:"Name&nbsp;{{value}}&nbsp;-&nbsp;{{index}}"}},
+          //     {label: 'Template stuff',array:{}, name: 'label', type: 'template', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+          //   {name:"Name"},
+          //   {name:"color",type:"color"},
+          //     {name:"Choose",max:10,type:"select"}
+          //   ]}
+          //   ]},
+          // ]
       }
+      options.fields = 	[{type: 'fieldset',columns:11,offset:'1', label:false,name:"show",fields:myconditions,array:{min:1,max:1}}]
+
     </script>
     <script src="../assets/js/example.js"></script>   
 
