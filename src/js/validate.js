@@ -48,7 +48,7 @@ gform.validateItem = function(force,item){
 	}
 	item.owner.errors[item.name] = item.errors;
 	item.owner.valid = item.valid && item.owner.valid;
-
+	return item.valid;
 
 };
 

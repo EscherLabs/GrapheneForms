@@ -1370,7 +1370,10 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
 gform.types['custom_radio'] = _.extend({}, gform.types['input'], gform.types['collection'], {
     set: function(value) {
-        this.el.querySelector('[data-value="'+value+'"]').click();
+        var target = this.el.querySelector('[data-value="'+value+'"]');
+        if(target !== null){
+            target.click();
+        }
     },		
     defaults: {
         selectedClass: 'btn btn-success',

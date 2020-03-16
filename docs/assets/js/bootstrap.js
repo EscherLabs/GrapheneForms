@@ -191,7 +191,7 @@ contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}is
 			{{#options}}
 			{{#multiple}}
 			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
-					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{label}}</label>
+					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
 			</div>
 			{{/multiple}}
 			{{^multiple}}

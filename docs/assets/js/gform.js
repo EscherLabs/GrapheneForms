@@ -2937,7 +2937,10 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
 gform.types['custom_radio'] = _.extend({}, gform.types['input'], gform.types['collection'], {
     set: function(value) {
-        this.el.querySelector('[data-value="'+value+'"]').click();
+        var target = this.el.querySelector('[data-value="'+value+'"]');
+        if(target !== null){
+            target.click();
+        }
     },		
     defaults: {
         selectedClass: 'btn btn-success',
@@ -3287,7 +3290,7 @@ gform.validateItem = function(force,item){
 	}
 	item.owner.errors[item.name] = item.errors;
 	item.owner.valid = item.valid && item.owner.valid;
-
+	return item.valid;
 
 };
 
