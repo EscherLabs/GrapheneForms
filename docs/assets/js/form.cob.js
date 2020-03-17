@@ -203,7 +203,7 @@ baseConditions = baseCond.concat(_.map([
 
 
 if(typeof workflow == 'undefined'){
-	baseConditions = baseCond.concat(_.map([
+	baseConditions = baseConditions.concat(_.map([
 		{type: 'textarea', label: 'Template', name: 'template',columns:12,parse:[{type:"requires"}]},
 
 		{type: 'fieldset', label: false, array: {min:1,max:100},columns:12,parse:[{type:"requires"}], name: 'data', 

@@ -122,7 +122,7 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<div class="btn-group" role="group" aria-label="...">
-								<a class="btn btn-success" onclick="new gform(_.extend(JSON.parse($.jStorage.get('form')),{name:'modal'}) ).modal().on('cancel',function(e){e.form.trigger('close')})">Preview </a>
+								<a class="btn btn-success" onclick="new gform(_.extend(JSON.parse($.jStorage.get('form')),{name:'modal'}) ).modal().on('save',function(e){if(e.form.validate()){e.form.trigger('close')}}).on('cancel',function(e){e.form.trigger('close')})">Preview </a>
 								<a class="btn btn-info" onclick="new gform({legend:'Descriptor',fields:[{type:'textarea',name:'descriptor',size:25,value:$.jStorage.get('form') }]}).modal().on('save',function(e){$.jStorage.set('form', e.form.get('descriptor'))}).on('cancel',function(e){e.form.trigger('close')})">Descriptor </a>
 								<!-- <a class="btn btn-info" href="examples/">Examples</a> -->
 							</div>
