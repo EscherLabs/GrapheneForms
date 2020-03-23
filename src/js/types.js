@@ -150,22 +150,30 @@ gform.types = {
   'bool':{
 
       base:'bool',
-      defaults:{options:[false, true]},
+      display: function(){
+        //   return (_.find(this.options,{value:this.value})||{label:''}).label
+        return ((_.find(this.options,{value:this.value})||{label:''}).label || this.value);
+      },
+      defaults:{options:[false, true],format:{value:function(e){return e.value}}},
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
         if(!this.strict && this.options[0]==false && this.options[1]==true){
             this.value = (!!this.value);
         }
         if(typeof this.mapOptions == 'undefined'){
-
+        
           this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.on('change',function(){
               this.options = this.mapOptions.getoptions()
+              if(typeof this.options[0].value == 'undefined'){this.options[0].value = false;this.options[0].selected = (this.value == false);}
+              if(typeof this.options[1].value == 'undefined'){this.options[1].value = true;this.options[1].selected = (this.value == true);}
+
               this.update();
           }.bind(this))
         }
         this.options = this.mapOptions.getoptions()
-
+        if(typeof this.options[0].value == 'undefined'){this.options[0].value = false;this.options[0].selected = (this.value == false);}
+        if(typeof this.options[1].value == 'undefined' || (this.options[0].value == '' && this.options[1].value == '')){this.options[1].value = true;this.options[1].selected = (this.value == true);}
         //   this.selected = (this.value == this.options[1].value);
           return gform.render(this.type, this);
 
@@ -194,11 +202,10 @@ gform.types = {
           this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
       },
       set: function(value) {
-        //   this.selected = (value == this.options[1].value);
-          this.el.querySelector('input[name="' + this.name + '"]').checked = (value == this.options[1].value);
+            this.el.querySelector('input[name="' + this.name + '"]').checked = (value == this.options[1].value);
       },
       get: function() {
-          return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0].value
+          return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0].value;
       },satisfied: function(value) {
 
         value = value||this.value;
@@ -548,7 +555,7 @@ gform.types = {
     //   },
 
     display: function() {
-        return '<div class="list-group-item ">'+gform.toString.call(this, name)+'</div>';              
+        return '<div class="list-group-item ">'+this.toString()+'</div>';              
       },
       set: function(value){
         if(value == null || value == ''){
@@ -726,7 +733,7 @@ gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:
 gform.types['output']   = _.extend({}, gform.types['input'], {
     toString: function(){return ''},
     display: function(){
-        return gform.renderString((this.format|| {}).value||'{{{value}}}', this);
+        return gform.renderString((this.format|| {}).value||'{{{value}}}', this,'display');
     },
     render: function(){
         return gform.render(this.type, this);

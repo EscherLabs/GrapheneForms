@@ -2,7 +2,6 @@ var gform = function(optionsIn, el){
     "use strict";
     //event management        
     this.updateActions = function(field){
-        debugger;
         var fieldCount = field.parent.filter({array:{ref:field.array.ref}},1).length
 
         var testFunc = function(selector,status, button){
@@ -658,7 +657,6 @@ gform.normalizeField = function(fieldIn,parent){
         if(typeof field.array !== 'object'){
             field.array = {};
         }
-        debugger;
         field.array = _.defaultsDeep(field.array,(gform.types[field.type]||{}).array,{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:true}})
         field.array.ref = field.array.ref || gform.getUID();
     }
@@ -1157,14 +1155,22 @@ gform.collectionManager = function(refObject){
 
 gform.collections =  new gform.collectionManager()
 
-gform.render = function(template, options) {
-    return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options, _.pick(options,'path','name','label','value','display','id','count','valid','visible','parseable','editable','errors','index','sibling')))
+gform.render = function(template, options,omit) {
+    var pick = [];
+    if('omit' !== 'all'){
+        var pick = _.omit(['path','name','label','value','display','id','count','valid','visible','parseable','editable','errors','index','sibling'],omit||[]);
+    }
+    return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options, _.pick(options,pick)))
   }
   gform.create = function(text) {
    return document.createRange().createContextualFragment(text).firstChild;
   }
-  gform.renderString = function(string,options) {
-    return gform.m(string || '', _.extend({},options, _.pick(options||{},'path','name','label','value','display','id','count','valid','visible','parseable','editable','errors','index','sibling')))
+  gform.renderString = function(string,options,omit) {
+    var pick = [];
+    if('omit' !== 'all'){
+        var pick = _.omit(['path','name','label','value','display','id','count','valid','visible','parseable','editable','errors','index','sibling'],omit||[]);
+    }
+    return gform.m(string || '', _.extend({},options, _.pick(options||{},pick)))
   }
   
   // add some classes. Eg. 'nav' and 'nav header'
@@ -1419,9 +1425,16 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.get = field.get || gform.types[field.type].get.bind(field);
     field.toString = gform.types[field.type].toString.bind(field);
     Object.defineProperty(field, "display", {
-        get: (gform.types[field.type].display||function(){
+        // get: (gform.types[field.type].display||function(){
+        //     return this.toString();
+        // })
+        get: function(){
+            //(gform.types[field.type].display.bind(this)||
+            if(typeof gform.types[field.type].display !== 'undefined'){
+                return gform.types[field.type].display.call(this)
+            }
             return this.toString();
-        })
+        }
     });
     Object.defineProperty(field, "sibling",{
         get: function(){
@@ -1717,22 +1730,30 @@ gform.types = {
   'bool':{
 
       base:'bool',
-      defaults:{options:[false, true]},
+      display: function(){
+        //   return (_.find(this.options,{value:this.value})||{label:''}).label
+        return ((_.find(this.options,{value:this.value})||{label:''}).label || this.value);
+      },
+      defaults:{options:[false, true],format:{value:function(e){return e.value}}},
       render: function() {
         //   this.options = gform.mapOptions.call(this,this, this.value);
         if(!this.strict && this.options[0]==false && this.options[1]==true){
             this.value = (!!this.value);
         }
         if(typeof this.mapOptions == 'undefined'){
-
+        
           this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
           this.mapOptions.on('change',function(){
               this.options = this.mapOptions.getoptions()
+              if(typeof this.options[0].value == 'undefined'){this.options[0].value = false;this.options[0].selected = (this.value == false);}
+              if(typeof this.options[1].value == 'undefined'){this.options[1].value = true;this.options[1].selected = (this.value == true);}
+
               this.update();
           }.bind(this))
         }
         this.options = this.mapOptions.getoptions()
-
+        if(typeof this.options[0].value == 'undefined'){this.options[0].value = false;this.options[0].selected = (this.value == false);}
+        if(typeof this.options[1].value == 'undefined' || (this.options[0].value == '' && this.options[1].value == '')){this.options[1].value = true;this.options[1].selected = (this.value == true);}
         //   this.selected = (this.value == this.options[1].value);
           return gform.render(this.type, this);
 
@@ -1761,11 +1782,10 @@ gform.types = {
           this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
       },
       set: function(value) {
-        //   this.selected = (value == this.options[1].value);
-          this.el.querySelector('input[name="' + this.name + '"]').checked = (value == this.options[1].value);
+            this.el.querySelector('input[name="' + this.name + '"]').checked = (value == this.options[1].value);
       },
       get: function() {
-          return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0].value
+          return this.options[this.el.querySelector('input[name="' + this.name + '"]').checked?1:0].value;
       },satisfied: function(value) {
 
         value = value||this.value;
@@ -2115,7 +2135,7 @@ gform.types = {
     //   },
 
     display: function() {
-        return '<div class="list-group-item ">'+gform.toString.call(this, name)+'</div>';              
+        return '<div class="list-group-item ">'+this.toString()+'</div>';              
       },
       set: function(value){
         if(value == null || value == ''){
@@ -2293,7 +2313,7 @@ gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:
 gform.types['output']   = _.extend({}, gform.types['input'], {
     toString: function(){return ''},
     display: function(){
-        return gform.renderString((this.format|| {}).value||'{{{value}}}', this);
+        return gform.renderString((this.format|| {}).value||'{{{value}}}', this,'display');
     },
     render: function(){
         return gform.render(this.type, this);
@@ -3404,6 +3424,18 @@ gform.validations =
 		}
 	}
 };gform.stencils = {
+	_style:`input + .falseLabel {
+		display: inline;
+	  }
+	  input + .falseLabel+ .trueLabel {
+		display: none;
+	  }
+	  input:checked + .falseLabel + .trueLabel {
+		display: inline;
+	  }
+	  input:checked + .falseLabel {
+		display: none;
+	  }`,
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
 _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
 text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
@@ -3689,7 +3721,7 @@ _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{nam
 	{{/label}}
 		<div class="checkbox">
 			<label class="{{alt-display}}">
-				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{#display}}<span class="noselect">{{{display}}}</span>{{/display}}&nbsp;
+				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}><span class="falseLabel">{{{options.0.label}}}</span><span class="trueLabel">{{{options.1.label}}}</span>&nbsp;
 			</label>
 		</div>
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
@@ -4061,7 +4093,8 @@ gform.prototype.modal = function(data){
 	// $(this.el).modal(data)
 	return this;
 }
-gform.stencils.smallcombo = `
+// debugger;
+document.body.appendChild(gform.create('<style>'+gform.render('_style',{},'all')+'</style>'));gform.stencils.smallcombo = `
 <div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
 	{{>_label}}
 	{{#label}}

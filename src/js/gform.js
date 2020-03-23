@@ -2,7 +2,6 @@ var gform = function(optionsIn, el){
     "use strict";
     //event management        
     this.updateActions = function(field){
-        debugger;
         var fieldCount = field.parent.filter({array:{ref:field.array.ref}},1).length
 
         var testFunc = function(selector,status, button){
@@ -658,7 +657,6 @@ gform.normalizeField = function(fieldIn,parent){
         if(typeof field.array !== 'object'){
             field.array = {};
         }
-        debugger;
         field.array = _.defaultsDeep(field.array,(gform.types[field.type]||{}).array,{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:true}})
         field.array.ref = field.array.ref || gform.getUID();
     }
@@ -1157,14 +1155,22 @@ gform.collectionManager = function(refObject){
 
 gform.collections =  new gform.collectionManager()
 
-gform.render = function(template, options) {
-    return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options, _.pick(options,'path','name','label','value','display','id','count','valid','visible','parseable','editable','errors','index','sibling')))
+gform.render = function(template, options,omit) {
+    var pick = [];
+    if('omit' !== 'all'){
+        var pick = _.omit(['path','name','label','value','display','id','count','valid','visible','parseable','editable','errors','index','sibling'],omit||[]);
+    }
+    return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options, _.pick(options,pick)))
   }
   gform.create = function(text) {
    return document.createRange().createContextualFragment(text).firstChild;
   }
-  gform.renderString = function(string,options) {
-    return gform.m(string || '', _.extend({},options, _.pick(options||{},'path','name','label','value','display','id','count','valid','visible','parseable','editable','errors','index','sibling')))
+  gform.renderString = function(string,options,omit) {
+    var pick = [];
+    if('omit' !== 'all'){
+        var pick = _.omit(['path','name','label','value','display','id','count','valid','visible','parseable','editable','errors','index','sibling'],omit||[]);
+    }
+    return gform.m(string || '', _.extend({},options, _.pick(options||{},pick)))
   }
   
   // add some classes. Eg. 'nav' and 'nav header'
@@ -1419,9 +1425,16 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     field.get = field.get || gform.types[field.type].get.bind(field);
     field.toString = gform.types[field.type].toString.bind(field);
     Object.defineProperty(field, "display", {
-        get: (gform.types[field.type].display||function(){
+        // get: (gform.types[field.type].display||function(){
+        //     return this.toString();
+        // })
+        get: function(){
+            //(gform.types[field.type].display.bind(this)||
+            if(typeof gform.types[field.type].display !== 'undefined'){
+                return gform.types[field.type].display.call(this)
+            }
             return this.toString();
-        })
+        }
     });
     Object.defineProperty(field, "sibling",{
         get: function(){

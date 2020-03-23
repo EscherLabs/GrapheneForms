@@ -92,7 +92,7 @@ baseFields = _.map([
 		{type: 'number', label: 'Minimum', name: 'min',placeholder:1},
 		{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
 	]},
-	{type: 'textarea',columns:12, label: 'Template', name: 'template',parse:[{type:"requires"}]}
+	// {type: 'textarea',columns:12, label: 'Template', name: 'template',parse:[{type:"requires"}]}
 
 ],function(item){
 	item.target = "#collapseDisplay .panel-body";
@@ -194,7 +194,7 @@ baseConditions = baseCond.concat(_.map([
 		{type: 'select',other:true,value:true,columns:12, label:"Apply",name:"conditions", show:[{name:"type",value:['none'],type:"not_matches"}], options:		
 			[{label:'Always',value:true},{label:"Conditionally",value:"other"}]
 		},
-		{type: 'fieldset',columns:11,offset:1, label:"{{index}}{{^index}}Conditions{{/index}}",name:"conditions",fields:myconditions,array:{min:1,max:1},show:[{name:"conditions",value:['other'],type:"matches"}]}
+		{type: 'fieldset',columns:11,offset:1, label:"Conditions",name:"conditions",fields:myconditions,array:{min:1,max:1},show:[{name:"conditions",value:['other'],type:"matches"}]}
 	],array:true}
 ],function(item){
 	item.target = "#collapseValidation .panel-body";
@@ -208,8 +208,8 @@ if(typeof workflow == 'undefined'){
 
 		{type: 'fieldset', label: false, array: {min:1,max:100},columns:12,parse:[{type:"requires"}], name: 'data', 
 		fields: [
-			{label: 'Key', name:"key"},
-			{label: 'Value', name:"value"}
+			{label: 'Key', name:"key",parse:[{type:"requires"},{type:"requires",name:"value"}]},
+			{label: 'Value', name:"value",parse:[{type:"requires"},{type:"requires",name:"key"}]}
 		]
 	}
 	],function(item){
@@ -567,9 +567,12 @@ Cobler.types.bool = function(container) {
 		return _.extend({},item);
 	}
 	function toJSON() {
-
-		return _.omit(get(),'widgetType','editable')
-		// return  _.transform(get(),function(r,v) {_.extend(r,v)},{});//get();
+		var temp = _.omit(get(),'widgetType','editable')
+		temp.options = _.map(temp.options,function(i){return _.omit(i,'selected')});
+		if(_.isEmpty(temp.options[0]) && _.isEmpty(temp.options[1])){
+			temp = _.omit(temp,'options')
+		}
+		return temp;
 	}
 	function set(newItem) {
 		newItem.display = newItem.display||newItem.details;
@@ -587,8 +590,8 @@ Cobler.types.bool = function(container) {
 			{label: 'Switch', value: 'switch'}
 		]}
 	].concat(baseFields,baseConditions,_.map([{type: 'fieldset', label: false, array: {min:2,max:2},columns:12, name: 'options', fields: [
-		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Label','name':'label'},
-		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Value','name':'value'},
+		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Label','name':'label',parse:[{type:"requires"}]},
+		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Value','name':'value',parse:[{type:"requires"}]},
 	]}],function(item){
 		item.target = "#collapseOptions .panel-body";
 		return item;
@@ -656,7 +659,7 @@ Cobler.types.section = function(container) {
 			{type: 'number', label: 'Minimum', name: 'min',placeholder:1},
 			{type: 'number', label: 'Maximum', name: 'max',placeholder:5}
 		]},
-		{target:"#collapseDisplay .panel-body", type: 'textarea',columns:12, label: 'Template', name: 'template',parse:[{type:"requires"}]},
+		// {target:"#collapseDisplay .panel-body", type: 'textarea',columns:12, label: 'Template', name: 'template',parse:[{type:"requires"}]},
 
 		{target: "#display",columns:9, type:"button",modifiers:"btn btn-default pull-left margin-bottom",label:"Manage Section",action:"manage",name:"manage",show:[{type:"test",name:"manage",test:function(e){
             return !e.owner.options.nomanage;

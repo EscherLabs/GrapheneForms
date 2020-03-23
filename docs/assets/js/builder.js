@@ -105,7 +105,7 @@ mainForm = function(){
         {name:"legend",label:"Label"},
         {name:"name",label:"Name"},
         {name:"default",label:false,type:'fieldset',fields:[
-          {name:"horizontal",label:"Horizontal",type:"checkbox"}
+          {name:"horizontal",label:"Horizontal",type:"checkbox",options:[{label:""},{label:"Yes"}]}
         ]},
         {name:"horizontal",label:"Horizontal",value:true,type:"checkbox",show:false,parse:true},
         {type: 'switch',format:{label:""}, label: 'Custom Actions', name: 'actions', show:[{name:"type",value:['output'],type:"not_matches"}],parse:[{type:"not_matches",name:"actions",value:false}]},

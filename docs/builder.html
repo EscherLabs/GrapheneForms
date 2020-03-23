@@ -83,6 +83,18 @@
 			.slider.round:before {
 			  border-radius: 50%;
 			}
+input + .falseLabel {
+  display: inline;
+}
+input + .falseLabel+ .trueLabel {
+  display: none;
+}
+input:checked + .falseLabel + .trueLabel {
+  display: inline;
+}
+input:checked + .falseLabel {
+  display: none;
+}
 			</style>
 	</head>
 
