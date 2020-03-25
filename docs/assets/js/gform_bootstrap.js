@@ -1504,7 +1504,6 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         field.filter = gform.types[field.type].filter.bind(field) || null;
     }
 
-
             //if(!this.options.clear) field.target = field.target;//||'[name="'+field.name+'"],[data-inline="'+field.name+'"]';
 
     if(!field.section){// && (this.options.clear || field.isChild)){
@@ -1793,8 +1792,7 @@ gform.types = {
       },
       toString: function(name,report){
         if(!report){
-          return '<dt>'+this.label||this.name+'</dt> <dd>'+(this.value||'<span class="text-muted">(empty)</span>')+'</dd><hr>'
-
+            return '<dt>'+(this.label||this.name)+'</dt> <dd>'+(this.display||'<span class="text-muted">(empty)</span>')+'</dd><hr>'
         }else{
             return this.value
         }
@@ -2580,6 +2578,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       }
   },
   set:function(value){
+      debugger;
     if(this.multiple){
         if(!_.isArray(value)){
           value = [value]
@@ -2589,6 +2588,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         //    option.checked = (value.indexOf(option.value)>=0)
            var search = _.find(this.list,{i:parseInt(option.value)})
            option.selected =  (typeof search !== 'undefined' && value.indexOf(search.value)>=0);
+           option.checked =  (typeof search !== 'undefined' && value.indexOf(search.value)>=0);
 
            
         }.bind(this))
@@ -2614,7 +2614,50 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
 
 gform.types['scale']    = _.extend({}, gform.types['radio']);
 gform.types['checkboxes']    = _.extend({}, gform.types['radio'],{multiple:true});
+gform.types['_grid_row'] = _.extend({}, gform.types['hidden'],{
+    toString: function(name,report){
+        if(!report){
+            if(this.multiple){
+                if(this.value.length){
+                    return _.reduce(this.value,function(returnVal,item){
+                        var lookup = _.find(this.list,{value:item});
+                        if(typeof lookup !== 'undefined'){
+                            returnVal+='<span>'+lookup.label+'</span>'                        
+                        }
+                        return returnVal;
+                    }.bind(this),'<tr><td style="width:20%">'+this.label+'</td><td>')+'</td><tr>'
+                }else{
+                    return '<tr><td style="width:20%">'+this.label+'</td> <td><span class="text-muted">(no selection)</span></td></tr>';
+                }
+            }else{
+                debugger;
+                return '<tr><td style="width:20%">'+this.label+'</td> <td>'+((_.find(this.parent.list,{value:this.parent.value[this.name]})||{label:""}).label||'<span class="text-muted">(no selection)</span>')+'</td></tr>';
+            }
+        }else{
+            if(this.multiple){
+                if(this.value.length){
+                    return _.reduce(this.value,function(returnVal,item){
+                        var lookup = _.find(this.list,{value:item});
+                        returnVal.push(lookup.label)
+                        return returnVal;
+                    }.bind(this),[])+'<hr>'
+                }else{
+                    return '';
+                }
+            }else{
+                return (_.find(this.list,{value:this.value})||{label:""}).label;
+            } 
+        }
+      },
+})
 gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'], gform.types['collection'],{
+    toString: function(name, report) {
+        if(!report){
+          return '<dt>'+this.label+'</dt><dd><table class="table table-bordered">'+gform.toString.call(this, name)+'</table></dd><hr>';
+        }else{
+          return gform.toString.call(this, name,report);
+        }
+    },
     render: function() {
         // this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
@@ -2654,7 +2697,14 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
                     field.maxSelected = false;
                     _.each(this.el.querySelectorAll('[type=checkbox][name="' + field.id + '"]'),function(item){
                         item.disabled = false;
-                    })  
+                    })
+                }
+            }.bind(this))
+        }else{
+            _.each(this.fields,function(field){
+                var el = this.el.querySelector('[name="' + field.id + '"][value="'+(this.value[field.name]||'')+'"]');
+                if(el !== null){
+                    el.checked = 'checked';
                 }
             }.bind(this))
         }
@@ -2671,7 +2721,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
           }.bind(this));
           gform.types[this.type].setup.call(this);
           this.rows = [];
-          this.fields = _.map(this.fields,function(item){item.type='hidden';return item;})
+          this.fields = _.map(this.fields,function(item){item.type='_grid_row';return item;})
       },
     get: function(){
         if(this.multiple){
@@ -3424,18 +3474,84 @@ gform.validations =
 		}
 	}
 };gform.stencils = {
-	_style:`input + .falseLabel {
-		display: inline;
-	  }
-	  input + .falseLabel+ .trueLabel {
-		display: none;
-	  }
-	  input:checked + .falseLabel + .trueLabel {
-		display: inline;
-	  }
-	  input:checked + .falseLabel {
-		display: none;
-	  }`,
+	_style:`
+input + .falseLabel {
+	display: inline;
+}
+input + .falseLabel+ .trueLabel {
+	display: none;
+}
+input:checked + .falseLabel + .trueLabel {
+	display: inline;
+}
+input:checked + .falseLabel {
+	display: none;
+}
+	
+/* The switch - the box around the slider */
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 4rem;
+	height: 2.2rem;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+/* The slider */
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	-webkit-transition: 0.2s;
+	transition: 0.2s;
+	border: solid 0.1rem #c8c8c8;
+}
+
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 1.8rem;
+	width: 1.8rem;
+	left: 0.1rem;
+	bottom: 0.1rem;
+	background-color: white;
+	-webkit-transition: 0.2s;
+	transition: 0.2s;
+}
+
+input:checked + .slider {
+	background-color: #1690d8;
+}
+
+input:focus + .slider {
+	border-color: #1690d8;
+	box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
+}
+
+input:checked + .slider:before {
+	-webkit-transform: translateX(1.8rem);
+	-ms-transform: translateX(1.8rem);
+	transform: translateX(1.8rem);
+}
+
+/* Rounded sliders */
+.slider.round {
+	border-radius: 2rem;
+}
+
+.slider.round:before {
+	border-radius: 50%;
+}`,
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
 _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
 text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
@@ -3508,7 +3624,7 @@ grid: `<div class="row">
 	</div>
 </fieldset>
 </div>`,
-switch:`<div class="row clearfix{{#horizontal}} form-horizontal{{/horizontal}} {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
+switch:`<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
@@ -3517,13 +3633,14 @@ switch:`<div class="row clearfix{{#horizontal}} form-horizontal{{/horizontal}} {
 	{{^label}}
 	<div class="col-md-12" style="margin: -10px 0 5px;"">
 	{{/label}}
-
-	<span class="falseLabel">{{options.0.label}} </span>
+	<div>
+	<span class="falseLabel">{{{options.0.label}}} </span>
 		<label class="switch">
 		<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}} value="{{value}}" id="{{name}}" />
 		<span class="slider round"></span>
 		</label>
-		<span class="trueLabel">{{options.1.label}}</span>
+		<span class="trueLabel">{{{options.1.label}}}</span>
+		</div>
 		{{>_addons}}
 		{{>_actions}}
 	</div>
@@ -3616,28 +3733,25 @@ contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}is
     radio: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{^horizontal}}<div class="col-md-12" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
-	{{#horizontal}}<div class="col-md-8" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
+	{{^horizontal}}<div class="col-md-12 {{#size}}row{{/size}}" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8 {{#size}}row{{/size}}" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
 	{{/label}}
 	{{^label}}
 	<div class="col-md-12" {{#size}}style="padding-top: 5px;"{{/size}}>
 	{{/label}}
 	{{#limit}}{{#multiple}}<small class="count text-muted" style="display:block;text-align:left">0/{{limit}}</small>{{/multiple}}{{/limit}}
-
-
 			{{#options}}
 			{{#multiple}}
 			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
-					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
+				<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
 			</div>
 			{{/multiple}}
 			{{^multiple}}
 			<div class="radio {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
-					<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
+				<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
 			</div>
 			{{/multiple}}
 			{{/options}}
-
 		{{>_addons}}
 		{{>_actions}}
 	</div>

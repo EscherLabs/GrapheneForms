@@ -1504,7 +1504,6 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         field.filter = gform.types[field.type].filter.bind(field) || null;
     }
 
-
             //if(!this.options.clear) field.target = field.target;//||'[name="'+field.name+'"],[data-inline="'+field.name+'"]';
 
     if(!field.section){// && (this.options.clear || field.isChild)){

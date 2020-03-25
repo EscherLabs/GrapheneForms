@@ -7,70 +7,6 @@
         <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
 <style>
 
-/* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 4rem;
-  height: 2.2rem;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: 0.2s;
-  transition: 0.2s;
-  border: solid 0.1rem #c8c8c8;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 1.8rem;
-  width: 1.8rem;
-  left: 0.1rem;
-  bottom: 0.1rem;
-  background-color: white;
-  -webkit-transition: 0.2s;
-  transition: 0.2s;
-}
-
-input:checked + .slider {
-  background-color: #1690d8;
-}
-
-input:focus + .slider {
-  border-color: #1690d8;
-  box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(1.8rem);
-  -ms-transform: translateX(1.8rem);
-  transform: translateX(1.8rem);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 2rem;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
 </style>
     </head>
     <body>
@@ -99,7 +35,10 @@ input:checked + .slider:before {
 
     <script>
     options = {
-        data:{color:"#00ff00",radio:['3','1'],switch:true},
+        data:{color:"#00ff00",radio:['2'],switch:true,"grid": {
+    "text1": "1",
+    "text2": "2"
+  }},
         fields:[
             {label: 'Text', type: 'text'},
             {label: 'Hidden', type: 'hidden', value:'hidden field'},
@@ -112,7 +51,7 @@ input:checked + .slider:before {
 {label: 'Select Field (url string)', name: 'url', type:'select', options:[{type:'optgroup', path:'../data/months.json'},{type:'optgroup', path:'../data/states.json'},{type:'optgroup', path:'../data/days.json'},{type:'optgroup', path:'https://www.binghamton.edu/maps/data/buildings.json',format:{label:"{{name}}",value:"{{code}}"}}]},
 
             {label: 'Select', type: 'select', options:[1,2,3]},
-            {label: 'Radio', type: 'radio', options:[1,2,3],multiple:true},
+            {label: 'Radio', type: 'radio', options:['1','2','3'],multiple:true},
             {label: 'Combobox', type: 'combo', options:[1,2,3]},
             {label: 'Grid', type: 'grid',options:[1,2,3],
             fields:[
@@ -128,5 +67,8 @@ input:checked + .slider:before {
     }
     </script>
     <script src="../assets/js/example.js"></script>   
+    <script>
+      // myform.set({radio:['3','1']})
+    </script>
    </body>
 </html>

@@ -1504,7 +1504,6 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         field.filter = gform.types[field.type].filter.bind(field) || null;
     }
 
-
             //if(!this.options.clear) field.target = field.target;//||'[name="'+field.name+'"],[data-inline="'+field.name+'"]';
 
     if(!field.section){// && (this.options.clear || field.isChild)){
@@ -1793,8 +1792,7 @@ gform.types = {
       },
       toString: function(name,report){
         if(!report){
-          return '<dt>'+this.label||this.name+'</dt> <dd>'+(this.value||'<span class="text-muted">(empty)</span>')+'</dd><hr>'
-
+            return '<dt>'+(this.label||this.name)+'</dt> <dd>'+(this.display||'<span class="text-muted">(empty)</span>')+'</dd><hr>'
         }else{
             return this.value
         }
@@ -2580,6 +2578,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       }
   },
   set:function(value){
+      debugger;
     if(this.multiple){
         if(!_.isArray(value)){
           value = [value]
@@ -2589,6 +2588,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         //    option.checked = (value.indexOf(option.value)>=0)
            var search = _.find(this.list,{i:parseInt(option.value)})
            option.selected =  (typeof search !== 'undefined' && value.indexOf(search.value)>=0);
+           option.checked =  (typeof search !== 'undefined' && value.indexOf(search.value)>=0);
 
            
         }.bind(this))
@@ -2614,7 +2614,50 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
 
 gform.types['scale']    = _.extend({}, gform.types['radio']);
 gform.types['checkboxes']    = _.extend({}, gform.types['radio'],{multiple:true});
+gform.types['_grid_row'] = _.extend({}, gform.types['hidden'],{
+    toString: function(name,report){
+        if(!report){
+            if(this.multiple){
+                if(this.value.length){
+                    return _.reduce(this.value,function(returnVal,item){
+                        var lookup = _.find(this.list,{value:item});
+                        if(typeof lookup !== 'undefined'){
+                            returnVal+='<span>'+lookup.label+'</span>'                        
+                        }
+                        return returnVal;
+                    }.bind(this),'<tr><td style="width:20%">'+this.label+'</td><td>')+'</td><tr>'
+                }else{
+                    return '<tr><td style="width:20%">'+this.label+'</td> <td><span class="text-muted">(no selection)</span></td></tr>';
+                }
+            }else{
+                debugger;
+                return '<tr><td style="width:20%">'+this.label+'</td> <td>'+((_.find(this.parent.list,{value:this.parent.value[this.name]})||{label:""}).label||'<span class="text-muted">(no selection)</span>')+'</td></tr>';
+            }
+        }else{
+            if(this.multiple){
+                if(this.value.length){
+                    return _.reduce(this.value,function(returnVal,item){
+                        var lookup = _.find(this.list,{value:item});
+                        returnVal.push(lookup.label)
+                        return returnVal;
+                    }.bind(this),[])+'<hr>'
+                }else{
+                    return '';
+                }
+            }else{
+                return (_.find(this.list,{value:this.value})||{label:""}).label;
+            } 
+        }
+      },
+})
 gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'], gform.types['collection'],{
+    toString: function(name, report) {
+        if(!report){
+          return '<dt>'+this.label+'</dt><dd><table class="table table-bordered">'+gform.toString.call(this, name)+'</table></dd><hr>';
+        }else{
+          return gform.toString.call(this, name,report);
+        }
+    },
     render: function() {
         // this.options = gform.mapOptions.call(this,this, this.value);
         if(typeof this.mapOptions == 'undefined'){
@@ -2654,7 +2697,14 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
                     field.maxSelected = false;
                     _.each(this.el.querySelectorAll('[type=checkbox][name="' + field.id + '"]'),function(item){
                         item.disabled = false;
-                    })  
+                    })
+                }
+            }.bind(this))
+        }else{
+            _.each(this.fields,function(field){
+                var el = this.el.querySelector('[name="' + field.id + '"][value="'+(this.value[field.name]||'')+'"]');
+                if(el !== null){
+                    el.checked = 'checked';
                 }
             }.bind(this))
         }
@@ -2671,7 +2721,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
           }.bind(this));
           gform.types[this.type].setup.call(this);
           this.rows = [];
-          this.fields = _.map(this.fields,function(item){item.type='hidden';return item;})
+          this.fields = _.map(this.fields,function(item){item.type='_grid_row';return item;})
       },
     get: function(){
         if(this.multiple){

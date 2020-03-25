@@ -1,16 +1,82 @@
 gform.stencils = {
-	_style:`input + .falseLabel {
-		display: inline;
-	  }
-	  input + .falseLabel+ .trueLabel {
-		display: none;
-	  }
-	  input:checked + .falseLabel + .trueLabel {
-		display: inline;
-	  }
-	  input:checked + .falseLabel {
-		display: none;
-	  }`,
+	_style:`
+input + .falseLabel {
+	display: inline;
+}
+input + .falseLabel+ .trueLabel {
+	display: none;
+}
+input:checked + .falseLabel + .trueLabel {
+	display: inline;
+}
+input:checked + .falseLabel {
+	display: none;
+}
+	
+/* The switch - the box around the slider */
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 4rem;
+	height: 2.2rem;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+/* The slider */
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	-webkit-transition: 0.2s;
+	transition: 0.2s;
+	border: solid 0.1rem #c8c8c8;
+}
+
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 1.8rem;
+	width: 1.8rem;
+	left: 0.1rem;
+	bottom: 0.1rem;
+	background-color: white;
+	-webkit-transition: 0.2s;
+	transition: 0.2s;
+}
+
+input:checked + .slider {
+	background-color: #1690d8;
+}
+
+input:focus + .slider {
+	border-color: #1690d8;
+	box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
+}
+
+input:checked + .slider:before {
+	-webkit-transform: translateX(1.8rem);
+	-ms-transform: translateX(1.8rem);
+	transform: translateX(1.8rem);
+}
+
+/* Rounded sliders */
+.slider.round {
+	border-radius: 2rem;
+}
+
+.slider.round:before {
+	border-radius: 50%;
+}`,
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
 _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
 text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
@@ -83,7 +149,7 @@ grid: `<div class="row">
 	</div>
 </fieldset>
 </div>`,
-switch:`<div class="row clearfix{{#horizontal}} form-horizontal{{/horizontal}} {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
+switch:`<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
@@ -92,13 +158,14 @@ switch:`<div class="row clearfix{{#horizontal}} form-horizontal{{/horizontal}} {
 	{{^label}}
 	<div class="col-md-12" style="margin: -10px 0 5px;"">
 	{{/label}}
-
-	<span class="falseLabel">{{options.0.label}} </span>
+	<div>
+	<span class="falseLabel">{{{options.0.label}}} </span>
 		<label class="switch">
 		<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}} value="{{value}}" id="{{name}}" />
 		<span class="slider round"></span>
 		</label>
-		<span class="trueLabel">{{options.1.label}}</span>
+		<span class="trueLabel">{{{options.1.label}}}</span>
+		</div>
 		{{>_addons}}
 		{{>_actions}}
 	</div>
@@ -191,28 +258,25 @@ contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}is
     radio: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
-	{{^horizontal}}<div class="col-md-12" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
-	{{#horizontal}}<div class="col-md-8" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
+	{{^horizontal}}<div class="col-md-12 {{#size}}row{{/size}}" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8 {{#size}}row{{/size}}" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
 	{{/label}}
 	{{^label}}
 	<div class="col-md-12" {{#size}}style="padding-top: 5px;"{{/size}}>
 	{{/label}}
 	{{#limit}}{{#multiple}}<small class="count text-muted" style="display:block;text-align:left">0/{{limit}}</small>{{/multiple}}{{/limit}}
-
-
 			{{#options}}
 			{{#multiple}}
 			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
-					<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
+				<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
 			</div>
 			{{/multiple}}
 			{{^multiple}}
 			<div class="radio {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
-					<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
+				<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
 			</div>
 			{{/multiple}}
 			{{/options}}
-
 		{{>_addons}}
 		{{>_actions}}
 	</div>
