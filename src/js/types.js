@@ -112,6 +112,7 @@ gform.types = {
       get: function() {
           return this.el.querySelector('input[name="' + this.name + '"]').value;
       },
+
       set: function(value) {
           this.el.querySelector('input[name="' + this.name + '"]').value = value;
       },
@@ -999,7 +1000,6 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       }
   },
   set:function(value){
-      debugger;
     if(this.multiple){
         if(!_.isArray(value)){
           value = [value]
@@ -1051,7 +1051,6 @@ gform.types['_grid_row'] = _.extend({}, gform.types['hidden'],{
                     return '<tr><td style="width:20%">'+this.label+'</td> <td><span class="text-muted">(no selection)</span></td></tr>';
                 }
             }else{
-                debugger;
                 return '<tr><td style="width:20%">'+this.label+'</td> <td>'+((_.find(this.parent.list,{value:this.parent.value[this.name]})||{label:""}).label||'<span class="text-muted">(no selection)</span>')+'</td></tr>';
             }
         }else{

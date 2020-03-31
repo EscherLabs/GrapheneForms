@@ -12,7 +12,16 @@ input:checked + .falseLabel + .trueLabel {
 input:checked + .falseLabel {
 	display: none;
 }
-	
+
+@media (min-width: 992px) {
+	.row .col-md-Infinity:first-child{margin-left: 15px;}
+	.col-md-Infinity{display:inline-block;padding:0 20px 0 0}
+}
+
+@media (max-width: 991px) {
+	.row .col-md-Infinity:first-child{margin-top: 5px !important;}
+	.row .col-md-Infinity{margin-left: 15px;}
+}
 /* The switch - the box around the slider */
 .switch {
 	position: relative;
@@ -678,7 +687,7 @@ gform.types['datetime'] = _.extend({}, gform.types['input'], {
 	  $el.datetimepicker({format: this.format.input})
 	//   $el.data("DateTimePicker").minDate(moment("1/1/1900"));
 	  $el.on("dp.change", this.onchangeEvent.bind(null,true));
-  },
+  }
 });
 gform.types['date'] = _.extend({},gform.types['datetime'], {
 	defaults:{

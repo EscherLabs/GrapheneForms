@@ -177,9 +177,7 @@ baseConditions = baseCond.concat(_.map([
 			return !!field.parent.index;
 		}}]},
 		{name:'type',label:'Type',type:'select',options:[
-		
 			{type:'optgroup',options:['none','matches','date','valid_url','valid_email','length','numeric','pattern','custom']}
-	
 		]
 	},
 
@@ -293,7 +291,13 @@ gformEditor = function(container){
 
 
 		var mygform = new gform(formConfig,$(opts.formTarget)[0] ||  $(container.elementOf(this))[0]);
+		mygform.onGet = function(data){
+			debugger;
+			return data;
+		}
+		debugger;
 		mygform.on('change:label',function(e){
+			debugger;
 			if(e.field.name == 'label' && e.form.get('name') == ""){
 				e.form.find('name').update({placeholder:e.form.get('label').toLowerCase().split(' ').join('_')})
 			}		
@@ -617,7 +621,6 @@ Cobler.types.section = function(container) {
 			nTemp.set(e);
 			content += nTemp.render()
 		})
-		debugger;
 		var html = $(gform.render('_fieldset', _.extend({},myform.default,temp)));
 		html.find('fieldset').append(content)
     	return html.html();

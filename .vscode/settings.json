@@ -3,6 +3,8 @@
     "src/js/gform.js",
     "src/js/types.js",
     "src/js/themes/bootstrap.js",
-    "src/js/themes/default.js"
+    "src/js/themes/default.js",
+    "docs/assets/js/builder.js",
+    "docs/builder.html"
   ]
 }

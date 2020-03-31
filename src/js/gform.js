@@ -155,13 +155,14 @@ var gform = function(optionsIn, el){
 
     this.restore = create.bind(this);
     this.toJSON = gform.toJSON.bind(this);
-    if(typeof this.options.onGet == 'function'){
-        this.get = function(){
-            return this.options.onGet(this.toJSON(null, arguments));
-        }.bind(this)
-    }else{
+    // if(typeof this.options.onGet == 'function'){
+    //     this.get = function(name){
+    //         debugger;
+    //         return this.options.onGet(this.toJSON(null, arguments));
+    //     }.bind(this)
+    // }else{
         this.get = this.toJSON;
-    }
+    // }
     this.toString = gform.toString.bind(this)
     this.reflow = gform.reflow.bind(this)
     this.find = gform.find.bind(this)
@@ -319,7 +320,6 @@ var gform = function(optionsIn, el){
     return this;
 }
 gform.addField = function(field){
-debugger;
     // var fieldCount = _.filter(field.parent.fields, 
     //     function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
     // ).length
@@ -418,10 +418,13 @@ gform.addConditions = function(field) {
         }
 
     })
+
     gform.processConditions.call(field, field.edit, function(result){
         this.editable = result;        
         gform.types[this.type].edit.call(this,this.editable);
     })
+
+    //should be able to reduce the number of times the process gets called using objectDefine
     if(typeof field.parse == 'undefined'){
         field.parse = field.show;
     }
@@ -434,6 +437,8 @@ gform.addConditions = function(field) {
     gform.processConditions.call(field, field.report, function(result){
         this.reportable = result
     })
+
+
     if(field.required){
         gform.processConditions.call(field, field.required, function(result,e){
             if(this.required !== result){
@@ -452,7 +457,18 @@ gform.each = function(func){
         }
     })
 }
+gform.reduce = function(func,object,filter){
+    var object = object ||{};
+    _.reduce(this.filter(filter,1),function(object, field){
+        var temp = func(object,field);
 
+        if(typeof field.fields !== 'undefined'){
+            temp = gform.reduce.call(field,func,temp,filter);
+        }
+        return temp;
+    },object)
+    return object;
+}
 gform.find = function(oname,depth){
     var name;
     var temp;
@@ -509,29 +525,16 @@ gform.filter = function(search,depth){
 //parse form values into JSON object
 gform.toJSON = function(name) {
     if(typeof name == 'string' && name.length>0) {
-        name = name.split('.');
-        var field = _.find(this.fields, {name: name.shift()});
-        if(typeof field !=='undefined'){
-            return field.get(name.join('.'));
+        var field = this.find({map:name},_.toPath(name).length)
+        if(!field){
+            field = this.find({name:name},_.toPath(name).length)
+            if(!field){return undefined;}
         }
-        return undefined;
+        return field.get()
     }
-    var obj = {};
-    _.each(this.fields, function(field) {
-        if(field.parsable){
-            if(field.array){
-                obj[field.name] = obj[field.name] || [];
-                if(!Array.isArray(obj[field.name])){
-                    obj[field.name] = [];
-                }
-                obj[field.name].push(field.get());
-            }else{
-                obj[field.name] = field.get();
-            }
-        }
-    }.bind(this))
-    return obj;
+    return gform.reduce.call(this,gform.patch,{},{parsable:true})
 }
+
 gform.toString = function(name,report){
     if(!report){
         if(typeof name == 'string' && name.length>0) {
@@ -1123,6 +1126,7 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
             return _.compact(waitlist).length>0;
         }
     });
+    
     return response;
 }
 // gform.mapOptions.prototype.handlers = {initialize: []}
@@ -1310,14 +1314,13 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                 field.value =  (atts[field.name] || field.owner.options.data[field.name])[index||0] || {};
             }else{
                 // field.value =  atts[field.name] || field.owner.options.data[field.name] || field.value;
-                field.value = _.defaults({value:atts[field.name]},{value:field.owner.options.data[field.name]},field).value
+                field.value = _.defaults({value:_.selectPath(atts,field.item.map||field.name)},{value:field.owner.options.data[field.name]},field).value
             }
         }else{
-            if(field.array && typeof (atts[field.name] || field.owner.options.data[field.name]) == 'object'){
+            if(field.array && typeof atts[field.name] == 'object'){
                 field.value =  atts[field.name] || {};
             }else{
-                field.value =  _.defaults({value:atts[field.name]},field).value
-                
+                field.value =  _.defaults({value:_.selectPath(atts,field.item.map||field.name)},field).value                
             }    
         }
     }
@@ -1384,7 +1387,9 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             }  else {
                 //may need to search deeper in atts?
                 // field.value =  atts[field.name] || field.value || '';
-                if(field.fillable){field.value = _.defaults({value:atts[field.name],},field,{value:''}).value;}
+                // if(field.fillable){field.value = _.defaults({value:atts[field.name],},field,{value:''}).value;}
+                if(field.fillable){field.value =  _.defaults({value:_.selectPath(atts,field.item.map||field.name)},field,{value:''}).value}
+
             }
         // } else {
         //     field.value = 0;
@@ -1461,6 +1466,19 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             // return _.find(field.meta,{key:key}).value;
         }
     });
+    Object.defineProperty(field, "map",{
+        get: function(){            
+            var map = '';
+            if(this.ischild) {
+                map = this.parent.map + '.';
+            }
+            map += this.name
+            if(this.array){
+                map+='.'+this.index;
+            }
+            return this.item.map || map;
+        }
+    });
     Object.defineProperty(field, "relative",{
         get: function(){
             var path = '/';
@@ -1473,6 +1491,11 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             path += this.name
             return path;
             // return _.find(field.meta,{key:key}).value;
+        }
+    });
+    Object.defineProperty(field, "toJSON",{
+        get: function(){
+            return this.get();
         }
     });
     Object.defineProperty(field, "count",{
@@ -1577,3 +1600,78 @@ gform.reflow = function(){
         }.bind(this))
     }
 }
+
+
+
+gform.patch = function(object,patch){
+
+    if(!_.isArray(patch)){
+        patch = [patch];
+    }
+    return _.reduce(patch,function(original, task){
+        if(typeof task.map !== "string")return original;
+        var stack = _.toPath(task.map);
+        object = original;
+
+        while(stack.length>1){
+            var target = stack.shift();
+            if(typeof object[target] !== 'object'){
+                if(!isNaN(parseInt(stack[0]))){
+                    stack[0] = parseInt(stack[0]);
+                    if(!_.isArray(object[target])){
+                        object[target] = [];
+                    }
+                }else{
+                    object[target] = {};
+                }
+            }
+
+            object = object[target];
+            
+        }
+        var target = stack.shift()
+        if(task.action == "delete"){
+            if(_.isArray(object)){
+                object.splice(target,1);
+            }else{
+                delete object[target];
+                object = _.compact(object);
+            }
+        }else{
+            if(typeof task.toJSON !== "undefined"){
+                object[target] = task.toJSON
+            }else{
+                object[target] = task.value;
+            }
+            
+        }
+
+        return original;
+
+
+    },object||{})
+  }
+  
+  
+  
+  
+  
+  _.mixin({
+    selectPath: function(object,path){
+        var obj = object;
+        if(typeof object.toJSON == "function"){
+            obj = object.toJSON()
+        }else{
+            obj = _.extend({},obj)
+        }
+      return _.reduce(_.toPath(path),function(i,map){
+        if(typeof i == 'object' && i !== null){
+          return i[map];
+        }else{
+          return undefined;
+        }
+      },obj)
+    }
+  });
+  
+

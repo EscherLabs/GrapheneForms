@@ -104,23 +104,25 @@ mainForm = function(){
       fields: [
         {name:"legend",label:"Label"},
         {name:"name",label:"Name"},
-        {name:"default",label:false,type:'fieldset',fields:[
-          {name:"horizontal",label:"Horizontal",type:"checkbox",options:[{label:""},{label:"Yes"}]}
-        ]},
+        // {name:"default",label:false,type:'fieldset',fields:[
+        //   {name:"horizontal",label:"Horizontal",type:"checkbox",options:[{label:""},{label:"Yes"}]}
+        // ]},
+        {name:"horizontal",label:"Horizontal",type:"checkbox",options:[{label:""},{label:"Yes"}],map:"default.horizontal"},
+
         {name:"horizontal",label:"Horizontal",value:true,type:"checkbox",show:false,parse:true},
-        {type: 'switch',format:{label:""}, label: 'Custom Actions', name: 'actions', show:[{name:"type",value:['output'],type:"not_matches"}],parse:[{type:"not_matches",name:"actions",value:false}]},
-        {type: 'fieldset',columns:12,array:true, label:false,name:"actions",parse:'show', show:[{name:"actions",value:true,type:"matches"}],fields:[
+        {type: 'switch',format:{label:""}, label: 'Custom Actions', name: 'actions', show:[{name:"type",value:['output'],type:"not_matches"}],parse:[{type:"not_matches",value:false}]},
+        {type: 'fieldset',columns:12,array:true, label:false,name:"actions",show:[{name:"actions",value:true,type:"matches"}],fields:[
           
-          {name:"type",columns:6,label:"Type",type:"smallcombo",options:["cancel","save"]},
+          {name:"type",columns:6,label:"Type",type:"smallcombo",options:["cancel","save"],parse:[{type:"requires"}]},
           // {name:"name",columns:6,label:"Name"},
-          {name:"action",columns:6,label:"Action"},
-          {name:"label",columns:6,label:"Label"},
-          {name:"modifiers",columns:6,label:"Classes",type:"smallcombo",options:[
+          {name:"action",columns:6,label:"Action",parse:[{type:"requires"}]},
+          {name:"label",columns:6,label:"Label",parse:[{type:"requires"}]},
+          {name:"modifiers",columns:6,label:"Classes",type:"smallcombo",parse:[{type:"requires"}],options:[
             {label:"Danger",value:"btn btn-danger"},
             {label:"Success",value:"btn btn-success"},
             {label:"Info",value:"btn btn-info"}]}
 
-        ]},
+        ],parse:[{name:"actions",value:true,type:"matches"},{type:"requires"}]},
 
       ],
       legend: 'Edit Form',
@@ -132,7 +134,10 @@ mainForm = function(){
           "modifiers": "btn btn-danger"})
       }
     }).on('input', _.throttle(function(e){
-      form = _.extend(form,e.form.get());
+debugger;      
+      // form = _.extend(_.pick(form,fields),e.form.get());
+      myform = _.extend(_.pick(form,"fields"),e.form.get());
+
       // if(typeof e.form.get().actions == 'undefined'){
       //   delete form.actions;
       // }
