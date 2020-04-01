@@ -659,7 +659,7 @@ gform.types = {
         }
       },
     toString: function(){return ''},
-      defaults:{parse:false, columns:2, target:".gform-footer"},
+      defaults:{parse:false, columns:2, target:".gform-footer",map:false},
       create: function() {
           var tempEl = gform.create(this.render());
           tempEl.setAttribute("id", this.id);

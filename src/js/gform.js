@@ -1468,6 +1468,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     });
     Object.defineProperty(field, "map",{
         get: function(){            
+            if(this.item.map === false){return this.item.map}
             var map = '';
             if(this.ischild) {
                 map = this.parent.map + '.';
@@ -1609,7 +1610,10 @@ gform.patch = function(object,patch){
         patch = [patch];
     }
     return _.reduce(patch,function(original, task){
-        if(typeof task.map !== "string")return original;
+        if(typeof task.map !== "string"){
+            debugger;
+            return original;
+        }
         var stack = _.toPath(task.map);
         object = original;
 
