@@ -568,7 +568,71 @@ gform.toString = function(name,report){
         return obj;
     }
 }
-gform.m = function (n,t,e,r){var i,o=gform.m,a="";function f(n,t){return n=null!=(n=n[(t=t.pop?t:t.split(".")).shift()])?n:"",0 in t?f(n,t):n}t=Array.isArray(t)?t:t?[t]:[],t=r?0 in t?[]:[1]:t;for(i=0;i<t.length;i++){var s,l="",p=0,g="object"==typeof t[i]?t[i]:{};(g=Object.assign({},e,g))[""]={"":t[i]},n.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(n,t,e,r,i,c,u){p?l+=p&&!i||1<p?n:t:(a+=t.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(n,t,e,r,i,c){return t?f(g,t):r?f(g,c):i?o(f(g,c),g):e?"":new Option(f(g,c)).innerHTML}),s=c),i?--p||(u=f(g,u),/^f/.test(typeof u)?a+=u.call(g,l,function(n){return o(n,g)}):a+=o(l,u,g,s),l=""):++p})}return a}
+gform.m = function(template, self, parent, invert) {
+  var render = gform.m
+  var output = ""
+  var i
+  template = self[template]||template;
+  function get (ctx, path) {
+    path = path.pop ? path : _.toPath(path)
+    ctx = ctx[path.shift()]       
+    ctx = ctx != null ? ctx : ""
+    return (0 in path) ? get(ctx, path) : ctx
+  }
+  self = Array.isArray(self) ? self : (self ? [self] : [])
+  self = invert ? (0 in self) ? [] : [1] : self
+  
+  for (i = 0; i < self.length; i++) {
+    var childCode = ''
+    var depth = 0
+    var inverted
+    var ctx = (typeof self[i] == "object") ? self[i] : {}
+    ctx = Object.assign({}, parent, ctx)
+    ctx[""] = {"": self[i]}
+    
+    template.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,
+      function(match, code, y, z, close, invert, name) {
+
+        if (!depth) {
+          output += code.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(@?)(=?)(.*?)}}/g,
+            function(match, raw, comment, isRaw, partial,address,equation, name) {
+              return raw ? get(ctx, raw)
+                : isRaw ? get(ctx, name)
+                : partial ? render(get(ctx, name), ctx)
+                : address ? function(ctx, path) {
+                  return "timeago"
+                }(ctx, name)
+                : equation ? function(ctx, path) {
+                  return "didMath"
+                }(ctx, name)
+                : !comment ? new Option(get(ctx, name)).innerHTML
+                : ""
+            }
+          )
+          inverted = invert
+        } else {
+          childCode += depth && !close || depth > 1 ? match : code
+        }
+        if (close) {
+          if (!--depth) {
+            name = get(ctx, name)
+            if (/^f/.test(typeof name)) {
+              output += name.call(ctx, childCode, function (template) {
+                return render(template, ctx)
+              })
+            } else {
+              output += render(childCode, name, ctx, inverted) 
+            }
+            childCode = ""
+          }
+        } else {
+          ++depth
+        }
+      }
+    )
+  }
+  return output;
+}
 
 gform.instances = {};
 
@@ -1159,22 +1223,14 @@ gform.collectionManager = function(refObject){
 
 gform.collections =  new gform.collectionManager()
 
-gform.render = function(template, options,omit) {
-    var pick = [];
-    if('omit' !== 'all'){
-        var pick = _.omit(['path','name','label','value','display','id','count','valid','visible','parseable','editable','errors','index','sibling'],omit||[]);
-    }
-    return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options, _.pick(options,pick)))
+gform.render = function(template, options) {
+    return gform.m(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))
   }
   gform.create = function(text) {
    return document.createRange().createContextualFragment(text).firstChild;
   }
-  gform.renderString = function(string,options,omit) {
-    var pick = [];
-    if('omit' !== 'all'){
-        var pick = _.omit(['path','name','label','value','display','id','count','valid','visible','parseable','editable','errors','index','sibling'],omit||[]);
-    }
-    return gform.m(string || '', _.extend({},options, _.pick(options||{},pick)))
+  gform.renderString = function(string,options) {
+    return gform.m(string || '', _.extend({},options))
   }
   
   // add some classes. Eg. 'nav' and 'nav header'
@@ -1439,13 +1495,15 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                 return gform.types[field.type].display.call(this)
             }
             return this.toString();
-        }
+        },
+        enumerable: true
     });
     Object.defineProperty(field, "sibling",{
         get: function(){
             var types = this.parent.filter({array:{ref:this.array.ref}},1);
             return (types.length && types[0] !== this );
-        }
+        },
+        enumerable: true
     });
     Object.defineProperty(field, "path",{
         get: function(){
@@ -1478,7 +1536,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
                 map+='.'+this.index;
             }
             return this.item.map || map;
-        }
+        },
+        enumerable: true
     });
     Object.defineProperty(field, "relative",{
         get: function(){
@@ -1502,7 +1561,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     Object.defineProperty(field, "count",{
         get: function(){
             return (this.index||0)+1;
-        }
+        },
+        enumerable: true
     });
     field.render = field.render || gform.types[field.type].render.bind(field);
     
