@@ -6,7 +6,7 @@ minify bin/gform.engine.min.js src/js/themes/bootstrap.js src/js/types/smallcomb
 minify src/js/themes/default.js > bin/default/default.theme.min.js
 cat bin/gform.js src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/gform_bootstrap.js 
 minify src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/bootstrap.theme.min.js
-
+cat bin/gform.js  src/js/themes/default.js > bin/default/gform_default.js
 # minify bin/gform.engine.min.js src/js/themes/bulma.js > bin/gform_bulma.min.js 
 # minify bin/gform.engine.min.js src/js/themes/skeleton.js> bin/gform_skeleton.min.js 
 # minify bin/gform.engine.min.js src/js/themes/milligram.js > bin/gform_milligram.min.js
@@ -21,7 +21,8 @@ cp src/js/themes/default.js bin/default/
 cp bin/* docs/assets/js/
 cp bin/default/* docs/assets/js/
 cp bin/bootstrap/* docs/assets/js/
-cp bin/default/gform.min.js docs/assets/js/gform_default.min
+cp bin/default/gform_default.js docs/assets/js/gform_default.js
+cp bin/default/gform.min.js docs/assets/js/gform.min.js
 
 
 sass src/scss/gform.scss > docs/assets/css/gform.css 

@@ -10,6 +10,7 @@ function Cobler(options) {
 	this.options.active = this.options.active || 'widget_active';
 	this.options.itemContainer = this.options.itemContainer || 'itemContainer';
 	this.options.itemTarget = this.options.itemTarget || 'cobler-li-content';
+	this.options.sortSelected = this.options.sortSelected || false;
 	// if(typeof options.fallback !== 'undefined'){
 	// 	this.options.fallback = options.fallback;
 	// }else{
@@ -54,13 +55,17 @@ function Cobler(options) {
 				if(target.className.split(' ').indexOf('cobler_container') < 0){
 					target.className += ' cobler_container';
 				}
+				var filter = "input, textarea";
+				if(!cob.options.sortSelected){
+					filter+=", ."+cob.options.active;
+				}
 				sortable = Sortable.create(target, {
 					forceFallback: !!cob.options.fallback,
 					group: cob.options.group || 'cb',
 					animation: 50,
 					// delay: 200,
 					preventOnFilter: false,
-					filter: "."+cob.options.active+", input, textarea",
+					filter: filter,
 					onSort: function (/**Event*/evt) {
 						if(cob.options.remove) {
 								cob.options.removed = items.splice(parseInt(evt.item.dataset.start, 10), 1)[0];
@@ -166,11 +171,13 @@ function Cobler(options) {
 				temp.className += ' ' + cob.options.active;
 			}
 			var modEL = elementOf(item);
-			 var a = modEL.parentNode.replaceChild(temp, modEL);
-		 	if(typeof item.initialize !== 'undefined'){
+			// if(typeof modEl !== 'undefined'){
+				var a = modEL.parentNode.replaceChild(temp, modEL);
+			// }
+			if(typeof item.initialize !== 'undefined'){
 				item.initialize(temp)
 			}
-		 	cob.publish('change', item);
+			cob.publish('change', item);
 		}
 		
 		function deactivate() {
@@ -267,7 +274,6 @@ function Cobler(options) {
 		}
 		EL.className = 'slice';
 		EL.innerHTML = gform.render(item.template || this.options.itemContainer,item.get());
-		// EL.innerHTML = templates[item.template || this.options.itemContainer].render(item.get(), templates);
 		EL.getElementsByClassName(item.target || this.options.itemTarget)[0].innerHTML += item.render();
 		return EL;
 	}

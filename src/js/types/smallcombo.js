@@ -101,11 +101,13 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 		}
     },
     initialize: function(){
+
         this.onchangeEvent = function(input){
 			_.throttle(this.renderMenu,100).call(this);
             this.set(this.combo.innerText,false,true);
             this.parent.trigger(['input'], this, {input:this.value});
-		}.bind(this)
+        }.bind(this)
+        gform.types[this.type].setup.call(this);
 		this.processOptions = function(item){
 			if(typeof item.optgroup !== 'undefined'){
 				if(typeof item.optgroup.options !== 'undefined' && item.optgroup.options.length){
@@ -316,7 +318,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.combo.addEventListener('blur', function(e){
             if(!(gform.hasClass(e.relatedTarget,'dropdown-item') || gform.hasClass(e.relatedTarget,'dropdown-toggle') || this.mousedropdown )){
                 if(this.shown ){
-                    debugger;
                 var list = _.filter(this.options,{filter:true});
                 if(this.strict){
                     if(list.length == 1){

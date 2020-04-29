@@ -186,8 +186,19 @@ _actions: `
     </div>
     {{/array}}
 `,
+_tooltip:`<div id="tooltip" role="tooltip">
+<span class="info-close"></span>
+<div class="tooltip-body"></div>
+<div id="arrow" data-popper-arrow></div>
+</div>`,
+_info:`<div>
+<div class="title">More&nbsp;Information</div>
+<hr>
+  <div>{{info}}</div>
+</div> `,
 _label: `      
-<label class="" for="{{name}}">{{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}</label>     
+{{#info}}<b class="gform-info" data-id="{{id}}"></b>{{/info}}
+<label class="" for="{{name}}">{{{label}}}{{suffix}} (spotcheck)</label>  
 <small class="column form-help" style="position:relative;left:-10px"> {{{help}}}</small>
 
 `,
@@ -246,7 +257,7 @@ table:'<div class="column column-100">{{#array}}<div style="overflow:scroll" cla
 gform.columns = 12;
 gform.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-'+item+' column'})
 gform.offsetClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-offset-'+item+' column'})
-gform.prototype.opts.suffix = ""
+gform.prototype.opts.suffix = "";
 
 gform.handleError = function(field){
     if(field.valid){
@@ -262,8 +273,6 @@ gform.handleError = function(field){
             field.el.querySelector('.error-text').innerHTML = field.errors;
         }
         field.el.classList.add('error');
-
-        field.el.querySelector('.valid').innerHTML = '';
 
         if(field.el.querySelector('.valid') !== null){
             field.el.querySelector('.valid').innerHTML = '';

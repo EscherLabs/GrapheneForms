@@ -85,7 +85,58 @@ input:checked + .slider:before {
 
 .slider.round:before {
 	border-radius: 50%;
-}`,
+}
+
+.gform-info {
+	position:absolute;
+	right:10px;
+	cursor: pointer;
+	font-weight: bold;
+	width: 2.2rem;
+	height: 2.2rem;
+	margin-right: 0.5rem;
+	line-height: 2.2rem;
+	color: #fff;
+	text-align: center;
+	background: rgba(0, 0, 0, 0.38);
+	border-radius: 50%;
+  }
+  .gform-info:after {
+	content: "?";
+  }
+  .gform-info:hover {
+	box-shadow: 0px 0px 2px #000;
+  }
+  
+  .info-close {
+	float: right;
+	cursor: pointer;
+	border: solid 1px;
+	border-radius: 0.5rem;
+	font-weight: bold;
+	padding: 0 0.7rem;
+  }
+  .info-close:after {
+	content: "X";
+  }
+  #tooltip {
+	background-color: #333;
+	color: #fff;
+	padding: 5px 10px;
+	border-radius: 4px;
+	font-size: 13px;
+	max-width: 400px;
+  }
+  #tooltip .title {
+	font-weight: bold;
+	margin-right: 40px;
+  }
+  
+  #tooltip hr,
+  #tooltip .gform-add, #tooltip .gform-minus {
+	display: none;
+  }
+`,
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
 _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
 text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
@@ -115,7 +166,6 @@ output: `
 		
 	<div class="col-xs-12">
     <output name="{{name}}" id="{{id}}">{{{display}}}</output>
-    {{>_error}}
 		{{>_addons}}
 		{{>_actions}} 
 		</div>
@@ -318,43 +368,52 @@ custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.dup
 	{{>_actions}}
 </div>
 </div>`,
-fieldset_array:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
+fieldset_array:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
 _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
 <div data-name="{{name}}" data-ref="{{ref}}" class="btn-group hidden-print actions">
-	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}"  class="fa gform-minus fa-minus text-danger"></i></div>
-	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}"  class="gform-add fa fa-plus text-success"></i></div>
+	{{#remove.enable}}
+	<div data-id="{{id}}" class="btn btn-white gform-minus">{{{remove.label}}}{{^remove.label}}<i data-id="{{id}}"  class="fa fa-minus text-danger"></i>{{/remove.label}}</div>
+	{{/remove.enable}}
+	{{#duplicate.enable}}
+	<div data-id="{{id}}" class="gform-add btn btn-white">{{{duplicate.label}}}{{^duplicate.label}}<i data-id="{{id}}"  class="fa fa-plus text-success"></i>{{/duplicate.label}}</div>
+	{{/duplicate.enable}}
 </div>
 {{#legend}}<legend>{{{legend}}}</legend>{{/legend}}
 {{/array}}
-{{^hideLabel}}
-{{^array}}
 {{#label}}<legend>{{{label}}}</legend>{{/label}}
-{{/array}}
-
-{{/hideLabel}}
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,
 	_actions: `{{#array}}
 	<div data-name="{{name}}" data-ref="{{ref}}" data-parent="{{parent.id}}" class="btn-group hidden-print actions pull-right">
 	{{#remove.enable}}
-	<div data-id="{{id}}" class="btn btn-white gform-minus">{{remove.label}}{{^remove.label}}<i class="fa fa-minus text-danger"></i>{{/remove.label}}</div>
+	<div data-id="{{id}}" class="btn btn-white gform-minus">{{{remove.label}}}{{^remove.label}}<i class="fa fa-minus text-danger"></i>{{/remove.label}}</div>
 	{{/remove.enable}}
 	{{#duplicate.enable}}
-	<div data-id="{{id}}" class="gform-add btn btn-white">{{duplicate.label}}{{^duplicate.label}}<i class="fa fa-plus text-success"></i>{{/duplicate.label}}</div>
+	<div data-id="{{id}}" class="gform-add btn btn-white">{{{duplicate.label}}}{{^duplicate.label}}<i class="fa fa-plus text-success"></i>{{/duplicate.label}}</div>
 	{{/duplicate.enable}}
 
 	</div>
 	{{/array}}`,
-    _label: `
-	{{^hideLabel}}
-	
+	_tooltip:`<div id="tooltip" role="tooltip">
+<span class="info-close"></span>
+<div class="tooltip-body"></div>
+<div id="arrow" data-popper-arrow></div>
+</div>`,
+_info:`<div>
+<div class="title">More&nbsp;Information</div>
+<hr>
+  <div>{{info}}</div>
+</div> `,
+	_label: `
+
     {{#label}}
 	<label for="{{name}}" {{^horizontal}}style="text-align:left"{{/horizontal}} class="control-label {{^horizontal}}col-xs-12{{/horizontal}}{{#horizontal}}col-md-4{{/horizontal}}">
   {{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}
 </label>{{/label}}
-{{/hideLabel}}
+{{#info}}<b class="gform-info" data-id="{{id}}"></b>{{/info}}
+
     `,
     _addons:`<span class="help-inline"> {{{help}}}</span>
 <span class="font-xs text-danger" style="display:block;"></span>`,
@@ -461,11 +520,11 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form
 </div>
 `,
 modal_fieldset:`{{>_fieldset}}`,
-template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
+template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
 template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{value}}}{{/format.template}}</div></div>`,
 child_modal_footer:`<button class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
-table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right" style="top: 22px;position: relative;">{{append.label}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
+table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right" style="top: 22px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
 };
 
 
@@ -560,6 +619,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 		this.parent.trigger('change',this);
 		this.parent.trigger('input',this);
 	}.bind(this));
+	gform.types[this.type].setLabel.call(this);
 
   }
 });
@@ -614,7 +674,9 @@ gform.types['contentEditable'] = gform.types['summernote'] = _.extend({}, gform.
 
 				this.owner.trigger('input',this);
 			}.bind(this)
-      );
+	  );
+	  gform.types[this.type].setLabel.call(this);
+
 		},satisfied: function(value){
 			this.value = this.get()
 			return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '' && this.value !== "<p><br></p>");
@@ -687,6 +749,8 @@ gform.types['datetime'] = _.extend({}, gform.types['input'], {
 	  $el.datetimepicker({format: this.format.input})
 	//   $el.data("DateTimePicker").minDate(moment("1/1/1900"));
 	  $el.on("dp.change", this.onchangeEvent.bind(null,true));
+	  gform.types[this.type].setLabel.call(this);
+
   }
 });
 gform.types['date'] = _.extend({},gform.types['datetime'], {
@@ -701,6 +765,7 @@ gform.types['time']= _.extend({}, gform.types['datetime'], {
 		elType:'text'
 	}
 })
+gform.prototype.modalDelay = 475;
 gform.prototype.modal = function(data){
 	// var el = this.modalEl||this.el;
 

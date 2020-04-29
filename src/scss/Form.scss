@@ -65,8 +65,44 @@ legend {
 	font-size: 1.6rem;
 	font-weight: 600;
 	margin-bottom: .5rem;
+	&.required {
+		&:after{
+			content:"*";
+			color:#f00;
+		}
+	}
 }
 
+.gform-info {
+	float:right;
+	cursor: pointer;
+	font-weight:bold;
+    width: 2.2rem;
+    height: 2.2rem;
+    margin-right: .5rem;
+    line-height: 2.2rem;
+    color: #fff;
+    text-align: center;
+    background: rgba(0,0,0,0.38);
+	border-radius: 50%;
+	&:after{
+		content:"?";
+	}
+	&:hover{
+		box-shadow: 0px 0px 2px #000;
+	}
+}
+.info-close{
+	float:right;
+	cursor: pointer;
+	border:solid 1px;
+	border-radius: .5rem;
+	font-weight: bold;
+	padding:0 .7rem;
+	&:after{
+		content:"X"
+	}
+}
 fieldset{
 	border-width: 0;
 	padding: 0;

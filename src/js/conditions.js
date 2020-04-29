@@ -3,7 +3,7 @@ gform.processConditions = function(conditions, func) {
 		if(conditions === 'show' || conditions === 'edit'  || conditions === 'parse') {
 			conditions = this.item[conditions];
 		}
-		if(typeof conditions !== 'undefined' && conditions.indexOf('method:') == 0){
+		if(typeof conditions == 'string' && conditions.indexOf('method:') == 0){
 			if(typeof this.owner.methods !== 'undefined' && typeof this.owner.methods[conditions.split('method:')[1]] == 'function'){
 				func.call(this, this.owner.methods[conditions.split('method:')[1]].call(null,{form:this.owner,field:this}),{form:this.owner,field:this})
 			}
@@ -25,11 +25,12 @@ gform.processConditions = function(conditions, func) {
 };
 
 gform._subscribeByName = function(conditions, callback){
+
 	for(var i in conditions) {
 		if(typeof conditions[i].conditions == 'object'){
 			gform._subscribeByName.call(this, conditions[i].conditions, callback)
 		}else{
-			var temp = this.parent.find(conditions[i].name);
+			var temp = this.parent.find((conditions[i].name||this.name));
 			if((conditions[i].name||this.name).indexOf('/')!==0 && typeof temp !== 'undefined'){
 
 				
@@ -69,6 +70,7 @@ gform._rules = function(rules, op){
 gform.conditions = {
 	requires: function(field, args) {
 		var looker;
+
 		if(typeof args.name !== 'undefined' && !!args.name ){
 			var matches = field.parent.filter({name:args.name,parsable:true},args.depth||10);
 			if(matches.length >0){

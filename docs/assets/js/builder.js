@@ -134,7 +134,6 @@ mainForm = function(){
           "modifiers": "btn btn-danger"})
       }
     }).on('input', _.throttle(function(e){
-debugger;      
       // form = _.extend(_.pick(form,fields),e.form.get());
       myform = _.extend(_.pick(form,"fields"),e.form.get());
 
@@ -150,18 +149,24 @@ debugger;
       renderBuilder();
     })
   }else{
-    var temp = new Cobler.types[gform.types[form.type].base]();
-    $("#mainform").html(gform.renderString(accordion))
+    var formConfig = new Cobler.types[gform.types[form.type].base]();
+    $("#mainform").html(gform.renderString(accordion))    
+		$('.panelOptions').toggle(!!_.find(formConfig.fields,{target:"#collapseOptions .panel-body"}));
+		$('.panelValidation').toggle(!!_.find(formConfig.fields,{target:"#collapseValidation .panel-body"}));
+		$('.panelBasic').toggle(!!_.find(formConfig.fields,{target:"#collapseBasic .panel-body"}));
+		$('.panelConditions').toggle(!!_.find(formConfig.fields,{target:"#collapseConditions .panel-body"}));
+		$('.panelDisplay').toggle(!!_.find(formConfig.fields,{target:"#collapseDisplay .panel-body"}));
+		$('.panelEvents').toggle(!!_.find(formConfig.fields,{target:"#collapseEvents .panel-body"}));
+		$('.panelGrid').toggle(!!_.find(formConfig.fields,{target:"#collapseGrid .panel-body"}));
 
-    $('.panelOptions').toggle(false);
-    
     new gform({
       name:"editor",
       nomanage:true,
+      default:{type:"text",columns:6},
       data: form,
       actions:[],
 			clear:false,
-      fields: temp.fields,
+      fields: formConfig.fields,
       legend: 'Edit Fieldset',
     }, '#mainform').on('change', function(e){
       // form = _.extend(form,e.form.get())
@@ -177,6 +182,7 @@ debugger;
       $.jStorage.set('form', JSON.stringify(myform, undefined, "\t"));
 
     })
+    
 
   }
 }

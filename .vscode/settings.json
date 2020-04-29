@@ -5,6 +5,7 @@
     "src/js/themes/bootstrap.js",
     "src/js/themes/default.js",
     "docs/assets/js/builder.js",
-    "docs/builder.html"
+    "docs/builder.html",
+    "docs/assets/js/form.cob.js"
   ]
 }

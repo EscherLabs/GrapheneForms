@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Adam Smallcomb">
+    <link rel="icon" href="../assets/favicon.png">
+
+    <title>Example:Template - Graphene:Forms</title>
+	  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+    <link rel="stylesheet" type='text/css' href="../assets/vendor/css/combobox.css">
+    <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
+
+<style>
+
+
+ul.stepper .step {
+    position: relative;
+    list-style: none
+}
+form {
+  counter-reset: section;
+}
+
+ul.stepper .step:before {
+    position: absolute;
+    top: .75rem;
+    counter-increment: section;
+    content: counter(section);
+    height: 2.8rem;
+    width: 2.8rem;
+    color: #fff;
+    background-color: rgba(0,0,0,.3);
+    -webkit-border-radius: 100%;
+    border-radius: 100%;
+    text-align: center;
+    line-height: 2.8rem;
+    font-weight: 400
+}
+
+/*
+ul.stepper .step.done:before,ul.stepper .step.wrong:before {
+    font-family: 'Font Awesome 5 free';
+    font-weight: 900
+}
+
+ul.stepper .step.active:before {
+    background-color: #4285f4
+}
+
+ul.stepper .step.done:before {
+    content: '\f00c';
+    font-size: 1rem;
+    background-color: #00c851
+}
+
+ul.stepper .step.wrong:before {
+    content: '\f071';
+    font-size: 1.1rem;
+    background-color: #ff3547
+}
+
+*/
+ul.stepper>li:not(:last-of-type) {
+    margin-bottom: .625rem;
+    -webkit-transition: margin-bottom .4s;
+    -o-transition: margin-bottom .4s;
+    transition: margin-bottom .4s
+}
+
+ul.stepper .step-title {
+    margin: 0 -1.3rem;
+    cursor: pointer;
+    padding: .9688rem 2.75rem 2.5rem 6rem;
+    display: block
+}
+
+ul.stepper .step-title:after {
+    content: attr(data-step-label);
+    display: block;
+    position: absolute;
+    font-size: 1rem;
+    color: #424242;
+    font-weight: 400
+}
+
+ul.stepper .step-title:hover {
+    background-color: rgba(0,0,0,.06)
+}
+
+ul.stepper .step.active .step-title {
+    font-weight: 500
+}
+ul.stepper .step-new-content {
+    position: relative;
+    /* display: none; */
+    height: calc(100% - 132px);
+    width: inherit;
+    /* overflow: visible; */
+    margin-left: 41px;
+    margin-right: 24px
+}
+
+ul.stepper>.step:not(:last-of-type):after {
+    content: '';
+    position: absolute;
+    top: 4.4rem;
+    left: 1.3463rem;
+    width: .0625rem;
+    height: 40%;
+    height: calc(100% - 38px);
+    background-color: rgba(0,0,0,.1);
+    -webkit-transition: all .4s;
+    -o-transition: all .4s;
+    transition: all .4s
+}
+
+
+
+</style>
+  </head>
+  <body>
+    <div style="padding:20px">
+    <h4><a href="./">Examples</a> - Template</h4>
+      <div class="container ">
+          <div class="row ">
+                <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
+                <div class="col-md-4"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>                
+                <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
+              </div>
+          </div>
+      </div>
+
+
+      <form action="?" method="GET"novalidate="novalidate"><ul class="stepper linear" id="accordion" role="tablist" aria-multiselectable="true">
+        <li class="step done">
+          <div  role="tab" id="headingOne" data-step-label="Type something" class="step-title" >
+            <a role="button" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Step 1</a>
+          </div>
+            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+              <div class="step-new-content" >
+
+                <div class="row">
+                  <div class="col-12">
+                    Hello
+                  </div>
+                </div>
+              </div>
+            </div>
+
+        </li>
+        <li class="step ">
+          <div  role="tab" id="headingTwo" data-step-label="Type something else" class="step-title" >
+            <a role="button" role="button" class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Step 2</a>
+          </div>
+            <div id="collapseTwo" class="panel-collapse collapse " role="tabpanel" aria-labelledby="headingTwo">
+              <div class="step-new-content" >
+
+                <div class="row">
+                  <div class="col-12">
+                    Hello
+                  </div>
+                </div>
+              </div>
+            </div>
+
+        </li>
+      </ul></form>
+
+    <script src='../assets/vendor/js/jquery.js'></script>
+    <script type='text/javascript' src='../assets/vendor/js/colorpicker.min.js'></script>    
+
+    <script src="../assets/js/lodash.min.js"></script>    
+    <script src='../assets/js/gform_bootstrap.js'></script>
+    <script src='../assets/vendor/js/combobox.js'></script>
+
+    <script src='../assets/js/bootstrap.min.js'></script>
+
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+
+    <script>
+      // options = {
+      //     legend: 'Bootstrap - Template',
+      //     data:{label:[{color:"red"},{color:"blue"}]},
+      //     // sections:'normal',
+      //     fields:[
+      //       {item:"",legend: 'Tab 1',array:{}, name: 'label', type: 'fieldset', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+      //       {name:"Name"},
+      //       {name:"color",type:"color"},
+      //         {name:"Choose",max:10,type:"select"}
+      //       ]},
+      //       {item:"",legend: 'Tab 2',array:{}, name: 'label', type: 'fieldset', format:{template:'<div style="color:{{value.color}};">{{label}}:{{value.Name}}</div>'},fields:[
+      //       {name:"Name 2"},
+      //       {name:"color2",type:"color2"},
+      //         {name:"Choose",max:10,type:"select"}
+      //       ]}
+      //     ]
+      // }
+
+      
+    </script>
+    <script src="../assets/js/example.js"></script>   
+
+        <script>
+// document.body.addEventListener('click', function(e){
+//   if(e.target.parentElement.classList.contains('step')){
+//           gform.removeClass(document.querySelector('.step.active'),'active')
+//           gform.addClass(e.target.parentElement,'active')
+
+//     }}
+// )
+// This is the important part!
+
+function collapseSection(element) {
+  // get the height of the element's inner content, regardless of its actual size
+  var sectionHeight = element.scrollHeight;
+  
+  // temporarily disable all css transitions
+  var elementTransition = element.style.transition;
+  element.style.transition = '';
+  
+  // on the next frame (as soon as the previous style change has taken effect),
+  // explicitly set the element's height to its current pixel height, so we 
+  // aren't transitioning out of 'auto'
+  requestAnimationFrame(function() {
+    element.style.height = sectionHeight + 'px';
+    element.style.transition = elementTransition;
+    
+    // on the next frame (as soon as the previous style change has taken effect),
+    // have the element transition to height: 0
+    requestAnimationFrame(function() {
+      element.style.height = 0 + 'px';
+    });
+  });
+  
+  // mark the section as "currently collapsed"
+  element.setAttribute('data-collapsed', 'true');
+}
+
+function expandSection(element) {
+  // get the height of the element's inner content, regardless of its actual size
+  var sectionHeight = element.scrollHeight;
+  
+  // have the element transition to the height of its inner content
+  element.style.height = sectionHeight + 'px';
+
+  // when the next css transition finishes (which should be the one we just triggered)
+  element.addEventListener('transitionend', function(e) {
+    // remove this event listener so it only gets triggered once
+    element.removeEventListener('transitionend', arguments.callee);
+    
+    // remove "height" from the element's inline styles, so it can return to its initial value
+    element.style.height = null;
+  });
+  
+  // mark the section as "currently not collapsed"
+  element.setAttribute('data-collapsed', 'false');
+}
+
+document.querySelector('#toggle-button').addEventListener('click', function(e) {
+  
+  debugger;
+  var section = document.querySelector('.section.collapsible');
+  var isCollapsed = section.getAttribute('data-collapsed') === 'true';
+    
+  if(isCollapsed) {
+    expandSection(section)
+    section.setAttribute('data-collapsed', 'false')
+  } else {
+    collapseSection(section)
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$('.collapse').on('show.bs.collapse', function (e) {
+  // do something…
+  // e.preventDefault()
+
+  // return false;
+  debugger;
+  // e.goodtogo = "yes"
+})
+$('.collapse').on('hide.bs.collapse', function (e) {
+  // do something…
+  // e.preventDefault()
+
+  
+  // return false;
+  debugger;
+
+})
+
+
+        </script>
+   </body>
+</html>

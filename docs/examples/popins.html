@@ -7,14 +7,15 @@
     <meta name="author" content="Adam Smallcomb">
     <link rel="icon" href="../assets/favicon.png">
 
-    <title>Example:Duplication - Graphene:Forms</title>
+    <title>Example:Popins - Graphene:Forms</title>
     <link rel="stylesheet" href="../assets/css/normalize.css">    
     <link rel="stylesheet" href="../assets/css/gform.css">
   </head>
   <body>
     <div style="padding:20px">
-    <h4><a href="./">Examples</a> - Duplication</h4>
-
+    <h4><a href="./">Examples</a> - Popins</h4>
+    <span data-form="test" data-map="candy.0" class="popform">Candy</span>
+    <span data-form="test" data-map="candy.0.color.0" class="popform">color</span>
     <div class="container ">
         <div class="row ">
                 <div class="column noprint" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
@@ -26,22 +27,26 @@
     <script src="../assets/js/lodash.min.js"></script>    
     <script src='../assets/js/gform.js'></script>
     <script src='../assets/js/default.js'></script> 
-    <script src='../assets/js/math.min.js'></script> 
+    <script src='../assets/js/math.min.js'></script>
+    <script src='../assets/vendor/js/moment.js'></script>
+    <script src='../assets/js/popper.min.js'></script>
+
 
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
       options = {
+        name:"test",
         data:{candy:[{flavor:"asdf",color:["#f00","#0f0"]},{flavor:"asdf",color:["#f00","#0f0"]}]},
           legend: 'Basic Form',
           fields:[
-          {
-      "label": "Name",
-      "name": "name"
-    },
-    {
-      "label": "Email",
-      "name": "email",
+    //       {
+    //   "label": "Name",
+    //   "name": "name"
+    // },
+    // {
+    //   "label": "Email",
+    //   "name": "email",
     //   "show":[
     //     {name:"name",type:"matches",value:"adam"}
     //   ]
@@ -52,7 +57,7 @@
     //   "show":[
     //     {name:"name",type:"not_matches",value:"adam"}
     //   ]
-    },{label: 'Flavor'},
+    // },{label: 'Flavor'},
     // {
     //   "label": "Phone",
     //   "name": "phone"
@@ -125,7 +130,7 @@
               {label:'Candy{{#index}} ({{index}}){{/index}}', type: 'fieldset',columns:12, value:{flavor:"orange"}, array: true, fields: [
                 {label: 'Flavor'},
                 // { label: 'Color ({{^index}}0{{/index}}{{index}})', type:'text',columns:6, array: {min:2,max:3}}
-                { label: 'Color{{#index}} ({{#math}}index+1{{/}}){{/index}}',columns:6, array: {min:2,max:7},"show":[
+                { label: 'Color{{#index}} ({{#math}}index+1{{/}}){{/}}',columns:6, array: {min:2,max:7},"show":[
         {name:"flavor",type:"not_matches",value:"adam"}
       ]}
               ]},
@@ -137,6 +142,73 @@
       }
     </script>
     <script src="../assets/js/example.js"></script>   
-        
+    <script>
+document.body.addEventListener('keydown',function(e) {
+    switch(e.keyCode) {
+        case 27://escape
+        case 13://enter
+    removeEL()
+            break;
+    }
+})
+
+removeEL = function(){
+  if(el.parentNode == document.body){
+    document.body.removeChild(el)
+    gform.removeClass(el.querySelector('label,legend'),'panel-heading')
+    var dataset = el.querySelector('.panel-body').dataset
+    matcher = _.pick(dataset,'map','path','index','name','id');
+    if("index" in matcher)matcher.index = parseInt(matcher.index);
+    gform.instances[dataset.form].find(matcher,10).parent.reflow()
+    mypop.destroy()
+    mypop = null;
+  }
+}
+el = gform.create(`<div id="tooltip" role="tooltip">
+    <div onClick="removeEL()" style="padding;5px;position:absolute;top:5px;right:15px">X</div>
+
+    <div class="panel panel-default">
+      <div class="panel-body"></div>
+    </div>  
+
+  <div id="arrow" data-popper-arrow></div>
+</div>
+  `)
+openEL =function(e){
+    removeEL();
+    target = el.querySelector('.panel-body');
+    gform.addClass(el.querySelector('label,legend'),'panel-heading')
+    _.reduce(_.pick(e.target.dataset,'map','path','index','name','id','form'),function(t,i,v){
+    t[v] = i;return t;},target.dataset)
+    matcher = _.pick(e.target.dataset,'map','path','index','name','id');
+    if("index" in matcher)matcher.index = parseInt(matcher.index);
+    formElement = gform.instances[e.target.dataset.form].find(matcher,10)
+    target.appendChild(formElement.el)
+
+    mypop = Popper.createPopper(e.target, el, 
+    {
+    placement: 'right',
+    modifiers: [
+        {
+        name: 'offset',
+        options: {
+            offset: [0, 8],
+        },
+        },
+    ],
+    }
+    );
+    document.body.appendChild(el)
+    gform.types[formElement.type].focus.call(formElement)
+}
+document.body.addEventListener('click', function(e){
+  if(e.target.classList.contains('popform')){
+          
+      openEL(e)
+        }
+    }
+)
+
+    </script>
    </body>
 </html>
