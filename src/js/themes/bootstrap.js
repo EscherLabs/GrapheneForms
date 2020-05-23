@@ -326,7 +326,7 @@ _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{nam
 	<div data-id="{{id}}" class="btn btn-white gform-minus"><i data-id="{{id}}"  class="fa gform-minus fa-minus text-danger"></i></div>
 	<div data-id="{{id}}" class="gform-add btn btn-white"><i data-id="{{id}}"  class="gform-add fa fa-plus text-success"></i></div>
 </div>
-{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}
+{{#label}}<legend>{{{label}}}</legend>{{/label}}
 {{/array}}
 {{^hideLabel}}
 {{^array}}
