@@ -177,7 +177,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                 }.bind(this)})
             }
 
-            // debugger;
             // gform.types.smallcombo.focus.call(this);
         }
         this.shown = false;

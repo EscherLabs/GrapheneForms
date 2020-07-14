@@ -45,16 +45,16 @@ displayFields = _.map([
 		{type: 'number', label: 'Maximum', name: 'max',placeholder:5},
 
 
-		{type: 'fieldset',columns:12, label: 'Append', name: 'append',fields:[
-			{type: 'radio',size:0, label: 'Enable', name: 'enable',options:[{label:"No",value:false},{label:"Yes",value:true},{label:"Auto",value:'auto'}]},
-			{type: 'text', label: 'Label', name: 'label',placeholder:'default'}
-		]},		
+		// {type: 'fieldset',columns:12, label: 'Append', name: 'append',fields:[
+		// 	{type: 'radio',size:0, label: 'Enable', name: 'enable',options:[{label:"No",value:false},{label:"Yes",value:true},{label:"Auto",value:'auto'}]},
+		// 	{type: 'text', label: 'Label', name: 'label',placeholder:'default'}
+		// ]},		
 		{ type: 'fieldset',columns:12, label: 'Duplicate', name: 'duplicate',fields:[
-			{type: 'radio',size:0, label: 'Enable', name: 'enable',options:[{label:"No",value:false},{label:"Yes",value:true},{label:"Auto",value:'auto'}]},
+			{type: 'radio', label: 'Enable', value:"auto", name: 'enable',options:[{label:"No",value:false},{label:"Yes",value:true},{label:"Auto",value:'auto'}]},
 			{type: 'text', label: 'Label', name: 'label',placeholder:'default'}
-		]},	
+		]},
 		{ type: 'fieldset',columns:12, label: 'Remove', name: 'remove',fields:[
-			{type: 'radio',size:0, label: 'Enable', name: 'enable',options:[{label:"No",value:false},{label:"Yes",value:true},{label:"Auto",value:'auto'}]},
+			{type: 'radio', label: 'Enable', value:"auto", name: 'enable',options:[{label:"No",value:false},{label:"Yes",value:true},{label:"Auto",value:'auto'}]},
 			{type: 'text', label: 'Label', name: 'label',placeholder:'default'}
 		]},
 	]},
@@ -103,6 +103,7 @@ baseFields = _.map([
 	{type: 'switch', label: "",columns:4, name: 'minMaxType',show:[{type:"matches",name:"type",value:"date"}],parse:false,options:[{label:"Date",value:false},{label:"Field",value:true}]},
 	
 	{type: 'textarea',columns:12, label: 'Instructions', name: 'help',parse:[{type:"requires"}],show:[{name:"type",value:['output'],type:"not_matches"}]},
+	{type: 'textarea',columns:12, label: 'More Information', name: 'info',parse:[{type:"requires"}]},
 	{type: 'checkbox', label: 'Multiple Selections', name: 'multiple',min:1,show:[{name:"type",value:['select','radio'],type:"matches"}]},
 	{type: 'number', label: 'Limit Selections',parse:[{type:"requires"}],placeholder:"No Limit", name: 'limit',min:1,show:[{name:"type",value:['select','radio'],type:"matches"},{name:"multiple",value:true,type:"matches"}]},
 	{type: 'number', label: 'Limit Length', name: 'limit',min:1,parse:[{name:"type",value:['select','radio'],type:"not_matches"},{type:"requires"}],show:[{name:"type",value:['select','radio'],type:"not_matches"}]},
@@ -411,7 +412,7 @@ Cobler.types.input = function(container) {
 				{label:"Day",value:"MM/DD"}
 
 			],label:"Date Format",parse:[{type:"requires"}],format:{title:'Date Format <span class="pull-right" style="font-weight:normal">{{value}}</span>'}}
-			,{name:"display",label:"Display",show:[{type:"matches",value:["template"],name:"/type"}]}
+			,{name:"display",label:"Display",show:[{type:"matches",value:["template","output"],name:"/type"}]}
 
 		] }
 	])
@@ -433,6 +434,7 @@ Cobler.types.collection = function(container) {
 		// if(typeof temp !== 'undefined') {
 		// 	temp.selected = true;
 		// }
+		debugger;
 		return gform.render(item.type, _.extend({},myform.default,options));
 	}
 	function get() {		
@@ -606,7 +608,9 @@ Cobler.types.bool = function(container) {
 		]}
 	].concat(baseFields,baseConditions,_.map([{type: 'fieldset', label: false, array: {min:2,max:2},columns:12, name: 'options', fields: [
 		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Label','name':'label',parse:[{type:"requires"}]},
-		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Value','name':'value',parse:[{type:"requires"}]},
+		{title: '{{#parent.index}}True{{/parent.index}}{{^parent.index}}False{{/parent.index}} Value','name':'value',parse:[{type:"requires"}],value:function(e){
+			return (typeof e.initial.value == 'boolean')?'':e.initial.value;
+		}},
 	]}],function(item){
 		item.target = "#collapseOptions .panel-body";
 		return item;

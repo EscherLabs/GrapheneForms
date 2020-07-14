@@ -38,7 +38,7 @@ input:checked + .falseLabel {
 }
 
 /* The slider */
-.slider {
+.switch .slider {
 	position: absolute;
 	cursor: pointer;
 	top: 0;
@@ -51,7 +51,7 @@ input:checked + .falseLabel {
 	border: solid 0.1rem #c8c8c8;
 }
 
-.slider:before {
+.switch .slider:before {
 	position: absolute;
 	content: "";
 	height: 1.8rem;
@@ -77,13 +77,15 @@ input:checked + .slider:before {
 	-ms-transform: translateX(1.8rem);
 	transform: translateX(1.8rem);
 }
-
+input:disabled + .slider {
+	background-color: #ddd;
+}
 /* Rounded sliders */
-.slider.round {
+.switch .slider.round {
 	border-radius: 2rem;
 }
 
-.slider.round:before {
+.switch .slider.round:before {
 	border-radius: 50%;
 }
 
@@ -136,6 +138,44 @@ input:checked + .slider:before {
   #tooltip .gform-add, #tooltip .gform-minus {
 	display: none;
   }
+
+
+
+
+
+
+
+
+
+
+
+  #arrow,
+  #arrow::before {
+	position: absolute;
+	width: 8px;
+	height: 8px;
+	z-index: -1;
+  }
+  
+  #arrow::before {
+	content: "";
+	transform: rotate(45deg);
+	background: #333;
+  }
+ 
+
+  
+
+
+
+
+
+  
+  label.required:after,
+	legend.required:after {
+	content: "*";
+	color: #f00;
+	}
 `,
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
 _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
@@ -150,7 +190,7 @@ text: `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
 	{{/label}}
 		{{#pre}}<div class="input-group col-xs-12"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
     {{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
-		<input {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="" />
+		<input {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} min="{{min}}" {{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="" />
 		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
     {{^post}}{{#pre}}</div>{{/pre}}{{/post}}
 		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
@@ -165,7 +205,7 @@ output: `
 		{{>_label}}
 		
 	<div class="col-xs-12">
-    <output name="{{name}}" id="{{id}}">{{{display}}}</output>
+    <output name="{{name}}" id="{{id}}">{{{display}}}{{^display}}&nbsp;{{/display}}</output>
 		{{>_addons}}
 		{{>_actions}} 
 		</div>
@@ -253,7 +293,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{^label}}
 	<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>
 	{{/label}}
-		<textarea class="form-control"  {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} style="width:100%;height:auto;min-height:20px" rows="{{size}}{{^size}}3{{/size}}" name="{{name}}" id="{{guid}}" placeholder="{{placeholder}}">{{content}}{{value}}</textarea>
+		<textarea class="form-control"  {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} style="width:100%;height:auto;min-height:20px" rows="{{size}}{{^size}}3{{/size}}" name="{{name}}" id="{{guid}}" placeholder="{{placeholder}}"></textarea>
 		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
 		{{>_addons}}
 			{{>_actions}}
@@ -347,8 +387,8 @@ custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.dup
 <div class="btn btn-default remove"><i class="fa fa-minus"></i></div>
 {{/multiple.duplicate}}
 {{#label}}
-{{#inline}}<div class="col-md-12">{{/inline}}
-{{^inline}}<div class="col-md-8">{{/inline}}
+{{^horizontal}}<div class="col-md-12">{{/horizontal}}
+{{#horizontal}}<div class="col-md-8">{{/horizontal}}
 {{/label}}
 {{^label}}
 <div class="col-md-12">
@@ -380,9 +420,9 @@ _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{nam
 	<div data-id="{{id}}" class="gform-add btn btn-white">{{{duplicate.label}}}{{^duplicate.label}}<i data-id="{{id}}"  class="fa fa-plus text-success"></i>{{/duplicate.label}}</div>
 	{{/duplicate.enable}}
 </div>
-{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}
+{{^section}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/section}}
 {{/array}}
-{{#label}}<legend>{{{label}}}</legend>{{/label}}
+{{^section}}{{#label}}<legend>{{{label}}}</legend>{{/label}}{{/section}}
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,
 	_actions: `{{#array}}
@@ -407,13 +447,13 @@ _info:`<div>
   <div>{{info}}</div>
 </div> `,
 	_label: `
-
+	{{^hideLabel}}
     {{#label}}
 	<label for="{{name}}" {{^horizontal}}style="text-align:left"{{/horizontal}} class="control-label {{^horizontal}}col-xs-12{{/horizontal}}{{#horizontal}}col-md-4{{/horizontal}}">
   {{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}
 </label>{{/label}}
 {{#info}}<b class="gform-info" data-id="{{id}}"></b>{{/info}}
-
+{{/hideLabel}}
     `,
     _addons:`<span class="help-inline"> {{{help}}}</span>
 <span class="font-xs text-danger" style="display:block;"></span>`,
@@ -428,7 +468,7 @@ _info:`<div>
 	{{/label}}
 		<div class="checkbox">
 			<label class="{{alt-display}}">
-				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}><span class="falseLabel">{{{options.0.label}}}</span><span class="trueLabel">{{{options.1.label}}}</span>&nbsp;
+				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{^format.display}}<span class="falseLabel">{{{options.0.label}}}</span><span class="trueLabel">{{{options.1.label}}}</span>{{/format.display}}{{format.display}}&nbsp;
 			</label>
 		</div>
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
@@ -472,7 +512,7 @@ scale:`
 		{{>_addons}}
 	</div>
 </div>`,
-button:`<button class="btn btn-default hidden-print {{modifiers}}" style="margin:0 15px">{{{label}}}</button>`,
+button:`<button class="btn btn-default hidden-print {{modifiers}}" type="button" style="margin:0 15px">{{{label}}}</button>`,
 tab_container: `
 <form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
 	<ul class="nav nav-tabs" style="margin-bottom:15px">
@@ -484,7 +524,7 @@ tab_container: `
 			{{/section}}		
 		{{/fields}}
 	</ul></form>
-	</form><div class="gform-footer row"></div>`,
+	</form><div class="gform-footer"></div>`,
 tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
 modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form-horizontal{{/horizontal}} " id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -523,8 +563,8 @@ modal_fieldset:`{{>_fieldset}}`,
 template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
 template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{value}}}{{/format.template}}</div></div>`,
-child_modal_footer:`<button class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
-table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right" style="top: 22px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<h3>{{label}}</h3><table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
+child_modal_footer:`<button type="button" class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
+table:'<div><div class="col-xs-12" style="overflow:scroll"><legend>{{label}}</legend>{{#array}}{{#append.enable}}<button type="button" data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
 };
 
 
@@ -806,5 +846,4 @@ gform.prototype.modal = function(data){
 	// $(this.el).modal(data)
 	return this;
 }
-// debugger;
 document.body.appendChild(gform.create('<style>'+gform.render('_style',{},'all')+'</style>'));

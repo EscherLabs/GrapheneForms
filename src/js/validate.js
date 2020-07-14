@@ -48,7 +48,7 @@ gform.validateItem = function(force,item){
 	}
 	item.owner.errors[item.name] = item.errors;
 	item.owner.valid = item.valid && item.owner.valid;
-	return item.valid;
+	// return item.valid;
 
 };
 
@@ -87,6 +87,7 @@ gform.validations =
 	none:function(value) {
 			return false;
 	},
+
 	required:function(value) {
 			return (this.satisfied(value) ? false : '{{label}} is required');
 	},
@@ -154,11 +155,18 @@ gform.validations =
 		if(!(gform.regex.decimal.test(value) || value === '')){
 			return '{{label}} must contain only numbers';
 		}
-		if(typeof args.min == 'number' && parseFloat(value) < parseFloat(args.min)){
+
+		args.min = (typeof args.min == 'number')?args.min:(typeof this.min == 'number')?this.min:null
+		if(args.min !== null && parseFloat(value) < parseFloat(args.min)){
 			return '{{label}} must contain a number greater than {{args.min}}'
 		}
-		if(typeof args.max == 'number' && parseFloat(value) > parseFloat(args.max)){
+
+		args.max =  (typeof args.max == 'number')?args.max:(typeof this.max == 'number')?this.max:null
+		if(args.max !== null && parseFloat(value) > parseFloat(args.max)){
 			return '{{label}} must contain a number less than {{args.max}}'
 		}
+		// if((typeof args.step == 'number' || typeof this.step == 'number') && parseFloat(value) > parseFloat(args.max)){
+		// 	return '{{label}} must contain a number less than {{args.max}}'
+		// }
 	}
 };

@@ -215,10 +215,10 @@ fieldset .gform_isArray > fieldset{
 
     <script>
       myconditions=[
-	{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
+	{label: false,columns:12,label:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
 		return true;
 	}}]},
-	{type: 'fieldset',label:false,name:"conditions",columns:12,fields:
+	{type: 'fieldset',label:false,label:"conditions",columns:12,fields:
 	[
 		{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
 		{label: 'Name',name:"name",show:[{type:'matches',name:"type",value:["matches","not_matches","contains","requires"]}]},
@@ -279,7 +279,26 @@ fieldset .gform_isArray > fieldset{
           //   ]},
           // ]
       }
-      options.fields = 	[{type: 'fieldset',columns:11,offset:'1', label:false,name:"show",fields:myconditions,array:{min:1,max:1}}]
+      options.fields = 	[{type: 'table',columns:11,offset:'1', label:false,name:"show",fields:myconditions,array:{min:1,max:1}}]
+
+
+      options.fields = 	[{"label":"Drug Levels",
+            "array":{
+				"duplicate": {
+					"enable": false
+				},
+				"remove": {
+					"enable": false
+				}
+			}
+            
+            ,"type":"table","fields":[
+                {"label":"Measured by"},
+                {"label":"ID"},
+                {"label":"Drug Levels",type:"number"},
+                {"label":"Date"},
+                {"label":"Time"}
+        ]}]
 
     </script>
     <script src="../assets/js/example.js"></script>   
