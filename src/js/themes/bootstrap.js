@@ -526,7 +526,7 @@ tab_container: `
 	</ul></form>
 	</form><div class="gform-footer"></div>`,
 tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
-modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form-horizontal{{/horizontal}} " id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form-horizontal{{/horizontal}} " id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">

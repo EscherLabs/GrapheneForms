@@ -1501,6 +1501,9 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     // }else{
     //     field.trigger = field.owner.trigger;
     // }
+    if(gform.types[field.type].filter){
+        field.filter = gform.types[field.type].filter.bind(field);
+    }
     
     field.active = function() {
         return this.parent.active() && this.editable && this.parsable && this.visible;
@@ -3334,20 +3337,25 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         }.bind(null,this.id));
 
         this.owner.on('close', function(id,e){
-
+  
             if(typeof e.field !== 'undefined' && id == e.field.id){
-                e.field.modal('hide')
-                e.field.modalEl.querySelector('.gform-modal_body').removeChild(e.field.container);
-                e.field.container.removeEventListener('click', e.form.listener)
-
-                e.field.value = e.field.get();
-                e.field.update();
-                if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
-                    $.bootstrapSortable({ applyLast: true });
+                e.field.owner.valid = true;
+                e.field.owner.validate.call(e.field,true)
+                if(e.field.owner.valid){
+                    e.field.modal('hide')
+                    e.field.modalEl.querySelector('.gform-modal_body').removeChild(e.field.container);
+                    e.field.container.removeEventListener('click', e.form.listener)
+    
+                    e.field.value = e.field.get();
+                    e.field.update();
+                    if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
+                        $.bootstrapSortable({ applyLast: true });
+                    }
+    
+                    e.form.trigger('done', this);   
                 }
-
-                e.form.trigger('done', this);   
             }
+ 
         }.bind(null,this.id));
 
         Object.defineProperty(this, "value",{
@@ -3933,12 +3941,12 @@ gform.validations =
 			return '{{label}} must contain only numbers';
 		}
 
-		args.min = (typeof args.min == 'number')?args.min:(typeof this.min == 'number')?this.min:null
+		args.min = (typeof this.min == 'number')?this.min:(typeof args.min == 'number')?args.min:null
 		if(args.min !== null && parseFloat(value) < parseFloat(args.min)){
 			return '{{label}} must contain a number greater than {{args.min}}'
 		}
 
-		args.max =  (typeof args.max == 'number')?args.max:(typeof this.max == 'number')?this.max:null
+		args.max =  (typeof this.max == 'number')?this.max:(typeof args.max == 'number')?args.max:null
 		if(args.max !== null && parseFloat(value) > parseFloat(args.max)){
 			return '{{label}} must contain a number less than {{args.max}}'
 		}
@@ -4474,7 +4482,7 @@ tab_container: `
 	</ul></form>
 	</form><div class="gform-footer"></div>`,
 tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
-modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form-horizontal{{/horizontal}} " id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form-horizontal{{/horizontal}} " id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">
@@ -4961,6 +4969,16 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                         }
                         return option;
                     }.bind(this)))
+                    
+                    if(typeof this.custom == 'object'){
+
+                        this.menu.style.display = 'block';
+                        this.shown = true;
+                        var li = document.createElement("li");
+                        li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{custom.name}}" class="dropdown-item">{{{custom.display}}}</a>', this);
+                        this.menu.appendChild(li);
+                    }
+
                     var first = this.menu.querySelector('li');
                     if(first !== null){
                         gform.addClass(first,'active')
@@ -4971,8 +4989,21 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                     }
                     this.parent.trigger(['change'], this, {input:this.value});
                 }.bind(this)})
+            }else{
+                if(typeof this.custom == 'object'){
+
+                    this.menu.style.display = 'block';
+                    this.shown = true;
+
+                    var li = document.createElement("li");
+                    li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{custom.name}}" class="dropdown-item">{{{custom.display}}}</a>', this);
+                    this.menu.appendChild(li);
+                }
             }
 
+
+
+            // debugger;
             // gform.types.smallcombo.focus.call(this);
         }
         this.shown = false;
@@ -4986,13 +5017,24 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.set = gform.types[this.type].set.bind(this);
         
         this.select = function(index){
-            var item = _.find(this.options,{i:parseInt(index)})
-            this.set(item.value);
-            this.parent.trigger(['input'], this, {input:this.value});
+            if(!isNaN(parseInt(index))){
+                var item = _.find(this.options,{i:parseInt(index)})
+                this.set(item.value);
+                this.parent.trigger(['input'], this, {input:this.value});
 
-            this.menu.style.display = 'none';
-            this.shown = false;
-            gform.types.smallcombo.focus.call(this);
+                this.menu.style.display = 'none';
+                this.shown = false;
+                gform.types.smallcombo.focus.call(this);
+            }else{
+                if(typeof this.custom == 'object' && this.custom.name == index){
+                    if(typeof this.custom.action == 'function'){
+                        this.custom.action.call(this)
+
+                    }
+                    this.parent.trigger(index, this);
+
+                }
+            }
 		}
         $(this.el).on('click',".dropdown-item",function(e){
             this.select(e.currentTarget.dataset.index);   

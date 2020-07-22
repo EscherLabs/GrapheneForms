@@ -1480,6 +1480,9 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     // }else{
     //     field.trigger = field.owner.trigger;
     // }
+    if(gform.types[field.type].filter){
+        field.filter = gform.types[field.type].filter.bind(field);
+    }
     
     field.active = function() {
         return this.parent.active() && this.editable && this.parsable && this.visible;
