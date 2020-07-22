@@ -1534,20 +1534,25 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         }.bind(null,this.id));
 
         this.owner.on('close', function(id,e){
-
+  
             if(typeof e.field !== 'undefined' && id == e.field.id){
-                e.field.modal('hide')
-                e.field.modalEl.querySelector('.gform-modal_body').removeChild(e.field.container);
-                e.field.container.removeEventListener('click', e.form.listener)
-
-                e.field.value = e.field.get();
-                e.field.update();
-                if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
-                    $.bootstrapSortable({ applyLast: true });
+                e.field.owner.valid = true;
+                e.field.owner.validate.call(e.field,true)
+                if(e.field.owner.valid){
+                    e.field.modal('hide')
+                    e.field.modalEl.querySelector('.gform-modal_body').removeChild(e.field.container);
+                    e.field.container.removeEventListener('click', e.form.listener)
+    
+                    e.field.value = e.field.get();
+                    e.field.update();
+                    if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
+                        $.bootstrapSortable({ applyLast: true });
+                    }
+    
+                    e.form.trigger('done', this);   
                 }
-
-                e.form.trigger('done', this);   
             }
+ 
         }.bind(null,this.id));
 
         Object.defineProperty(this, "value",{

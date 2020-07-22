@@ -156,12 +156,12 @@ gform.validations =
 			return '{{label}} must contain only numbers';
 		}
 
-		args.min = (typeof args.min == 'number')?args.min:(typeof this.min == 'number')?this.min:null
+		args.min = (typeof this.min == 'number')?this.min:(typeof args.min == 'number')?args.min:null
 		if(args.min !== null && parseFloat(value) < parseFloat(args.min)){
 			return '{{label}} must contain a number greater than {{args.min}}'
 		}
 
-		args.max =  (typeof args.max == 'number')?args.max:(typeof this.max == 'number')?this.max:null
+		args.max =  (typeof this.max == 'number')?this.max:(typeof args.max == 'number')?args.max:null
 		if(args.max !== null && parseFloat(value) > parseFloat(args.max)){
 			return '{{label}} must contain a number less than {{args.max}}'
 		}

@@ -165,6 +165,16 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                         }
                         return option;
                     }.bind(this)))
+                    
+                    if(typeof this.custom == 'object'){
+
+                        this.menu.style.display = 'block';
+                        this.shown = true;
+                        var li = document.createElement("li");
+                        li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{custom.name}}" class="dropdown-item">{{{custom.display}}}</a>', this);
+                        this.menu.appendChild(li);
+                    }
+
                     var first = this.menu.querySelector('li');
                     if(first !== null){
                         gform.addClass(first,'active')
@@ -175,8 +185,21 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                     }
                     this.parent.trigger(['change'], this, {input:this.value});
                 }.bind(this)})
+            }else{
+                if(typeof this.custom == 'object'){
+
+                    this.menu.style.display = 'block';
+                    this.shown = true;
+
+                    var li = document.createElement("li");
+                    li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{custom.name}}" class="dropdown-item">{{{custom.display}}}</a>', this);
+                    this.menu.appendChild(li);
+                }
             }
 
+
+
+            // debugger;
             // gform.types.smallcombo.focus.call(this);
         }
         this.shown = false;
@@ -190,13 +213,24 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         this.set = gform.types[this.type].set.bind(this);
         
         this.select = function(index){
-            var item = _.find(this.options,{i:parseInt(index)})
-            this.set(item.value);
-            this.parent.trigger(['input'], this, {input:this.value});
+            if(!isNaN(parseInt(index))){
+                var item = _.find(this.options,{i:parseInt(index)})
+                this.set(item.value);
+                this.parent.trigger(['input'], this, {input:this.value});
 
-            this.menu.style.display = 'none';
-            this.shown = false;
-            gform.types.smallcombo.focus.call(this);
+                this.menu.style.display = 'none';
+                this.shown = false;
+                gform.types.smallcombo.focus.call(this);
+            }else{
+                if(typeof this.custom == 'object' && this.custom.name == index){
+                    if(typeof this.custom.action == 'function'){
+                        this.custom.action.call(this)
+
+                    }
+                    this.parent.trigger(index, this);
+
+                }
+            }
 		}
         $(this.el).on('click',".dropdown-item",function(e){
             this.select(e.currentTarget.dataset.index);   

@@ -1501,6 +1501,9 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     // }else{
     //     field.trigger = field.owner.trigger;
     // }
+    if(gform.types[field.type].filter){
+        field.filter = gform.types[field.type].filter.bind(field);
+    }
     
     field.active = function() {
         return this.parent.active() && this.editable && this.parsable && this.visible;
@@ -3334,20 +3337,25 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         }.bind(null,this.id));
 
         this.owner.on('close', function(id,e){
-
+  
             if(typeof e.field !== 'undefined' && id == e.field.id){
-                e.field.modal('hide')
-                e.field.modalEl.querySelector('.gform-modal_body').removeChild(e.field.container);
-                e.field.container.removeEventListener('click', e.form.listener)
-
-                e.field.value = e.field.get();
-                e.field.update();
-                if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
-                    $.bootstrapSortable({ applyLast: true });
+                e.field.owner.valid = true;
+                e.field.owner.validate.call(e.field,true)
+                if(e.field.owner.valid){
+                    e.field.modal('hide')
+                    e.field.modalEl.querySelector('.gform-modal_body').removeChild(e.field.container);
+                    e.field.container.removeEventListener('click', e.form.listener)
+    
+                    e.field.value = e.field.get();
+                    e.field.update();
+                    if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
+                        $.bootstrapSortable({ applyLast: true });
+                    }
+    
+                    e.form.trigger('done', this);   
                 }
-
-                e.form.trigger('done', this);   
             }
+ 
         }.bind(null,this.id));
 
         Object.defineProperty(this, "value",{
@@ -3933,12 +3941,12 @@ gform.validations =
 			return '{{label}} must contain only numbers';
 		}
 
-		args.min = (typeof args.min == 'number')?args.min:(typeof this.min == 'number')?this.min:null
+		args.min = (typeof this.min == 'number')?this.min:(typeof args.min == 'number')?args.min:null
 		if(args.min !== null && parseFloat(value) < parseFloat(args.min)){
 			return '{{label}} must contain a number greater than {{args.min}}'
 		}
 
-		args.max =  (typeof args.max == 'number')?args.max:(typeof this.max == 'number')?this.max:null
+		args.max =  (typeof this.max == 'number')?this.max:(typeof args.max == 'number')?args.max:null
 		if(args.max !== null && parseFloat(value) > parseFloat(args.max)){
 			return '{{label}} must contain a number less than {{args.max}}'
 		}
