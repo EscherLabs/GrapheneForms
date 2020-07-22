@@ -229,20 +229,8 @@ var gform = function(optionsIn, el){
                         // }
 
                         this.updateActions(field);
-                        // var fieldCount = this.filter({array:{ref:field.array.ref}},1).length
-
-                        // var testFunc = function(selector,status, button){
-                        //     gform.toggleClass(button.querySelector(selector),'hidden', status)
-                        // }
-                        // _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
-                        // _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
-            
                         field.operator.reflow();
-
-
-
                     }else{
-                        // gform.inflate.bind(this, this.options.data||{})
                         if(typeof field !== 'undefined'){
                             field.set(item);
                         }
@@ -250,13 +238,11 @@ var gform = function(optionsIn, el){
                 }
             }.bind(this))
         }
-        // if(typeof name == 'undefined'){
         if(name == null){
             gform.each.call(this, function(field) {
                 field.set('');
             })
         }
-        // _.find(this.fields, {name: name}).set(value);
     }.bind(this),
 
     this.isActive = false;
@@ -533,6 +519,14 @@ gform.reduce = function(func,object,filter){
     },object)
     return object;
 }
+gform.reduceShallow = function(func,object,filter){
+    var object = object ||{};
+    _.reduce(this.filter(filter,1),function(object, field){
+        var temp = func(object,field);
+        return temp;
+    },object)
+    return object;
+}
 gform.find = function(oname,depth){
     var name;
     var temp;
@@ -593,7 +587,7 @@ gform.toJSON = function(name) {
         }
         return field.get()
     }
-    return gform.reduce.call(this,gform.patch,{},{parsable:true})
+    return gform.reduceShallow.call(this,gform.patch,{},{parsable:true})
 }
 
 gform.toString = function(name,report){
@@ -732,6 +726,7 @@ gform.instances = {};
 
 //creates multiple instances of duplicatable fields if input attributes exist for them
 gform.inflate = function(atts, fieldIn, ind, list) {
+    debugger;
     var newList = list;
     //commented this out because I am not sure what its purpose is 
     // - may need it but it breaks if you have an array following two fields with the same name
@@ -746,7 +741,6 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         }else{
             _.each(field.fields, gform.inflate.bind(this, atts[field.name] || {}) );
         }
-        // field.reflow()
     }
     if(field.array) {
         var fieldCount = field.array.min||0;
@@ -766,23 +760,8 @@ gform.inflate = function(atts, fieldIn, ind, list) {
             field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
             field = newfield;
         }
-        // var testFunc = function(status, button){
-        //     gform.toggleClass(button,'hidden', status)
-        // }
-        // if(field.name == "options")
-        // _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-add'),testFunc.bind(null,(fieldCount >= (field.array.max || 5)) ))
 
-        // _.each(field.operator.container.querySelectorAll('[data-ref="'+field.array.ref+'"] .gform-minus'),testFunc.bind(null,!(fieldCount > (field.array.min || 1) ) ))
         this.updateActions(field);
-        // var fieldCount = field.operator.filter({array:{ref:field.array.ref}},1).length
-
-        // var testFunc = function(selector,status, button){
-        //     gform.toggleClass(button.querySelector(selector),'hidden', status)
-        // }
-        // _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
-        // _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
-
-
     }
 }
 gform.normalizeField = function(fieldIn,parent){
@@ -865,7 +844,7 @@ gform.prototype.opts = {
     sections:'',
     suffix: ':',
     rowClass: 'row',
-    requiredText: '<span style="color:red">*</span>'
+    requiredText: '<span style="color:red">*</span>',subsections:false
 }
 
 gform.eventBus = function(options, owner){
@@ -1264,7 +1243,7 @@ gform.render = function(template, options) {
     // return elem
   };
   
-gform.VERSION = '0.0.1.2';
+gform.VERSION = '0.0.2.0';
 gform.i = 0;
 gform.getUID = function() {
     return 'f' + (gform.i++);
@@ -1678,10 +1657,16 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         }
 
         field.fields = _.map(field.fields, gform.createField.bind(this, field, newatts, null, null) );
-        if(field.array) {
-            _.each(field.fields, gform.inflate.bind(this, newatts) );
-            field.reflow()
-        }
+
+
+///look here - commented this out but need to confirm that is ok - seems to be so far
+
+
+
+        // if(field.array) {
+        //     _.each(field.fields, gform.inflate.bind(this, newatts) );
+        //     field.reflow()
+        // }
         field.update();
     }
 
@@ -1730,7 +1715,6 @@ gform.reflow = function(){
 
 
 gform.patch = function(object,patch,action){
-
     if(!_.isArray(patch)){
         patch = [patch];
     }

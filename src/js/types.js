@@ -515,7 +515,6 @@ gform.types = {
       }
   },
   'section':{
-
     base:'section',
     filter: function(search,depth){
         return gform.filter.call(this,search,depth);
@@ -1457,6 +1456,7 @@ gform.types['template'] = _.extend({}, gform.types['input'], gform.types['sectio
             // this.modalEl.querySelector('.done').addEventListener('click', closeFunc);
                 
             this.modalEl.querySelector('.done').addEventListener('click', function(e){
+                
                 this.owner.trigger('close',this);
             }.bind(this));
             this.modalEl.querySelector('.gform-footer .gform-minus').addEventListener('click', function(){
@@ -1502,6 +1502,18 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         });//_.uniq(_.map(this.fields,'label'))
         return gform.render('table',this);
     },
+    get: function(name) {
+        //this is not right ----
+        if(typeof name !== 'undefined'){
+            return gform.toJSON.call(this, name);
+        }
+        return _.selectPath(gform.toJSON.call(this),this.map)
+
+      //   var value = gform.toJSON.call(this)[this.name];
+      //   return !this.array || typeof value == 'undefined'?value:value[this.index];
+     
+      //   return gform.toJSON.call(this, name)[this.name]
+    },
     toString: function(name, report) {
         if(!report){
           if(this.sibling){
@@ -1522,7 +1534,7 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         }
     },
     rowSelector:"tbody",
-    array:{max:5,min:1,duplicate:{enable:false},remove:{enable:false},append:{enable:true},sortable:{enable:true}},
+    array:{max:5,min:0,duplicate:{enable:false},remove:{enable:false},append:{enable:true},sortable:{enable:true}},
     initialize: function() {
         this.rows = [];
         this.initialValue = this.value
@@ -1534,20 +1546,24 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         }.bind(null,this.id));
 
         this.owner.on('close', function(id,e){
-
-            if(typeof e.field !== 'undefined' && id == e.field.id){
-                e.field.modal('hide')
-                e.field.modalEl.querySelector('.gform-modal_body').removeChild(e.field.container);
-                e.field.container.removeEventListener('click', e.form.listener)
-
-                e.field.value = e.field.get();
-                e.field.update();
-                if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
-                    $.bootstrapSortable({ applyLast: true });
+            e.field.owner.valid = true;
+                e.field.owner.validate.call(e.field,true)
+                if(e.field.owner.valid){
+                    if(typeof e.field !== 'undefined' && id == e.field.id){
+                        e.field.modal('hide')
+                        e.field.modalEl.querySelector('.gform-modal_body').removeChild(e.field.container);
+                        e.field.container.removeEventListener('click', e.form.listener)
+        
+                        e.field.value = e.field.get();
+                        e.field.update();
+                        if(e.field.array.sortable.enable && typeof $ !== 'undefined' && typeof $.bootstrapSortable !== 'undefined'){
+                            $.bootstrapSortable({ applyLast: true });
+                        }
+        
+                        e.form.trigger('done', this);   
+                    }
                 }
-
-                e.form.trigger('done', this);   
-            }
+ 
         }.bind(null,this.id));
 
         Object.defineProperty(this, "value",{
@@ -1561,6 +1577,7 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
       },     
     render: function(el) {
+        debugger;
         el = el||this.el;
 
         el.innerHTML = "";
@@ -1570,7 +1587,7 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         // var cellText = gform.create('<button class="btn btn-info btn-xs gform-edit"><i class="fa fa-pencil"></i> Edit</button>');
         // cell.appendChild(cellText);
         // el.appendChild(cell);
-
+        if(this.subsections == false){
         _.each(this.fields,function(field){
             var renderable = "";
             if(typeof (this.value||{})[field.name] !== 'undefined' && (this.value||{})[field.name] !== ''){
@@ -1602,56 +1619,75 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
             }
 
         }.bind(this))
-
+    }
     },     
     display: function(){
            return this.toString();
     },
     edit:function(e){
-            if(
-                !e.target.classList.contains('gform-minus') && 
-                !e.target.classList.contains('gform-add')
-            ){
+        if(
+            !e.target.classList.contains('gform-minus') && 
+            !e.target.classList.contains('gform-add')
+        ){
+            e.preventDefault();
+            this.modalEl = gform.create(gform.render("modal_container",{body:'<div class="gform-modal_body"></div>',footer:gform.render('child_modal_footer'),legend:this.label,name:"preview"}))
+            this.container.addEventListener('click', this.owner.listener)
+            // gform.removeClass(this.modalEl,'modal-hide');
+            // gform.prototype.modal.call(this)
+            this.modalEl.querySelector('.gform-modal_body').appendChild(this.container);
+            this.owner.trigger('modal',this);
+
+            this.modal = gform.prototype.modal.bind(this);
+            this.modal();
+
+            this.find({visible:true}).focus(this.owner.modalDelay);
+
+            // this.modalEl.querySelector('.close').addEventListener('click', closeFunc);
+            // this.modalEl.querySelector('.modal-background').addEventListener('click', closeFunc);
+            // this.modalEl.querySelector('.done').addEventListener('click', closeFunc);
+            this.modalEl.querySelector('.done').addEventListener('click', function(e){
+                this.owner.trigger('close',this);
+            }.bind(this));
+
+            this.modalEl.querySelector('.gform-footer .gform-minus').addEventListener('click', function(){
+                e.stopPropagation();
                 e.preventDefault();
-                this.modalEl = gform.create(gform.render("modal_container",{body:'<div class="gform-modal_body"></div>',footer:gform.render('child_modal_footer'),legend:this.label,name:"preview"}))
-                this.container.addEventListener('click', this.owner.listener)
-                // gform.removeClass(this.modalEl,'modal-hide');
-                // gform.prototype.modal.call(this)
-                this.modalEl.querySelector('.gform-modal_body').appendChild(this.container);
-    
-                this.modal = gform.prototype.modal.bind(this);
-                this.modal();
-                this.find({visible:true}).focus(this.owner.modalDelay);
-
-                // this.modalEl.querySelector('.close').addEventListener('click', closeFunc);
-                // this.modalEl.querySelector('.modal-background').addEventListener('click', closeFunc);
-                // this.modalEl.querySelector('.done').addEventListener('click', closeFunc);
-                this.modalEl.querySelector('.done').addEventListener('click', function(e){
-                    this.owner.trigger('close',this);
-                }.bind(this));
-
-                this.modalEl.querySelector('.gform-footer .gform-minus').addEventListener('click', function(){
-                    e.stopPropagation();
-                    e.preventDefault();
-                    this.modal('hide');
-                    this.modalEl.querySelector('.gform-modal_body').removeChild(this.container);
-                    this.container.removeEventListener('click', this.owner.listener)
-                    gform.removeField.call(this.owner,this);
-                }.bind(this));
-            }
-        },
+                this.modal('hide');
+                this.modalEl.querySelector('.gform-modal_body').removeChild(this.container);
+                this.container.removeEventListener('click', this.owner.listener)
+                gform.removeField.call(this.owner,this);
+            }.bind(this));
+        }
+    },
     create: function() {
-        var tempEl = document.createElement("tr");
-        gform.addClass(tempEl,'gform-edit');
-        this.render(tempEl);
-        tempEl.setAttribute("id", this.id);
-        gform.toggleClass(tempEl,'gform_isArray',!!this.array)
-        this.container = gform.create('<fieldset></fieldset>');
+        if(!this.subsections){
+            var tempEl = document.createElement("tr");
+            gform.addClass(tempEl,'gform-edit');
+            this.render(tempEl);
+            tempEl.setAttribute("id", this.id);
+            gform.toggleClass(tempEl,'gform_isArray',!!this.array)
+            this.container = gform.create('<fieldset></fieldset>');
 
-        tempEl.removeEventListener('click', gform.types.table.edit.bind(this))
-        tempEl.addEventListener('click', gform.types.table.edit.bind(this))
+            tempEl.removeEventListener('click', gform.types.table.edit.bind(this))
+            tempEl.addEventListener('click', gform.types.table.edit.bind(this))
 
-        return tempEl;
+            return tempEl;
+        }else{
+            // var tempEl = document.createElement("tr");
+            // gform.addClass(tempEl,'gform-edit');
+            // this.render(tempEl);
+            tempEl=gform.create(gform.types.table.row.call(this))
+
+            tempEl.setAttribute("id", this.id);
+            gform.toggleClass(tempEl,'gform_isArray',!!this.array)
+            this.container = gform.create('<fieldset></fieldset>');
+    
+            // tempEl.removeEventListener('click', gform.types.table.edit.bind(this))
+            // tempEl.addEventListener('click', gform.types.table.edit.bind(this))
+    
+            return tempEl;
+            
+        }
     },
     update: function(item, silent) {
         if(typeof item === 'object') {
