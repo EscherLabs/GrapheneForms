@@ -4920,7 +4920,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 			}else{
 				if(this.filter !== false && (this.combo.innerText == ""  || _.score(item.label.toLowerCase(), this.combo.innerText.toLowerCase())>.6)){
 					var li = document.createElement("li");
-					li.innerHTML = gform.renderString('<a href="javaScript:void(0);" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
+					li.innerHTML = gform.renderString('<a  href="javascript:void(0);" tabindex="0" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',item);
 					this.menu.appendChild(li);
 					item.filter = true;
 				}else{
@@ -4963,7 +4963,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                         if(!this.filter || this.combo.innerText == ""  || _.score(option.label.toLowerCase(), this.combo.innerText.toLowerCase())>.1){
 
                             var li = document.createElement("li");
-                            li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>', option);
+                            li.innerHTML = gform.renderString('<a  href="javascript:void(0);" tabindex="0" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>', option);
                             this.menu.appendChild(li);
                             option.filter = true;
                         }
@@ -4975,7 +4975,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                         this.menu.style.display = 'block';
                         this.shown = true;
                         var li = document.createElement("li");
-                        li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{custom.name}}" class="dropdown-item">{{{custom.display}}}</a>', this);
+                        li.innerHTML = gform.renderString('<a  href="javascript:void(0);" tabindex="0" data-index="{{custom.name}}" class="dropdown-item">{{{custom.display}}}</a>', this);
                         this.menu.appendChild(li);
                     }
 
@@ -4996,7 +4996,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                     this.shown = true;
 
                     var li = document.createElement("li");
-                    li.innerHTML = gform.renderString('<a href="javaScript:void(0);"  data-index="{{custom.name}}" class="dropdown-item">{{{custom.display}}}</a>', this);
+                    li.innerHTML = gform.renderString('<a href="javascript:void(0);" tabindex="0" data-index="{{custom.name}}" class="dropdown-item">{{{custom.display}}}</a>', this);
                     this.menu.appendChild(li);
                 }
             }
@@ -5153,6 +5153,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         }.bind(this))
 
         this.combo.addEventListener('blur', function(e){
+            debugger;
             if(!(gform.hasClass(e.relatedTarget,'dropdown-item') || gform.hasClass(e.relatedTarget,'dropdown-toggle') || this.mousedropdown )){
                 if(this.shown ){
                 var list = _.filter(this.options,{filter:true});
@@ -5223,7 +5224,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
                     if(this.combo.innerText == ""  || _.score(option.label.toLowerCase(),this.combo.innerText.toLowerCase())>.1){
                         var li = document.createElement("li");
-                        li.innerHTML = gform.renderString('<a href="#" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
+                        li.innerHTML = gform.renderString('<a href="javascript:void(0);" tabindex="0" data-index="{{i}}" class="dropdown-item">{{{display}}}{{^display}}{{{label}}}{{/display}}</a>',option);
                         this.menu.appendChild(li);
                     }
                     return option;
