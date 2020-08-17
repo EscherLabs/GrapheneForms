@@ -1578,7 +1578,6 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
 
       },     
     render: function(el) {
-        debugger;
         el = el||this.el;
 
         el.innerHTML = "";
@@ -1588,7 +1587,6 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         // var cellText = gform.create('<button class="btn btn-info btn-xs gform-edit"><i class="fa fa-pencil"></i> Edit</button>');
         // cell.appendChild(cellText);
         // el.appendChild(cell);
-        if(this.subsections == false){
         _.each(this.fields,function(field){
             var renderable = "";
             if(typeof (this.value||{})[field.name] !== 'undefined' && (this.value||{})[field.name] !== ''){
@@ -1620,7 +1618,6 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
             }
 
         }.bind(this))
-    }
     },     
     display: function(){
            return this.toString();
@@ -1656,12 +1653,15 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
                 this.modal('hide');
                 this.modalEl.querySelector('.gform-modal_body').removeChild(this.container);
                 this.container.removeEventListener('click', this.owner.listener)
-                gform.removeField.call(this.owner,this);
+                debugger;
+                _.find(_.filter(this.parent.items,function(item){return item instanceof gform.arrayManager}),{field:{array:{ref:this.array.ref}}}).removeField(
+                    this
+                )
+                // gform.removeField.call(this.owner,this);
             }.bind(this));
         }
     },
     create: function() {
-        if(!this.subsections){
             var tempEl = document.createElement("tr");
             gform.addClass(tempEl,'gform-edit');
             this.render(tempEl);
@@ -1673,22 +1673,7 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
             tempEl.addEventListener('click', gform.types.table.edit.bind(this))
 
             return tempEl;
-        }else{
-            // var tempEl = document.createElement("tr");
-            // gform.addClass(tempEl,'gform-edit');
-            // this.render(tempEl);
-            tempEl=gform.create(gform.types.table.row.call(this))
 
-            tempEl.setAttribute("id", this.id);
-            gform.toggleClass(tempEl,'gform_isArray',!!this.array)
-            this.container = gform.create('<fieldset></fieldset>');
-    
-            // tempEl.removeEventListener('click', gform.types.table.edit.bind(this))
-            // tempEl.addEventListener('click', gform.types.table.edit.bind(this))
-    
-            return tempEl;
-            
-        }
     },
     update: function(item, silent) {
         if(typeof item === 'object') {

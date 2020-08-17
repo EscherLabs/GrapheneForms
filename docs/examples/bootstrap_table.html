@@ -281,21 +281,25 @@ fieldset .gform_isArray > fieldset{
       }
       options.fields = 	[{type: 'table',columns:11,offset:'1', label:false,name:"show",fields:myconditions,array:{min:1,max:1}}]
 
-
-      options.fields = 	[{"label":"Drug Levels",
-            "array":{
+      options.data = {'drug_levels':[
+      
+// {'drug_level':1},{'drug_level':2}
+      ]}
+      options.fields = 	[{"label":"Drug Levels",subsections:false,
+        "array":{
 				"duplicate": {
 					"enable": false
 				},
 				"remove": {
 					"enable": false
-				}
+        },
+        min:0
 			}
             
             ,"type":"table","fields":[
                 {"label":"Measured by"},
                 {"label":"ID"},
-                {"label":"Drug Levels",type:"number"},
+                {"label":"Drug Level",type:"number"},
                 {"label":"Date"},
                 {"label":"Time"}
         ]}]
