@@ -24,7 +24,9 @@ var gform = function(optionsIn, el){
     this.methods = data.methods||{};
 
     this.eventBus = new gform.eventBus({owner:'form',item:'field',handlers:data.events||{}}, this)
-	this.on = this.eventBus.on;
+    this.on = this.eventBus.on;
+    this.errors = {};
+
     // this.sub = this.on;
     this.popin = function(){
         
@@ -117,6 +119,7 @@ var gform = function(optionsIn, el){
 
   
     this.trigger('initialize',this);
+    this.add = gform.createField.bind(this, this, this.options.data||{}, null, null);
 
     var create = function(){
         if(typeof this.el == 'undefined'){
@@ -157,7 +160,7 @@ var gform = function(optionsIn, el){
         this.rows = [];
 
         this.fields = [];
-        this.fields =_.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
+        this.fields =_.map(this.options.fields, this.add)
 
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
 
@@ -380,6 +383,7 @@ gform.addField = function(field){
     // var fieldCount = _.filter(field.parent.fields, 
     //     function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
     // ).length
+    field.parent = field.parent || this;
     var fieldCount = field.parent.filter({array:{ref:field.array.ref}}).length
 
     var newField;

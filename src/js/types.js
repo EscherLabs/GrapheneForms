@@ -1067,7 +1067,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
                 e.field.field.owner.trigger("collection",e.field.field)
             })
             }
-            this.options = this.mapOptions.getoptions();
+            this.options = this.mapOptions.getobject();
             this.list = this.mapOptions.getoptions()
             if(!this.mapOptions.waiting){
                 if(this.multiple){

@@ -1,4 +1,3 @@
-gform.prototype.errors = {};
 gform.prototype.validate = function(force){
 	this.valid = true;
 	_.each(this.fields, gform.validateItem.bind(null, force))
@@ -8,6 +7,7 @@ gform.prototype.validate = function(force){
 		this.trigger('valid');
 	}
 	this.trigger('validation');
+	
 	return this.valid;
 };
 gform.handleError = gform.update;
@@ -19,6 +19,7 @@ gform.validateItem = function(force,item){
 		item.errors = '';
 		if(item.parsable && typeof item.validate === 'object'){
 			var errors = gform.validation.call(item,item.validate);
+			debugger;
 			if(item.required){
 				var type = (item.satisfied(item.get()) ? false : '{{label}} is required')
 				if(type) {
@@ -47,6 +48,7 @@ gform.validateItem = function(force,item){
 		item.owner.trigger('valid:'+item.name);
 	}
 	item.owner.errors[item.name] = item.errors;
+	item.owner.errors = _.pickBy(item.owner.errors);
 	item.owner.valid = item.valid && item.owner.valid;
 	// return item.valid;
 
@@ -89,6 +91,7 @@ gform.validations =
 	},
 
 	required:function(value) {
+		debugger;
 			return (this.satisfied(value) ? false : '{{label}} is required');
 	},
 	pattern: function(value, args) {
@@ -116,11 +119,15 @@ gform.validations =
 
 	},
 	matches:function(value, args) {
-		var temp = this.parent.find(args.name);
-		if(typeof temp == 'undefined'){return "Matching field not defined";}
-		args.label = temp.label;
-		args.value = temp.get();
-		return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
+		if(typeof args.name !== 'undefined'){
+			var temp = this.parent.find(args.name);
+			if(typeof temp == 'undefined'){return "Matching field not defined";}
+			args.label = temp.label;
+			args.value = temp.get();
+			return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
+		}else if(typeof args.value !== 'undefined'){
+			return (value == args.value ? false : '"{{label}}" does not match "{{args.value}}"');
+		}
 	},
 	date: function(value) {
 			return gform.regex.date.test(value) || value === '' ? false : '{{label}} should be in the format MM/DD/YYYY';
@@ -155,15 +162,15 @@ gform.validations =
 		if(!(gform.regex.decimal.test(value) || value === '')){
 			return '{{label}} must contain only numbers';
 		}
-
+		
 		args.min = (typeof this.min == 'number')?this.min:(typeof args.min == 'number')?args.min:null
 		if(args.min !== null && parseFloat(value) < parseFloat(args.min)){
-			return '{{label}} must contain a number greater than {{args.min}}'
+			return '{{label}} must contain a number not less than {{args.min}} '
 		}
 
 		args.max =  (typeof this.max == 'number')?this.max:(typeof args.max == 'number')?args.max:null
 		if(args.max !== null && parseFloat(value) > parseFloat(args.max)){
-			return '{{label}} must contain a number less than {{args.max}}'
+			return '{{label}} must contain a number not more than {{args.max}}'
 		}
 		// if((typeof args.step == 'number' || typeof this.step == 'number') && parseFloat(value) > parseFloat(args.max)){
 		// 	return '{{label}} must contain a number less than {{args.max}}'

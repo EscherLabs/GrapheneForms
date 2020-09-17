@@ -24,7 +24,9 @@ var gform = function(optionsIn, el){
     this.methods = data.methods||{};
 
     this.eventBus = new gform.eventBus({owner:'form',item:'field',handlers:data.events||{}}, this)
-	this.on = this.eventBus.on;
+    this.on = this.eventBus.on;
+    this.errors = {};
+
     // this.sub = this.on;
     this.popin = function(){
         
@@ -117,6 +119,7 @@ var gform = function(optionsIn, el){
 
   
     this.trigger('initialize',this);
+    this.add = gform.createField.bind(this, this, this.options.data||{}, null, null);
 
     var create = function(){
         if(typeof this.el == 'undefined'){
@@ -157,7 +160,7 @@ var gform = function(optionsIn, el){
         this.rows = [];
 
         this.fields = [];
-        this.fields =_.map(this.options.fields, gform.createField.bind(this, this, this.options.data||{}, null, null))
+        this.fields =_.map(this.options.fields, this.add)
 
         _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
 
@@ -380,6 +383,7 @@ gform.addField = function(field){
     // var fieldCount = _.filter(field.parent.fields, 
     //     function(o) { return (o.name == field.name) && (typeof o.array !== "undefined") && !!o.array; }
     // ).length
+    field.parent = field.parent || this;
     var fieldCount = field.parent.filter({array:{ref:field.array.ref}}).length
 
     var newField;
@@ -2870,7 +2874,7 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
                 e.field.field.owner.trigger("collection",e.field.field)
             })
             }
-            this.options = this.mapOptions.getoptions();
+            this.options = this.mapOptions.getobject();
             this.list = this.mapOptions.getoptions()
             if(!this.mapOptions.waiting){
                 if(this.multiple){
@@ -3783,8 +3787,7 @@ gform.conditions = {
 			return (parseInt(val) == localval);
 		}
 	}
-}; gform.prototype.errors = {};
-gform.prototype.validate = function(force){
+}; gform.prototype.validate = function(force){
 	this.valid = true;
 	_.each(this.fields, gform.validateItem.bind(null, force))
 	if(!this.valid){
@@ -3793,6 +3796,7 @@ gform.prototype.validate = function(force){
 		this.trigger('valid');
 	}
 	this.trigger('validation');
+	
 	return this.valid;
 };
 gform.handleError = gform.update;
@@ -3804,6 +3808,7 @@ gform.validateItem = function(force,item){
 		item.errors = '';
 		if(item.parsable && typeof item.validate === 'object'){
 			var errors = gform.validation.call(item,item.validate);
+			debugger;
 			if(item.required){
 				var type = (item.satisfied(item.get()) ? false : '{{label}} is required')
 				if(type) {
@@ -3832,6 +3837,7 @@ gform.validateItem = function(force,item){
 		item.owner.trigger('valid:'+item.name);
 	}
 	item.owner.errors[item.name] = item.errors;
+	item.owner.errors = _.pickBy(item.owner.errors);
 	item.owner.valid = item.valid && item.owner.valid;
 	// return item.valid;
 
@@ -3874,6 +3880,7 @@ gform.validations =
 	},
 
 	required:function(value) {
+		debugger;
 			return (this.satisfied(value) ? false : '{{label}} is required');
 	},
 	pattern: function(value, args) {
@@ -3901,11 +3908,15 @@ gform.validations =
 
 	},
 	matches:function(value, args) {
-		var temp = this.parent.find(args.name);
-		if(typeof temp == 'undefined'){return "Matching field not defined";}
-		args.label = temp.label;
-		args.value = temp.get();
-		return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
+		if(typeof args.name !== 'undefined'){
+			var temp = this.parent.find(args.name);
+			if(typeof temp == 'undefined'){return "Matching field not defined";}
+			args.label = temp.label;
+			args.value = temp.get();
+			return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
+		}else if(typeof args.value !== 'undefined'){
+			return (value == args.value ? false : '"{{label}}" does not match "{{args.value}}"');
+		}
 	},
 	date: function(value) {
 			return gform.regex.date.test(value) || value === '' ? false : '{{label}} should be in the format MM/DD/YYYY';
@@ -3940,15 +3951,15 @@ gform.validations =
 		if(!(gform.regex.decimal.test(value) || value === '')){
 			return '{{label}} must contain only numbers';
 		}
-
+		
 		args.min = (typeof this.min == 'number')?this.min:(typeof args.min == 'number')?args.min:null
 		if(args.min !== null && parseFloat(value) < parseFloat(args.min)){
-			return '{{label}} must contain a number greater than {{args.min}}'
+			return '{{label}} must contain a number not less than {{args.min}} '
 		}
 
 		args.max =  (typeof this.max == 'number')?this.max:(typeof args.max == 'number')?args.max:null
 		if(args.max !== null && parseFloat(value) > parseFloat(args.max)){
-			return '{{label}} must contain a number less than {{args.max}}'
+			return '{{label}} must contain a number not more than {{args.max}}'
 		}
 		// if((typeof args.step == 'number' || typeof this.step == 'number') && parseFloat(value) > parseFloat(args.max)){
 		// 	return '{{label}} must contain a number less than {{args.max}}'
@@ -4331,18 +4342,49 @@ contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}is
 	<div class="col-md-12" {{#size}}style="padding-top: 5px;"{{/size}}>
 	{{/label}}
 	{{#limit}}{{#multiple}}<small class="count text-muted" style="display:block;text-align:left">0/{{limit}}</small>{{/multiple}}{{/limit}}
+
 			{{#options}}
-			{{#multiple}}
-			<div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
-				<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
-			</div>
-			{{/multiple}}
-			{{^multiple}}
-			<div class="radio {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
-				<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
-			</div>
-			{{/multiple}}
+				{{^optgroup}}
+
+					{{#multiple}}
+					<div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
+						<label class="noselect"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
+					</div>
+					{{/multiple}}
+					{{^multiple}}
+					<div class="radio {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
+						<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
+					</div>
+					{{/multiple}}
+
+				{{/optgroup}}
+			{{#optgroup}}
+			{{#optgroup.label}}
+			<b class="text-muted" data-id="{{optgroup.id}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}">{{label}}</b>
+			{{/optgroup.label}}
+					{{#options}}
+
+					{{#multiple}}
+					<div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
+						<label class="noselect"><input data-id="{{optgroup.id}}" name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
+					</div>
+					{{/multiple}}
+					{{^multiple}}
+					<div class="radio {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
+						<label {{^horizontal}}class="radio-inline"{{/horizontal}}><input data-id="{{optgroup.id}}" style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
+					</div>
+					{{/multiple}}
+
+					{{/options}}
+
+			{{/optgroup}}
 			{{/options}}
+
+
+
+
+
+
 		{{>_addons}}
 		{{>_actions}}
 	</div>
