@@ -236,5 +236,56 @@ gform.conditions = {
 		}else{
 			return (parseInt(val) == localval);
 		}
+	},
+	numeric: function(field, args) {
+		var looker;
+		if(typeof args.name !== 'undefined' && !!args.name ){
+			var matches = field.parent.filter({name:args.name,parsable:true},args.depth||10);
+			if(matches.length >0){
+				looker = matches[0];
+			}else if(field.name == args.name){
+				looker = field;
+			}else{
+				looker = field.parent.find(args.name)||field.owner.filter({path:args.name},args.depth||10)[0];
+				if(typeof looker == 'undefined'){
+					return false;
+				}
+			}
+		}else{
+			looker = field;
+		}
+
+		var val = args[args.attribute||'value'];
+		var localval = parseInt(looker[args.attribute||'value']);
+
+
+
+
+
+
+		if(!(gform.regex.decimal.test(value) || value === '')){
+			return '{{label}} must contain only numbers';
+		}
+		
+		args.min = (typeof this.min == 'number')?this.min:(typeof args.min == 'number')?args.min:null
+		if(args.min !== null && parseFloat(value) < parseFloat(args.min)){
+			return '{{label}} must contain a number not less than {{args.min}} '
+		}
+
+		args.max =  (typeof this.max == 'number')?this.max:(typeof args.max == 'number')?args.max:null
+		if(args.max !== null && parseFloat(value) > parseFloat(args.max)){
+			return '{{label}} must contain a number not more than {{args.max}}'
+		}
+
+
+
+		if(typeof val== "object" && val !== null && localval !== null){
+			return (_.map(val,function(vals){return parseInt(vals);}).indexOf(localval) !== -1);
+		}else{
+			return (parseInt(val) == localval);
+		}
+
+
+		
 	}
 }; 
