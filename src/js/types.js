@@ -139,6 +139,8 @@ gform.types = {
         return (typeof value !== 'undefined' && value !== null && value !== '' && !(typeof value == 'number' && isNaN(value)));            
       },
       edit: function(state) {
+        this.editable = state;
+
         this.el.querySelector('[name="'+this.name+'"]').disabled = !state;
       },
       show: function(state) {
@@ -175,6 +177,7 @@ gform.types = {
         gform.types[this.type].setLabel.call(this)
         this.infoEl = this.el.querySelector('.gform-info');
       },
+
       display: function(){
         //   return (_.find(this.options,{value:this.value})||{label:''}).label
         return ((_.find(this.options,{value:this.value})||{label:''}).label || this.value);
@@ -231,8 +234,11 @@ gform.types = {
       set: function(value) {
             this.el.querySelector('input[name="' + this.name + '"]').checked = (value == this.options[1].value);
       },edit: function(state) {
+        this.editable = state;
+
         this.el.querySelector('[name="'+this.name+'"]').disabled = !state;
     },
+
     show: function(state) {
       this.el.style.display = state ? "block" : "none";
     },
@@ -497,6 +503,8 @@ gform.types = {
         if(this.multiple){search+='[]'}
           this.el.querySelector('[name="'+search+'"]').focus();
       },edit: function(state) {
+        this.editable = state;
+
         var search = this.name;
         if(this.multiple){search+='[]'}
 
@@ -1136,6 +1144,8 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
       if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
   },
   edit: function(state) {
+    this.editable = state;
+
       _.each(this.el.querySelectorAll('input'),function(item){
           item.disabled = !state;            
       })

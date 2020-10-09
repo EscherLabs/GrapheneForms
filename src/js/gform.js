@@ -259,6 +259,8 @@ var gform = function(optionsIn, el){
                 field.set('');
             })
         }
+        this.trigger('set');
+        return this;
         // _.find(this.fields, {name: name}).set(value);
     }.bind(this),
 
@@ -395,7 +397,8 @@ gform.addField = function(field){
         newField = gform.createField.call(this, field.parent, atts, field.el ,null, _.extend({},field.item,{array:field.array}),null,null,fieldCount);
         field.parent.fields.splice(index+1, 0, newField)
         gform.addConditions.call(this,newField);
-        gform.each.call(newField, gform.addConditions)
+        // I dont think this is needed - seems to be adding redundant events
+        // gform.each.call(newField, gform.addConditions)
 
         field.operator.reflow();
         _.each(_.filter(field.parent.fields, 
@@ -742,7 +745,8 @@ gform.inflate = function(atts, fieldIn, ind, list) {
     if(fieldIn.array){
         newList = _.filter(newList,function(item){return !item.index})
     }
-    var field = _.findLast(newList, {name: newList[ind].name});
+    //newList[ind].name >> fieldIn.name should fix above comments
+    var field = _.findLast(newList, {name: fieldIn.name});
 
     if(!field.array && field.fields){
         if(!this.options.strict){
@@ -768,6 +772,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         for(var i = initialCount; i<fieldCount; i++) {
             var newfield = gform.createField.call(this, field.parent, atts, field.el, i, _.extend({},field.item,{array:field.array}), null, null,i);
             field.parent.fields.splice(_.findIndex(field.parent.fields, {id: field.id})+1, 0, newfield)
+            gform.addConditions.call(this,newfield);
             field = newfield;
         }
         // var testFunc = function(status, button){
@@ -1328,7 +1333,7 @@ gform.layout = function(field){
             search.id = field.operator.filter({array:{ref:field.array.ref}},1)[0].row;
         }
         var cRow  = _.findLast(field.operator.rows,search);
-        if(!field.sibling || !('id' in search) || typeof cRow == 'undefined'){
+        if(!field.sibling ||field.forceRow == true || !('id' in search) || typeof cRow == 'undefined'){
             if(typeof cRow === 'undefined' || (cRow.used + parseInt(field.columns,10) + parseInt(field.offset,10)) > field.owner.options.columns || field.forceRow == true){
                 cRow = search;
                 cRow.id =gform.getUID();
@@ -1514,6 +1519,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
     }
     field.set = function(value, silent){
         //not sure we should be excluding objects - test how to allow objects
+        if('fields' in this && typeof value == 'object'){value = _.pick(value,_.map(this.fields,"name"))}
+
         if(this.value != value || value == null){// && typeof value !== 'object') {
             if(!gform.types[this.type].set.call(this,value)){
                 this.value = value;
@@ -1548,6 +1555,12 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             return (types.length && types[0] !== this );
         },
         enumerable: true
+    });
+
+    Object.defineProperty(field, "isSatisfied",{
+        get: function(){
+            return this.satisfied(this.get())
+        },
     });
     Object.defineProperty(field, "path",{
         get: function(){
@@ -1692,18 +1705,20 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         field.update();
     }
 
-    if(_.isArray(field.data)){
-        _.each(field.data,function(i){
+    if(_.isArray(field.item.data)){
+        field.meta = field.item.data;
+        _.each(field.meta,function(i){
             if(typeof i.key == 'string' && i.key !== "" && !(i.key in field)){
                 Object.defineProperty(field, i.key,{
                     get: function(key,field){
-                        return _.find(field.data,{key:key}).value;
+                        return _.find(field.meta,{key:key}).value;
                     }.bind(null,i.key,field),
                     set: function(key,field,value){
-                        _.find(field.data,{key:key}).value = value;
+                        _.find(field.meta,{key:key}).value = value;
                         field.parent.trigger(i.key,field);
                     }.bind(null,i.key,field),
-                    configurable: true
+                    configurable: true,            
+                    enumerable: true
                 });
             }
         })

@@ -19,7 +19,6 @@ gform.validateItem = function(force,item){
 		item.errors = '';
 		if(item.parsable && typeof item.validate === 'object'){
 			var errors = gform.validation.call(item,item.validate);
-			debugger;
 			if(item.required){
 				var type = (item.satisfied(item.get()) ? false : '{{label}} is required')
 				if(type) {
@@ -91,8 +90,10 @@ gform.validations =
 	},
 
 	required:function(value) {
-		debugger;
-			return (this.satisfied(value) ? false : '{{label}} is required');
+		return (this.satisfied(value) ? false : '{{label}} is required');
+	},
+	unique:function(value) {
+		return (this.parent.get()[this.name].indexOf(this.value)==this.index ? false : '{{label}} is a duplicate');
 	},
 	pattern: function(value, args) {
 		var r = args.regex;
@@ -126,7 +127,12 @@ gform.validations =
 			args.value = temp.get();
 			return (value == args.value ? false : '"{{label}}" does not match the "{{args.label}}" field');
 		}else if(typeof args.value !== 'undefined'){
-			return (value == args.value ? false : '"{{label}}" does not match "{{args.value}}"');
+			if(_.isArray(args.value)){
+                return (args.value.indexOf(value) !== -1 ? false : '"{{label}}" does not match "{{args.value}}"');
+
+            }else{
+                return (value == args.value ? false : '"{{label}}" does not match "{{args.value}}"');
+			}
 		}
 	},
 	date: function(value) {
