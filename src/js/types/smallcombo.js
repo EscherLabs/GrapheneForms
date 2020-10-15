@@ -125,6 +125,10 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         }.bind(this)
         gform.types[this.type].setup.call(this);
 		this.processOptions = function(item){
+
+            item.visible = ('visible' in item)?item.visible:true
+            item.editable = ('editable' in item)?item.editable:true
+            
 			if(typeof item.optgroup !== 'undefined'){
 				if(typeof item.optgroup.options !== 'undefined' && item.optgroup.options.length){
 					_.each(item.optgroup.options,this.processOptions.bind(this))
@@ -171,6 +175,8 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                                 option.value = this.format.value.call(this,option)
                             }
                         }
+                        option.visible = ('visible' in option)?option.visible:true
+                        option.editable = ('editable' in option)?option.editable:true
                         if(!this.filter || this.combo.innerText == ""  || _.score(option.label.toLowerCase(), this.combo.innerText.toLowerCase())>.1){
 
                             var li = document.createElement("li");
@@ -447,6 +453,9 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                             option.value = this.format.value.call(this,option)
                         }
                     }
+
+                    option.visible = ('visible' in option)?option.visible:true
+                    option.editable = ('editable' in option)?option.editable:true
 
                     if(this.combo.innerText == ""  || _.score(option.label.toLowerCase(),this.combo.innerText.toLowerCase())>.1){
                         var li = document.createElement("li");

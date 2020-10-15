@@ -1156,10 +1156,11 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
     var response = {getobject:function(){
         var temp = {};
         temp = _.map(this.optgroup.options,function(item){
+
+            item.visible = ('visible' in item)?item.visible:true
+            item.editable = ('editable' in item)?item.editable:true
             if('map' in item){
                 item.options = item.map.getoptions();
-                item.visible = ('visible' in item)?item.visible:true
-                item.editable = ('editable' in item)?item.editable:true
                 return {optgroup:{label:item.label||'',visible:item.visible,editable:item.editable,options:item.map.getoptions()}}
             }else{return item;}
         })
@@ -1167,6 +1168,9 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
     }.bind(this),getoptions:function(search){
         var temp = [];
         _.each(this.optgroup.options,function(item){
+
+            item.visible = ('visible' in item)?item.visible:true
+            item.editable = ('editable' in item)?item.editable:true
             if('map' in item){
                 temp = temp.concat(item.map.getoptions())
             }else{temp.push(item)}

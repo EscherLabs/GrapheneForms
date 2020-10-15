@@ -58,7 +58,7 @@
     <script>
 
 gform.types['states']= _.extend({}, gform.types['smallcombo'], {
-  defaults:{strict:false,options:[{name:"Originator",value:"{{user.originator}}"},{name:"Second",value:1}],search:"../data/states.json",custom:{display:"New File",name:"new",action:function(){
+  defaults:{strict:false,options:[{name:"Originator",value:"{{user.originator}}"},{name:"Second",value:1,editable:false}],search:"../data/states.json",custom:{display:"New File",name:"new",action:function(){
     debugger;
   }},format:{title:'{{{title}}} <span class="text-success pull-right">{{value}}</span>',label:"{{name}}",value:"{{value}}", display:'{{name}}<span style="float:right">{{value}}</span>'}}
 })

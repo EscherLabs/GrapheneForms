@@ -1156,10 +1156,11 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
     var response = {getobject:function(){
         var temp = {};
         temp = _.map(this.optgroup.options,function(item){
+
+            item.visible = ('visible' in item)?item.visible:true
+            item.editable = ('editable' in item)?item.editable:true
             if('map' in item){
                 item.options = item.map.getoptions();
-                item.visible = ('visible' in item)?item.visible:true
-                item.editable = ('editable' in item)?item.editable:true
                 return {optgroup:{label:item.label||'',visible:item.visible,editable:item.editable,options:item.map.getoptions()}}
             }else{return item;}
         })
@@ -1167,6 +1168,9 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
     }.bind(this),getoptions:function(search){
         var temp = [];
         _.each(this.optgroup.options,function(item){
+
+            item.visible = ('visible' in item)?item.visible:true
+            item.editable = ('editable' in item)?item.editable:true
             if('map' in item){
                 temp = temp.concat(item.map.getoptions())
             }else{temp.push(item)}
@@ -5064,6 +5068,10 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         }.bind(this)
         gform.types[this.type].setup.call(this);
 		this.processOptions = function(item){
+
+            item.visible = ('visible' in item)?item.visible:true
+            item.editable = ('editable' in item)?item.editable:true
+            
 			if(typeof item.optgroup !== 'undefined'){
 				if(typeof item.optgroup.options !== 'undefined' && item.optgroup.options.length){
 					_.each(item.optgroup.options,this.processOptions.bind(this))
@@ -5110,6 +5118,8 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                                 option.value = this.format.value.call(this,option)
                             }
                         }
+                        option.visible = ('visible' in option)?option.visible:true
+                        option.editable = ('editable' in option)?option.editable:true
                         if(!this.filter || this.combo.innerText == ""  || _.score(option.label.toLowerCase(), this.combo.innerText.toLowerCase())>.1){
 
                             var li = document.createElement("li");
@@ -5386,6 +5396,9 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                             option.value = this.format.value.call(this,option)
                         }
                     }
+
+                    option.visible = ('visible' in option)?option.visible:true
+                    option.editable = ('editable' in option)?option.editable:true
 
                     if(this.combo.innerText == ""  || _.score(option.label.toLowerCase(),this.combo.innerText.toLowerCase())>.1){
                         var li = document.createElement("li");

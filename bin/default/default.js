@@ -86,16 +86,60 @@ select: `
 radio: `
     {{>_label}}
     <span class="">
-    {{#options}}
 
-    {{#multiple}}
-        <div><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}"/>
-        <label class="noselect label-inline" for="{{name}}_{{value}}">{{label}}</label></div>
-    {{/multiple}}
-    {{^multiple}}
-        <label class="noselect"><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span style="font-weight:normal">{{label}}</span></label>        
-    {{/multiple}}
-    {{/options}}
+
+
+
+
+
+
+
+    {{#options}}
+    {{^optgroup}}
+
+        {{#multiple}}
+        <div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
+            <label class="noselect label-inline"><input name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
+
+        </div>
+        {{/multiple}}
+        {{^multiple}}
+        <div class="radio {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
+            <label {{^horizontal}}class="radio-inline"{{/horizontal}}><input style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
+        </div>
+        {{/multiple}}
+
+    {{/optgroup}}
+{{#optgroup}}
+{{#optgroup.label}}
+<b class="text-muted" data-id="{{optgroup.id}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}">{{label}}</b>
+{{/optgroup.label}}
+        {{#options}}
+
+        {{#multiple}}
+        <div class="checkbox {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
+            <label class="noselect label-inline"><input data-id="{{optgroup.id}}" name="{{name}}_{{value}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{i}}"/> {{{label}}}</label>
+        </div>
+        {{/multiple}}
+        {{^multiple}}
+        <div class="radio {{#size}}col-md-{{size}}{{/size}}" {{#size}}style="margin-top: -5px;"{{/size}}>
+            <label {{^horizontal}}class="radio-inline"{{/horizontal}}><input data-id="{{optgroup.id}}" style="margin-right: 5px;" name="{{id}}" {{#selected}} checked=selected {{/selected}}  value="{{i}}" type="radio"><span class="noselect" style="font-weight:normal">{{{label}}}{{^label}}&nbsp;{{/label}}</span></label>        
+        </div>
+        {{/multiple}}
+
+        {{/options}}
+
+{{/optgroup}}
+{{/options}}
+
+
+
+
+
+
+
+
+    
     </span>
     {{>_error}}
     {{>_actions}}`,
@@ -176,7 +220,7 @@ grid: `<div class="row row-wrap">
 </div>`,
 _actions: `      
     {{#array}}
-    <div data-name="{{name}}" data-ref="{{ref}}" class="noprint" style="float:right">
+    <div data-name="{{name}}" data-ref="{{ref}}" class="noprint" style="float:right;margin-left:5px">
     {{#duplicate.enable}}
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:green;color:green;float:right;margin:0 5px" class="gform-add button button-outline" type="button" value="{{duplicate.label}}{{^duplicate.label}}+{{/duplicate.label}}">
     {{/duplicate.enable}}
