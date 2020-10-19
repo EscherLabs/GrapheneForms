@@ -398,7 +398,7 @@ gform.addField = function(field){
         field.parent.fields.splice(index+1, 0, newField)
         gform.addConditions.call(this,newField);
         // I dont think this is needed - seems to be adding redundant events
-        // gform.each.call(newField, gform.addConditions)
+        gform.each.call(newField, gform.addConditions)
 
         field.operator.reflow();
         _.each(_.filter(field.parent.fields, 

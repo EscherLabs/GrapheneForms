@@ -398,7 +398,7 @@ gform.addField = function(field){
         field.parent.fields.splice(index+1, 0, newField)
         gform.addConditions.call(this,newField);
         // I dont think this is needed - seems to be adding redundant events
-        // gform.each.call(newField, gform.addConditions)
+        gform.each.call(newField, gform.addConditions)
 
         field.operator.reflow();
         _.each(_.filter(field.parent.fields, 
@@ -2499,6 +2499,7 @@ gform.types = {
                 }
             }.bind(this))
         }
+        this.render();
         return true;
 
       },
@@ -3350,7 +3351,7 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
                 return initial;
               },""
               )
-            return gform.m('<h4>{{#label}}{{{label}}}{{/label}}</h4><dl style="margin-left:10px"><table class="table"><thead><tr>{{#field.fields}}<th>{{label}}</th>{{/field.fields}}</tr></thead><tbody>{{{value}}}</tbody></table></dl>',{label:this.label,value:mystring,field:this})
+            return gform.m('<h4>{{#label}}{{{label}}}{{/label}}</h4><dl style="margin-left:10px"><table class="table"><thead><tr>{{#field.fields}}<th>{{{label}}}</th>{{/field.fields}}</tr></thead><tbody>{{{value}}}</tbody></table></dl>',{label:this.label,value:mystring,field:this})
           }
 
         }else{

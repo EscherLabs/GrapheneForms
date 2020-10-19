@@ -398,7 +398,7 @@ gform.addField = function(field){
         field.parent.fields.splice(index+1, 0, newField)
         gform.addConditions.call(this,newField);
         // I dont think this is needed - seems to be adding redundant events
-        // gform.each.call(newField, gform.addConditions)
+        gform.each.call(newField, gform.addConditions)
 
         field.operator.reflow();
         _.each(_.filter(field.parent.fields, 
@@ -2499,6 +2499,7 @@ gform.types = {
                 }
             }.bind(this))
         }
+        this.render();
         return true;
 
       },
@@ -3350,7 +3351,7 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
                 return initial;
               },""
               )
-            return gform.m('<h4>{{#label}}{{{label}}}{{/label}}</h4><dl style="margin-left:10px"><table class="table"><thead><tr>{{#field.fields}}<th>{{label}}</th>{{/field.fields}}</tr></thead><tbody>{{{value}}}</tbody></table></dl>',{label:this.label,value:mystring,field:this})
+            return gform.m('<h4>{{#label}}{{{label}}}{{/label}}</h4><dl style="margin-left:10px"><table class="table"><thead><tr>{{#field.fields}}<th>{{{label}}}</th>{{/field.fields}}</tr></thead><tbody>{{{value}}}</tbody></table></dl>',{label:this.label,value:mystring,field:this})
           }
 
         }else{
@@ -4621,7 +4622,7 @@ tab_container: `
 	</ul></form>
 	</form><div class="gform-footer"></div>`,
 tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
-modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form-horizontal{{/horizontal}} " id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+modal_container:`<div class="modal fade gform {{modifiers}} {{#options.horizontal}} form-horizontal{{/options.horizontal}}  " id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">
@@ -4659,7 +4660,7 @@ template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-r
 
 template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{value}}}{{/format.template}}</div></div>`,
 child_modal_footer:`<button type="button" class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
-table:'<div><div class="col-xs-12" style="overflow:scroll"><legend>{{label}}</legend>{{#array}}{{#append.enable}}<button type="button" data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{label}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
+table:'<div><div class="col-xs-12" style="overflow:scroll"><legend>{{label}}</legend>{{#array}}{{#append.enable}}<button type="button" data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{{label}}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
 };
 
 
@@ -4745,12 +4746,13 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 	  }.bind(this)
 
 
-	this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+	  this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+	  this.el.querySelector('.input-group-addon i').addEventListener('click', function(){this.focus()}.bind(this));
 
 	$(this.el.querySelector('input[name="' + this.name + '"]')).attr('type','text');
-		this.el.querySelector('i').style.backgroundColor = this.get()
+		this.el.querySelector('.input-group-addon i').style.backgroundColor = this.get()
 	$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex',container:$(this.el).find('.input-group')}).on('changeColor', function(ev){
-		this.el.querySelector('i').style.backgroundColor = this.get()
+		this.el.querySelector('.input-group-addon i').style.backgroundColor = this.get()
 		this.parent.trigger('change',this);
 		this.parent.trigger('input',this);
 	}.bind(this));
