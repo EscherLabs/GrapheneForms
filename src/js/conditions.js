@@ -26,7 +26,7 @@ gform.processConditions = function(conditions, func) {
 
 gform._subscribeByName = function(conditions, callback){
 
-	for(var i in conditions) {
+	for(var i in conditions && this.owner instanceof gform) {
 		if(typeof conditions[i].conditions == 'object'){
 			gform._subscribeByName.call(this, conditions[i].conditions, callback)
 		}else{

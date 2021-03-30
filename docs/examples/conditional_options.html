@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Adam Smallcomb">
+    <link rel="icon" href="../assets/favicon.png">
+
+    <title>Example:Basic - Graphene:Forms</title>
+    <link rel="stylesheet" href="../assets/css/normalize.css">    
+    <link rel="stylesheet" href="../assets/css/gform.css">
+  </head>
+  <body>
+    <div style="padding:20px">
+    <h4><a href="./">Examples</a> - Options Array</h4>
+
+    <div class="container ">
+        <div class="row ">
+                <div class="column noprint" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
+                <div class="column column-40" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>
+                <div class="column noprint" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
+            </div>
+        </div>
+    </div>
+    <script src="../assets/js/lodash.min.js"></script>    
+    <script src='../assets/js/gform.js'></script>
+    <script src='../assets/js/default.theme.min.js'></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+
+    <script>
+
+gform.mapOptions = function(optgroup, value, count,collections,waitlist){
+    waitlist = waitlist||[];
+
+    if(optgroup.owner instanceof gform){
+        this.field = optgroup;
+    }
+    this.collections = collections;
+    this.eventBus = new gform.eventBus({owner:'field',item:'option'}, this)
+    this.optgroup = _.extend({},optgroup);
+    count = count||0;
+    var format = this.optgroup.format;
+
+    function pArray(opts){
+        return _.map(opts,function(item){
+            if(typeof item === 'object' && item.type == 'optgroup'){
+                item.map = new gform.mapOptions(_.extend({format:format},item),value,count,this.collections,waitlist);
+                item.map.on('*',function(e){
+                    this.eventBus.dispatch(e.event);
+                }.bind(this))
+
+                item.id = gform.getUID();
+
+                gform.processConditions.call(this.field, item.edit, function(item,id, result,e){
+                    // if(typeof e.field.el !== 'undefined'){
+                    //     var op = e.field.el.querySelectorAll('[data-id="'+id+'"]');
+                    //     for (var i = 0; i < op.length; i++) {
+                    //         op[i].disabled = !result;
+                    //     }
+                    // }
+                    // _.find(item.map.optgroup.options,{id:id}).editable = result
+                    if(item.id == id){
+                      item.editable = result
+                      item.map.optgroup.editable = result
+                    }else{
+                      _.find(item.map.optgroup.options,{id:id}).editable = result
+                    }
+                    this.eventBus.dispatch('change')
+
+                }.bind(this,item,item.id))
+
+                gform.processConditions.call(this.field, item.show, function(item,id, result,e,){
+                    // if(typeof e.field.el !== 'undefined'){
+                    //     var op = e.field.el.querySelectorAll('[data-id="'+id+'"]');
+                    //     for (var i = 0; i < op.length; i++) {
+                    //         op[i].hidden = !result;
+                    //     }
+                    // }
+                    if(item.id == id){
+                      item.visible = result
+                      item.isVisible = result
+                      item.map.optgroup.visible = result
+                      item.map.optgroup.isVisible = result
+                    }else{
+                      _.find(item.map.optgroup.options,{id:id}).visible = result
+                      _.find(item.map.optgroup.options,{id:id}).isVisible = result
+                    }
+                    // _.find(item.map.optgroup.options,{id:id}).settit = result
+                    this.eventBus.dispatch('change')
+                }.bind(this,item,item.id))
+
+                // count += item.options.length;
+                count += item.map.getoptions().length;
+                return item;
+            }else{
+                var option = _.extend({},item)
+                option.data = item;
+                if(typeof item === 'string' || typeof item === 'number' || typeof item == 'boolean') {
+                    option.label = option.value = item;
+                }
+                option.index = item.index || ""+count;
+
+                if(typeof format !== 'undefined'){
+                    option = _.reduce(['label','display','value'/*,'cleanlabel'*/],function(option,prop){
+                        if(prop in format){
+                            option[prop] = (typeof format[prop] == 'string')? 
+                                    gform.renderString(format[prop],option) 
+                                : (typeof format[prop] == 'function')? 
+                                    format[prop].call(this,option)
+                                    : option[prop]
+                        }
+                        return option;
+                    }.bind(this), option)
+                    /*
+                    if('cleanlabel' in format){
+                        if(typeof format.cleanlabel == 'string'){
+                            option.label = gform.renderString(format.cleanlabel,option);
+                          }else{
+                              if(typeof format.cleanlabel == 'function'){
+                                  option.label = format.cleanlabel.call(this.option);
+                              }
+                        }
+                    }
+                    */
+                }
+                if(option.value == value || (/*this.multiple && */typeof value !=='undefined' && value !== null && value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
+
+                count+=1;
+                option.i = count;
+                return option;
+            }
+        }.bind(this))
+    }
+
+    this.optgroup.options = this.optgroup.options || [];
+    // optgroup.options = optgroup.options || optgroup.path || optgroup.action;
+    
+    switch(typeof this.optgroup.options){
+        case 'string':
+            this.optgroup.path = this.optgroup.path || this.optgroup.options;
+            this.optgroup.options = []
+        break;
+        case 'function':
+            this.optgroup.action = this.optgroup.options;
+            this.optgroup.options = []
+        break;
+    }
+
+    // If max is set on the field, assume a number set is desired. 
+    // min defaults to 0 and the step defaults to 1.
+
+	if('max' in this.optgroup && this.optgroup.max !== '') {
+        for(var i = (this.optgroup.min || 0);i<=this.optgroup.max;i=i+(this.optgroup.step || 1)){
+            this.optgroup.options.push(""+i);
+        }
+    }
+
+    if(typeof this.optgroup.action == 'function'){
+        this.optgroup.options = this.optgroup.options.concat(pArray.call(this,this.optgroup.action.call(this)));
+    }
+
+    if(_.isArray(this.optgroup.options)){
+        this.optgroup.options = pArray.call(this,this.optgroup.options);
+    }
+
+    if(_.isString(this.optgroup.path) && this.optgroup.path){
+
+        this.collections.on(this.optgroup.path,function(e){
+            this.optgroup.options = pArray.call(this.optgroup.map, e.collection);
+            if( waitlist.indexOf(e.event) >= 0){
+                delete  waitlist[ waitlist.indexOf(e.event)];
+            }
+            this.eventBus.dispatch('change')
+        }.bind(this))
+
+        if(!this.collections.get(this.optgroup.path) || this.collections.get(this.optgroup.path) == 'waiting'){
+
+            if( waitlist.indexOf(this.optgroup.path) == -1){
+                waitlist.push(this.optgroup.path);
+            }
+
+            if(this.collections.get(this.optgroup.path)!== 'waiting'){
+                this.collections.add(this.optgroup.path,'waiting')
+                
+                gform.ajax({path: (gform.options.rootpath||'')+this.optgroup.path, success:function(data) {
+                    this.collections.update(this.optgroup.path,data)
+                    if( waitlist.indexOf(this.optgroup.path) >= 0){
+                        delete  waitlist[ waitlist.indexOf(this.optgroup.path)];
+                    }
+
+                    this.eventBus.dispatch('collection');
+                    this.eventBus.dispatch('change');
+
+                }.bind(this)})
+            }
+        }else{
+            this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
+        }
+    }
+
+
+
+    var response = {getobject:function(){
+        var temp = {};
+        
+            this.optgroup.isVisible = ('isVisible' in this.optgroup)?this.optgroup.isVisible:true
+            this.optgroup.editable = ('editable' in this.optgroup)?this.optgroup.editable:true
+            
+        temp = _.map(this.optgroup.options,function(og, item){
+
+            
+            item.isVisible = ('isVisible' in item)?og.visible&&item.isVisible:og.visible
+            item.editable = ('editable' in item)?og.editable&&item.editable:og.editable
+            if('map' in item){
+                // debugger;
+                // item.map.optgroup.visible = item.visible;
+                // item.map.optgroup.editable = item.editable;
+
+                item.options = item.map.getoptions();
+                return {optgroup:{label:item.label||'',visible:item.isVisible,editable:item.editable,options:item.options}}
+            }else{
+              return {label:item.label||'',visible:item.isVisible,editable:item.editable};
+            }
+        }.bind(null,this.optgroup))
+        return temp;
+    }.bind(this),
+    getoptions:function(search){
+        var temp = [];
+            this.optgroup.isVisible = ('isVisible' in this.optgroup)?this.optgroup.isVisible:true
+            this.optgroup.editable = ('editable' in this.optgroup)?this.optgroup.editable:true
+        _.each(this.optgroup.options,function(og,item){
+
+            item.isVisible = ('isVisible' in item)?og.isVisible&&item.isVisible:og.isVisible
+            item.editable = ('editable' in item)?og.editable&&item.editable:og.editable
+            item.selected = ('selected' in item)?(item.selected&&item.isVisible):false
+
+            if('map' in item){
+                
+                // item.map.optgroup.visible = item.visible;
+                // item.map.optgroup.editable = item.editable;
+                temp = temp.concat(item.map.getoptions())
+            }else{
+              item.selected = (item.selected&&item.isVisible);
+              
+              if(item.isVisible){
+                temp.push({label:item.label||'',visible:item.isVisible,editable:item.editable,selected:(!!item.selected&&!!item.isVisible),i:item.i,index:item.index,data:item.data})
+
+              };
+            }
+        }.bind(null,this.optgroup))
+        if(typeof search !== 'undefined'){
+            return _.find(temp,search)
+        }
+        return _.compact(temp);
+    }.bind(this),
+    
+    on:this.eventBus.on,handlers:this.handlers,optgroup:this.optgroup}
+
+    Object.defineProperty(response, "waiting",{
+        get: function(){
+            return _.compact(waitlist).length>0;
+        }
+    });
+    
+    return response;
+}
+
+
+
+// gform.mapOptions = function(optgroup, value, count,collections,waitlist){
+//     waitlist = waitlist||[];
+
+//     if(optgroup.owner instanceof gform){
+//         this.field = optgroup;
+//     }
+//     this.collections = collections;
+//     this.eventBus = new gform.eventBus({owner:'field',item:'option'}, this)
+//     this.optgroup = _.extend({},optgroup);
+//     count = count||0;
+//     var format = this.optgroup.format;
+
+//     function pArray(opts){
+//         return _.map(opts,function(item){
+//             if(typeof item === 'object' && item.type == 'optgroup'){
+//                 item.map = new gform.mapOptions(_.extend({format:format},item),value,count,this.collections,waitlist);
+//                 item.map.on('*',function(e){
+//                     this.eventBus.dispatch(e.event);
+//                 }.bind(this))
+
+//                 item.id = gform.getUID();
+
+//                 gform.processConditions.call(this.field, item.edit, function(id, result,e){
+//                     _.find(this.optgroup.options,{id:id}).editable = result
+//                     this.eventBus.dispatch('change')
+
+//                 }.bind(this,item.id))
+//                 gform.processConditions.call(this.field, item.show, function(id, result,e,){
+//                     _.find(this.optgroup.options,{id:id}).visible = result
+//                     this.eventBus.dispatch('change')
+//                 }.bind(this,item.id))
+
+//                 // count += item.options.length;
+//                 count += item.map.getoptions().length;
+//                 return item;
+//             }else{
+//                 var option = _.extend({},item)
+//                 option.data = item;
+//                 if(typeof item === 'string' || typeof item === 'number' || typeof item == 'boolean') {
+//                     option.label = option.value = item;
+//                 }
+//                 option.index = item.index || ""+count;
+
+//                 if(typeof format !== 'undefined'){
+//                     option = _.reduce(['label','display','value'/*,'cleanlabel'*/],function(option,prop){
+//                         if(prop in format){
+//                             option[prop] = (typeof format[prop] == 'string')? 
+//                                     gform.renderString(format[prop],option) 
+//                                 : (typeof format[prop] == 'function')? 
+//                                     format[prop].call(this,option)
+//                                     : option[prop]
+//                         }
+//                         return option;
+//                     }.bind(this), option)
+// /*
+
+//                     if('cleanlabel' in format){
+//                         if(typeof format.cleanlabel == 'string'){
+//                             option.label = gform.renderString(format.cleanlabel,option);
+//                           }else{
+//                               if(typeof format.cleanlabel == 'function'){
+//                                   option.label = format.cleanlabel.call(this.option);
+//                               }
+//                         }
+//                     }
+//                     */
+//                 }
+//                 if(option.value == value || (/*this.multiple && */typeof value !=='undefined' && value !== null && value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
+
+//                 count+=1;
+//                 option.i = count;
+//                 return option;
+//             }
+//         }.bind(this))
+//     }
+
+//     this.optgroup.options = this.optgroup.options || [];
+//     // optgroup.options = optgroup.options || optgroup.path || optgroup.action;
+    
+//     switch(typeof this.optgroup.options){
+//         case 'string':
+//             this.optgroup.path = this.optgroup.path || this.optgroup.options;
+//             this.optgroup.options = []
+//         break;
+//         case 'function':
+//             this.optgroup.action = this.optgroup.options;
+//             this.optgroup.options = []
+//         break;
+//     }
+
+//     // If max is set on the field, assume a number set is desired. 
+//     // min defaults to 0 and the step defaults to 1.
+
+// 	if('max' in this.optgroup && this.optgroup.max !== '') {
+//         for(var i = (this.optgroup.min || 0);i<=this.optgroup.max;i=i+(this.optgroup.step || 1)){
+//             this.optgroup.options.push(""+i);
+//         }
+//     }
+
+//     if(typeof this.optgroup.action == 'function'){
+//         this.optgroup.options = this.optgroup.options.concat(pArray.call(this,this.optgroup.action.call(this)));
+//     }
+
+//     if(_.isArray(this.optgroup.options)){
+//         this.optgroup.options = pArray.call(this,this.optgroup.options);
+//     }
+
+//     if(_.isString(this.optgroup.path) && this.optgroup.path){
+
+//         this.collections.on(this.optgroup.path,function(e){
+//             this.optgroup.options = pArray.call(this.optgroup.map, e.collection);
+//             if( waitlist.indexOf(e.event) >= 0){
+//                 delete  waitlist[ waitlist.indexOf(e.event)];
+//             }
+//             this.eventBus.dispatch('change')
+//         }.bind(this))
+
+//         if(!this.collections.get(this.optgroup.path) || this.collections.get(this.optgroup.path) == 'waiting'){
+
+//             if( waitlist.indexOf(this.optgroup.path) == -1){
+//                 waitlist.push(this.optgroup.path);
+//             }
+
+//             if(this.collections.get(this.optgroup.path)!== 'waiting'){
+//                 this.collections.add(this.optgroup.path,'waiting')
+                
+//                 gform.ajax({path: (gform.options.rootpath||'')+this.optgroup.path, success:function(data) {
+//                     this.collections.update(this.optgroup.path,data)
+//                     if( waitlist.indexOf(this.optgroup.path) >= 0){
+//                         delete  waitlist[ waitlist.indexOf(this.optgroup.path)];
+//                     }
+
+//                     this.eventBus.dispatch('collection');
+//                     this.eventBus.dispatch('change',);
+
+//                 }.bind(this)})
+//             }
+//         }else{
+//             this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
+//         }
+//     }
+
+
+
+//     var response = {
+//       getobject:function(){
+//         var temp = {};
+//         temp = _.map(this.optgroup.options,function(item){
+
+//             item.visible = ('visible' in item)?item.visible:true
+//             item.editable = ('editable' in item)?item.editable:true
+//             if('map' in item){
+//                 item.options = item.map.getoptions();
+//                 return {optgroup:{label:item.label||'',visible:item.visible,editable:item.editable,options:item.map.getoptions()}}
+//             }else{return item;}
+//         })
+//         return temp;
+//     }.bind(this),
+//     getoptions:function(search){
+//         var temp = [];
+//         _.each(this.optgroup.options,function(item){
+
+//             item.visible = ('visible' in item)?item.visible:true
+//             item.editable = ('editable' in item)?item.editable:true
+//             if('map' in item){
+//                 temp = temp.concat(item.map.getoptions())
+//             }else{temp.push(item)}
+//         })
+//         if(typeof search !== 'undefined'){
+//             return _.find(temp,search)
+//         }
+//         return temp;
+//     }.bind(this),on:this.eventBus.on,handlers:this.handlers,optgroup:this.optgroup}
+
+//     Object.defineProperty(response, "waiting",{
+//         get: function(){
+//             return _.compact(waitlist).length>0;
+//         }
+//     });
+    
+//     return response;
+// }
+
+    options = {
+        legend: 'Options Array',
+        data:{url:"Tuesday"},
+        fields:[
+        // {label: 'Select Field Array', name: 'array', type:'select', options:[
+        //     {"label":"First","value":1},
+        //     {"label":"Second","value":2},
+        //     {"label":"Third","value":3}
+        // ]},       
+        // {label: 'Select Field Simple Array', name: 'simple', type:'select', options:[
+        //     {type:"optgroup",options:['0','1','2']}
+        // ]},
+        // {label: 'Checkbox Simple Array', name: 'checkbox', type:'checkbox', options:[
+        //     'no','yes'
+        // ]},
+        // {label: '<span style="color:{{value}}">Select Field function</span>',placeholder:'Choose a color', name: 'function', type:'select', options: function(){
+        //     return["Red","Green","Blue"];
+        // }},
+            //{label: 'Select Field (url string)', name: 'url', type:'select', options:[{type:'optgroup', path:'../data/days.json'},{type:'optgroup', path:'https://www.binghamton.edu/maps/data/buildings.json',format:{label:"{{name}}",value:"{{code}}"}}]},
+            // {label: 'Select Country (url string)', name: 'countries', type:'select', options:[{type:'optgroup', path:'../data/countries.json',format:{label:"{{name}}",value:"{{code}}"}}]}
+        		{
+			"label": "Please indicate the school you are affiliated with",
+			"name": "school",
+			"type": "select",
+			"required": false,
+			"enabled": true,
+			"options": [
+				{
+					"options": [
+						{
+							"label": "Harpur College of Arts and Sciences",
+							"value": "Harpur"
+						},
+						{
+							"label": "College of Community and Public Affairs",
+							"value": "CCPA"
+						},
+						{
+							"label": "Decker School of Nursing",
+							"value": "Decker"
+						},
+						{
+							"label": "School of Management",
+							"value": "SoM"
+						},
+						{
+							"label": "Thomas J. Watson School of Engineering and Applied Science",
+							"value": "Watson"
+						}
+					],
+					"type": "optgroup",
+					"label": ""
+				}
+			]
+		},
+		{
+			"type": "select",
+			"label": "Which ceremony will you be attending?",
+			"name": "ceremony",
+			"multiple": false,
+			"showColumn": true,
+			"options": [
+        // {label:"hello",value:"no",show:false},
+				{
+					"label": "",
+					"type": "optgroup",
+					"options": [
+						{
+							"label": "Harpur (Friday 8:00 am)",
+							"value": "harpur1"
+						},
+						{
+							"label": "Harpur (Friday 9:15am)",
+							"value": "harpur2"
+						}
+					],
+					"show": [
+						{
+							"op": "and",
+							"conditions": [
+								{
+									"type": "matches",
+									"name": "school",
+									"value": [
+										"Harpur"
+									]
+								}
+							]
+						}
+					],
+					"edit": "show"
+				},
+				{
+					"label": "",
+					"type": "optgroup",
+					"options": [
+						{
+							"label": "Decker (Friday 1:15pm)",
+							"value": "decker1"
+						}
+					],
+					"show": [
+						{
+							"op": "and",
+							"conditions": [
+								{
+									"type": "matches",
+									"name": "school",
+									"value": [
+										"Decker"
+									]
+								}
+							]
+						}
+					],
+					"edit": "show"
+				}
+			]
+		}
+        ]
+    }
+    </script>
+    <script src="../assets/js/example.js"></script>   
+        
+   </body>
+</html>

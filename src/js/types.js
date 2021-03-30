@@ -25,7 +25,7 @@ gform.types = {
       },
       create: function(){
         var tempEl = document.createElement("span");
-        tempEl.setAttribute("id", this.id);
+        tempEl.setAttribute("id", "el_"+this.id);
         gform.addClass(tempEl,gform.columnClasses[this.columns])
         gform.addClass(tempEl,gform.offsetClasses[this.offset])
         gform.toggleClass(tempEl,'gform_isArray',!!this.array)
@@ -112,7 +112,8 @@ gform.types = {
             this.parent.trigger(['change'], this);
         }
         // if(typeof gform.types[this.type].setup == 'function') {
-            gform.types[this.type].setup.call(this);
+            //removed because its called in initialize
+    //        gform.types[this.type].setup.call(this);
         // }
         
       },
@@ -736,7 +737,7 @@ gform.types = {
       defaults:{parse:false, columns:2, target:".gform-footer",map:false},
       create: function() {
           var tempEl = gform.create(this.render());
-          tempEl.setAttribute("id", this.id);
+          tempEl.setAttribute("id", "el_"+this.id);
           // tempEl.setAttribute("class", tempEl.className+' '+gform.columnClasses[this.columns]);
           return tempEl;
       },
@@ -877,7 +878,22 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
         //   return gform.render(this.type, this);
           return gform.render(this.type, this).split('></textarea>').join('>'+_.escape(this.value)+'</textarea>')
 
-      },
+      },focus:function(timeout) {
+        //   .focus();
+        window.setTimeout(function(){
+            if(this.el.querySelector('textarea[name="' + this.name + '"]') !== null && typeof this.el.querySelector('textarea[name="' + this.name + '"]').focus == "function"){
+
+
+                this.el.querySelector('textarea[name="'+this.name+'"]').focus();
+                var temp = this.value;
+                this.set('');
+                this.set(temp);
+            }
+        }.bind(this), timeout||0); 
+
+         
+        //   this.el.querySelector('[name="'+this.name+'"]').select();
+      }
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
 
@@ -1136,10 +1152,27 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         }.bind(this))
       
       }else{
-        var index = (_.find(this.list,{value:value})||{i:''}).i
-        var el = this.el.querySelector('[value="'+index+'"]');
-        if(el !== null){
-            el.checked = 'checked';
+        (this.el.querySelector('[value="'+(_.find(this.list,{value:this.value})||{i:''}).i+'"]')||{}).checked = false
+
+        var option = _.find(this.list,{value:value});
+        if(typeof option !== 'undefined'){
+            var el = this.el.querySelector('[value="'+option.i+'"]');
+            if(el !== null){
+                value = value;
+                el.checked = 'checked';
+            }
+        }else{
+
+            value = this.default||null
+            var option = _.find(this.list,{value:value});
+            if(typeof option == 'undefined' && typeof this.defaultIndex !== 'undefined'){
+                option = _.find(this.list,{index:''+this.defaultIndex});
+            }
+            if(typeof option !== 'undefined'){
+                debugger;
+                var el = this.el.querySelector('[value="'+option.i+'"]');
+                if(el !== null){ el.checked = 'checked'; }
+            }
         }
       }
       if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
@@ -1660,7 +1693,7 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         var tempEl = document.createElement("tr");
         gform.addClass(tempEl,'gform-edit');
         this.render(tempEl);
-        tempEl.setAttribute("id", this.id);
+        tempEl.setAttribute("id", "el_"+this.id);
         gform.toggleClass(tempEl,'gform_isArray',!!this.array)
         this.container = gform.create('<fieldset></fieldset>');
 

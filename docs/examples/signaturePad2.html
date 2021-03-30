@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    </head>
+    <body>
+      <div style="padding:20px">
+      <h4><a href="./">Examples</a> - Types</h4>
+      <div class="container ">
+        <canvas style="border:solid 1px"></canvas>
+        <img src=""  style="border:solid 1px" />
+      </div>
+    
+      <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+      
+
+    <script>
+var canvas = document.querySelector("canvas");
+
+var signaturePad = new SignaturePad(canvas,{onEnd:function(){
+    debugger;
+document.querySelector('img').src = signaturePad.toDataURL();
+
+}});
+
+// Returns signature image as data URL (see https://mdn.io/todataurl for the list of possible parameters)
+// signaturePad.toDataURL(); // save image as PNG
+// signaturePad.toDataURL("image/jpeg"); // save image as JPEG
+; // save image as SVG
+
+    </script>
+   </body>
+</html>

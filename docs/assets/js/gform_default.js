@@ -162,7 +162,7 @@ var gform = function(optionsIn, el){
         this.fields = [];
         this.fields =_.map(this.options.fields, this.add)
 
-        _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
+        _.each(_.extend([],this.fields), gform.inflate.bind(this, this.options.data||{}))
 
         this.reflow()
         // _.each(this.fields, function(field) {
@@ -397,7 +397,7 @@ gform.addField = function(field){
         newField = gform.createField.call(this, field.parent, atts, field.el ,null, _.extend({},field.item,{array:field.array}),null,null,fieldCount);
         field.parent.fields.splice(index+1, 0, newField)
         gform.addConditions.call(this,newField);
-        // I dont think this is needed - seems to be adding redundant events
+        //add conditions to child fields
         gform.each.call(newField, gform.addConditions)
 
         field.operator.reflow();
@@ -750,9 +750,9 @@ gform.inflate = function(atts, fieldIn, ind, list) {
 
     if(!field.array && field.fields){
         if(!this.options.strict){
-            _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
+            _.each(_.extend([],field.fields), gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
         }else{
-            _.each(field.fields, gform.inflate.bind(this, atts[field.name] || {}) );
+            _.each(_.extend([],field.fields), gform.inflate.bind(this, atts[field.name] || {}) );
         }
         // field.reflow()
     }
@@ -1577,7 +1577,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             }
             path += this.name
             if(this.array){
-                path+='.'+this.id
+                path+='.'+this.index
             }
             return path;
             // return _.find(field.meta,{key:key}).value;
@@ -1703,7 +1703,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
         field.fields = _.map(field.fields, gform.createField.bind(this, field, newatts, null, null) );
         if(field.array) {
-            _.each(field.fields, gform.inflate.bind(this, newatts) );
+            _.each(_.extend([],field.fields), gform.inflate.bind(this, newatts) );
             field.reflow()
         }
         field.update();
@@ -1851,7 +1851,7 @@ gform.types = {
       },
       create: function(){
         var tempEl = document.createElement("span");
-        tempEl.setAttribute("id", this.id);
+        tempEl.setAttribute("id", "el_"+this.id);
         gform.addClass(tempEl,gform.columnClasses[this.columns])
         gform.addClass(tempEl,gform.offsetClasses[this.offset])
         gform.toggleClass(tempEl,'gform_isArray',!!this.array)
@@ -1938,7 +1938,8 @@ gform.types = {
             this.parent.trigger(['change'], this);
         }
         // if(typeof gform.types[this.type].setup == 'function') {
-            gform.types[this.type].setup.call(this);
+            //removed because its called in initialize
+    //        gform.types[this.type].setup.call(this);
         // }
         
       },
@@ -2562,7 +2563,7 @@ gform.types = {
       defaults:{parse:false, columns:2, target:".gform-footer",map:false},
       create: function() {
           var tempEl = gform.create(this.render());
-          tempEl.setAttribute("id", this.id);
+          tempEl.setAttribute("id", "el_"+this.id);
           // tempEl.setAttribute("class", tempEl.className+' '+gform.columnClasses[this.columns]);
           return tempEl;
       },
@@ -2703,7 +2704,22 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
         //   return gform.render(this.type, this);
           return gform.render(this.type, this).split('></textarea>').join('>'+_.escape(this.value)+'</textarea>')
 
-      },
+      },focus:function(timeout) {
+        //   .focus();
+        window.setTimeout(function(){
+            if(this.el.querySelector('textarea[name="' + this.name + '"]') !== null && typeof this.el.querySelector('textarea[name="' + this.name + '"]').focus == "function"){
+
+
+                this.el.querySelector('textarea[name="'+this.name+'"]').focus();
+                var temp = this.value;
+                this.set('');
+                this.set(temp);
+            }
+        }.bind(this), timeout||0); 
+
+         
+        //   this.el.querySelector('[name="'+this.name+'"]').select();
+      }
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
 
@@ -2962,10 +2978,27 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         }.bind(this))
       
       }else{
-        var index = (_.find(this.list,{value:value})||{i:''}).i
-        var el = this.el.querySelector('[value="'+index+'"]');
-        if(el !== null){
-            el.checked = 'checked';
+        (this.el.querySelector('[value="'+(_.find(this.list,{value:this.value})||{i:''}).i+'"]')||{}).checked = false
+
+        var option = _.find(this.list,{value:value});
+        if(typeof option !== 'undefined'){
+            var el = this.el.querySelector('[value="'+option.i+'"]');
+            if(el !== null){
+                value = value;
+                el.checked = 'checked';
+            }
+        }else{
+
+            value = this.default||null
+            var option = _.find(this.list,{value:value});
+            if(typeof option == 'undefined' && typeof this.defaultIndex !== 'undefined'){
+                option = _.find(this.list,{index:''+this.defaultIndex});
+            }
+            if(typeof option !== 'undefined'){
+                debugger;
+                var el = this.el.querySelector('[value="'+option.i+'"]');
+                if(el !== null){ el.checked = 'checked'; }
+            }
         }
       }
       if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
@@ -3486,7 +3519,7 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         var tempEl = document.createElement("tr");
         gform.addClass(tempEl,'gform-edit');
         this.render(tempEl);
-        tempEl.setAttribute("id", this.id);
+        tempEl.setAttribute("id", "el_"+this.id);
         gform.toggleClass(tempEl,'gform_isArray',!!this.array)
         this.container = gform.create('<fieldset></fieldset>');
 
@@ -3606,7 +3639,7 @@ gform.processConditions = function(conditions, func) {
 
 gform._subscribeByName = function(conditions, callback){
 
-	for(var i in conditions) {
+	for(var i in conditions && this.owner instanceof gform) {
 		if(typeof conditions[i].conditions == 'object'){
 			gform._subscribeByName.call(this, conditions[i].conditions, callback)
 		}else{
@@ -4091,8 +4124,8 @@ switch: `
 `,  
 checkbox: `
     {{>_label}}
-    <input name="{{name}}" type="{{type}}" {{#options.1.selected}} checked {{/options.1.selected}} value="{{value}}" id="{{name}}" />
-    <label class="label-inline" for="{{name}}"><span class="falseLabel">{{options.0.label}}</span><span class="trueLabel">{{options.1.label}}</span></label>
+    <input name="{{name}}" type="{{type}}" {{#options.1.selected}} checked {{/options.1.selected}} value="{{value}}" id="{{id}}" />
+    <label class="label-inline" for="{{id}}"><span class="falseLabel">{{options.0.label}}</span><span class="trueLabel">{{options.1.label}}</span></label>
     {{>_error}}
     </div>
     {{>_actions}}   
@@ -4296,7 +4329,7 @@ _info:`<div>
 </div> `,
 _label: `      
 {{#info}}<b class="gform-info" data-id="{{id}}"></b>{{/info}}
-{{#label}}<label class="" for="{{name}}">{{{label}}}{{suffix}}</label>{{/label}} 
+{{#label}}<label class="" for="{{id}}">{{{label}}}{{suffix}}</label>{{/label}} 
 <small class="column form-help" style="position:relative;left:-10px"> {{{help}}}</small>
 
 `,
@@ -4395,7 +4428,8 @@ gform.types['clear']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
     "modifiers": "button-outline"}});
 
 gform.types.fieldset.setLabel = function(){
-    this.label = gform.renderString(this.item.label||this.label, this);
+    this.label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
+
     var labelEl = this.el.querySelector('legend');
     if(labelEl !== null){
         labelEl.innerHTML = '<h5>'+this.label+'</h5>';

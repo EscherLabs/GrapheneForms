@@ -12,7 +12,10 @@ input:checked + .falseLabel + .trueLabel {
 input:checked + .falseLabel {
 	display: none;
 }
-
+.combobox-container .form-control[contenteditable="false"]
+{
+background: #eee;
+}
 @media (min-width: 992px) {
 	.row .col-md-Infinity:first-child{margin-left: 15px;}
 	.col-md-Infinity{display:inline-block;padding:0 20px 0 0}
@@ -509,8 +512,8 @@ _info:`<div>
 	<div class="col-md-12" style="margin: -10px 0 5px;"">
 	{{/label}}
 		<div class="checkbox">
-			<label class="{{alt-display}}">
-				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{^format.display}}<span class="falseLabel">{{{options.0.label}}}</span><span class="trueLabel">{{{options.1.label}}}</span>{{/format.display}}{{format.display}}&nbsp;
+			<label class="{{alt-display}}" for="{{id}}">
+				<input name="{{name}}" id="{{id}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{^format.display}}<span class="falseLabel">{{{options.0.label}}}</span><span class="trueLabel">{{{options.1.label}}}</span>{{/format.display}}{{format.display}}&nbsp;
 			</label>
 		</div>
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
@@ -862,7 +865,6 @@ gform.prototype.modal = function(data){
 
 
 
-
 	// $(this.modalEl||this.el).modal(data)
 	// return this;
 
@@ -887,6 +889,10 @@ gform.prototype.modal = function(data){
             $(el).modal(data)
     }
 	// $(this.el).modal(data)
+	$(this.el).on('hidden.bs.modal', function () {
+		this.trigger("cancel",this);
+	}.bind(this))
+
 	return this;
 }
 document.body.appendChild(gform.create('<style>'+gform.render('_style',{},'all')+'</style>'));

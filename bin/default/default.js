@@ -37,8 +37,8 @@ switch: `
 `,  
 checkbox: `
     {{>_label}}
-    <input name="{{name}}" type="{{type}}" {{#options.1.selected}} checked {{/options.1.selected}} value="{{value}}" id="{{name}}" />
-    <label class="label-inline" for="{{name}}"><span class="falseLabel">{{options.0.label}}</span><span class="trueLabel">{{options.1.label}}</span></label>
+    <input name="{{name}}" type="{{type}}" {{#options.1.selected}} checked {{/options.1.selected}} value="{{value}}" id="{{id}}" />
+    <label class="label-inline" for="{{id}}"><span class="falseLabel">{{options.0.label}}</span><span class="trueLabel">{{options.1.label}}</span></label>
     {{>_error}}
     </div>
     {{>_actions}}   
@@ -242,7 +242,7 @@ _info:`<div>
 </div> `,
 _label: `      
 {{#info}}<b class="gform-info" data-id="{{id}}"></b>{{/info}}
-{{#label}}<label class="" for="{{name}}">{{{label}}}{{suffix}}</label>{{/label}} 
+{{#label}}<label class="" for="{{id}}">{{{label}}}{{suffix}}</label>{{/label}} 
 <small class="column form-help" style="position:relative;left:-10px"> {{{help}}}</small>
 
 `,
@@ -341,7 +341,8 @@ gform.types['clear']   = _.defaultsDeep({}, gform.types['button'], {defaults:{
     "modifiers": "button-outline"}});
 
 gform.types.fieldset.setLabel = function(){
-    this.label = gform.renderString(this.item.label||this.label, this);
+    this.label = gform.renderString((this.format||{title:null}).title||this.item.title|| this.item.label||this.label, this);
+
     var labelEl = this.el.querySelector('legend');
     if(labelEl !== null){
         labelEl.innerHTML = '<h5>'+this.label+'</h5>';

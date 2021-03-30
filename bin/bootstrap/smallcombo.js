@@ -11,7 +11,7 @@ gform.stencils.smallcombo = `
 	<div class="combobox-container">
 		<div class="input-group" style="width:100%" contentEditable="false"> 
 		{{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
-        <div style="overflow: hidden;white-space: nowrap;position: absolute;padding-right: 40px;border-radius: 5px;" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" contentEditable type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
+        <div style="overflow: hidden;white-space: nowrap;position: absolute;padding-right: 40px;border-radius: 5px;" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control {{^editable}}readonly disabled{{/editable}}" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" {{#editable}}contentEditable{{/editable}} type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
         <ul class="typeahead typeahead-long dropdown-menu"></ul>
         <span class="input-group-addon dropdown-toggle" style="height: 34px;z-index: 10;position: relative;border-left: solid 1px #ccc;width: 38px;" data-dropdown="dropdown"> <span class="caret" data-dropdown="dropdown"></span> <span data-dropdown="" class="fa fa-times"></span> </span> 
 		</div>
@@ -58,7 +58,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         if(typeof this.mapOptions == 'undefined'){
         	this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
         	this.mapOptions.on('change', function(){
-        	    debugger;
             	this.options = this.mapOptions.getoptions()
 				if(this.shown){
 					this.renderMenu();
@@ -117,6 +116,11 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
     //         		}
 
     // },
+    edit: function(state) {
+        this.editable = state;
+        this.el.querySelector('.form-control').setAttribute("contenteditable", state?"true":"false");
+        gform.toggleClass(this.el,'disabled',!state)
+    },
     initialize: function(){
         this.onchangeEvent = function(input){
 			_.throttle(this.renderMenu,100).call(this);
@@ -257,9 +261,12 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
         this.el.addEventListener('mouseup',function(e){
             if(typeof e.target.dataset.dropdown !== "undefined" && this.editable){
+                debugger;
+
                 e.stopPropagation();
                 if(this.el.querySelector('.combobox-selected') !== null){
 					this.set();
+                    this.parent.trigger(['input'], this, {input:""});
 					this.renderMenu();
                 }else{
                     if(this.shown){

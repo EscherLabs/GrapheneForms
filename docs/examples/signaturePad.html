@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+		<link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+        <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+        <link rel='stylesheet' type='text/css' href='../assets/css/summernote.min.css'>
+
+    </head>
+    <body>
+      <div style="padding:20px">
+      <h4><a href="./">Examples</a> - Types</h4>
+      <div class="container ">
+          <div class="row ">
+                <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
+                <div class="col-md-4" style="">
+                    <pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>                
+                <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
+              </div>
+          </div>
+      </div>
+      <script src='../assets/vendor/js/jquery.js'></script>
+
+      <script src="../assets/js/lodash.min.js"></script>    
+	  <!-- <script src='../assets/js/gform_bootstrap.min.js'></script>  -->
+	  <script src='../assets/js/summernote.min.js'></script> 
+
+      <script src='../assets/js/gform.js'></script> 
+      <script src='../assets/js/bootstrap.js'></script> 
+      <script src='../assets/js/bootstrap.min.js'></script> 
+      <!-- <script src='../assets/js/gform.summernote.js'></script>  -->
+
+      <!-- <script src='../assets/vendor/js/colorpicker.min.js'></script>  -->
+
+      <!-- <script src='../assets/js/gform.bootstrap.js'></script> -->
+      <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>      
+      <script src="../assets/js/signaturePad.js"></script>
+      
+
+    <script>
+    
+    gform.stencils.signaturePad = `
+<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
+	{{>_label}}
+	{{#label}}
+	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
+	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
+	{{/label}}
+	{{^label}}
+	<div class="col-md-12">
+    {{/label}}
+    <canvas style="border:solid 1px #333;" width="355" height="200"></canvas>
+
+	<div class="">
+		<div class="input-group" style="width:100%" contentEditable="false"> 
+        {{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
+        </div>
+		{{>_addons}}
+		{{>_actions}}
+	</div>
+</div>`;
+    gform.types['signaturePad'] = _.extend({}, gform.types['input'], gform.types['collection'], {
+    set: function(value) {
+        if(typeof value == 'undefined' || value == null){
+            this.signaturePad.clear();
+        }else{
+            this.signaturePad.fromData(value);
+        }
+    },
+    toString: function(name, report) {
+        if(!report){
+            return '<dt>'+this.label+'</dt> <dd><img src="'+( this.signaturePad.toDataURL())+'" alt="(Empty)"/></dd><hr>'
+          }else{
+            return  this.signaturePad.toDataURL();
+          }
+    },
+    get: function() {
+        // return '<img src='+( this.signaturePad.toDataURL("image/svg+xml"))+' alt="(Empty)" style="border:solid 1px"/>'
+        // return '<img src='+( this.signaturePad.toDataURL())+' alt="(Empty)"/>'
+        return  this.signaturePad.toDataURL();
+        return  this.signaturePad.toData();
+    },
+    initialize: function() {
+        this.canvas = document.querySelector(".gform canvas");
+
+        this.signaturePad = new SignaturePad(this.canvas,{onEnd:function(e){
+        this.owner.trigger('input')
+
+        }.bind(this)});
+ 
+        gform.types[this.type].setLabel.call(this);
+
+
+    },satisfied:function(){
+        return !this.signaturePad.isEmpty();
+    },focus:function(){
+
+    }
+  });
+
+
+
+
+
+    options = {
+        events:[{event:"cancel",handler:function(e){
+            e.form.set({text:null})
+            e.form.trigger('input')
+        }}],
+        actions:[{type:"cancel",label:'<i class="fa fa-times"></i> Clear'},{type:"save"}],
+        fields:[
+          {title: 'By Signing here you ', name: "text", type: 'signaturePad',required:true}//,options:[{label:"first",value:"1"},{label:"second",value:"2"}]},
+        ]
+    }
+    document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(options,null,2);
+var myform = new gform(options).modal()
+// $('#form').html(myform.toString())
+myform.on('input',function(e){
+    if(e.form.validate()){}
+        document.querySelector('#result code').classList = "prettyprint"
+        document.querySelector('#result code').innerHTML = 'myform.get();<br> => '+JSON.stringify(e.form,null,2);
+        PR.prettyPrint();
+})
+myform.on('collection',function(e){
+    // debugger;
+    if(!e.field.mapOptions.waiting){
+        if(e.form.validate()){}
+        document.querySelector('#result code').classList = "prettyprint"
+        document.querySelector('#result code').innerHTML = 'myform.get();<br> => '+JSON.stringify(e.form,null,2);
+        PR.prettyPrint();
+    }
+//     if(e.form.validate()){}
+//         document.querySelector('#result code').classList = "prettyprint"
+//         document.querySelector('#result code').innerHTML = 'myform.get();<br> => '+JSON.stringify(e.form,null,2);
+//         PR.prettyPrint();
+}
+)
+// myform.on('change:',function(e){
+//  debugger;
+// })
+myform.trigger('input')
+
+    </script>
+    <!-- <script src="../assets/js/example.js"> -->
+    <!-- </script>    -->
+    <script>
+
+
+
+// var canvas = document.querySelector(".gform canvas");
+
+// var signaturePad = new SignaturePad(canvas);
+
+// Returns signature image as data URL (see https://mdn.io/todataurl for the list of possible parameters)
+// signaturePad.toDataURL(); // save image as PNG
+// signaturePad.toDataURL("image/jpeg"); // save image as JPEG
+// signaturePad.toDataURL("image/svg+xml"); // save image as SVG
+
+// Draws signature image from data URL.
+// NOTE: This method does not populate internal data structure that represents drawn signature. Thus, after using #fromDataURL, #toData won't work properly.
+// signaturePad.fromDataURL("data:image/png;base64,iVBORw0K...");
+
+// Returns signature image as an array of point groups
+// const data = signaturePad.toData();
+
+// // Draws signature image from an array of point groups
+// signaturePad.fromData(data);
+
+// Clears the canvas
+// signaturePad.clear();
+
+// Returns true if canvas is empty, otherwise returns false
+// signaturePad.isEmpty();
+
+// // Unbinds all event handlers
+// signaturePad.off();
+
+// // Rebinds all event handlers
+// signaturePad.on();
+
+
+    </script>
+   </body>
+</html>

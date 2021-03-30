@@ -162,7 +162,7 @@ var gform = function(optionsIn, el){
         this.fields = [];
         this.fields =_.map(this.options.fields, this.add)
 
-        _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
+        _.each(_.extend([],this.fields), gform.inflate.bind(this, this.options.data||{}))
 
         this.reflow()
         // _.each(this.fields, function(field) {
@@ -397,7 +397,7 @@ gform.addField = function(field){
         newField = gform.createField.call(this, field.parent, atts, field.el ,null, _.extend({},field.item,{array:field.array}),null,null,fieldCount);
         field.parent.fields.splice(index+1, 0, newField)
         gform.addConditions.call(this,newField);
-        // I dont think this is needed - seems to be adding redundant events
+        //add conditions to child fields
         gform.each.call(newField, gform.addConditions)
 
         field.operator.reflow();
@@ -750,9 +750,9 @@ gform.inflate = function(atts, fieldIn, ind, list) {
 
     if(!field.array && field.fields){
         if(!this.options.strict){
-            _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
+            _.each(_.extend([],field.fields), gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
         }else{
-            _.each(field.fields, gform.inflate.bind(this, atts[field.name] || {}) );
+            _.each(_.extend([],field.fields), gform.inflate.bind(this, atts[field.name] || {}) );
         }
         // field.reflow()
     }
@@ -1577,7 +1577,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             }
             path += this.name
             if(this.array){
-                path+='.'+this.id
+                path+='.'+this.index
             }
             return path;
             // return _.find(field.meta,{key:key}).value;
@@ -1703,7 +1703,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
         field.fields = _.map(field.fields, gform.createField.bind(this, field, newatts, null, null) );
         if(field.array) {
-            _.each(field.fields, gform.inflate.bind(this, newatts) );
+            _.each(_.extend([],field.fields), gform.inflate.bind(this, newatts) );
             field.reflow()
         }
         field.update();

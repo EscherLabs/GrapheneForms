@@ -162,7 +162,7 @@ var gform = function(optionsIn, el){
         this.fields = [];
         this.fields =_.map(this.options.fields, this.add)
 
-        _.each(this.fields, gform.inflate.bind(this, this.options.data||{}))
+        _.each(_.extend([],this.fields), gform.inflate.bind(this, this.options.data||{}))
 
         this.reflow()
         // _.each(this.fields, function(field) {
@@ -397,7 +397,7 @@ gform.addField = function(field){
         newField = gform.createField.call(this, field.parent, atts, field.el ,null, _.extend({},field.item,{array:field.array}),null,null,fieldCount);
         field.parent.fields.splice(index+1, 0, newField)
         gform.addConditions.call(this,newField);
-        // I dont think this is needed - seems to be adding redundant events
+        //add conditions to child fields
         gform.each.call(newField, gform.addConditions)
 
         field.operator.reflow();
@@ -750,9 +750,9 @@ gform.inflate = function(atts, fieldIn, ind, list) {
 
     if(!field.array && field.fields){
         if(!this.options.strict){
-            _.each(field.fields, gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
+            _.each(_.extend([],field.fields), gform.inflate.bind(this, atts[field.name]|| field.owner.options.data[field.name] || {}) );
         }else{
-            _.each(field.fields, gform.inflate.bind(this, atts[field.name] || {}) );
+            _.each(_.extend([],field.fields), gform.inflate.bind(this, atts[field.name] || {}) );
         }
         // field.reflow()
     }
@@ -1577,7 +1577,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
             }
             path += this.name
             if(this.array){
-                path+='.'+this.id
+                path+='.'+this.index
             }
             return path;
             // return _.find(field.meta,{key:key}).value;
@@ -1703,7 +1703,7 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
 
         field.fields = _.map(field.fields, gform.createField.bind(this, field, newatts, null, null) );
         if(field.array) {
-            _.each(field.fields, gform.inflate.bind(this, newatts) );
+            _.each(_.extend([],field.fields), gform.inflate.bind(this, newatts) );
             field.reflow()
         }
         field.update();
@@ -1851,7 +1851,7 @@ gform.types = {
       },
       create: function(){
         var tempEl = document.createElement("span");
-        tempEl.setAttribute("id", this.id);
+        tempEl.setAttribute("id", "el_"+this.id);
         gform.addClass(tempEl,gform.columnClasses[this.columns])
         gform.addClass(tempEl,gform.offsetClasses[this.offset])
         gform.toggleClass(tempEl,'gform_isArray',!!this.array)
@@ -1938,7 +1938,8 @@ gform.types = {
             this.parent.trigger(['change'], this);
         }
         // if(typeof gform.types[this.type].setup == 'function') {
-            gform.types[this.type].setup.call(this);
+            //removed because its called in initialize
+    //        gform.types[this.type].setup.call(this);
         // }
         
       },
@@ -2562,7 +2563,7 @@ gform.types = {
       defaults:{parse:false, columns:2, target:".gform-footer",map:false},
       create: function() {
           var tempEl = gform.create(this.render());
-          tempEl.setAttribute("id", this.id);
+          tempEl.setAttribute("id", "el_"+this.id);
           // tempEl.setAttribute("class", tempEl.className+' '+gform.columnClasses[this.columns]);
           return tempEl;
       },
@@ -2703,7 +2704,22 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
         //   return gform.render(this.type, this);
           return gform.render(this.type, this).split('></textarea>').join('>'+_.escape(this.value)+'</textarea>')
 
-      },
+      },focus:function(timeout) {
+        //   .focus();
+        window.setTimeout(function(){
+            if(this.el.querySelector('textarea[name="' + this.name + '"]') !== null && typeof this.el.querySelector('textarea[name="' + this.name + '"]').focus == "function"){
+
+
+                this.el.querySelector('textarea[name="'+this.name+'"]').focus();
+                var temp = this.value;
+                this.set('');
+                this.set(temp);
+            }
+        }.bind(this), timeout||0); 
+
+         
+        //   this.el.querySelector('[name="'+this.name+'"]').select();
+      }
   });
 gform.types['switch'] = gform.types['checkbox'] = _.extend({}, gform.types['input'], gform.types['bool']);
 
@@ -2962,10 +2978,27 @@ gform.types['radio'] = _.extend({}, gform.types['input'], gform.types['collectio
         }.bind(this))
       
       }else{
-        var index = (_.find(this.list,{value:value})||{i:''}).i
-        var el = this.el.querySelector('[value="'+index+'"]');
-        if(el !== null){
-            el.checked = 'checked';
+        (this.el.querySelector('[value="'+(_.find(this.list,{value:this.value})||{i:''}).i+'"]')||{}).checked = false
+
+        var option = _.find(this.list,{value:value});
+        if(typeof option !== 'undefined'){
+            var el = this.el.querySelector('[value="'+option.i+'"]');
+            if(el !== null){
+                value = value;
+                el.checked = 'checked';
+            }
+        }else{
+
+            value = this.default||null
+            var option = _.find(this.list,{value:value});
+            if(typeof option == 'undefined' && typeof this.defaultIndex !== 'undefined'){
+                option = _.find(this.list,{index:''+this.defaultIndex});
+            }
+            if(typeof option !== 'undefined'){
+                debugger;
+                var el = this.el.querySelector('[value="'+option.i+'"]');
+                if(el !== null){ el.checked = 'checked'; }
+            }
         }
       }
       if(typeof gform.types[this.type].setup == 'function') {gform.types[this.type].setup.call(this);}
@@ -3486,7 +3519,7 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
         var tempEl = document.createElement("tr");
         gform.addClass(tempEl,'gform-edit');
         this.render(tempEl);
-        tempEl.setAttribute("id", this.id);
+        tempEl.setAttribute("id", "el_"+this.id);
         gform.toggleClass(tempEl,'gform_isArray',!!this.array)
         this.container = gform.create('<fieldset></fieldset>');
 
@@ -3606,7 +3639,7 @@ gform.processConditions = function(conditions, func) {
 
 gform._subscribeByName = function(conditions, callback){
 
-	for(var i in conditions) {
+	for(var i in conditions && this.owner instanceof gform) {
 		if(typeof conditions[i].conditions == 'object'){
 			gform._subscribeByName.call(this, conditions[i].conditions, callback)
 		}else{
@@ -4066,7 +4099,10 @@ input:checked + .falseLabel + .trueLabel {
 input:checked + .falseLabel {
 	display: none;
 }
-
+.combobox-container .form-control[contenteditable="false"]
+{
+background: #eee;
+}
 @media (min-width: 992px) {
 	.row .col-md-Infinity:first-child{margin-left: 15px;}
 	.col-md-Infinity{display:inline-block;padding:0 20px 0 0}
@@ -4563,8 +4599,8 @@ _info:`<div>
 	<div class="col-md-12" style="margin: -10px 0 5px;"">
 	{{/label}}
 		<div class="checkbox">
-			<label class="{{alt-display}}">
-				<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{^format.display}}<span class="falseLabel">{{{options.0.label}}}</span><span class="trueLabel">{{{options.1.label}}}</span>{{/format.display}}{{format.display}}&nbsp;
+			<label class="{{alt-display}}" for="{{id}}">
+				<input name="{{name}}" id="{{id}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}}>{{^format.display}}<span class="falseLabel">{{{options.0.label}}}</span><span class="trueLabel">{{{options.1.label}}}</span>{{/format.display}}{{format.display}}&nbsp;
 			</label>
 		</div>
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
@@ -4916,7 +4952,6 @@ gform.prototype.modal = function(data){
 
 
 
-
 	// $(this.modalEl||this.el).modal(data)
 	// return this;
 
@@ -4941,6 +4976,10 @@ gform.prototype.modal = function(data){
             $(el).modal(data)
     }
 	// $(this.el).modal(data)
+	$(this.el).on('hidden.bs.modal', function () {
+		this.trigger("cancel",this);
+	}.bind(this))
+
 	return this;
 }
 document.body.appendChild(gform.create('<style>'+gform.render('_style',{},'all')+'</style>'));gform.stencils.smallcombo = `
@@ -4956,7 +4995,7 @@ document.body.appendChild(gform.create('<style>'+gform.render('_style',{},'all')
 	<div class="combobox-container">
 		<div class="input-group" style="width:100%" contentEditable="false"> 
 		{{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
-        <div style="overflow: hidden;white-space: nowrap;position: absolute;padding-right: 40px;border-radius: 5px;" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" contentEditable type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
+        <div style="overflow: hidden;white-space: nowrap;position: absolute;padding-right: 40px;border-radius: 5px;" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control {{^editable}}readonly disabled{{/editable}}" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" {{#editable}}contentEditable{{/editable}} type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
         <ul class="typeahead typeahead-long dropdown-menu"></ul>
         <span class="input-group-addon dropdown-toggle" style="height: 34px;z-index: 10;position: relative;border-left: solid 1px #ccc;width: 38px;" data-dropdown="dropdown"> <span class="caret" data-dropdown="dropdown"></span> <span data-dropdown="" class="fa fa-times"></span> </span> 
 		</div>
@@ -5003,7 +5042,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         if(typeof this.mapOptions == 'undefined'){
         	this.mapOptions = new gform.mapOptions(this, this.value,0,this.owner.collections)
         	this.mapOptions.on('change', function(){
-        	    debugger;
             	this.options = this.mapOptions.getoptions()
 				if(this.shown){
 					this.renderMenu();
@@ -5062,6 +5100,11 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
     //         		}
 
     // },
+    edit: function(state) {
+        this.editable = state;
+        this.el.querySelector('.form-control').setAttribute("contenteditable", state?"true":"false");
+        gform.toggleClass(this.el,'disabled',!state)
+    },
     initialize: function(){
         this.onchangeEvent = function(input){
 			_.throttle(this.renderMenu,100).call(this);
@@ -5202,9 +5245,12 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
         this.el.addEventListener('mouseup',function(e){
             if(typeof e.target.dataset.dropdown !== "undefined" && this.editable){
+                debugger;
+
                 e.stopPropagation();
                 if(this.el.querySelector('.combobox-selected') !== null){
 					this.set();
+                    this.parent.trigger(['input'], this, {input:""});
 					this.renderMenu();
                 }else{
                     if(this.shown){
