@@ -103,7 +103,7 @@ var gform = function(optionsIn, el){
         _.each(_.filter(this.options.fields,{type:'fieldset'}),function(item,i){
             item.index = i;
             item.section = true;
-            item.id = gform.getUID();
+            item.id = item.id||gform.getUID();
         return item})
     }
     

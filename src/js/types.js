@@ -1253,7 +1253,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
             return _.assignIn({
                 name: (gform.renderString(field.label)||'').toLowerCase().split(' ').join('_'), 
                 id: gform.getUID(), 
-                label: field.name,     
+                label: field.id||field.name,     
             }, field)
     
         })

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Adam Smallcomb">
+    <link rel="icon" href="../assets/favicon.png">
+
+    <title>Example:Prompt - Graphene:Forms</title>
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">    
+    <!-- <link rel="stylesheet" href="../assets/css/normalize.css">     -->
+    <!-- <link rel="stylesheet" href="../assets/css/gform.css"> -->
+  </head>
+  <body>
+    <div style="padding:20px">
+    <h4><a href="./">Examples</a> - Prompt Form</h4>
+
+    <div class="container ">
+        <div class="row ">
+                <div class="column noprint" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
+                <div class="column column-40" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>
+                <div class="column noprint" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
+            </div>
+        </div>
+    </div>
+		    <script src='../assets/js/jquery.min.js'></script>
+		    <script src='../assets/js/bootstrap.min.js'></script>
+
+    <script src="../assets/js/lodash.min.js"></script>    
+    <script src='../assets/js/gform.js'></script>
+    <script src='../assets/js/bootstrap.js'></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+
+<p>    
+<p>    <script>
+      
+    </script></p>
+      <script>
+
+        // async function f(options) {
+
+        //     let promise = new Promise((resolve, reject) => {
+
+        //         new gform(options).modal().on('save', e => {
+        //             e.form.trigger('close');
+        //             resolve (e.form.get());
+        //         })
+        //     });
+
+        //     let result = await promise; // wait until the promise resolves (*)
+
+        //     return result;// "done!"
+        // }
+
+    gform.eb = new gform.eventBus({});
+    gform.eb.on('prompt',function(e){
+        console.log('prompt:'+e.result)
+    })
+    let prompt = (text,choices) =>{
+        return new Promise((resolve, reject) => {
+            let labels = ['Yes','No'];
+            if(typeof choices == 'object' && Array.isArray(choices)){
+             if(choices.length > 1){
+                labels = choices
+             }else{
+                labels[0] = choices[0];
+             }
+            }else if(typeof choices == 'string'){
+                labels[0] = choices;
+            }
+
+            let options = {
+                legend: text,
+                actions:[{type:'cancel',action:"reject",label:labels[1]},{type:'save',label:labels[0]}]
+            }
+            new gform(options).modal().on('save', e => {
+                e.form.trigger('close');
+                resolve (e.form.get());
+            }).on('reject', e => {
+                e.form.trigger('close');
+                reject (e.form.get());
+            })
+        }).then(e=>{
+            gform.eb.dispatch('prompt',this,{result:true,status:'resolved'});
+            return e;
+        }).catch(e=>{
+            gform.eb.dispatch('prompt',this,{result:false,status:'rejected'});
+            return e;
+        })
+    }
+
+    prompt("Do you?",'Yes please')
+    // .then(e => {
+    //     console.log('Resolved:'+e);
+    // }).catch(e=>{
+    //     console.log('Rejected:'+e);
+    // });
+
+      </script>
+
+</p>
+    <!-- <script src="../assets/js/example.js"></script>    -->
+        
+   </body>
+</html>

@@ -14,7 +14,7 @@ input:checked + .falseLabel {
 }
 .combobox-container .form-control[contenteditable="false"]
 {
-background: #eee;
+	background: #eee;
 }
 @media (min-width: 992px) {
 	.row .col-md-Infinity:first-child{margin-left: 15px;}

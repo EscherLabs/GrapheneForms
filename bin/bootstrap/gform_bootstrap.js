@@ -103,7 +103,7 @@ var gform = function(optionsIn, el){
         _.each(_.filter(this.options.fields,{type:'fieldset'}),function(item,i){
             item.index = i;
             item.section = true;
-            item.id = gform.getUID();
+            item.id = item.id||gform.getUID();
         return item})
     }
     
@@ -3079,7 +3079,7 @@ gform.types['grid'] = _.extend({}, gform.types['input'], gform.types['section'],
             return _.assignIn({
                 name: (gform.renderString(field.label)||'').toLowerCase().split(' ').join('_'), 
                 id: gform.getUID(), 
-                label: field.name,     
+                label: field.id||field.name,     
             }, field)
     
         })
@@ -3638,8 +3638,9 @@ gform.processConditions = function(conditions, func) {
 };
 
 gform._subscribeByName = function(conditions, callback){
+    if(!(this.owner instanceof gform))return;
 
-	for(var i in conditions && this.owner instanceof gform) {
+	for(var i in conditions) {
 		if(typeof conditions[i].conditions == 'object'){
 			gform._subscribeByName.call(this, conditions[i].conditions, callback)
 		}else{
@@ -4101,7 +4102,7 @@ input:checked + .falseLabel {
 }
 .combobox-container .form-control[contenteditable="false"]
 {
-background: #eee;
+	background: #eee;
 }
 @media (min-width: 992px) {
 	.row .col-md-Infinity:first-child{margin-left: 15px;}
