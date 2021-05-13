@@ -762,7 +762,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         if(!this.options.strict && typeof atts[field.name] !== 'object' && typeof field.owner.options.data[field.name] == 'object'){
             atts = field.owner.options.data;
         }
-        if((typeof atts[field.name] == 'object' && atts[field.name].length > 1)){
+        if((typeof atts[field.name] == 'object' && atts[field.name] !== null && atts[field.name].length > 1)){
             if(atts[field.name].length> fieldCount){fieldCount = atts[field.name].length}
         }
         var initialCount = _.filter(field.parent.fields,
@@ -1412,8 +1412,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         return field;
     },field)
 
-    if(field.array && typeof atts[field.name] == 'object'){
-        if(field.fillable){field.value =  atts[field.name][index||0];}
+    if(field.array && field.fillable && typeof atts[field.name] == 'object' && !!atts[field.name] ){
+        field.value =  atts[field.name][index||0];
     }else{
 
         // if(field.item.value !== 0){
@@ -1901,9 +1901,9 @@ gform.types = {
         var oldDiv = this.el;
 
         if(typeof item !== 'undefined' && (
-            typeof item.options !== undefined ||
-            typeof item.max !== undefined ||
-            typeof item.action !== undefined 
+            typeof item.options !== 'undefined' ||
+            typeof item.max !== 'undefined' ||
+            typeof item.action !== 'undefined' 
             )
             && typeof this.mapOptions !== 'undefined'){
             delete this.mapOptions;
@@ -4659,7 +4659,7 @@ tab_container: `
 	</ul></form>
 	</form><div class="gform-footer"></div>`,
 tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
-modal_container:`<div class="modal fade gform {{modifiers}} {{#options.horizontal}} form-horizontal{{/options.horizontal}}  " id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+modal_container:`<div class="modal fade gform {{modifiers}} {{#options.horizontal}} form-horizontal{{/options.horizontal}}" id="myModal" name="modal_{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">
@@ -5008,6 +5008,13 @@ document.body.appendChild(gform.create('<style>'+gform.render('_style',{},'all')
 		
 gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 	base:"collection",
+    destroy:function(){
+        this.el.removeEventListener('change',this.onchangeEvent );		
+      //   this.el.removeEventListener('change',this.onchange );		
+        this.el.removeEventListener('input', this.onchangeEvent);
+        this.combo.removeEventListener('blur',  this.handleBlur)
+
+    },
 	toString: function(name,display){
 		if(!display){
 			if(typeof this.combo !== 'undefined'){
@@ -5360,54 +5367,54 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
         /*look into clean up this way*/
         // this.combo.addEventListener('paste', function(e){})
- 
-        this.combo.addEventListener('blur', function(e){
-            /*clean up value to just be a string*/
-            var input = document.createElement("input");
-            input.value = this.combo.innerText;
-            this.combo.innerHTML = input.value
-            
-            
-            if(!(
-                gform.hasClass(e.relatedTarget,'dropdown-item') || 
-                gform.hasClass(e.relatedTarget,'dropdown-toggle') || 
-                this.mousedropdown 
-            )){
-                if(this.shown ){
-                var list = _.filter(this.options,{filter:true});
-                if(this.strict){
-                    if(list.length == 1){
-                        this.set(list[0].value);
-                    }else{
-                        list = _.filter(this.options,{label:this.combo.innerText});
-                        if(list.length){
-                            this.set(list[0].value);
-                        }
-                    }
-                }else{
-                    this.set(this.combo.innerText)
-                }
-                if (!this.mousedover && this.shown) {setTimeout(function () { 
-                    this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);
-                }
-                this.parent.trigger(['input'], this, {input:this.value});
-                this.menu.style.display = 'none';
-                this.shown = false;
-            }else{}
-            
-            if(this.strict){
-                this.set(this.value||this.combo.innerText)
-
-                this.set(gform.types[this.type].get.call(this))
+ this.handleBlur = function(e){
+    /*clean up value to just be a string*/
+    var input = document.createElement("input");
+    input.value = this.combo.innerText;
+    this.combo.innerHTML = input.value
+    
+    
+    if(!(
+        gform.hasClass(e.relatedTarget,'dropdown-item') || 
+        gform.hasClass(e.relatedTarget,'dropdown-toggle') || 
+        this.mousedropdown 
+    )){
+        if(this.shown ){
+        var list = _.filter(this.options,{filter:true});
+        if(this.strict){
+            if(list.length == 1){
+                this.set(list[0].value);
             }else{
-                if(typeof _.find(this.options,{value:this.value}) !== "undefined"){
-                    this.set(this.value)
-                }else{
-                    this.parent.trigger(['undefined'], this);
+                list = _.filter(this.options,{label:this.combo.innerText});
+                if(list.length){
+                    this.set(list[0].value);
                 }
             }
-            }
-        }.bind(this))
+        }else{
+            this.set(this.combo.innerText)
+        }
+        if (!this.mousedover && this.shown) {setTimeout(function () { 
+            this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);
+        }
+        this.parent.trigger(['input'], this, {input:this.value});
+        this.menu.style.display = 'none';
+        this.shown = false;
+    }else{}
+    
+    if(this.strict){
+        this.set(this.value||this.combo.innerText)
+
+        this.set(gform.types[this.type].get.call(this))
+    }else{
+        if(typeof _.find(this.options,{value:this.value}) !== "undefined"){
+            this.set(this.value)
+        }else{
+            this.parent.trigger(['undefined'], this);
+        }
+    }
+    }
+}.bind(this);
+        this.combo.addEventListener('blur',  this.handleBlur)
 		this.options = this.mapOptions.getoptions();
 
         if(typeof this.search == 'string'){

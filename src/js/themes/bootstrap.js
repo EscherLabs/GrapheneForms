@@ -347,17 +347,17 @@ contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}is
 			<select class="form-control test"  {{#multiple}}multiple=multiple{{/multiple}} {{#size}}size={{size}}{{/size}}  name="{{name}}{{#multiple}}[]{{/multiple}}" value="{{value}}" id="{{id}}" />
 			{{#options}}
 			{{^optgroup}}
-			<option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}} value="{{i}}">{{{label}}}</option>
+			{{#visible}}<option {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}} value="{{i}}">{{{label}}}</option>{{/visible}}
 			{{/optgroup}}
 			{{#optgroup}}
 			{{#optgroup.label}}
 			<optgroup label="{{label}}" data-id="{{optgroup.id}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}">
-			{{/optgroup.label}}
+			{{#visible}}{{/optgroup.label}}
 					{{#options}}
-					<option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{i}}">{{{label}}}</option>
+					{{#visible}}<option data-id="{{optgroup.id}}" {{#selected}}selected='selected'{{/selected}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}  value="{{i}}">{{{label}}}</option>{{/visible}}
 					{{/options}}
 					{{#optgroup.label}}
-			</optgroup>
+			</optgroup>{{/visible}}
 			{{/optgroup.label}}
 			{{/optgroup}}
 			{{/options}}
@@ -571,7 +571,7 @@ tab_container: `
 	</ul></form>
 	</form><div class="gform-footer"></div>`,
 tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
-modal_container:`<div class="modal fade gform {{modifiers}} {{#options.horizontal}} form-horizontal{{/options.horizontal}}  " id="myModal{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+modal_container:`<div class="modal fade gform {{modifiers}} {{#options.horizontal}} form-horizontal{{/options.horizontal}}" id="myModal" name="modal_{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">

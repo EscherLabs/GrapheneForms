@@ -23,6 +23,13 @@ gform.stencils.smallcombo = `
 		
 gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 	base:"collection",
+    destroy:function(){
+        this.el.removeEventListener('change',this.onchangeEvent );		
+      //   this.el.removeEventListener('change',this.onchange );		
+        this.el.removeEventListener('input', this.onchangeEvent);
+        this.combo.removeEventListener('blur',  this.handleBlur)
+
+    },
 	toString: function(name,display){
 		if(!display){
 			if(typeof this.combo !== 'undefined'){
@@ -261,7 +268,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
         this.el.addEventListener('mouseup',function(e){
             if(typeof e.target.dataset.dropdown !== "undefined" && this.editable){
-                debugger;
 
                 e.stopPropagation();
                 if(this.el.querySelector('.combobox-selected') !== null){
@@ -375,54 +381,54 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
         /*look into clean up this way*/
         // this.combo.addEventListener('paste', function(e){})
- 
-        this.combo.addEventListener('blur', function(e){
-            /*clean up value to just be a string*/
-            var input = document.createElement("input");
-            input.value = this.combo.innerText;
-            this.combo.innerHTML = input.value
-            
-            
-            if(!(
-                gform.hasClass(e.relatedTarget,'dropdown-item') || 
-                gform.hasClass(e.relatedTarget,'dropdown-toggle') || 
-                this.mousedropdown 
-            )){
-                if(this.shown ){
-                var list = _.filter(this.options,{filter:true});
-                if(this.strict){
-                    if(list.length == 1){
-                        this.set(list[0].value);
-                    }else{
-                        list = _.filter(this.options,{label:this.combo.innerText});
-                        if(list.length){
-                            this.set(list[0].value);
-                        }
-                    }
-                }else{
-                    this.set(this.combo.innerText)
-                }
-                if (!this.mousedover && this.shown) {setTimeout(function () { 
-                    this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);
-                }
-                this.parent.trigger(['input'], this, {input:this.value});
-                this.menu.style.display = 'none';
-                this.shown = false;
-            }else{}
-            
-            if(this.strict){
-                this.set(this.value||this.combo.innerText)
-
-                this.set(gform.types[this.type].get.call(this))
+ this.handleBlur = function(e){
+    /*clean up value to just be a string*/
+    var input = document.createElement("input");
+    input.value = this.combo.innerText;
+    this.combo.innerHTML = input.value
+    
+    
+    if(!(
+        gform.hasClass(e.relatedTarget,'dropdown-item') || 
+        gform.hasClass(e.relatedTarget,'dropdown-toggle') || 
+        this.mousedropdown 
+    )){
+        if(this.shown ){
+        var list = _.filter(this.options,{filter:true});
+        if(this.strict){
+            if(list.length == 1){
+                this.set(list[0].value);
             }else{
-                if(typeof _.find(this.options,{value:this.value}) !== "undefined"){
-                    this.set(this.value)
-                }else{
-                    this.parent.trigger(['undefined'], this);
+                list = _.filter(this.options,{label:this.combo.innerText});
+                if(list.length){
+                    this.set(list[0].value);
                 }
             }
-            }
-        }.bind(this))
+        }else{
+            this.set(this.combo.innerText)
+        }
+        if (!this.mousedover && this.shown) {setTimeout(function () { 
+            this.menu.style.display = 'none'; this.shown = false;}.bind(this), 200);
+        }
+        this.parent.trigger(['input'], this, {input:this.value});
+        this.menu.style.display = 'none';
+        this.shown = false;
+    }else{}
+    
+    if(this.strict){
+        this.set(this.value||this.combo.innerText)
+
+        this.set(gform.types[this.type].get.call(this))
+    }else{
+        if(typeof _.find(this.options,{value:this.value}) !== "undefined"){
+            this.set(this.value)
+        }else{
+            this.parent.trigger(['undefined'], this);
+        }
+    }
+    }
+}.bind(this);
+        this.combo.addEventListener('blur',  this.handleBlur)
 		this.options = this.mapOptions.getoptions();
 
         if(typeof this.search == 'string'){

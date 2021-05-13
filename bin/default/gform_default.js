@@ -762,7 +762,7 @@ gform.inflate = function(atts, fieldIn, ind, list) {
         if(!this.options.strict && typeof atts[field.name] !== 'object' && typeof field.owner.options.data[field.name] == 'object'){
             atts = field.owner.options.data;
         }
-        if((typeof atts[field.name] == 'object' && atts[field.name].length > 1)){
+        if((typeof atts[field.name] == 'object' && atts[field.name] !== null && atts[field.name].length > 1)){
             if(atts[field.name].length> fieldCount){fieldCount = atts[field.name].length}
         }
         var initialCount = _.filter(field.parent.fields,
@@ -1412,8 +1412,8 @@ gform.createField = function(parent, atts, el, index, fieldIn,i,j, instance) {
         return field;
     },field)
 
-    if(field.array && typeof atts[field.name] == 'object'){
-        if(field.fillable){field.value =  atts[field.name][index||0];}
+    if(field.array && field.fillable && typeof atts[field.name] == 'object' && !!atts[field.name] ){
+        field.value =  atts[field.name][index||0];
     }else{
 
         // if(field.item.value !== 0){
@@ -1901,9 +1901,9 @@ gform.types = {
         var oldDiv = this.el;
 
         if(typeof item !== 'undefined' && (
-            typeof item.options !== undefined ||
-            typeof item.max !== undefined ||
-            typeof item.action !== undefined 
+            typeof item.options !== 'undefined' ||
+            typeof item.max !== 'undefined' ||
+            typeof item.action !== 'undefined' 
             )
             && typeof this.mapOptions !== 'undefined'){
             delete this.mapOptions;

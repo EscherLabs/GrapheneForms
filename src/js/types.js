@@ -75,9 +75,9 @@ gform.types = {
         var oldDiv = this.el;
 
         if(typeof item !== 'undefined' && (
-            typeof item.options !== undefined ||
-            typeof item.max !== undefined ||
-            typeof item.action !== undefined 
+            typeof item.options !== 'undefined' ||
+            typeof item.max !== 'undefined' ||
+            typeof item.action !== 'undefined' 
             )
             && typeof this.mapOptions !== 'undefined'){
             delete this.mapOptions;
