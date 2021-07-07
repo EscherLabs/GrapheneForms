@@ -230,7 +230,7 @@ var gform = function(optionsIn, el){
                         // }
 
                         this.updateActions(field);
-                        field.operator.reflow();
+                        if(this.operator)this.operator.reflow();
                     }else{
                         if(typeof field !== 'undefined'){
                             field.set(item);
@@ -2262,9 +2262,9 @@ gform.patch = function(object,patch,action){
   });gform.each = function(func){
     _.each(this.fields, function(field){
         func(field);
-        if('fields' in field){
-            gform.each.call(field,func);
-        }
+        // if('fields' in field){
+        //     gform.each.call(field,func);
+        // }
     })
 }
 gform.reduce = function(func,object,filter){
@@ -2280,8 +2280,6 @@ gform.reduce = function(func,object,filter){
     return object;
 }
 gform.reduceShallow = function(func,object,filter){
-    debugger;
-
     var object = object ||{};
     _.reduce(this.filter(filter,1),function(object, field){
         var temp = func(object,field);
@@ -2348,7 +2346,7 @@ gform.addConditions = function(field) {
 
     
         if(events){
-            this.operator.reflow();
+            if(this.operator)this.operator.reflow();
             this.owner.trigger('change', this);
         }
 
@@ -3513,6 +3511,12 @@ gform.reflow = function(){
   
 
 gform.arrayManager = function(field){
+    field = _.reduce(['reflow','find','filter'],function(field,prop){
+        if(prop in gform.types[field.type]){
+            field[prop] = gform.types[field.type][prop].bind(field);// || null;
+        }
+        return field;
+    },field)
     this.field = field;
     this.name = this.field.name;
     this.owner = field.owner;
@@ -3523,9 +3527,17 @@ gform.arrayManager = function(field){
     this.satisfied = function(){return true;}
     this.fields =[];
     this.instances = []
-    this.filter = gform.types[field.type].filter.bind(this);
+
+    
+   
     this.el = gform.create(gform.types[this.field.type].row.call(this.field));
-    this.container = this.el.querySelector(gform.types[this.field.type].rowSelector);
+    this.container = this.el;
+
+    if(typeof gform.types[field.type].rowSelector == 'string'){
+        this.container = this.el.querySelector(gform.types[this.field.type].rowSelector);
+    }
+    this.field.operator = this;
+
     Object.defineProperty(this, "map",{
         get: function(){            
             if(this.field.item.map === false){return this.field.item.map}
@@ -3552,9 +3564,6 @@ gform.arrayManager = function(field){
     if(typeof gform.types[field.type].row  == "function"){
     }
     this.get= function(){
-        debugger;
-        var temp = {};
-        temp[this.name] = []
         return [];
     }
     this.addField = function(value,field){

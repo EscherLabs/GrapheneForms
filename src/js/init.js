@@ -1175,6 +1175,12 @@ gform.reflow = function(){
   
 
 gform.arrayManager = function(field){
+    field = _.reduce(['reflow','find','filter'],function(field,prop){
+        if(prop in gform.types[field.type]){
+            field[prop] = gform.types[field.type][prop].bind(field);// || null;
+        }
+        return field;
+    },field)
     this.field = field;
     this.name = this.field.name;
     this.owner = field.owner;
@@ -1185,9 +1191,17 @@ gform.arrayManager = function(field){
     this.satisfied = function(){return true;}
     this.fields =[];
     this.instances = []
-    this.filter = gform.types[field.type].filter.bind(this);
+
+    
+   
     this.el = gform.create(gform.types[this.field.type].row.call(this.field));
-    this.container = this.el.querySelector(gform.types[this.field.type].rowSelector);
+    this.container = this.el;
+
+    if(typeof gform.types[field.type].rowSelector == 'string'){
+        this.container = this.el.querySelector(gform.types[this.field.type].rowSelector);
+    }
+    this.field.operator = this;
+
     Object.defineProperty(this, "map",{
         get: function(){            
             if(this.field.item.map === false){return this.field.item.map}
@@ -1214,9 +1228,6 @@ gform.arrayManager = function(field){
     if(typeof gform.types[field.type].row  == "function"){
     }
     this.get= function(){
-        debugger;
-        var temp = {};
-        temp[this.name] = []
         return [];
     }
     this.addField = function(value,field){
