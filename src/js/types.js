@@ -225,7 +225,7 @@ gform.types = {
               (_.find(this.options,{value:this.value})||this.options[0]||{value:""}).selected = true;
               gform.types[this.type].setup.call(this);
 
-              this.parent.trigger(['change','input'], this,{input:this.value});
+              this.parent.trigger(input?'change':'input', this,{input:this.value});
           }.bind(this)
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
           this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
@@ -805,7 +805,7 @@ gform.types = {
 // remove the added classes
 gform.types['text'] = gform.types['password'] = gform.types['color'] = gform.types['input'];
 gform.types['number']= _.extend({}, gform.types['input'],{get:function(){
-    return parseInt(this.el.querySelector('input[name="' + this.name + '"]').value,10);
+    return parseFloat(this.el.querySelector('input[name="' + this.name + '"]').value,10);
 }, render: function(){
     return gform.render(this.type, this).split('value=""').join('value="'+this.value+'"')
 },});

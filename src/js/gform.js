@@ -173,6 +173,9 @@ var gform = function(optionsIn, el){
             field.owner.trigger('change', field);
         })
         if(!this.options.private){
+            if(typeof gform.instances[this.options.name] !== 'undefined' && gform.instances[this.options.name] !== this){
+                gform.instances[this.options.name].destroy();
+            }
             gform.instances[this.options.name] = this;
         }
     }
@@ -305,9 +308,11 @@ var gform = function(optionsIn, el){
         this.options.autoFocus = gform.options.autoFocus;
     }
     if(this.options.autoFocus && this.fields.length){
-        window.setTimeout(gform.types[this.find({visible:true}).type].focus.bind(this.find({visible:true})), 0); 
-
-        gform.types[this.fields[0].type].focus.call(this.fields[0])
+        var field = this.find({visible:true})
+        if(field){
+            window.setTimeout(gform.types[this.find({visible:true}).type].focus.bind(this.find({visible:true})), 0); 
+        }
+        // gform.types[this.fields[0].type].focus.call(this.fields[0])
     }
 
 
@@ -1029,6 +1034,10 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
                 if(typeof format !== 'undefined'){
                     option = _.reduce(['label','display','value'/*,'cleanlabel'*/],function(option,prop){
                         if(prop in format){
+                            if(prop in option){
+                                option.original = option.original||{};
+                                option.original[prop] = option[prop]
+                            }
                             option[prop] = (typeof format[prop] == 'string')? 
                                     gform.renderString(format[prop],option) 
                                 : (typeof format[prop] == 'function')? 
@@ -1206,7 +1215,7 @@ gform.collectionManager = function(refObject){
             this.eventBus.dispatch('change',name);
 		}.bind(this),
 		get: function(name){
-			return collections[name];
+            return (typeof name == 'undefined')?collections:collections[name]
 		},
 		update: function(name, data){
             if(typeof data !== 'undefined'){

@@ -1,5 +1,5 @@
 gform.stencils.smallcombo = `
-<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
+<div class="row clearfix form-group {{modifiers}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12">{{/horizontal}}

@@ -173,6 +173,9 @@ var gform = function(optionsIn, el){
             field.owner.trigger('change', field);
         })
         if(!this.options.private){
+            if(typeof gform.instances[this.options.name] !== 'undefined' && gform.instances[this.options.name] !== this){
+                gform.instances[this.options.name].destroy();
+            }
             gform.instances[this.options.name] = this;
         }
     }
@@ -305,9 +308,11 @@ var gform = function(optionsIn, el){
         this.options.autoFocus = gform.options.autoFocus;
     }
     if(this.options.autoFocus && this.fields.length){
-        window.setTimeout(gform.types[this.find({visible:true}).type].focus.bind(this.find({visible:true})), 0); 
-
-        gform.types[this.fields[0].type].focus.call(this.fields[0])
+        var field = this.find({visible:true})
+        if(field){
+            window.setTimeout(gform.types[this.find({visible:true}).type].focus.bind(this.find({visible:true})), 0); 
+        }
+        // gform.types[this.fields[0].type].focus.call(this.fields[0])
     }
 
 
@@ -1029,6 +1034,10 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
                 if(typeof format !== 'undefined'){
                     option = _.reduce(['label','display','value'/*,'cleanlabel'*/],function(option,prop){
                         if(prop in format){
+                            if(prop in option){
+                                option.original = option.original||{};
+                                option.original[prop] = option[prop]
+                            }
                             option[prop] = (typeof format[prop] == 'string')? 
                                     gform.renderString(format[prop],option) 
                                 : (typeof format[prop] == 'function')? 
@@ -1206,7 +1215,7 @@ gform.collectionManager = function(refObject){
             this.eventBus.dispatch('change',name);
 		}.bind(this),
 		get: function(name){
-			return collections[name];
+            return (typeof name == 'undefined')?collections:collections[name]
 		},
 		update: function(name, data){
             if(typeof data !== 'undefined'){
@@ -2051,7 +2060,7 @@ gform.types = {
               (_.find(this.options,{value:this.value})||this.options[0]||{value:""}).selected = true;
               gform.types[this.type].setup.call(this);
 
-              this.parent.trigger(['change','input'], this,{input:this.value});
+              this.parent.trigger(input?'change':'input', this,{input:this.value});
           }.bind(this)
           this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
           this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
@@ -2631,7 +2640,7 @@ gform.types = {
 // remove the added classes
 gform.types['text'] = gform.types['password'] = gform.types['color'] = gform.types['input'];
 gform.types['number']= _.extend({}, gform.types['input'],{get:function(){
-    return parseInt(this.el.querySelector('input[name="' + this.name + '"]').value,10);
+    return parseFloat(this.el.querySelector('input[name="' + this.name + '"]').value,10);
 }, render: function(){
     return gform.render(this.type, this).split('value=""').join('value="'+this.value+'"')
 },});
@@ -3917,17 +3926,21 @@ gform.conditions = {
 gform.handleError = gform.update;
 
 gform.validateItem = function(force,item){
+	// debugger;
 	var value = item.get();
 	if(force || !item.valid || item.required || item.satisfied(value)){
 		item.valid = true;
 		item.errors = '';
 		if(item.parsable && typeof item.validate === 'object'){
-			var errors = gform.validation.call(item,item.validate);
+			var errors = [];
 			if(item.required){
 				var type = (item.satisfied(item.get()) ? false : '{{label}} is required')
 				if(type) {
 					errors.push(gform.renderString(item.required.message || type, {label:item.label,value:value, args:item.required}));
 				}
+			}
+			if(!errors.length){
+				errors = gform.validation.call(item,item.validate);
 			}
 			errors = _.compact(errors);
 			if((typeof item.display === 'undefined') || item.visible) {
@@ -3981,7 +3994,7 @@ gform.validation = function(rules, op){
 
 gform.regex = {
 	numeric: /^[0-9]+$/,
-	decimal: /^\-?[0-9]*\.?[0-9]+$/,
+	decimal: /^\-?[0-9]*\.?[0-9]*$/,
 	url: /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
 	date: /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
 	email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i
@@ -4073,12 +4086,12 @@ gform.validations =
 			return '{{label}} must contain only numbers';
 		}
 		
-		args.min = (typeof this.min == 'number')?this.min:(typeof args.min == 'number')?args.min:null
+		args.min = (typeof parseFloat(this.min) == 'number')?parseFloat(this.min):(typeof parseFloat(args.min) == 'number')?parseFloat(args.min):null
 		if(args.min !== null && parseFloat(value) < parseFloat(args.min)){
 			return '{{label}} must contain a number not less than {{args.min}} '
 		}
 
-		args.max =  (typeof this.max == 'number')?this.max:(typeof args.max == 'number')?args.max:null
+		args.max =  (typeof parseFloat(this.max) == 'number')?parseFloat(this.max):(typeof parseFloat(args.max) == 'number')?parseFloat(this.max):null
 		if(args.max !== null && parseFloat(value) > parseFloat(args.max)){
 			return '{{label}} must contain a number not more than {{args.max}}'
 		}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Adam Smallcomb">
+    <link rel="icon" href="../assets/favicon.png">
+
+    <title>Example:Basic - Graphene:Forms</title>
+    <link rel="stylesheet" href="../assets/css/normalize.css">    
+    <link rel="stylesheet" href="../assets/css/gform.css">
+
+	  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+  </head>
+  <body>
+    <div style="padding:20px">
+    <h4><a href="./">Examples</a> - Basic Form</h4>
+
+    <div class="container ">
+        <div class="row ">
+                <div class="column noprint" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
+                <div class="column column-40" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>
+                <div class="column noprint" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
+            </div>
+        </div>
+    </div>
+    <script src='../assets/vendor/js/jquery.js'></script>
+    <script src="../assets/js/lodash.min.js"></script>    
+    <script src='../assets/js/gform_bootstrap.js'></script>
+    <script src='../assets/js/cleave.min.js'></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+
+    <script>
+
+// gform.stencils.currency = `<div class="row clearfix form-group {{modifiers}} data-type="{{type}}">
+// 	{{>_label}}
+// 	{{#label}}
+// 	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
+// 	{{#horizontal}}<div class="col-md-8">{{/horizontal}}
+// 	{{/label}}
+// 	{{^label}}
+// 	<div class="col-md-12">
+// 	{{/label}}
+// 		{{#pre}}<div class="input-group col-xs-12"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
+//     {{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
+// 		<input {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} min="{{min}}" {{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="" />
+// 		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
+//     {{^post}}{{#pre}}</div>{{/pre}}{{/post}}
+// 		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
+
+// 		{{>_addons}}
+// 		{{>_actions}}
+// 	</div>
+// </div>`;
+
+
+gform.types['currency']= _.extend({}, gform.types['input'],{
+  defaults:{placeholder:"$0.00",cleave:{
+              prefix: '$',
+              noImmediatePrefix: true,
+              rawValueTrimPrefix: true,
+              numeral: true,
+              numeralThousandsGroupStyle: 'thousand'
+            },validate:[{type:'numeric'}/*,{type:'numeric'}*/]},
+  initialize: function(){
+    //   this.iel = this.el.querySelector('input[name="' + this.name + '"]')
+    //   if(this.onchange !== undefined){ this.el.addEventListener('change', this.onchange);}
+      this.onchangeEvent = function(input){
+        //   this.input = input;
+          this.value = this.get();
+          if(this.el.querySelector('.count') != null){
+            var text = (this.value+"").length;
+            if(this.limit>1){text+='/'+this.limit;}
+            this.el.querySelector('.count').innerHTML = text;
+          }
+        //   this.update({value:this.get()},true);
+        //   gform.types[this.type].focus.call(this)
+            gform.types[this.type].setup.call(this);
+          this.parent.trigger(['change'], this,{input:this.value});
+          if(input){
+            this.parent.trigger(['input'], this,{input:this.value});
+          }
+      }.bind(this)
+      this.input = this.input || false;
+      this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+
+      this.el.addEventListener('change', this.onchangeEvent.bind(null,false));
+      this.cleave = new Cleave('#el_'+this.id+' input', this.cleave||{});
+      
+      gform.types[this.type].setup.call(this);
+
+  },      
+  set: function(value) {
+          // this.el.querySelector('input[name="' + this.name + '"]').value = value;
+          this.cleave.setRawValue(value)
+      },
+  get:function(){
+    return parseFloat(this.cleave.getRawValue())||0;
+    // return parseInt(this.el.querySelector('input[name="' + this.name + '"]').value,10);
+  }, 
+  render: function(){
+    return gform.render(this.type, this).split('value=""').join('value="'+this.value+'"')
+  }     
+  ,satisfied: function(value) {
+    if(this.cleave.getRawValue().length == 0 && this.value == 0)return false;
+    value = value||this.value;
+    // if(_.isArray(value)){return !!value.length;}
+    return (typeof value !== 'undefined' && value !== null && value !== '' && !(typeof value == 'number' && isNaN(value)));            
+  }
+});
+
+// gform.regex.currency = /(?=.*?\d)^\$?(([1-9]\d{0,2}(,\d{3})*)|\d+)?(\.\d{0,2})?$/;
+// gform.validations.currency= function(value,args) {
+//   // return gform.regex.currency.test(value) || value === '' ? false : '{{label}} must contain a valid Currency';
+//   // if(this.cleave.getRawValue().length == 0 && this.value == 0)return false;
+
+//   if(!(gform.regex.decimal.test(value) || value === '')){
+//     return '{{label}} must contain a valid Currency';
+//   }
+  
+//   args.min = (typeof parseFloat(this.min) == 'number')?parseFloat(this.min):(typeof parseFloat(args.min) == 'number')?parseFloat(args.min):null
+//   if(args.min !== null && parseFloat(value) < parseFloat(args.min)){
+//     return '{{label}} must contain a number not less than {{args.min}} '
+//   }
+
+//   args.max =  (typeof parseFloat(this.max) == 'number')?parseFloat(this.max):(typeof parseFloat(args.max) == 'number')?parseFloat(this.max):null
+//   if(args.max !== null && parseFloat(value) > parseFloat(args.max)){
+//     return '{{label}} must contain a number not more than {{args.max}}'
+//   }
+
+
+
+
+// }
+      options = {
+          legend: 'Basic Form',
+          data:{label:23452},
+          fields:[
+            {label: 'Money', name: 'label',type:"currency",max:100,min:'.50',required:true}
+          ]
+      }
+    </script>
+    <script src="../assets/js/example.js"></script>   
+        
+   </body>
+</html>

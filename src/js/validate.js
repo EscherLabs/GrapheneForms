@@ -13,17 +13,21 @@ gform.prototype.validate = function(force){
 gform.handleError = gform.update;
 
 gform.validateItem = function(force,item){
+	// debugger;
 	var value = item.get();
 	if(force || !item.valid || item.required || item.satisfied(value)){
 		item.valid = true;
 		item.errors = '';
 		if(item.parsable && typeof item.validate === 'object'){
-			var errors = gform.validation.call(item,item.validate);
+			var errors = [];
 			if(item.required){
 				var type = (item.satisfied(item.get()) ? false : '{{label}} is required')
 				if(type) {
 					errors.push(gform.renderString(item.required.message || type, {label:item.label,value:value, args:item.required}));
 				}
+			}
+			if(!errors.length){
+				errors = gform.validation.call(item,item.validate);
 			}
 			errors = _.compact(errors);
 			if((typeof item.display === 'undefined') || item.visible) {
@@ -77,7 +81,7 @@ gform.validation = function(rules, op){
 
 gform.regex = {
 	numeric: /^[0-9]+$/,
-	decimal: /^\-?[0-9]*\.?[0-9]+$/,
+	decimal: /^\-?[0-9]*\.?[0-9]*$/,
 	url: /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
 	date: /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
 	email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/i
@@ -169,12 +173,12 @@ gform.validations =
 			return '{{label}} must contain only numbers';
 		}
 		
-		args.min = (typeof this.min == 'number')?this.min:(typeof args.min == 'number')?args.min:null
+		args.min = (typeof parseFloat(this.min) == 'number')?parseFloat(this.min):(typeof parseFloat(args.min) == 'number')?parseFloat(args.min):null
 		if(args.min !== null && parseFloat(value) < parseFloat(args.min)){
 			return '{{label}} must contain a number not less than {{args.min}} '
 		}
 
-		args.max =  (typeof this.max == 'number')?this.max:(typeof args.max == 'number')?args.max:null
+		args.max =  (typeof parseFloat(this.max) == 'number')?parseFloat(this.max):(typeof parseFloat(args.max) == 'number')?parseFloat(this.max):null
 		if(args.max !== null && parseFloat(value) > parseFloat(args.max)){
 			return '{{label}} must contain a number not more than {{args.max}}'
 		}

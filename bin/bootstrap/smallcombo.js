@@ -268,7 +268,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
         this.el.addEventListener('mouseup',function(e){
             if(typeof e.target.dataset.dropdown !== "undefined" && this.editable){
-                debugger;
 
                 e.stopPropagation();
                 if(this.el.querySelector('.combobox-selected') !== null){
