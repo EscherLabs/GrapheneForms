@@ -1,6 +1,6 @@
 #! /bin/bash
-cat src/js/gform.js src/js/types.js src/js/conditions.js src/js/validate.js > bin/gform.js
-minify src/js/gform.js src/js/types.js src/js/conditions.js src/js/validate.js > bin/gform.engine.min.js 
+src/js/gform.js src/js/types.js src/js/utils.js src/js/iterations.js src/js/init.js src/js/conditions.js src/js/validate.js > bin/gform.js
+minify src/js/gform.js src/js/types.js src/js/utils.js src/js/iterations.js src/js/init.js src/js/conditions.js src/js/validate.js > bin/gform.engine.min.js 
 minify bin/gform.engine.min.js src/js/themes/default.js > bin/default/gform.min.js 
 minify bin/gform.engine.min.js src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/gform_bootstrap.min.js 
 minify src/js/themes/default.js > bin/default/default.theme.min.js
