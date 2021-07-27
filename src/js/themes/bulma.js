@@ -98,8 +98,8 @@ text: `
 };
 gform.columns = 12;
 gform.columnClasses = _.map(['','is-one-fifth','is-one-fifth','is-one-quarter','is-one-third','is-two-fifths','is-half','is-three-fifths','is-two-thirds','is-three-quarters','is-four-fifths','is-four-fifths','is-full'],function(item){return ' column'})
-gform.prototype.opts.suffix = ""
-gform.prototype.opts.rowClass = "columns"
+gform.prototype.options.suffix = ""
+gform.prototype.options.rowClass = "columns"
 
 gform.handleError = function(field){
     field.el.querySelector('help').innerHTML = field.errors;

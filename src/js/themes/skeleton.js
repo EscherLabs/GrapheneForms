@@ -96,7 +96,7 @@ gform.stencils = {
 };
 gform.columns = 12;
 gform.columnClasses = _.map(['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'],function(item){return item+' columns'})
-gform.prototype.opts.suffix = ""
+gform.prototype.options.suffix = ""
 gform.handleError = function(field){
     field.el.querySelector('small').innerHTML = field.errors;
 }

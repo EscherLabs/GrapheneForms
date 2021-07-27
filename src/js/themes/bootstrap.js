@@ -613,14 +613,14 @@ table:'<div><div class="col-xs-12" style="overflow:scroll"><legend>{{label}}</le
 };
 
 
-gform.columns = 12;
+// gform.columns = 12;
 
 gform.columnClasses = _.map(new Array(13),function(item, i){return 'col-xs-12 col-sm-'+i})
 gform.offsetClasses = _.map(new Array(13),function(item, i){return 'col-xs-offset-0 col-sm-offset-'+i})
-gform.default.inline = true;
-gform.default.columns = 12;
+gform.prototype.options.inline = true;
+gform.prototype.options.columns = 12;
 
-gform.prototype.opts.suffix = "";
+gform.prototype.options.suffix = "";
 
 gform.handleError = function(field){
 	var error_container = field.el.querySelector('.font-xs.text-danger')

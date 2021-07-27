@@ -88,7 +88,7 @@ button:`<span class="button {{modifiers}}" style="margin:0 10px 0">{{{label}}}</
 
 gform.columns = 12;
 gform.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-'+item+' column'})
-gform.prototype.opts.suffix = ""
+gform.prototype.options.suffix = ""
 
 gform.handleError = function(field){
     field.el.querySelector('small').innerHTML = field.errors;

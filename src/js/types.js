@@ -655,6 +655,7 @@ gform.types = {
                     // }else{
                         var attr = {};
                         attr[field.name] = item;
+                        debugger;
                         gform.inflate.call(this.owner,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
                     // }
                     var fieldCount = this.filter({array:{ref:field.array.ref}},1).length

@@ -298,10 +298,11 @@ template_item:`<div class="input-template"><div class="gform-template_container"
 child_modal_footer:`<button class="hidden-print button-outline gform-minus float-left" style="margin:0 15px">X Delete</button><button class="float-right hidden-print done" style="margin:0 15px"><i class="fa fa-check-o"></i>Done</button>`,
 table:'<div class="column column-100">{{#array}}<div style="overflow:scroll" class="column column-100">{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append float-right">{{append.label}}{{^append.label}}Add{{/append.label}}</button>{{/append.enable}}{{/array}}<h3>{{label}}</h3><table class="{{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#fields}}<th>{{label}}</th>{{/fields}}</thead><tbody></tbody></table></div></div>'
 };
-gform.columns = 12;
+// gform.columns = 12;
 gform.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-'+item+' column'})
 gform.offsetClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-offset-'+item+' column'})
-gform.prototype.opts.suffix = "";
+gform.prototype.options.suffix = "";
+gform.prototype.options.columns = 12;
 
 gform.handleError = function(field){
     if(field.valid){

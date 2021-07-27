@@ -153,6 +153,122 @@ gform.rows = {
     }
 }
 
+gform.eventBus = function(options, owner){
+	this.options = options || {owner:'form',item:'field'};
+    this.owner = owner||this;
+    this.on = function (event, handler, ref) {
+        if(typeof event != 'undefined'){
+
+            var events = event.split(' ');
+            // if (typeof this.handlers[event] !== 'object') {
+            // this.handlers[event] = [];
+            // }
+            _.each(events,function(ref,event){
+                this.handlers[event] = this.handlers[event] ||[];
+                if(typeof handler == 'function'){
+                    this.handlers[event].push(handler);
+                    if(typeof ref == 'object'){
+                        ref.push(handler);
+
+                    }
+                }else{
+                    if(typeof this.owner.methods[handler] == 'function'){
+                        this.handlers[event].push(this.owner.methods[handler]);
+                    }
+                }
+            }.bind(this,ref))
+        }
+		return this.owner;
+	}.bind(this);
+    if(_.isArray(options.handlers)){
+        this.handlers = {};
+        _.each(options.handlers,function(item){
+            if(item !== null && 'event' in item && 'handler' in item)this.on(item.event, item.handler)
+        }.bind(this))
+    }else{
+        this.handlers = _.extend({},options.handlers);
+    }
+
+    _.each(this.handlers,function(a,b,c){
+        if(typeof a == 'function'){
+            c[b] = [a];
+        }else if(typeof a == 'string'){
+            if(typeof this[a] == 'function'){
+                c[b] = [this[a]];
+            }else{
+              if(typeof this.owner[a] == 'function'){
+                c[b] = [this.owner[a]];
+              }else{
+                if('methods' in this.owner && typeof this.owner.methods[a] == 'function'){
+                  c[b] = [this.owner.methods[a]];
+                }else{
+                  if(typeof window[a] == 'function'){
+                    c[b] = [window[a]];
+                  }else{
+                    c[b] = null;
+                  }
+                }
+              }
+            }
+        }
+    }.bind(this))
+
+	this.dispatch = function (e,f,a) {
+		a = a || {};
+		a[this.options.owner] = this.owner;
+		if(typeof f !== 'undefined'){
+		    a[this.options.item] = f;
+		}
+        a.default = true;
+        a.continue = true;
+        a.preventDefault = function(){this.default = false;}.bind(a)
+        a.stopPropagation = function(){this.continue = false;}.bind(a)
+		var events = [];
+		if(typeof e == 'string'){
+		    events.push(e)
+		}else{events = events.concat(e)}
+		_.each(events, function(args,event){
+            args.event = event;
+            
+            var f = function (handler) {
+                if(a.continue){
+                    if(typeof handler == 'function'){
+                        handler.call(owner, args);
+                    }
+                }
+            }.bind(this)
+            
+            _.each(this.handlers[event], f);
+            _.each(this.handlers['*'], f);
+		}.bind(this, a))
+        return a;
+        
+	}.bind(this)
+
+}
+
+gform.collectionManager = function(refObject){
+    var collections = refObject||{};
+    this.eventBus = new gform.eventBus({owner:'manager',item:'collection',handlers:{}}, this)
+    
+	return {
+		add: function(name, data){
+            collections[name] = data;
+            this.eventBus.dispatch('change',name);
+		}.bind(this),
+		get: function(name){
+            return (typeof name == 'undefined')?collections:collections[name]
+		},
+		update: function(name, data){
+            if(typeof data !== 'undefined'){
+                collections[name] = data;
+            }
+            this.eventBus.dispatch(name,collections[name]);
+            this.eventBus.dispatch('change',name);
+		}.bind(this),
+		on: this.eventBus.on
+	}
+}
 
   
 gform.VERSION = '0.0.2.0';

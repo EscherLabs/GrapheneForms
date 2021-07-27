@@ -32,16 +32,16 @@
 
     <script>
       options = {
-        data:{candy:[{flavor:"asdf",color:["#f00","#0f0"]},{flavor:"asdf",color:["#f00","#0f0"]}]},
-          legend: 'Basic Form',
+        data:{candy:[{flavor:"asdf",color:["#f00","#0f0"]},{flavor:"asdf",color:["#f00","#ff0"]}]},
+          legend: 'Duplication Form',
           fields:[
-          {
-      "label": "Name",
-      "name": "name"
-    },
-    {
-      "label": "Email",
-      "name": "email",
+    //       {
+    //   "label": "Name",
+    //   "name": "name"
+    // },
+    // {
+    //   "label": "Email",
+    //   "name": "email",
     //   "show":[
     //     {name:"name",type:"matches",value:"adam"}
     //   ]
@@ -52,7 +52,8 @@
     //   "show":[
     //     {name:"name",type:"not_matches",value:"adam"}
     //   ]
-    },{label: 'Flavor'},
+    // },
+    // {label: 'Flavor'},
     // {
     //   "label": "Phone",
     //   "name": "phone"
@@ -129,10 +130,10 @@
         {name:"flavor",type:"not_matches",value:"adam"}
       ]}
               ]},
-    {
-      "label": "Campus Department",
-      "name": "department"
-    },{ label: 'Color{{#index}} ({{#math}}index+1{{/}}){{/index}}',columns:6, array: {min:0,max:7,duplicate:{copy:true}}}
+    // {
+    //   "label": "Campus Department",
+    //   "name": "department"
+    // },{ label: 'Color{{#index}} ({{#math}}index+1{{/}}){{/index}}',columns:6, array: {min:0,max:7,duplicate:{copy:true}}}
           ]
       }
 
