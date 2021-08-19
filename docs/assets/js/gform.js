@@ -4207,7 +4207,32 @@ gform.reflow = function(options){
     if(typeof this.rowManager == 'object'){
         this.rowManager.clear(options);
         return _.reduce(this.items||this.instances, (error, item) => {
-            this.rowManager.insert(item)
+
+            //Keep track of unique locations to clear them out 
+            switch(typeof item.target){
+                case 'function':
+                    // debugger;
+
+                    item.location = item.target.call(item)
+                    if(typeof item.location == 'string'){
+                        item.location = item.owner.el.querySelector(item.location);
+                    }
+                    if(item.location instanceof Node){
+                        item.location.appendChild(item.el)
+                    }
+                    break;
+                case 'string':
+                    item.location = item.owner.el.querySelector(item.target);
+
+                    if(item.location instanceof Node){
+                        item.location.appendChild(item.el)
+                    }
+                    break;
+                default:
+                    this.rowManager.insert(item)
+                    
+            }
+            
             error = gform.reflow.call(item)
             return error;
         }, false)
