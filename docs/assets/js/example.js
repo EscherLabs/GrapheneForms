@@ -5,7 +5,7 @@ myform.on('input',function(e){
     if(e.form.validate()){}
         document.querySelector('#result code').classList = "prettyprint"
         document.querySelector('#result code').innerHTML = 'myform.get();<br> => '+JSON.stringify(e.form,null,2);
-        PR.prettyPrint();
+        if(typeof PR !== 'undefined')PR.prettyPrint();
 })
 myform.on('collection',function(e){
     // debugger;
@@ -13,7 +13,7 @@ myform.on('collection',function(e){
         if(e.form.validate()){}
         document.querySelector('#result code').classList = "prettyprint"
         document.querySelector('#result code').innerHTML = 'myform.get();<br> => '+JSON.stringify(e.form,null,2);
-        PR.prettyPrint();
+        if(typeof PR !== 'undefined')PR.prettyPrint();
     }
 //     if(e.form.validate()){}
 //         document.querySelector('#result code').classList = "prettyprint"

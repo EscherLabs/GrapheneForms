@@ -1,5 +1,12 @@
 gform.stencils = {
-	_style:`
+	_style:`.array_container + button.create {
+		display: none;
+
+	  }
+
+	  .array_container:empty + button.create{
+		display: inline-block;
+	  }
 input + .falseLabel {
 	display: inline;
 }
@@ -204,7 +211,7 @@ text: `<div class="row clearfix form-group {{modifiers}}" data-type="{{type}}">
 	{{/label}}
 		{{#pre}}<div class="input-group col-xs-12"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
     {{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
-		<input {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} min="{{min}}" {{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="" />
+		<input {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} min="{{min}}" {{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{id}}" value="" />
 		{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
     {{^post}}{{#pre}}</div>{{/pre}}{{/post}}
 		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
@@ -274,7 +281,7 @@ switch:`<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{mu
 	<div>
 	<span class="falseLabel">{{{options.0.label}}} </span>
 		<label class="switch">
-		<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}} value="{{value}}" id="{{name}}" />
+		<input name="{{name}}" type="checkbox" {{^editable}}disabled{{/editable}} {{#options.1.selected}}checked=checked{{/options.1.selected}} value="{{value}}" id="{{id}}" />
 		<span class="slider round"></span>
 		</label>
 		<span class="trueLabel">{{{options.1.label}}}</span>
@@ -307,7 +314,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	{{^label}}
 	<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>
 	{{/label}}
-		<textarea class="form-control"  {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} style="width:100%;height:auto;min-height:20px" rows="{{size}}{{^size}}3{{/size}}" name="{{name}}" id="{{guid}}" placeholder="{{placeholder}}"></textarea>
+		<textarea class="form-control"  {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}} style="width:100%;height:auto;min-height:20px" rows="{{size}}{{^size}}3{{/size}}" name="{{name}}" id="{{id}}" placeholder="{{placeholder}}"></textarea>
 		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
 		{{>_addons}}
 			{{>_actions}}
@@ -324,7 +331,7 @@ contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}is
 	<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>
 	{{/label}}
 
-		<div class="formcontrol" style="height:auto"><div placeholder="{{placeholder}}" style="outline:none;border:solid 1px #cbd5dd;{{^unstyled}}background:#fff;padding:10px{{/unstyled}}" name="{{name}}">{{content}}{{value}}</div></div>
+		<div class="formcontrol" style="height:auto" id={{id}}><div placeholder="{{placeholder}}" style="outline:none;border:solid 1px #cbd5dd;{{^unstyled}}background:#fff;padding:10px{{/unstyled}}" name="{{name}}">{{content}}{{value}}</div></div>
 		{{#limit}}<small class="count text-muted" style="display:block;text-align:right">0/{{limit}}</small>{{/limit}}
 		{{>_addons}}
 			{{>_actions}}
@@ -605,11 +612,11 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#options.horizonta
 </div>
 `,
 modal_fieldset:`{{>_fieldset}}`,
-template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
-
-template_item:`<div class="list-group-item"><div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{value}}}{{/format.template}}</div></div>`,
 child_modal_footer:`<button type="button" class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
-table:'<div><div class="col-xs-12" style="overflow:scroll"><legend>{{label}}</legend>{{#array}}{{#append.enable}}<button type="button" data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{{label}}}</th>{{/labels}}</thead><tbody></tbody></table></div></div>'
+
+template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{refid}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend>{{/array}}</div></div>',
+template_item:`<div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{display}}}{{/format.template}}</div>`,
+table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}<legend>{{{label}}}</legend>{{#append.enable}}<button type="button" data-ref="{{refid}}"  class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{{.}}}</th>{{/labels}}</thead></table></div></div>'
 };
 
 

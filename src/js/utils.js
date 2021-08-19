@@ -4,8 +4,8 @@ gform.m = function (n,t,e,r){var i,o= gform.m,a="";function f(n,t){return n=null
 gform.render = function(template, options) {
     return gform.renderString(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))    
 }
-gform.create = function(text) {
-    return document.createRange().createContextualFragment(text).firstChild;
+gform.create = function(text,selector) {
+   return document.createRange().createContextualFragment(text).querySelector(selector||'*') || document.createRange().createContextualFragment(text).firstChild
 }
 gform.renderString = function(string,options) {
     return gform.m(string || '', _.extend({math:function(ms,render){
@@ -115,6 +115,7 @@ gform.patch = function(object,patch,action){
   
   _.mixin({
     selectPath: function(object,path){
+        if(typeof object == 'undefined') return undefined;
         var obj = object;
         if(typeof object.toJSON == "function"){
             obj = object.toJSON()
@@ -135,23 +136,6 @@ gform.patch = function(object,patch,action){
 
 
 
-gform.rows = {
-    add:function(parent){
-            var temp = gform.getUID();
-            cRow = {};
-            cRow.used = 0;
-            cRow.ref  = document.createElement("div");
-            cRow.ref.setAttribute("id", temp);
-            cRow.ref.setAttribute("class", this.options.rowClass);
-            cRow.ref.setAttribute("style", "margin-bottom:0;");
-            parent.rows[temp] = cRow;
-            parent.container.appendChild(cRow.ref);
-            return cRow
-    },
-    remove:function(){
-
-    }
-}
 
 gform.eventBus = function(options, owner){
 	this.options = options || {owner:'form',item:'field'};

@@ -19,7 +19,7 @@ describe('gform Initialization', function () {
   });
 
 	it('should create a form', function () {
-		expect(document.querySelector('form')).not.toBe(null);
+		expect(document.querySelector('#gform')).not.toBe(null);
 	});
 
 // 	it('should create actions correctly', function () {

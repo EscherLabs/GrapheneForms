@@ -8,31 +8,40 @@
     <link rel="icon" href="../assets/favicon.png">
 
     <title>Example:Duplication - Graphene:Forms</title>
-    <link rel="stylesheet" href="../assets/css/normalize.css">    
-    <link rel="stylesheet" href="../assets/css/gform.css">
+    <!-- <link rel="stylesheet" href="../assets/css/normalize.css">    
+    <link rel="stylesheet" href="../assets/css/gform.css"> -->
+
+	  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
   </head>
   <body>
     <div style="padding:20px">
     <h4><a href="./">Examples</a> - Duplication</h4>
-
     <div class="container ">
-        <div class="row ">
-                <div class="column noprint" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
-                <div class="column column-40 print-100" style="overflow: scroll;"><pre id="code"><code class="prettyprint noprint">var myForm = new gform(config, '#form');</code></pre><hr class="noprint"><div id="form"></div></div>
-                <div class="column noprint" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
-            </div>
-        </div>
-    </div>
-    <script src="../assets/js/lodash.min.js"></script>    
-    <script src='../assets/js/gform.js'></script>
-    <script src='../assets/js/default.js'></script> 
-    <script src='../assets/js/math.min.js'></script> 
+      <div class="row ">
+            <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
+            <div class="col-md-4"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>                
+            <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
+          </div>
+      </div>
+  </div>
 
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+<script src='../assets/vendor/js/jquery.js'></script>
+
+<script src="../assets/js/lodash.min.js"></script>    
+<script src='../assets/vendor/js/colorpicker.min.js'></script> 
+
+<script src='../assets/js/bootstrap.min.js'></script>
+<script src='../assets/js/gform_bootstrap.js'></script>
+
+<!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>             -->
+
+
+    <script src='../assets/js/math.min.js'></script> 
 
     <script>
       options = {
-        data:{candy:[{flavor:"asdf",color:["#f00","#0f0"]},{flavor:"asdf",color:["#f00","#ff0"]}]},
+        // data:{candy:[{flavor:"First",color:["#001","#002"]},{flavor:"Second",color:["#011","#012"]}]},
           legend: 'Duplication Form',
           fields:[
     //       {
@@ -123,13 +132,23 @@
     //         }
     //     ]
     // },
-              {label:'Candy{{#index}} ({{index}}){{/index}}', type: 'fieldset',columns:12, value:{flavor:"orange"}, array: {duplicate:{copy:true}}, fields: [
-                {label: 'Flavor'},
+              {label:'Candy{{#index}} ({{index}}){{/index}}', type: 'template',columns:12, value:{flavor:"oranges",color:['#200','#201']}, array: {label:"Candies",duplicate:{copy:true},min:0}, parse:[{type:"not_matches",name:"candy",value:[]}], fields: [
+                {label: 'Flavor',value:"pb&j"},
                 // { label: 'Color ({{^index}}0{{/index}}{{index}})', type:'text',columns:6, array: {min:2,max:3}}
-                { label: 'Color{{#index}} ({{#math}}index+1{{/}}){{/index}}',columns:6, array: {min:2,max:7,duplicate:{copy:true}},"show":[
-        {name:"flavor",type:"not_matches",value:"adam"}
+                { label: 'Color{{#index}} ({{#math}}index+1{{/math}}){{/index}}',columns:6, array: {label:"Colors",min:2,max:7,duplicate:{copy:true}},"show":[
+        {name:"flavor",type:"not_matches",value:"orange"}
       ]}
-              ]},
+              ]},{legend: 'Gradient',array:{min:0,max:20}, type: 'table',fields:[
+          {label:"Time (min)",name:'time',type:"number",value:0,min:0,max:12,validate:[{type:'numeric'}]},
+          {label:"Solvent A (%)",name:"a",type:"number",min:0,max:100,step:1,edit:false,value:function(e){
+              if(e.initial.parent.index == e.field.parent.index && e.field.name == "solvent_b"){
+                  return 100 - parseInt(e.field.get());
+              }else{
+                  return e.initial.value || 0  
+              }
+          }},
+          {label:"Solvent B (%)",name:"solvent_b",type:"number",value:0,min:0,max:100,step:1},
+        ]}
     // {
     //   "label": "Campus Department",
     //   "name": "department"
@@ -169,6 +188,55 @@
           
         ]}
       ]}
+    //   options = {
+    //     data:{
+    //       text:""
+    //     },
+    //     fields:[
+    //         {label: 'Text', type: 'text', value: 'Some Text'},
+    //         // {label: 'Text2', type: 'text', value: e=>{
+    //         //   let temp = e.form.call('get', e.field);
+    //         //   e.field.internalValue = e.form.call('get', e.field);
+    //         //   return (e.field.internalValue||"")+("___-___-___".slice((e.field.internalValue||"").length));
+    //         // }},
+    //         {label: 'Hidden', type: 'hidden', value:'hidden field'},
+    //         {label: 'Number', type: 'number',value: 24},
+    //         {label: 'Color', type: 'color',value:"#00FF00"},
+    //         {label: 'Email', type: 'email',value:'test@gmail.com'},
+    //         {label: 'Textarea', type: 'textarea',value:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sit amet mollis purus."},
+    //         {label: 'Checkbox', type: 'checkbox', value:true},
+    //         {label: 'Select', type: 'select', options:[1,2,3],value:3},
+    //         {label: 'Radio', type: 'radio', options:[1,2,3],value:2}
+    //     ]
+    // }
+    optionors = {strict:true,fields:[
+                {type: 'fieldset', name:'basics', legend: '<i class="fa fa-th"></i> Basics', hideLabel: true, inline: true, fields:[
+                    {type: 'text', required: true, label: 'Field Label', name: 'label'},
+                    {type: 'text', label: 'Name', name: 'name'},
+                    {type: 'select', label: 'Display', name: 'type', value: 'select', options: [
+                        {label: 'Dropdown', value: 'select'},
+                        {label: 'Radio', value: 'radio'},
+                        // {label: 'Range', value: 'range'}
+                    ]},
+                    // {type: 'text', label: 'External List', name: 'options'},
+
+                    // {type: 'text', label: 'Label-key', name: 'label_key'},
+                    // {type: 'text', label: 'Value-key', name: 'value_key'},
+
+                    {type: 'text', label: 'Default Value', name: 'value'},
+                    // {type: 'number', label: 'Max', name: 'max'},
+                    // {type: 'number', label: 'Min', name: 'min'},
+                    // {type: 'number', label: 'Step', name: 'step'},
+                    {type: 'textarea', label: 'Instructions', name: 'help'},
+                    {type: 'checkbox', label: 'Required', name: 'required'},
+                ]},
+                {type: 'fieldset', name:'options_c', legend: '<i class="fa fa-th-list"></i> options', hideLabel: true,  inline: true, fields:[
+                    {type: 'fieldset', label: false, array: true, name: 'options', fields: [
+                        {label: 'Label'},
+                        {label: 'Value'}
+                    ]}
+                ]}
+            ],data:{"label":"Field Label","name":"label","type":"select","value":"","help":"","required":false,"options":[{"label":"Hello","value":"Stuff"}]}}
     </script>
     <script src="../assets/js/example.js"></script>   
         

@@ -38,7 +38,7 @@
           "Bob",
         "checked":true,
         // "number": 3,
-        "favorite_state": "NC",
+        "favorite_state": ["asfd"],
         "candies": {
           "candy": "skittles",
           "brand": "mars",
@@ -103,7 +103,7 @@
                 
             //   ]
 			},
-              {"label": "Favorite State",multiple:true, suffix:'',type:'select', "options": "../data/states.json",format:{"label":'({{value}}) {{name}}'} },
+              {"label": "Favorite State",multiple:true, suffix:'',type:'radio', "options": "../data/states.json",format:{"label":'({{value}}) {{name}}'} },
               {name: 'stated', label: 'Stated?',type: 'checkbox',required:true,display:[{type:'contains',name:'favorite_state',value:['NY','PA']}]},// , display: {matches:[{name:'number', value:['first','1']}]}},
 
               {label: 'Candies', type:'fieldset', fields: [
@@ -222,11 +222,11 @@
 //        {}
 //      ]}
 	options.el = '#form';
-    var mygform = new gform(options).sub('change',_.debounce(function(e){
+    var mygform = new gform(options).on('change',_.debounce(function(e){
       // if(e.form.validate()){
           document.querySelector('#result').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(e.form.toJSON(),null,2);
       // }
-  },250)).sub('save',_.debounce(function(form){
+  },250)).on('save',_.debounce(function(form){
     console.log(form.toJSON())
   },250) )
     // mygform.debounce('change', function(field){
@@ -237,7 +237,7 @@
 
 
 	// mygform
-  mygform.pub('change',null, {message:'initialize'})
+  // mygform.trigger('change',null, {message:'initialize'})
   // mygform.debounce('save',function(form){
   //   console.log(form.toJSON())
   // })
