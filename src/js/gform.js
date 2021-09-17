@@ -14,20 +14,23 @@ var gform = function(optionsIn, el){
     this.bind = (method, field, ...rest) => (field[method]||gform.types[field.type||'text'][method]).bind(field,...rest);
 
     //event management        
-    this.updateActions = function(field){
-        var fieldCount = field.am.instances.length;//field.parent.filter({array:{ref:field.array.ref}},1).length
-        
+    this.updateActions = function(am){
+
+        // var fieldCount = am.instances.length;//field.parent.filter({array:{ref:field.array.ref}},1).length
+        if(am.instances.length>1)debugger;
+        const {array, id, instances, container} = am;
+        const {max=5, min} = array;
         var testFunc = function(selector, status, button){
             gform.toggleClass(button.querySelector(selector),'hidden', status)
         }
-        if(field.array.duplicate.enable == "auto"){
-            _.each(field.am.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.am.id+'"] .gform-add',(fieldCount >= (field.am.array.max || 5)) ))
+        if(array.duplicate.enable == "auto"){
+            _.each(container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref='+id+'].actions .gform-add',(instances.length >= max) ))
         }
-        if(field.array.remove.enable == "auto"){
-            _.each(field.am.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.am.id+'"] .gform-minus',!(fieldCount > field.am.array.min ) ))
+        if(array.remove.enable == "auto"){
+            _.each(container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref='+id+'].actions .gform-minus',!(instances.length > min ) ))
         }
-        if(field.array.append.enable == "auto"){
-            testFunc.call(null,'[data-ref="'+field.array.ref+'"].gform-append',(fieldCount >= (field.array.max || 5) ) ,field.operator.container)
+        if(array.append.enable == "auto"){
+            testFunc.call(null,'[data-id='+id+'].gform-append',(instances.length >= (max || 5) ) , container)
         }
           
     }
@@ -100,7 +103,9 @@ var gform = function(optionsIn, el){
     //initalize form
     // this.options = _.assignIn({fields:[], legend: '',strict:true, default:gform.default||{}, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
     // this.options2 = _.assign({fields:[], legend: '',strict:true, default:gform.default, data:'search', columns:gform.columns,name: gform.getUID()},this.opts, data);
-    this.options = {fields:[], legend: '',strict:true, data:'search', columns:gform.columns,name: gform.getUID(),...this.options, ...data};
+    this.options = {fields:[], legend: '',strict:true, data:'search', columns:gform.columns,name: gform.getUID(),...this.options, ...data,default:{...this.options.default,...data.default}};
+
+    // this.options = {fields:[], legend: '',strict:true, data:'search', columns:gform.columns,name: gform.getUID(),...this.options, ...data};
 
     if(typeof this.options.onSet == 'function'){
         data = this.options.onSet(data)
@@ -281,7 +286,6 @@ var gform = function(optionsIn, el){
                             gform.inflate.call(this.owner||this,attr,field,_.findIndex(field.parent.fields,{id:field.id}),field.parent.fields);
                         // }
 
-                        this.updateActions(field);
                         // var fieldCount = this.filter({array:{ref:field.array.ref}},1).length
 
                         // var testFunc = function(selector,status, button){
@@ -291,6 +295,8 @@ var gform = function(optionsIn, el){
                         // _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
             
                         field.operator.reflow();
+                        // debugger;
+                        // this.updateActions(field);
 
 
 
@@ -376,8 +382,7 @@ var gform = function(optionsIn, el){
         }
         if(typeof target.dataset.id !== 'undefined') {
             // console.error('ID not set on element'); return false;
-        
-            field = gform.findByID.call(this,target.dataset.id)
+            field =gform.filter.call(this, {id:target.dataset.id}, 10)[0] || false;
             if(typeof field == 'undefined'){console.error('Field not found with id:'+target.dataset.id); return false;}
         }
 
@@ -391,6 +396,11 @@ var gform = function(optionsIn, el){
                 //     newField.trigger(['change','input'],newField)
                 // }
             }
+            
+            if(newField.owner.fieldAttr('base', newField) == "section" && "fields" in newField && newField.fields.length){
+                _.each(newField.fields,(field)=>field.trigger(['change','input'],field))
+                // newField.trigger(['change','input'],newField);
+            }
             field.am.reflow();
         }
         if(target.classList.contains('gform-minus')){
@@ -401,13 +411,20 @@ var gform = function(optionsIn, el){
         if(target.classList.contains('gform-append')){
             e.stopPropagation();
             e.preventDefault();
-            var am = gform.filterItems.call(this,{id:target.dataset.ref});
-            // var field = 
-            if(am.length){
-                this.trigger('appended', am[0].addField());
-                am[0].reflow()
-            }
-            // var field = gform.addField.call(this,
+
+            var newField = field.am.addField();
+
+            this.trigger('appended', newField);
+
+            field.am.reflow();
+
+            // var am = gform.items.filter.call(this,{id:target.dataset.ref});
+            // // var field = 
+            // if(am.length){
+            //     this.trigger('appended', am[0].addField());
+            //     am[0].reflow()
+            // }
+            // // var field = gform.addField.call(this,
             //     _.last((this.find({id:target.dataset.parent}) || this).filter({array:{ref:target.dataset.ref}},10))
             // )
         }

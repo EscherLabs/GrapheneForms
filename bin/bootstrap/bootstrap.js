@@ -7,6 +7,29 @@ gform.stencils = {
 	  .array_container:empty + button.create{
 		display: inline-block;
 	  }
+	  .actions {
+		margin-bottom: -15px;
+	}
+	fieldset > .actions {
+		margin-bottom: 0;
+	}
+	.gform_isArray > fieldset:before {
+		content: "";
+		border: dashed 1px #102e7946;
+		border-right:0px;
+		width:10px;
+		position: absolute;
+		bottom: 5px;
+		left: 7px;
+		top: 0px;
+	  }
+	  fieldset:disabled .actions{
+		display:none;
+	  }
+
+	  fieldset fieldset {
+		margin-left: 10px !important;
+	  }
 input + .falseLabel {
 	display: inline;
 }
@@ -464,7 +487,7 @@ fieldset_array:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button 
 
 _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
-<div data-name="{{name}}" data-ref="{{ref}}" class="btn-group hidden-print actions">
+<div data-name="{{name}}" data-ref="{{am.id}}" class="btn-group hidden-print actions">
 	{{#remove.enable}}
 	<div data-id="{{id}}" class="btn btn-white gform-minus">{{{remove.label}}}{{^remove.label}}<i data-id="{{id}}"  class="fa fa-minus text-danger"></i>{{/remove.label}}</div>
 	{{/remove.enable}}
@@ -478,7 +501,7 @@ _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{nam
 <div style="position:relative;top:-20px">{{>_addons}}</div>
 </fieldset></div>`,
 	_actions: `{{#array}}
-	<div data-name="{{name}}" data-ref="{{ref}}" data-parent="{{parent.id}}" class="btn-group hidden-print actions pull-right">
+	<div data-name="{{name}}" data-ref="{{am.id}}" data-parent="{{parent.id}}" class="btn-group hidden-print actions pull-right">
 	{{#remove.enable}}
 	<div data-id="{{id}}" class="btn btn-white gform-minus">{{{remove.label}}}{{^remove.label}}<i class="fa fa-minus text-danger"></i>{{/remove.label}}</div>
 	{{/remove.enable}}
@@ -614,9 +637,9 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#options.horizonta
 modal_fieldset:`{{>_fieldset}}`,
 child_modal_footer:`<button type="button" class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
 
-template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{refid}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend>{{/array}}</div></div>',
+template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{am.id}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend>{{/array}}</div></div>',
 template_item:`<div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{display}}}{{/format.template}}</div>`,
-table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}<legend>{{{label}}}</legend>{{#append.enable}}<button type="button" data-ref="{{refid}}"  class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{{.}}}</th>{{/labels}}</thead></table></div></div>'
+table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}<legend>{{{label}}}</legend>{{#append.enable}}<button type="button" data-ref="{{am.id}}"  class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{{.}}}</th>{{/labels}}</thead></table></div></div>'
 };
 
 

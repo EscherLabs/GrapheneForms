@@ -34,8 +34,7 @@ gform.toJSON = function(name) {
         }
         return field.get()
     }
-    // return gform.reduceShallow.call(this,gform.patch,{},{parsable:true})
-    return gform.reduceItems.call(this,gform.patch,{},{parsable:true})
+    return gform.items.reduce.call(this,gform.patch,{},{parsable:true})
 
 }
 
@@ -82,7 +81,7 @@ gform.addConditions = function(field) {
 
         gform.types[this.type].show.call(this,this.visible);
 
-        if(events) {
+        if(events && this.owner.isActive) {
             (this.am||this.owner).reflow();
             this.owner.trigger('change', this);
         }
@@ -301,6 +300,7 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
     waitlist = waitlist||[];
 
     if(optgroup.owner instanceof gform){
+        this.owner = optgroup.owner;
         this.field = optgroup;
     }
     this.collections = collections;
@@ -312,14 +312,14 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
     function pArray(opts){
         return _.map(opts,function(item){
             if(typeof item === 'object' && item.type == 'optgroup'){
-                item.map = new gform.mapOptions(_.extend({format:format},item),value,count,this.collections,waitlist);
+                item.map = new gform.mapOptions(_.extend({format:format,owner:this.owner},item),value,count,this.collections,waitlist);
                 item.map.on('*',function(e){
                     this.eventBus.dispatch(e.event);
                 }.bind(this))
 
                 item.id = gform.getUID();
 
-                gform.processConditions.call(this.field, item.edit, function(id, result,e){
+                gform.processConditions.call(this.owner, item.edit, function(id, result,e){
                     // if(typeof e.field.el !== 'undefined'){
                     //     var op = e.field.el.querySelectorAll('[data-id="'+id+'"]');
                     //     for (var i = 0; i < op.length; i++) {
@@ -330,7 +330,7 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
                     this.eventBus.dispatch('change')
 
                 }.bind(this,item.id))
-                gform.processConditions.call(this.field, item.show, function(id, result,e,){
+                gform.processConditions.call(this.owner, item.show, function(id, result,e,){
                     // if(typeof e.field.el !== 'undefined'){
                     //     var op = e.field.el.querySelectorAll('[data-id="'+id+'"]');
                     //     for (var i = 0; i < op.length; i++) {
@@ -384,7 +384,7 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
                 count+=1;
                 option.i = count;
                 return option;
-            }
+            }''
         }.bind(this))
     }
 
@@ -438,7 +438,7 @@ gform.mapOptions = function(optgroup, value, count,collections,waitlist){
             if(this.collections.get(this.optgroup.path)!== 'waiting'){
                 this.collections.add(this.optgroup.path,'waiting')
                 
-                gform.ajax({path: (this.field.owner.options.rootpath||'')+this.optgroup.path, success:function(data) {
+                gform.ajax({path: (this.owner.options.rootpath||'')+this.optgroup.path, success:function(data) {
                     this.collections.update(this.optgroup.path,data)
                     if( waitlist.indexOf(this.optgroup.path) >= 0){
                         delete  waitlist[ waitlist.indexOf(this.optgroup.path)];
@@ -505,6 +505,7 @@ gform.arrayManager = function(field){
     this.name = this.field.name;
     this.owner = field.owner;
     this.array = field.array;
+    this.target = field.target;
     this.array.min = (this.array.min == 0)?0:this.array.min||1;
     this.parsable= true;
     this.focus = function(){};
@@ -516,9 +517,10 @@ gform.arrayManager = function(field){
     this.fields =[];
     this.instances = [];
     this.id = gform.getUID();
-    this.field.array.refid = this.id;
+    // this.field.array.refid = this.id;
    
     // this.el = gform.create(gform.types[this.field.type].row.call(this.field));
+    // debugger;
     this.el = gform.types[this.field.type].array.template(this);
     this.container = gform.types[field.type].array.container||this.el;
 
@@ -602,7 +604,8 @@ gform.arrayManager = function(field){
 
 
         newField.parent.trigger(['change','input', 'create', 'inserted'],newField)
-        newField.owner.updateActions(newField);
+        // debugger;
+        // newField.owner.updateActions(newField);
 
         return newField;
     }
@@ -642,9 +645,9 @@ gform.arrayManager = function(field){
         }else{
             if(field.editable)field.set(null);
             field.parent.trigger(['input'],field)
-    
         }           
-        field.owner.updateActions(field);
+        // debugger;
+        // field.owner.updateActions(field);
     }
 }
 
@@ -666,7 +669,7 @@ gform.field = {
             field = form.fieldMethods.normalize(options, field);
             field.owner = form;
 
-            if(typeof options.data == 'object' && field.name in options.data){
+            if(typeof options.data == 'object' && options.data !== null && field.name in options.data){
                 options.data = options.data[field.name];
             }else{
                 delete options.data;
@@ -823,7 +826,9 @@ gform.field = {
                 // get: (typeof field.derivedValue == 'function')?()=>field.derivedValue():
                 get:() => field.internalValue,
                 set: val => {
-                    field.set(val, true);
+                    if(field.internalValue !== val){
+                        field.set(val, true);
+                    }
                 },
                 enumerable: true
             });
@@ -1040,7 +1045,7 @@ gform.field = {
                     field.array = {};
                 }
                 field.array = _.defaultsDeep(field.array,(gform.types[field.type]||{}).array,{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:true}})
-                field.array.ref = field.array.ref || gform.getUID();
+                // field.array.ref = field.array.ref || gform.getUID();
             }
             
             if(!('multiple' in field)) field.multiple = ('limit' in field && field.limit>1);
@@ -1054,10 +1059,22 @@ gform.field = {
 
 
 gform.rowManager = (options) => {
+    // let rows = options.rows || []
+    // let {rowClass, columns, rowTemplate, container, rowSelector} = { 
+    //     rowClass: 'row',
+    //     columns:  gform.prototype.options.columns,
+    //     rowTemplate: '<div></div>',
+    //     container: gform.create(gform.renderString('<div></div>', options)),
+    //     // rowSelector:(options.owner || options).call('rowSelector', options.field),
+    //     // templateSelector:(options.owner || options).call('templateSelector', options.field) || "*",
+    //     ...(options.owner || options).call('array', options.field),
+    //     ...options
+    // };
     let rows = options.rows || []
-    let {rowClass, columns, rowTemplate, container, rowSelector} = { 
+    let columns = gform.prototype.options.columns||12
+    let {rowClass, rowTemplate, container, rowSelector} = { 
         rowClass: 'row',
-        columns:  gform.prototype.options.columns,
+        // columns:  gform.prototype.options.columns,
         rowTemplate: '<div></div>',
         container: gform.create(gform.renderString('<div></div>', options)),
         // rowSelector:(options.owner || options).call('rowSelector', options.field),
@@ -1158,6 +1175,16 @@ gform.rowManager = (options) => {
         get: ()=>rows
     });
 
+    Object.defineProperty(api, "status", {
+        get: ()=>{ return {rows:rows,rowClass:rowClass, rowTemplate:rowTemplate, container:container, rowSelector:rowSelector};},
+        set: (status)=>{ 
+            if(status.container)container=status.container;
+            if(status.container)rowClass=status.rowClass; 
+            if(status.rowTemplate)rowTemplate=status.rowTemplate;
+            if(status.rowSelector)rowSelector=status.rowSelector;
+        }
+    });
+
     return api;
 }
 
@@ -1246,30 +1273,60 @@ gform.reflow = function(options){
         this.rowManager.clear(options);
         return _.reduce(this.items||this.instances, (error, item) => {
 
-            //Keep track of unique locations to clear them out 
-            switch(typeof item.target){
-                case 'function':
-                    // debugger;
 
-                    item.location = item.target.call(item)
-                    if(typeof item.location == 'string'){
-                        item.location = item.owner.el.querySelector(item.location);
-                    }
-                    if(item.location instanceof Node){
-                        item.location.appendChild(item.el)
-                    }
-                    break;
-                case 'string':
-                    item.location = item.owner.el.querySelector(item.target);
-
-                    if(item.location instanceof Node){
-                        item.location.appendChild(item.el)
-                    }
-                    break;
-                default:
+            //come back to this
+            if('am' in item && typeof item.am !== 'undefined'){
+                // if (typeof item.target ==  'function'){
+                //     item.location = item.target.call(item)
+                // }
+                // if(typeof (item.location||item.target) == 'string'){
+                //     item.location = item.owner.el.querySelector(item.location||item.target);
+                // }
+                // if((item.location||item.target) instanceof Node){
+                //     (item.location||item.target).appendChild(item.el)
+                // }else{
                     this.rowManager.insert(item)
-                    
+                // }
+
+
+                item.owner.updateActions(item.am);
+            }else{
+                if (typeof item.target ==  'function'){
+                    item.location = item.target.call(item)
+                }
+                if(typeof (item.location||item.target) == 'string'){
+                    item.location = item.owner.el.querySelector(item.location||item.target);
+                }
+                if((item.location||item.target) instanceof Node){
+                    (item.location||item.target).appendChild(item.el)
+                }else{
+                    this.rowManager.insert(item)
+                }
             }
+            //Keep track of unique locations to clear them out 
+            // switch(typeof item.target){
+            //     case 'function':
+            //         // debugger;
+
+            //         item.location = item.target.call(item)
+            //         if(typeof item.location == 'string'){
+            //             item.location = item.owner.el.querySelector(item.location);
+            //         }
+            //         if(item.location instanceof Node){
+            //             item.location.appendChild(item.el)
+            //             break;
+            //         }
+            //     case 'string':
+            //         item.location = item.owner.el.querySelector(item.target);
+
+            //         if(item.location instanceof Node){
+            //             item.location.appendChild(item.el)
+            //             break;
+            //         }
+            //     default:
+            //         this.rowManager.insert(item)
+                    
+            // }
             
             error = gform.reflow.call(item)
             return error;

@@ -220,7 +220,7 @@ grid: `<div class="row row-wrap">
 </div>`,
 _actions: `      
     {{#array}}
-    <div data-name="{{name}}" data-ref="{{ref}}" class="noprint" style="float:right;margin-left:5px">
+    <div data-name="{{name}}" data-id="{{id}}" class="noprint" style="float:right;margin-left:5px">
     {{#duplicate.enable}}
     <input data-id="{{id}}" style="padding: 0 ;padding:0 1.5rem; border-color:green;color:green;float:right;margin:0 5px" class="gform-add button button-outline" type="button" value="{{duplicate.label}}{{^duplicate.label}}+{{/duplicate.label}}">
     {{/duplicate.enable}}
@@ -293,10 +293,10 @@ modal_container:`<div class="modal modal-hide">
   </footer>
 </div>
 </div>`,
-template:'<div><div class="column column-100">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append float-right">{{append.label}}{{^append.label}}Add{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
+template:'<div><div class="column column-100">{{#array}}{{#append.enable}}<button data-id="{{id}}" data-parent="{{parent.id}}" class="gform-append float-right">{{append.label}}{{^append.label}}Add{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 template_item:`<div class="input-template"><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{value}}}{{/format.template}}</div></div>`,
 child_modal_footer:`<button class="hidden-print button-outline gform-minus float-left" style="margin:0 15px">X Delete</button><button class="float-right hidden-print done" style="margin:0 15px"><i class="fa fa-check-o"></i>Done</button>`,
-table:'<div class="column column-100">{{#array}}<div style="overflow:scroll" class="column column-100">{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append float-right">{{append.label}}{{^append.label}}Add{{/append.label}}</button>{{/append.enable}}{{/array}}<h3>{{label}}</h3><table class="{{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#fields}}<th>{{label}}</th>{{/fields}}</thead><tbody></tbody></table></div></div>'
+table:'<div class="column column-100">{{#array}}<div style="overflow:scroll" class="column column-100">{{#append.enable}}<button data-id="{{id}}" data-parent="{{parent.id}}" class="gform-append float-right">{{append.label}}{{^append.label}}Add{{/append.label}}</button>{{/append.enable}}{{/array}}<h3>{{label}}</h3><table class="{{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#fields}}<th>{{label}}</th>{{/fields}}</thead><tbody></tbody></table></div></div>'
 };
 // gform.columns = 12;
 gform.columnClasses = _.map(['','10','20','25','33','40','50','60','66','75','80','90','100'],function(item){return 'column-'+item+' column'})

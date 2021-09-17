@@ -92,11 +92,11 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 				this.combo.innerText = item.label;
 				gform.addClass(this.el.querySelector('.combobox-container'), 'combobox-selected');
 			}
-			this.value = item.value;
+			this.internalValue = item.value;
 		}else{
             
             
-			this.value = value||"";
+			this.internalValue = value||"";
 			if(typeof value == 'undefined' || (typeof value !== 'undefined' && this.combo.innerText !== value)) {
 				this.combo.innerText =  this.value||"";
 				

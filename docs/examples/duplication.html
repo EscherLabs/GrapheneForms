@@ -20,8 +20,10 @@
     <div class="container ">
       <div class="row ">
             <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
-            <div class="col-md-4"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>                
+            <div class="col-md-4"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form">
+              <div id="other_form"></div></div></div>                
             <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
+
           </div>
       </div>
   </div>
@@ -40,6 +42,119 @@
     <script src='../assets/js/math.min.js'></script> 
 
     <script>
+
+var accordion = `
+<form>
+<div id="display"></div>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+<div class="panel panel-default panelBasic">
+  <div class="panel-heading" role="tab" id="headingBasic">
+    <h4 class="panel-title">
+      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseBasic" aria-expanded="true" aria-controls="collapseBasic">
+Basic
+      </a>
+    </h4>
+  </div>
+  <div id="collapseBasic" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingBasic">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+
+<div class="panel panel-default panelDisplay">
+  <div class="panel-heading" role="tab" id="headingDisplay">
+    <h4 class="panel-title">
+      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseDisplay" aria-expanded="false" aria-controls="collapseDisplay">
+Display
+      </a>
+    </h4>
+  </div>
+  <div id="collapseDisplay" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingDisplay">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+
+
+<div class="panel panel-default panelConditions">
+  <div class="panel-heading" role="tab" id="headingConditions">
+    <h4 class="panel-title">
+      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseConditions" aria-expanded="false" aria-controls="collapseConditions">
+Conditions
+      </a>
+    </h4>
+  </div>
+  <div id="collapseConditions" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingConditions">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+
+<div class="panel panel-default panelValidation">
+  <div class="panel-heading" role="tab" id="headingValidation">
+    <h4 class="panel-title">
+      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseValidation" aria-expanded="false" aria-controls="collapseValidation">
+Validation
+      </a>
+    </h4>
+  </div>
+  <div id="collapseValidation" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingValidation">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+
+
+<div class="panel panel-default panelOptions">
+  <div class="panel-heading" role="tab" id="headingOptions">
+    <h4 class="panel-title">
+      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOptions" aria-expanded="false" aria-controls="collapseOptions">
+Options
+      </a>
+    </h4>
+  </div>
+  <div id="collapseOptions" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOptions">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default panelEvents">
+  <div class="panel-heading" role="tab" id="headingEvents">
+    <h4 class="panel-title">
+      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEvents" aria-expanded="false" aria-controls="collapseEvents">
+Events
+      </a>
+    </h4>
+  </div>
+  <div id="collapseEvents" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEvents">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default panelGrid">
+  <div class="panel-heading" role="tab" id="headingGrid">
+    <h4 class="panel-title">
+      <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseGrid" aria-expanded="false" aria-controls="collapseGrid">
+Other
+      </a>
+    </h4>
+  </div>
+  <div id="collapseGrid" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingGrid">
+    <div class="panel-body">
+    </div>
+  </div>
+</div>
+
+</div>
+</form>
+`
       options = {
         // data:{candy:[{flavor:"First",color:["#001","#002"]},{flavor:"Second",color:["#011","#012"]}]},
           legend: 'Duplication Form',
@@ -132,7 +247,7 @@
     //         }
     //     ]
     // },
-              {label:'Candy{{#index}} ({{index}}){{/index}}', type: 'template',columns:12, value:{flavor:"oranges",color:['#200','#201']}, array: {label:"Candies",duplicate:{copy:true},min:0}, parse:[{type:"not_matches",name:"candy",value:[]}], fields: [
+              {label:'Candy{{#index}} ({{index}}){{/index}}', type: 'template',columns:12,target:"#other_form", value:{flavor:"oranges",color:['#200','#201']}, array: {label:"Candies",duplicate:{copy:true},min:0}, parse:[{type:"not_matches",name:"candy",value:[]}], fields: [
                 {label: 'Flavor',value:"pb&j"},
                 // { label: 'Color ({{^index}}0{{/index}}{{index}})', type:'text',columns:6, array: {min:2,max:3}}
                 { label: 'Color{{#index}} ({{#math}}index+1{{/math}}){{/index}}',columns:6, array: {label:"Colors",min:2,max:7,duplicate:{copy:true}},"show":[
@@ -156,6 +271,43 @@
           ]
       }
 
+
+      myconditions=[
+	{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
+		return true;
+	}}]},
+	{type: 'fieldset',label:false,name:"conditions",columns:12,fields:
+	[
+		{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
+		{label: 'Name',name:"name",show:[{type:'matches',name:"type",value:["matches","not_matches","contains","requires"]}]},
+		{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1},show:[{type:'matches',name:"type",value:["matches","not_matches","contains"]}]},
+		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:'matches',name:"type",value:"conditions"}]},
+		{label:'Condition',name:'conditions',columns:10,offset:1,type:'fieldset',array:true,show:[{type:'matches',name:"type",value:"conditions"}],fields:[
+			{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires']},
+			{label: 'Name',name:"name"},
+			{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1}}
+		]}
+	]
+	,array:true},
+
+	
+]
+options.default ={columns:6}
+options.clear= false;
+options.fields = [
+
+{target:"#collapseOptions .panel-body",type: 'select',other:true, columns:12, label:'Show the field <span class="pull-right text-muted">"show"</span>', value: true, name:"show",parse:[{type:"not_matches",name:"show",value:true}],options:		
+		[
+      {type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Edit"',value:'edit'}, {label:"Conditionally",value:"other"}]},{type:'optgroup',label:"Methods",options:'methods',format:{value:"method:{{value}}",label:"Method: {{label}}"}}
+  ]
+	},
+	{target:"#collapseOptions .panel-body",type: 'fieldset',columns:11,offset:'1', label:false,name:"show",fields:myconditions,array:{min:1,max:1},show:[{name:"show",value:['other'],type:"matches"}]},
+  {type: 'select',other:true, columns:12, label:'Allow the field to be Edited <span class="pull-right text-muted">"edit"</span>', value:true,name:"edit",parse:[{type:"not_matches",name:"/edit",value:true}],options:		
+		[{type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Show"',value:'show'}, {label:"Conditionally",value:"other"}]}]
+	},
+	{type: 'fieldset',columns:11,offset:'1', label:false,name:"edit",fields:myconditions,array:{min:1,max:1},show:[{name:"/edit",value:['other'],type:"matches"}]},
+
+]
 
       optionss =     {
       legend:'Gas Chromatograph',
@@ -237,7 +389,10 @@
                     ]}
                 ]}
             ],data:{"label":"Field Label","name":"label","type":"select","value":"","help":"","required":false,"options":[{"label":"Hello","value":"Stuff"}]}}
-    </script>
+options.clear = false;
+            $("#form").html(gform.renderString(accordion))
+
+</script>
     <script src="../assets/js/example.js"></script>   
         
    </body>

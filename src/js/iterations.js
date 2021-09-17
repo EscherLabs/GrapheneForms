@@ -18,58 +18,112 @@ gform.reduce = function(func,object,filter){
     },object)
     return object;
 }
-gform.reduceShallow = function(func,object,filter){
-    var object = object ||{};
-    _.reduce(this.filter(filter,1),function(object, field){
-        var temp = func(object,field);
-        return temp;
-    },object)
-    return object;
-}
 
-gform.reduceItems = function(func,object,filter){
-    var object = object ||{};
-    _.reduce(gform.filterItems.call(this, filter),function(object, field){
-        var temp = func(object,field);
-        return temp;
-    }, object)
-    return object;
-}
-gform.filterItems = function(search, depth){
-    // debugger;
-    var temp = [];
-    if(typeof search == 'string'){
-        search = {name: search}
-    }
-    var depth = (depth||10);
-    depth--;
+gform.items = {
+    reduce:function(func,object,filter){
+        var object = object ||{};
+        if(!("items" in this) || !this.items.length)return object;
+        _.reduce(gform.items.filter.call(this, filter, 1),function(object, field){
+            var temp = func(object,field);
+            return temp;
+        }, object)
+        return object;
+    },
+    filter:function(search, depth){
+        var temp = [];
+        if(typeof search == 'string'){
+            search = {name: search}
+        }
+        var depth = (depth||10);
+        depth--;
+        
+        temp = _.reduce( this['items'], (temp,item)=>{
+            if(!_.isMatch(item, search)){return temp}
+            
+                if(item instanceof gform.arrayManager){
+                    // if(_.isMatch(item, search)){
+                    //     temp.push(item);
+                    // }
+
+                    temp =_.reduce(item.instances, function(temp,instance){
+                        // if(!_.isMatch(instance, search)){return temp}
+                        if(_.isMatch(instance, search)){
+                            temp.push(instance);
+
+                            temp = temp.concat(gform.items.filter.call(instance,search,depth))
+                        }
+                        return temp;
+
+                    },temp)
+                }else{
+                    if(_.isMatch(item, search)){
+                        temp.push(item)
+                    }
+                }
     
-    temp = _.reduce( this['items'], (temp,item)=>{
+            
+            if(!!depth  && ('items' in item /*|| field instanceof gform.arrayManager*/) && item.items.length){
+                // if(!_.isMatch(item, search)){return temp}
+                // debugger;
 
-            if(item instanceof gform.arrayManager){
-                if(_.isMatch(item, search)){
-                    temp.push(item);
-                }
-                temp =_.reduce(item.instances, function(temp,instance){
-                    temp = temp.concat(gform.filterItems.call(instance,search,depth))
-                    return temp;
-                },temp)
-            }else{
-                if(_.isMatch(item, search)){
-                    temp.push(item)
-                }
+                temp = temp.concat(gform.items.filter.call(item, search, depth));
             }
+            return temp;
+        },temp)
+        return temp;
+    }
+
+}
+// gform.reduceShallow = function(func,object,filter){
+//     var object = object ||{};
+//     _.reduce(this.filter(filter,1),function(object, field){
+//         var temp = func(object,field);
+//         return temp;
+//     },object)
+//     return object;
+// }
+
+// gform.reduceItems = function(func,object,filter){
+//     var object = object ||{};
+//     _.reduce(gform.filterItems.call(this, filter, 1),function(object, field){
+//         var temp = func(object,field);
+//         return temp;
+//     }, object)
+//     return object;
+// }
+// gform.filterItems = function(search, depth){
+//     // debugger;
+//     var temp = [];
+//     if(typeof search == 'string'){
+//         search = {name: search}
+//     }
+//     var depth = (depth||10);
+//     depth--;
+    
+//     temp = _.reduce( this['items'], (temp,item)=>{
+
+//             if(item instanceof gform.arrayManager){
+//                 if(_.isMatch(item, search)){
+//                     temp.push(item);
+//                 }
+//                 temp =_.reduce(item.instances, function(temp,instance){
+//                     temp = temp.concat(gform.filterItems.call(instance,search,depth))
+//                     return temp;
+//                 },temp)
+//             }else{
+//                 if(_.isMatch(item, search)){
+//                     temp.push(item)
+//                 }
+//             }
 
         
-        if(!!depth  && ('items' in item /*|| field instanceof gform.arrayManager*/) && item.items.length){
-            temp = temp.concat(gform.filterItems.call(item, search, depth));
-        }
-        return temp;
-    },temp)
-    return temp;
-}
-
-
+//         if(!!depth  && ('items' in item /*|| field instanceof gform.arrayManager*/) && item.items.length){
+//             temp = temp.concat(gform.filterItems.call(item, search, depth));
+//         }
+//         return temp;
+//     },temp)
+//     return temp;
+// }
 
 gform.find = function(oname,depth){
     var name;
@@ -98,9 +152,9 @@ gform.find = function(oname,depth){
         }
     }
 }
-gform.findByID = function(id){
-    return  gform.filter.call(this, {id:id},10)[0] || false;
-}
+// gform.findByID = function(id){
+//     return  gform.filter.call(this, {id:id},10)[0] || false;
+// }
 gform.filter = function(search,depth){
     var temp = [];
     if(typeof search == 'string'){

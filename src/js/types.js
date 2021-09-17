@@ -12,21 +12,23 @@ gform.types = {
             tempEl.setAttribute("id", "el_"+(data||this).id);
             gform.addClass(tempEl,gform.columnClasses[(data||this).columns])
             gform.addClass(tempEl,gform.offsetClasses[(data||this).offset])
-            gform.toggleClass(tempEl,'gform_isArray',!!(data||this).array)
+            // gform.toggleClass(tempEl,'gform_isArray',!!(data||this).array)
             //   if(this.owner.options.clear){
                 // tempEl.setAttribute("class", gform.columnClasses[this.columns]+' '+gform.offsetClasses[this.offset]);
             //   }
             //   tempEl.innerHTML = this.render();
               tempEl.innerHTML =  gform.m(`
-              <fieldset data-id="{{id}}" class="col-xs-12">
-                {{#array}}{{#append.enable}}<button data-ref="{{refid}}" class="btn btn-success gform-append float-right">{{append.label}}{{^append.label}}Add{{/append.label}}</button>{{/append.enable}}{{/array}}
-                <legend>{{array.label}}</legend>
+              <div data-id="{{id}}" class="col-xs-12">
+                {{#array}}{{#append.enable}}<button data-id="{{id}}" class="btn btn-success gform-append float-right">{{append.label}}{{^append.label}}Add{{/append.label}}</button>{{/append.enable}}{{/array}}
+                {{#array.legend}}<legend>{{array.legend}}</legend>{{/array.legend}}
                 <div class="array_container"></div>
-                {{#array}}{{^append.enable}}<button data-ref="{{refid}}" class="create btn btn-success gform-append">{{append.label}}{{^append.label}}Click here to create first{{/append.label}}</button>{{/append.enable}}{{/array}}
-                </fieldset>`,data||this)
+                {{#array}}{{^append.enable}}<button data-id="{{id}}" class="create btn btn-success gform-append">{{append.label}}{{^append.label}}Click here to create first{{/append.label}}</button>{{/append.enable}}{{/array}}
+                </div>`,data||this)
               return tempEl;
         },
+        max:5,min:1,
         container:".array_container",
+        duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:false}
       },
       setup:function(){
           this.labelEl = this.el.querySelector('label');
@@ -554,6 +556,30 @@ gform.types = {
       }
   },
   'section':{
+    array:{
+      template:(data)=>{
+          var tempEl = document.createElement("span");
+          tempEl.setAttribute("id", "el_"+(data||this).id);
+          gform.addClass(tempEl,gform.columnClasses[(data||this).columns])
+          gform.addClass(tempEl,gform.offsetClasses[(data||this).offset])
+          // gform.toggleClass(tempEl,'gform_isArray',!!(data||this).array)
+          //   if(this.owner.options.clear){
+              // tempEl.setAttribute("class", gform.columnClasses[this.columns]+' '+gform.offsetClasses[this.offset]);
+          //   }
+          //   tempEl.innerHTML = this.render();
+            tempEl.innerHTML =  gform.m(`
+            <fieldset data-id="{{id}}" class="col-xs-12">
+              {{#array}}{{#append.enable}}<button data-id="{{id}}" class="btn btn-success gform-append float-right">{{append.label}}{{^append.label}}Add{{/append.label}}</button>{{/append.enable}}{{/array}}
+              {{#array.label}}<legend>{{array.label}}</legend>{{/array.label}}
+              <div class="array_container"></div>
+              {{#array}}{{^append.enable}}<button data-id="{{id}}" class="create btn btn-success gform-append">{{append.label}}{{^append.label}}Click here to create first{{/append.label}}</button>{{/append.enable}}{{/array}}
+              </fieldset>`,data||this)
+            return tempEl;
+      },
+      max:20,min:1,
+      container:".array_container",
+      duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:false}
+    },
     resetValue:()=>{return {}}, 
 
     base:'section',
@@ -561,7 +587,6 @@ gform.types = {
         return gform.filter.call(this,search,depth);
     },
     setLabel:function(){
-      debugger;
         // if(!!this.item.label){
             var label = gform.renderString(this.item.label||this.label, this);
             if(this.required){
@@ -700,8 +725,8 @@ gform.types = {
 
                     var fieldCount = this.filter({array:{ref:field.array.ref}},1).length
 
-                    _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
-                    _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
+                    // _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-id="'+field.array.id+'"] .gform-add',(fieldCount >= (field.array.max || 5)) ))
+                    // _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-id="'+field.array.id+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
          
                     field.operator.reflow();
 
@@ -752,7 +777,7 @@ gform.types = {
             }
         }.bind(this))
         // a.unshift(a+':'+this.name)
-        this.parent.trigger(_.uniq(events),b,c);
+        this.parent.trigger(_.uniq(events),b||this,c);
 
       },
       show: function(state) {
@@ -1391,7 +1416,7 @@ gform.types['fieldset'] = _.extend({}, gform.types['input'], gform.types['sectio
     //     }
     // },
     // rowSelector:".gform-template_row",
-    array:{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:false},...gform.types['input'].array}
+    // array:{max:5,min:1,duplicate:{enable:'auto'},remove:{enable:'auto'},append:{enable:false},...gform.types['input'].array}
     
 });
 // gform.types['template'] = _.extend({}, gform.types['input'], gform.types['section'],{
@@ -1637,12 +1662,10 @@ gform.types['template'] = _.extend({}, gform.types['input'], gform.types['sectio
                 labelEl.innerHTML = label
             }
             this.label = label;
-            debugger;
             this.render();
         // }
       },
     edit:function(e){
-      debugger;
             if( e===this ||
                 (!e.target.classList.contains('gform-minus') && 
                 !e.target.classList.contains('gform-add') && !e.target.parentNode.classList.contains('gform-minus') && 
