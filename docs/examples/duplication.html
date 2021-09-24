@@ -280,12 +280,12 @@ Other
 	[
 		{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
 		{label: 'Name',name:"name",show:[{type:'matches',name:"type",value:["matches","not_matches","contains","requires"]}]},
-		{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1},show:[{type:'matches',name:"type",value:["matches","not_matches","contains"]}]},
+		{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:0,default:[],filter:true},show:[{type:'matches',name:"type",value:["matches","not_matches","contains"]}]},
 		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:'matches',name:"type",value:"conditions"}]},
 		{label:'Condition',name:'conditions',columns:10,offset:1,type:'fieldset',array:true,show:[{type:'matches',name:"type",value:"conditions"}],fields:[
 			{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires']},
 			{label: 'Name',name:"name"},
-			{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1}}
+			{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:0}}
 		]}
 	]
 	,array:true},
@@ -294,8 +294,31 @@ Other
 ]
 options.default ={columns:6}
 options.clear= false;
-options.fields = [
+options.actions=[{type:"button",name:"deativate",action:"deactivate",label:'<i class="fa fa-check"></i>',target:"#display",modifiers:"btn btn-info pull-right visible-lg"}],
 
+options.fields = [
+{target:"#display", type: 'smallcombo',columns:9, label: false, name: 'type', value: 'text', parse: [{type:"not_matches",name:"type",value:"text"}], 'options': [
+		{label: 'Single Line', value: 'text'},
+		{label: 'Multi-line', value: 'textarea'},
+		{label: 'Phone', value: 'tel'},
+		{label: 'Url', value: 'url'},
+		{label: 'Email', value: 'email'},
+		{label: 'Date', value: 'date'},
+		{label: 'Number', value: 'number'},
+		{label: 'Currency', value: 'currency'},
+		{label: 'Password', value: 'password'},
+		{label: 'Color', value: 'color'},
+		{label: 'Output', value: 'output'},
+		{label: 'File', value: 'base64'},
+		{label: 'Signature', value: 'signature'},
+		{label: 'Hidden', value: 'hidden'}
+	]},
+  {target: "#collapseGrid .panel-body",type: 'table', label: 'Meta Data', array: {min:0,max:100},columns:12,parse:[{type:"requires"}],format:{template:"{{value.key}}:{{value.value}}"}, name: 'data', 
+		fields: [
+			{label: 'Key', name:"key",parse:[{type:"requires"},{type:"requires",name:"value"}]},
+			{label: 'Value', name:"value",parse:[{type:"requires"},{type:"requires",name:"key"}]}
+		]
+	},
 {target:"#collapseOptions .panel-body",type: 'select',other:true, columns:12, label:'Show the field <span class="pull-right text-muted">"show"</span>', value: true, name:"show",parse:[{type:"not_matches",name:"show",value:true}],options:		
 		[
       {type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Edit"',value:'edit'}, {label:"Conditionally",value:"other"}]},{type:'optgroup',label:"Methods",options:'methods',format:{value:"method:{{value}}",label:"Method: {{label}}"}}

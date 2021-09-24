@@ -17,7 +17,6 @@ var gform = function(optionsIn, el){
     this.updateActions = function(am){
 
         // var fieldCount = am.instances.length;//field.parent.filter({array:{ref:field.array.ref}},1).length
-        if(am.instances.length>1)debugger;
         const {array, id, instances, container} = am;
         const {max=5, min} = array;
         var testFunc = function(selector, status, button){
@@ -218,7 +217,7 @@ var gform = function(optionsIn, el){
         // this.fields = _.map(this.options.fields, this.add)
         // _.each(_.extend([],this.fields), gform.inflate.bind(this, this.options.data||{}))
 
-        this.reflow()
+        // this.reflow()
         // _.each(this.fields, function(field) {
         //     field.owner.trigger('change:' + field.name,field.owner, field);
         // })
@@ -382,7 +381,7 @@ var gform = function(optionsIn, el){
         }
         if(typeof target.dataset.id !== 'undefined') {
             // console.error('ID not set on element'); return false;
-            field =gform.filter.call(this, {id:target.dataset.id}, 10)[0] || false;
+            field =gform.items.find.call(this, {id:target.dataset.id}, 10) || false;
             if(typeof field == 'undefined'){console.error('Field not found with id:'+target.dataset.id); return false;}
         }
 
@@ -412,11 +411,11 @@ var gform = function(optionsIn, el){
             e.stopPropagation();
             e.preventDefault();
 
-            var newField = field.am.addField();
+            var newField = field.addField();
 
             this.trigger('appended', newField);
 
-            field.am.reflow();
+            field.reflow();
 
             // var am = gform.items.filter.call(this,{id:target.dataset.ref});
             // // var field = 

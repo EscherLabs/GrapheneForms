@@ -72,14 +72,15 @@ gform.patch = function(object,patch,action){
         patch = [patch];
     }
     return _.reduce(patch,function(original, task){
-        if(typeof task.map !== "string"){
+        if(typeof task.map !== "string" || original == null){
             return original;
         }
         var stack = _.toPath(task.map);
-        object = original;
-
+        var object = original;
+        
         while(stack.length>1){
             var target = stack.shift();
+            
             if(typeof object[target] !== 'object'){
                 if(isFinite(stack[0])){
                     // stack[0] = parseInt(stack[0]);
@@ -90,8 +91,9 @@ gform.patch = function(object,patch,action){
                     object[target] = {};
                 }
             }
-
-            object = object[target];
+            if(object[target] != null){
+                object = object[target];
+            }
             
         }
         var target = stack.shift()
@@ -103,11 +105,12 @@ gform.patch = function(object,patch,action){
                 object = _.compact(object);
             }
         }else{
-            if(typeof task.toJSON !== "undefined"){
+            if('toJSON' in task){
                 object[target] = task.toJSON
             }else{
                 object[target] = task.value;
             }
+            if(object[target] == null)delete object[target];
             
         }
 

@@ -22,7 +22,7 @@ gform.types = {
                 {{#array}}{{#append.enable}}<button data-id="{{id}}" class="btn btn-success gform-append float-right">{{append.label}}{{^append.label}}Add{{/append.label}}</button>{{/append.enable}}{{/array}}
                 {{#array.legend}}<legend>{{array.legend}}</legend>{{/array.legend}}
                 <div class="array_container"></div>
-                {{#array}}{{^append.enable}}<button data-id="{{id}}" class="create btn btn-success gform-append">{{append.label}}{{^append.label}}Click here to create first{{/append.label}}</button>{{/append.enable}}{{/array}}
+                {{#array}}{{^append.enable}}<button data-id="{{id}}" class="create btn btn-success gform-append">{{append.label}}{{^append.label}}Add a {{name}}{{/append.label}}</button>{{/append.enable}}{{/array}}
                 </div>`,data||this)
               return tempEl;
         },
@@ -475,7 +475,7 @@ gform.types = {
       get: function() {
           if(!('el' in this))return this.internalValue;
           var value = this.el.querySelector('select').value;
-          search = _.find(this.list,{i:parseInt(value,10)});
+          var search = _.find(this.list,{i:parseInt(value,10)});
           if(typeof search == 'undefined'){
             if(this.other){
                 value = "other";
@@ -572,7 +572,7 @@ gform.types = {
               {{#array}}{{#append.enable}}<button data-id="{{id}}" class="btn btn-success gform-append float-right">{{append.label}}{{^append.label}}Add{{/append.label}}</button>{{/append.enable}}{{/array}}
               {{#array.label}}<legend>{{array.label}}</legend>{{/array.label}}
               <div class="array_container"></div>
-              {{#array}}{{^append.enable}}<button data-id="{{id}}" class="create btn btn-success gform-append">{{append.label}}{{^append.label}}Click here to create first{{/append.label}}</button>{{/append.enable}}{{/array}}
+              {{#array}}{{^append.enable}}<button data-id="{{id}}" class="create btn btn-success gform-append">{{append.label}}{{^append.label}}Click here create {{name}}{{/append.label}}</button>{{/append.enable}}{{/array}}
               </fieldset>`,data||this)
             return tempEl;
       },
@@ -1979,14 +1979,15 @@ gform.types['template'] = _.extend({}, gform.types['input'], gform.types['sectio
 
 gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section'],{
   array:{
-      columns:-1,
+      // columns:-1,
       template:(data)=>{
-        return gform.create(gform.render('table', {labels:_.map(data.field.fields, item=>(item.array)?item.array.label||item.label:item.label||item.name),...data.field}));
+        return gform.create(gform.render('table', {ref:data.id,labels:_.map(data.field.fields, item=>(item.array)?item.array.label||item.label:item.label||item.name),...data.field}));
       },
       container:"table",
       rowTemplate:"<table><tbody></tbody></table>",
       rowSelector:"tbody",
-      max:5,min:1,duplicate:{enable:false},remove:{enable:false},append:{enable:true},sortable:{enable:true}
+      rowClass:"table-row",
+      max:20,min:0,duplicate:{enable:false},remove:{enable:false},append:{enable:true},sortable:{enable:true}
     },
     edit:function(e){
             if( e===this ||
@@ -2010,19 +2011,34 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
                 this.modalEl.querySelector('.done').addEventListener('click', ()=>{
                     // this.owner.trigger('close',this);
 
-                    this.render();
+                    this.action = 'done';
                     this.modal("hide")
                 });
 
-                this.modalEl.querySelector('.gform-footer .gform-minus').addEventListener('click', function(e){
+                this.modalEl.querySelector('.gform-footer .gform-minus').addEventListener('click', ()=>{
                     // e.stopPropagation();
                     // e.preventDefault();
-                    this.modal('hide');
-                    this.modalEl.querySelector('.gform-modal_body').removeChild(this.container);
-                    this.container.removeEventListener('click', this.owner.listener)
-                    this.am.removeField(this)
 
-                }.bind(this));
+                    this.action = 'remove';
+                    this.modal('hide');
+
+                });
+                $(this.modalEl).on('hidden.bs.modal', function(e){
+                  console.log(this.action)
+                  switch(this.action){
+                    case 'remove':
+                      this.modalEl.querySelector('.gform-modal_body').removeChild(this.container);
+                      this.container.removeEventListener('click', this.owner.listener)
+                      this.am.removeField(this);
+                      break;
+                    case 'done':
+                    case 'closed':
+                    default:
+
+                    this.render();
+
+                  }
+                }.bind(this))
             }
         },
     create: function() {

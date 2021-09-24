@@ -19,9 +19,9 @@ gform.stencils = {
 		border-right:0px;
 		width:10px;
 		position: absolute;
-		bottom: 5px;
+		bottom: 1px;
 		left: 7px;
-		top: 0px;
+		top: 2px;
 	  }
 	  fieldset:disabled .actions{
 		display:none;
@@ -172,6 +172,10 @@ input:disabled + .slider {
 	display: none;
   }
 
+.gform-append{
+	margin-bottom:5px;
+}
+
 
 
 
@@ -220,6 +224,8 @@ input:disabled + .slider {
 			height: auto !important;
 		}
 	}
+
+	.table>tbody.table-row+tbody.table-row{border-top:1px}
 `,
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
 _container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
@@ -299,7 +305,7 @@ switch:`<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{mu
 	{{#horizontal}}<div class="col-md-8" style="margin:0 0 15px">{{/horizontal}}
 	{{/label}}
 	{{^label}}
-	<div class="col-md-12" style="margin: -10px 0 5px;"">
+	<div class="col-md-12">
 	{{/label}}
 	<div>
 	<span class="falseLabel">{{{options.0.label}}} </span>
@@ -605,7 +611,7 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#options.horizonta
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="close" data-action="kill" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title" id="myModalLabel">{{#icon}}<i class="fa fa-{{icon}}"></i> {{/icon}}{{{title}}}{{{legend}}}&nbsp;</h4>
 			</div>
 			<div class="modal-body">
@@ -639,7 +645,7 @@ child_modal_footer:`<button type="button" class="btn btn-danger hidden-print pul
 
 template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{am.id}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend>{{/array}}</div></div>',
 template_item:`<div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{display}}}{{/format.template}}</div>`,
-table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}<legend>{{{label}}}</legend>{{#append.enable}}<button type="button" data-ref="{{am.id}}"  class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{{.}}}</th>{{/labels}}</thead></table></div></div>'
+table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}<legend>{{{label}}}</legend>{{#append.enable}}<button type="button" data-id="{{ref}}"  class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{{.}}}</th>{{/labels}}</thead></table></div></div>'
 };
 
 
@@ -897,31 +903,39 @@ gform.prototype.modal = function(data){
 
 	// $(this.modalEl||this.el).modal(data)
 	// return this;
-
+debugger;
 
 	var el = this.modalEl||this.el;
     if(!document.body.contains(el)){
         document.body.appendChild(el);
         el.querySelector('.close').addEventListener('click', function(){
 			// gform.prototype.modal.call(this,'hide');
+			this.action = 'closed';
 			(this.owner||this).trigger('close',this);
         }.bind(this));
     }
 
-    switch(data){
-        case "hide":
-            // if(typeof this.type !== 'undefined'){
-            //     this.owner.trigger("close_child",this);
-            // }else{
-            //     this.trigger("close",this);
-            // }
-        default:
-            $(el).modal(data)
-    }
-	// $(this.el).modal(data)
-	$(this.el).on('hidden.bs.modal', function () {
+
+    // switch(data){
+    //     case "hide":
+    //         // if(typeof this.type !== 'undefined'){
+    //         //     this.owner.trigger("close_child",this);
+    //         // }else{
+    //         //     this.trigger("close",this);
+    //         // }
+    //     default:
+    //         $(el).modal(data)
+    // }
+if(typeof this.modalManager ==  'undefined'){
+	this.modalManager = $(el).modal(data)
+	
+	$(el).on('hidden.bs.modal', function(e){
 		this.trigger("cancel",this);
 	}.bind(this))
+}else(
+	this.modalManager = $(el).modal(data)
+)
+	
 
 	return this;
 }
