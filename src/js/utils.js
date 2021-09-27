@@ -52,7 +52,7 @@ gform.ajax = function(options){
         if(request.readyState === 4) {
             if(request.status === 200) { 
                 try{
-                    options.success(JSON.parse(response));
+                    options.success(JSON.parse(request.response));
                 }catch(e){}
                 options.success(_.pick(request,'statusText','responseText'));
             } else {

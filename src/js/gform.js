@@ -401,6 +401,7 @@ var gform = function(optionsIn, el){
                 // newField.trigger(['change','input'],newField);
             }
             field.am.reflow();
+            gform.types[newField.type].focus.call(newField);
         }
         if(target.classList.contains('gform-minus')){
             e.stopPropagation();
@@ -416,6 +417,7 @@ var gform = function(optionsIn, el){
             this.trigger('appended', newField);
 
             field.reflow();
+            gform.types[newField.type].focus.call(newField);
 
             // var am = gform.items.filter.call(this,{id:target.dataset.ref});
             // // var field = 

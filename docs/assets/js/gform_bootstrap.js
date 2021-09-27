@@ -401,6 +401,7 @@ var gform = function(optionsIn, el){
                 // newField.trigger(['change','input'],newField);
             }
             field.am.reflow();
+            gform.types[newField.type].focus.call(newField);
         }
         if(target.classList.contains('gform-minus')){
             e.stopPropagation();
@@ -416,6 +417,7 @@ var gform = function(optionsIn, el){
             this.trigger('appended', newField);
 
             field.reflow();
+            gform.types[newField.type].focus.call(newField);
 
             // var am = gform.items.filter.call(this,{id:target.dataset.ref});
             // // var field = 
@@ -2683,7 +2685,7 @@ gform.ajax = function(options){
         if(request.readyState === 4) {
             if(request.status === 200) { 
                 try{
-                    options.success(JSON.parse(response));
+                    options.success(JSON.parse(request.response));
                 }catch(e){}
                 options.success(_.pick(request,'statusText','responseText'));
             } else {
@@ -3762,8 +3764,6 @@ gform.arrayManager = function(field){
             item.index = index;
             gform.types[item.type].setLabel.call(item)
         })
-        gform.types[newField.type].focus.call(newField);
-
 
         newField.parent.trigger(['change','input', 'create', 'inserted'],newField)
         // debugger;
@@ -5043,10 +5043,10 @@ gform.validations =
 	  .array_container:empty + button.create{
 		display: inline-block;
 	  }
-	  .actions {
+	  .array_container .actions {
 		margin-bottom: -15px;
 	}
-	fieldset > .actions {
+	.array_container fieldset > .actions {
 		margin-bottom: 0;
 	}
 	.gform_isArray > fieldset:before {
@@ -5081,6 +5081,18 @@ input:checked + .falseLabel {
 .combobox-container .form-control[contenteditable="false"]
 {
 	background: #eee;
+}
+.combobox-selected .caret {
+	display: none;
+}
+/* :not doesn't work in IE8 */
+.combobox-container:not(.combobox-selected) .fa-times {
+	display: none;
+}
+.typeahead-long {
+	max-height: 300px;
+	overflow-y: auto;
+	width: 100%;
 }
 @media (min-width: 992px) {
 	.row .col-md-Infinity:first-child{margin-left: 15px;}

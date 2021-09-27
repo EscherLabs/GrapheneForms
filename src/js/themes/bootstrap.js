@@ -7,10 +7,10 @@ gform.stencils = {
 	  .array_container:empty + button.create{
 		display: inline-block;
 	  }
-	  .actions {
+	  .array_container .actions {
 		margin-bottom: -15px;
 	}
-	fieldset > .actions {
+	.array_container fieldset > .actions {
 		margin-bottom: 0;
 	}
 	.gform_isArray > fieldset:before {
@@ -45,6 +45,18 @@ input:checked + .falseLabel {
 .combobox-container .form-control[contenteditable="false"]
 {
 	background: #eee;
+}
+.combobox-selected .caret {
+	display: none;
+}
+/* :not doesn't work in IE8 */
+.combobox-container:not(.combobox-selected) .fa-times {
+	display: none;
+}
+.typeahead-long {
+	max-height: 300px;
+	overflow-y: auto;
+	width: 100%;
 }
 @media (min-width: 992px) {
 	.row .col-md-Infinity:first-child{margin-left: 15px;}

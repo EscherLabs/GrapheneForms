@@ -401,6 +401,7 @@ var gform = function(optionsIn, el){
                 // newField.trigger(['change','input'],newField);
             }
             field.am.reflow();
+            gform.types[newField.type].focus.call(newField);
         }
         if(target.classList.contains('gform-minus')){
             e.stopPropagation();
@@ -416,6 +417,7 @@ var gform = function(optionsIn, el){
             this.trigger('appended', newField);
 
             field.reflow();
+            gform.types[newField.type].focus.call(newField);
 
             // var am = gform.items.filter.call(this,{id:target.dataset.ref});
             // // var field = 
@@ -2683,7 +2685,7 @@ gform.ajax = function(options){
         if(request.readyState === 4) {
             if(request.status === 200) { 
                 try{
-                    options.success(JSON.parse(response));
+                    options.success(JSON.parse(request.response));
                 }catch(e){}
                 options.success(_.pick(request,'statusText','responseText'));
             } else {
@@ -3762,8 +3764,6 @@ gform.arrayManager = function(field){
             item.index = index;
             gform.types[item.type].setLabel.call(item)
         })
-        gform.types[newField.type].focus.call(newField);
-
 
         newField.parent.trigger(['change','input', 'create', 'inserted'],newField)
         // debugger;

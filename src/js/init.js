@@ -615,8 +615,6 @@ gform.arrayManager = function(field){
             item.index = index;
             gform.types[item.type].setLabel.call(item)
         })
-        gform.types[newField.type].focus.call(newField);
-
 
         newField.parent.trigger(['change','input', 'create', 'inserted'],newField)
         // debugger;

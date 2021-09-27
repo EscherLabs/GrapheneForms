@@ -297,7 +297,7 @@ options.clear= false;
 options.actions=[{type:"button",name:"deativate",action:"deactivate",label:'<i class="fa fa-check"></i>',target:"#display",modifiers:"btn btn-info pull-right visible-lg"}],
 
 options.fields = [
-{target:"#display", type: 'smallcombo',columns:9, label: false, name: 'type', value: 'text', parse: [{type:"not_matches",name:"type",value:"text"}], 'options': [
+{target:"#display", type: 'smallcombo',columns:9, label: false, name: 'type', value: 'text', parse: [{type:"not_matches",value:"text"},{type:"requires"}], 'options': [
 		{label: 'Single Line', value: 'text'},
 		{label: 'Multi-line', value: 'textarea'},
 		{label: 'Phone', value: 'tel'},
