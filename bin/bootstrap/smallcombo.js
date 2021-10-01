@@ -113,7 +113,6 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
     },
     // "display":function(){
     //         // return true;
-    //         debugger;
     //         		var item = _.find(this.options,{value:this.value})||_.find(this.options,{label:this.value})
     //         if(typeof item !== 'undefined') {
     //         				return item.label;

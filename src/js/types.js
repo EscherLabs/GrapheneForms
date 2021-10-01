@@ -1718,7 +1718,6 @@ gform.types['template'] = _.extend({}, gform.types['input'], gform.types['sectio
       tempEl.addEventListener('click', gform.types.template.edit.bind(this))
       this.render(tempEl);
       return tempEl;
-      // debugger;
       // return "";
       // return this.render();
   },
@@ -2054,7 +2053,6 @@ gform.types['table'] = _.extend({}, gform.types['input'], gform.types['section']
       tempEl.addEventListener('click', gform.types.table.edit.bind(this))
       this.render(tempEl);
       return tempEl;
-      // debugger;
       // return "";
       // return this.render();
   },

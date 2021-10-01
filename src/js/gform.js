@@ -225,12 +225,6 @@ var gform = function(optionsIn, el){
         gform.each.call(this, function(field) {
             field.owner.trigger('change', field);
         })
-        if(!this.options.private){
-            if(typeof gform.instances[this.options.name] !== 'undefined' && gform.instances[this.options.name] !== this){
-                gform.instances[this.options.name].destroy();
-            }
-            gform.instances[this.options.name] = this;
-        }
     }
     this.infoEl = gform.create(gform.render('_tooltip'))
     this.infoEl.querySelector('.info-close').addEventListener('click',function(e){
@@ -294,7 +288,6 @@ var gform = function(optionsIn, el){
                         // _.each(field.operator.container.querySelectorAll('.gform_isArray'),testFunc.bind(null,'[data-ref="'+field.array.ref+'"] .gform-minus',!(fieldCount > (field.array.min || 1) ) ))
             
                         field.operator.reflow();
-                        // debugger;
                         // this.updateActions(field);
 
 
@@ -341,6 +334,13 @@ var gform = function(optionsIn, el){
         delete this.eventBus;
 
     };
+
+    if(!this.options.private){
+        if(typeof gform.instances[this.options.name] !== 'undefined' && gform.instances[this.options.name] !== this){
+            gform.instances[this.options.name].destroy();
+        }
+        gform.instances[this.options.name] = this;
+    }
     create.call(this)
 
     //setup tab navigation if tabs exist
@@ -376,6 +376,19 @@ var gform = function(optionsIn, el){
     this.listener = function(e){
         var field;
         var target = e.target;
+        if(gform.items.find.call(myform,{id:document.activeElement.id}) !== null){
+            e.stopPropagation();
+            e.preventDefault();
+            // if(gform.items.find.call(myform,e.target.dataset) !== gform.items.find.call(myform,{id:document.activeElement.id}).am){
+            //     return false;
+            // }
+            if(gform.items.find.call(myform,{id:document.activeElement.id}).am instanceof gform.arrayManager && e.detail === 0 && !e.pointerType){
+                target = gform.items.find.call(myform,{id:document.activeElement.id}).el.querySelector('.gform-add') || form.items.find.call(myform,{id:document.activeElement.id}).am.el.querySelector('.gform-append')
+            }else{
+                return false;
+            }
+            
+        } 
         if(e.target.classList.value.indexOf('gform-')<0 && e.target.parentElement.classList.value.indexOf('gform-')>=0){
             target = e.target.parentElement;
         }

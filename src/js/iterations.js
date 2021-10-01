@@ -20,35 +20,37 @@ gform.reduce = function(func,object,filter){
 }
 
 gform.items = {
-    reduce:function(func,object,filter){
+    reduce:function(func, object, filter){
         var object = object ||{};
         if(!("items" in this) || !this.items.length)return object;
-        _.reduce(gform.items.filter.call(this, filter, 1), function(object, item){
+        _.reduce(gform.items.filter.call(this, filter, {depth:1}), function(object, item){
             // var temp = func(object,item);
             return func(object, item);
         }, object)
         return object;
     },
-    filter:function(search, depth){
+    filter:function(search, options){
+
+        var {depth = 10, stopOnFail=true} = options;
         var temp = [];
         if(typeof search == 'string'){
             search = {name: search}
         }
-        var depth = (depth||10);
+        // var depth = (depth||10);
         depth--;
         
-        temp = _.reduce( this['items'], (temp,item)=>{
+        temp = _.reduce( this.items, (temp,item)=>{
             
-            if(!_.isMatch(item, search)){return temp}
+            if(!_.isMatch(item, search) && stopOnFail){return temp}
                 if(_.isMatch(item, search)){
                     temp.push(item)
                 }
                 if(!!depth && item instanceof gform.arrayManager){
                     temp =_.reduce(item.instances, function(temp,instance){
-                        if(_.isMatch(instance, search)){
+                        if(!stopOnFail  || _.isMatch(instance, search)){
                             // temp.push(instance);
 
-                            temp = temp.concat(gform.items.filter.call(instance,search,depth))
+                            temp = temp.concat(gform.items.filter.call(instance,search, {depth:depth,stopOnFail:stopOnFail}))
                         }
                         return temp;
 
@@ -60,53 +62,53 @@ gform.items = {
                 }
     
             if(!!depth  && ('items' in item /*|| field instanceof gform.arrayManager*/) && item.items.length){
-                temp = temp.concat(gform.items.filter.call(item, search, depth));
+                temp = temp.concat(gform.items.filter.call(item, search, {depth:depth,stopOnFail:stopOnFail}));
             }
             return temp;
         },temp)
         return temp;
     },
-    _filter:function(search, depth){
-        var temp = [];
-        if(typeof search == 'string'){
-            search = {name: search}
-        }
-        var depth = (depth||10);
-        depth--;
+    // _filter:function(search, depth){
+    //     var temp = [];
+    //     if(typeof search == 'string'){
+    //         search = {name: search}
+    //     }
+    //     var depth = (depth||10);
+    //     depth--;
         
-        temp = _.reduce( this['items'], (temp,item)=>{
+    //     temp = _.reduce( this['items'], (temp,item)=>{
             
-            if(!_.isMatch(item, search)){return temp}
+    //         if(!_.isMatch(item, search)){return temp}
             
-                if(item instanceof gform.arrayManager){
-                    // if(_.isMatch(item, search)){
-                    //     temp.push(item);
-                    // }
+    //             if(item instanceof gform.arrayManager){
+    //                 // if(_.isMatch(item, search)){
+    //                 //     temp.push(item);
+    //                 // }
 
-                    temp =_.reduce(item.instances, function(temp,instance){
-                        // if(!_.isMatch(instance, search)){return temp}
-                        if(_.isMatch(instance, search)){
-                            temp.push(instance);
+    //                 temp =_.reduce(item.instances, function(temp,instance){
+    //                     // if(!_.isMatch(instance, search)){return temp}
+    //                     if(_.isMatch(instance, search)){
+    //                         temp.push(instance);
 
-                            temp = temp.concat(gform.items.filter.call(instance,search,depth))
-                        }
-                        return temp;
+    //                         temp = temp.concat(gform.items.filter.call(instance,search,depth))
+    //                     }
+    //                     return temp;
 
-                    },temp)
-                }else{
-                    if(_.isMatch(item, search)){
-                        temp.push(item)
-                    }
-                }
+    //                 },temp)
+    //             }else{
+    //                 if(_.isMatch(item, search)){
+    //                     temp.push(item)
+    //                 }
+    //             }
     
             
-            if(!!depth  && ('items' in item /*|| field instanceof gform.arrayManager*/) && item.items.length){
-                temp = temp.concat(gform.items.filter.call(item, search, depth));
-            }
-            return temp;
-        },temp)
-        return temp;
-    },
+    //         if(!!depth  && ('items' in item /*|| field instanceof gform.arrayManager*/) && item.items.length){
+    //             temp = temp.concat(gform.items.filter.call(item, search, depth));
+    //         }
+    //         return temp;
+    //     },temp)
+    //     return temp;
+    // },
     find:function(search, depth){
         var temp = null;
         if(typeof search == 'string'){
@@ -162,7 +164,6 @@ gform.items = {
 //     return object;
 // }
 // gform.filterItems = function(search, depth){
-//     // debugger;
 //     var temp = [];
 //     if(typeof search == 'string'){
 //         search = {name: search}

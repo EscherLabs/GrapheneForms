@@ -915,7 +915,6 @@ gform.prototype.modal = function(data){
 
 	// $(this.modalEl||this.el).modal(data)
 	// return this;
-debugger;
 
 	var el = this.modalEl||this.el;
     if(!document.body.contains(el)){
