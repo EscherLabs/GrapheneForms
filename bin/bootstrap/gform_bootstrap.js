@@ -11,7 +11,7 @@ var gform = function(optionsIn, el){
         let actor = field[method]||gform.types[field.type||'text'][method];
         return (typeof actor == 'function')?actor.call(field,field,...rest):actor;
     };
-    this.bind = (method, field, ...rest) => (field[method]||gform.types[field.type||'text'][method]).bind(field,...rest);
+    this.bind = (method, field, ...rest) => ( (field[method] == Object.prototype[method])?gform.types[field.type||'text'][method]:field.method).bind(field,...rest);
 
     //event management        
     this.updateActions = function(am){
@@ -376,18 +376,18 @@ var gform = function(optionsIn, el){
     this.listener = function(e){
         var field;
         var target = e.target;
-        if(gform.items.find.call(myform,{id:document.activeElement.id}) !== null){
-            e.stopPropagation();
-            e.preventDefault();
-            // if(gform.items.find.call(myform,e.target.dataset) !== gform.items.find.call(myform,{id:document.activeElement.id}).am){
-            //     return false;
-            // }
-            if(gform.items.find.call(myform,{id:document.activeElement.id}).am instanceof gform.arrayManager && e.detail === 0 && !e.pointerType){
-                target = gform.items.find.call(myform,{id:document.activeElement.id}).el.querySelector('.gform-add') || form.items.find.call(myform,{id:document.activeElement.id}).am.el.querySelector('.gform-append')
+        var activeField = gform.items.find.call(this,{id:document.activeElement.id});
+        if(activeField !== null && e.detail === 0 && !e.pointerType){
+            if(activeField.am instanceof gform.arrayManager){
+                target = activeField.el.querySelector('.gform-add') || activeField.am.el.querySelector('.gform-append')
             }else{
-                return false;
+
+                let index = activeField.parent.fields.indexOf(activeField);
+                if(index>=0 && typeof activeField.parent.fields[index+1] !== 'undefined') activeField.parent.fields[index+1].focus();
+                // e.stopPropagation();
+                // e.preventDefault();
+                // return false;
             }
-            
         } 
         if(e.target.classList.value.indexOf('gform-')<0 && e.target.parentElement.classList.value.indexOf('gform-')>=0){
             target = e.target.parentElement;
@@ -731,6 +731,7 @@ gform.types = {
 
       },
       set: function(value) {
+          debugger;
         if('el' in this)this.el.querySelector('input[name="' + this.name + '"]').checked = (value == this.options[1].value);
       },edit: function(state) {
         this.editable = state;
@@ -1398,9 +1399,7 @@ gform.types['output']   = _.extend({}, gform.types['input'], {
         return this.value;
     },
     set: function(value) {
-        this.value = value;
-        // this.display = gform.renderString((this.format|| {}).value||'{{{value}}}', this);
-        // gform.renderString(this.template, this);
+        this.internalValue = value;
         this.el.querySelector('output').innerHTML = this.display;
 
     },
@@ -2697,8 +2696,9 @@ gform.ajax = function(options){
             if(request.status === 200) { 
                 try{
                     options.success(JSON.parse(request.response));
-                }catch(e){}
-                options.success(_.pick(request,'statusText','responseText'));
+                }catch(e) {
+                    options.success(_.pick(request,'statusText','responseText'));
+                }
             } else {
                 // console.log(request.responseText);
                 if(typeof options.error == 'function'){options.error(request.responseText)};
@@ -3983,7 +3983,7 @@ gform.field = {
                         }
                     });
                 }else{
-                    field.value = ('data' in options)?options.data:(("value" in field.item)?field.item.value:form.call('resetValue', field));
+                    field.value = ('data' in options && typeof options.data !== 'undefined')?options.data:(("value" in field.item)?field.item.value:form.call('resetValue', field));
                 }
                 // field.value =  _.defaults({value:_.selectPath(options.data,field.item.map||field.name)},field).value
                 options.data = ('data' in options)?options.data:field.value;
@@ -4112,8 +4112,8 @@ gform.field = {
                 'find',
                 'filter'
             ], (field, prop)=>{
-                if(!(prop in field) && prop in gform.types[field.type]){
-                    field[prop] = form.bind(prop, field)// gform.types[field.type][prop].bind(field);// || null;
+                if((!(prop in field)|| (field[prop] == Object.prototype[prop]) ) && prop in gform.types[field.type]){
+                    field[prop] = form.bind(prop, field);
                 }
                 return field;
             }, field)

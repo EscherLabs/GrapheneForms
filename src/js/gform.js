@@ -11,7 +11,7 @@ var gform = function(optionsIn, el){
         let actor = field[method]||gform.types[field.type||'text'][method];
         return (typeof actor == 'function')?actor.call(field,field,...rest):actor;
     };
-    this.bind = (method, field, ...rest) => (field[method]||gform.types[field.type||'text'][method]).bind(field,...rest);
+    this.bind = (method, field, ...rest) => ( (field[method] == Object.prototype[method])?gform.types[field.type||'text'][method]:field.method).bind(field,...rest);
 
     //event management        
     this.updateActions = function(am){
@@ -376,18 +376,18 @@ var gform = function(optionsIn, el){
     this.listener = function(e){
         var field;
         var target = e.target;
-        if(gform.items.find.call(myform,{id:document.activeElement.id}) !== null){
-            e.stopPropagation();
-            e.preventDefault();
-            // if(gform.items.find.call(myform,e.target.dataset) !== gform.items.find.call(myform,{id:document.activeElement.id}).am){
-            //     return false;
-            // }
-            if(gform.items.find.call(myform,{id:document.activeElement.id}).am instanceof gform.arrayManager && e.detail === 0 && !e.pointerType){
-                target = gform.items.find.call(myform,{id:document.activeElement.id}).el.querySelector('.gform-add') || form.items.find.call(myform,{id:document.activeElement.id}).am.el.querySelector('.gform-append')
+        var activeField = gform.items.find.call(this,{id:document.activeElement.id});
+        if(activeField !== null && e.detail === 0 && !e.pointerType){
+            if(activeField.am instanceof gform.arrayManager){
+                target = activeField.el.querySelector('.gform-add') || activeField.am.el.querySelector('.gform-append')
             }else{
-                return false;
+
+                let index = activeField.parent.fields.indexOf(activeField);
+                if(index>=0 && typeof activeField.parent.fields[index+1] !== 'undefined') activeField.parent.fields[index+1].focus();
+                // e.stopPropagation();
+                // e.preventDefault();
+                // return false;
             }
-            
         } 
         if(e.target.classList.value.indexOf('gform-')<0 && e.target.parentElement.classList.value.indexOf('gform-')>=0){
             target = e.target.parentElement;

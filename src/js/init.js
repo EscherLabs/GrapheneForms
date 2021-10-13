@@ -822,7 +822,7 @@ gform.field = {
                         }
                     });
                 }else{
-                    field.value = ('data' in options)?options.data:(("value" in field.item)?field.item.value:form.call('resetValue', field));
+                    field.value = ('data' in options && typeof options.data !== 'undefined')?options.data:(("value" in field.item)?field.item.value:form.call('resetValue', field));
                 }
                 // field.value =  _.defaults({value:_.selectPath(options.data,field.item.map||field.name)},field).value
                 options.data = ('data' in options)?options.data:field.value;
@@ -951,8 +951,8 @@ gform.field = {
                 'find',
                 'filter'
             ], (field, prop)=>{
-                if(!(prop in field) && prop in gform.types[field.type]){
-                    field[prop] = form.bind(prop, field)// gform.types[field.type][prop].bind(field);// || null;
+                if((!(prop in field)|| (field[prop] == Object.prototype[prop]) ) && prop in gform.types[field.type]){
+                    field[prop] = form.bind(prop, field);
                 }
                 return field;
             }, field)

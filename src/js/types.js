@@ -257,6 +257,7 @@ gform.types = {
 
       },
       set: function(value) {
+          debugger;
         if('el' in this)this.el.querySelector('input[name="' + this.name + '"]').checked = (value == this.options[1].value);
       },edit: function(state) {
         this.editable = state;
@@ -924,9 +925,7 @@ gform.types['output']   = _.extend({}, gform.types['input'], {
         return this.value;
     },
     set: function(value) {
-        this.value = value;
-        // this.display = gform.renderString((this.format|| {}).value||'{{{value}}}', this);
-        // gform.renderString(this.template, this);
+        this.internalValue = value;
         this.el.querySelector('output').innerHTML = this.display;
 
     },
