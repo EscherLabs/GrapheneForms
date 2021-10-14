@@ -35,7 +35,6 @@ gform.toJSON = function(name) {
         return field.get()
     }
     return gform.items.reduce.call(this,gform.patch,{},{parsable:true})
-
 }
 
 gform.toString = function(name,report){
@@ -501,12 +500,32 @@ gform.arrayManager = function(field){
         return manager;
     }, this)
     this.field = field;
-    this.name = this.field.name;
+    this.name = field.name;
     this.owner = field.owner;
     this.array = field.array;
     this.target = field.target;
+    this.parent = field.parent;
+    this.type = 'arrayManager'
+    // const {name, owner, array, target, parent} = field;
+
+
     this.array.min = (this.array.min == 0)? (this.field.required)?1:0 :this.array.min||1;
-    this.parsable= true;
+    this.parsable = true;
+    this.reportable = true;
+    this.editable = true;
+    // this.fillable = true;
+
+    _.reduce(['parse','show','edit'],(am,attr)=>{
+        let val = undefined;
+        if(typeof this.field.item.array == 'object'){
+            val = (attr in this.field.item.array)?this.field.item.array[attr]:undefined;
+        }
+        if(typeof val == 'undefined')val =(attr in this.field.item)?this.field.item[attr]:undefined;
+        if(typeof val !== 'undefined')am[attr]= val;
+        return am;
+        // this[attr] = this.field.item.array[attr]||this.field.item[attr]||true
+    },this)
+
     this.focus = function(){};
     // this.type = 'am';//field.type;
     this.satisfied = function(){
@@ -548,6 +567,7 @@ gform.arrayManager = function(field){
     });    
 
     // this.field.operator = this;
+    debugger;
     gform.addConditions.call(this.owner,this);
 
     Object.defineProperty(this, "map",{

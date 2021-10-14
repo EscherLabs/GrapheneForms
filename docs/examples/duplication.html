@@ -313,18 +313,18 @@ options.fields = [
 		{label: 'Signature', value: 'signature'},
 		{label: 'Hidden', value: 'hidden'}
 	]},
-  {target: "#collapseGrid .panel-body",type: 'table', label: 'Meta Data', array: {min:0,max:100},columns:12,parse:[{type:"requires"}],format:{template:"{{value.key}}:{{value.value}}"}, name: 'data', 
-		fields: [
-			{label: 'Key', name:"key",parse:[{type:"requires"},{type:"requires",name:"value"}]},
-			{label: 'Value', name:"value",parse:[{type:"requires"},{type:"requires",name:"key"}]}
-		]
-	},
-{target:"#collapseOptions .panel-body",type: 'select',other:true, columns:12, label:'Show the field <span class="pull-right text-muted">"show"</span>', value: true, name:"show",parse:[{type:"not_matches",name:"show",value:true}],options:		
-		[
-      {type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Edit"',value:'edit'}, {label:"Conditionally",value:"other"}]},{type:'optgroup',label:"Methods",options:'methods',format:{value:"method:{{value}}",label:"Method: {{label}}"}}
-  ]
-	},
-	{target:"#collapseOptions .panel-body",type: 'fieldset',columns:11,offset:'1', label:false,name:"show",fields:myconditions,array:{min:1,max:1},show:[{name:"show",value:['other'],type:"matches"}]},
+  // {target: "#collapseGrid .panel-body",type: 'table', label: 'Meta Data', array: {min:0,max:100},columns:12,parse:[{type:"requires"}],format:{template:"{{value.key}}:{{value.value}}"}, name: 'data', 
+	// 	fields: [
+	// 		{label: 'Key', name:"key",parse:[{type:"requires"},{type:"requires",name:"value"}]},
+	// 		{label: 'Value', name:"value",parse:[{type:"requires"},{type:"requires",name:"key"}]}
+	// 	]
+	// },
+// {target:"#collapseOptions .panel-body",type: 'select',other:true, columns:12, label:'Show the field <span class="pull-right text-muted">"show"</span>', value: true, name:"show",parse:[{type:"not_matches",name:"show",value:true}],options:		
+// 		[
+//       {type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Edit"',value:'edit'}, {label:"Conditionally",value:"other"}]},{type:'optgroup',label:"Methods",options:'methods',format:{value:"method:{{value}}",label:"Method: {{label}}"}}
+//   ]
+// 	},
+	// {target:"#collapseOptions .panel-body",type: 'fieldset',columns:11,offset:'1', label:false,name:"show",fields:myconditions,array:{min:1,max:1},show:[{name:"show",value:['other'],type:"matches"}]},
   {type: 'select',other:true, columns:12, label:'Allow the field to be Edited <span class="pull-right text-muted">"edit"</span>', value:true,name:"edit",parse:[{type:"not_matches",name:"/edit",value:true}],options:		
 		[{type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Show"',value:'show'}, {label:"Conditionally",value:"other"}]}]
 	},

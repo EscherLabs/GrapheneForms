@@ -1,4 +1,10 @@
 gform.types = {
+  
+  'arrayManager':{
+    show: function(state) {
+        this.el.style.display = state ? "block" : "none";
+      }
+  },
   'input':{
       base:'input',
       defaults:{},

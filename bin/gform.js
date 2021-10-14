@@ -473,6 +473,12 @@ var gform = function(optionsIn, el){
     return this;
 }
 gform.types = {
+  
+  'arrayManager':{
+    show: function(state) {
+        this.el.style.display = state ? "block" : "none";
+      }
+  },
   'input':{
       base:'input',
       defaults:{},
@@ -2749,21 +2755,73 @@ gform.patch = function(object,patch,action){
                 object = _.compact(object);
             }
         }else{
-            if('toJSON' in task){
-                object[target] = task.toJSON
-            }else{
-                object[target] = task.value;
-            }
+            // if('toJSON' in task){
+            //     object[target] = task.toJSON
+            // }else{
+            //     object[target] = task.value;
+            // }
+            object[target] = ('toJSON' in task)?task.toJSON:task.value;
+
             if(object[target] == null)delete object[target];
+            // let val = ('toJSON' in task)?task.toJSON:task.value;
+            // if(val !== null) object[target] = val;
             
         }
 
         return original;
 
     },object||{})
-  }
+}
   
-  _.mixin({
+_.mixin({
+    score: function(base, abbr, offset) {
+
+        offset = offset || 0; // TODO: I think this is unused... remove
+        
+        if(abbr.length === 0) return 0.9;
+        if(abbr.length > base.length) return 0.0;
+        
+        for (var i = abbr.length; i > 0; i--) {
+          var sub_abbr = abbr.substring(0,i);
+          var index = base.indexOf(sub_abbr);
+          
+          if(index < 0) continue;
+          if(index + abbr.length > base.length + offset) continue;
+          
+          var next_string = base.substring(index+sub_abbr.length);
+          var next_abbr = null;
+          
+          if(i >= abbr.length) {
+            next_abbr = '';
+          } else {
+            next_abbr = abbr.substring(i);
+          }
+          // Changed to fit new (jQuery) format (JSK)
+          var remaining_score   = _.score(next_string, next_abbr,offset+index);
+          
+          if (remaining_score > 0) {
+            var score = base.length-next_string.length;
+            
+            if(index !== 0) {     
+              var c = base.charCodeAt(index-1);
+              if(c==32 || c == 9) {
+                for(var j=(index-2); j >= 0; j--) {
+                  c = base.charCodeAt(j);
+                  score -= ((c == 32 || c == 9) ? 1 : 0.15);
+                }
+              } else {
+                score -= index;
+              }
+            }
+            
+            score += remaining_score * next_string.length;
+            score /= base.length;
+            return(score);
+          }
+        }
+        // return(0.0);
+          return( false );
+      },
     selectPath: function(object,path){
         if(typeof object == 'undefined') return undefined;
         var obj = object;
@@ -2772,15 +2830,15 @@ gform.patch = function(object,patch,action){
         }else{
             obj = _.extend({},obj)
         }
-      return _.reduce(_.toPath(path),function(i,map){
-        if(typeof i == 'object' && i !== null){
-          return i[map];
-        }else{
-          return undefined;
-        }
-      },obj)
+        return _.reduce(_.toPath(path),function(i,map){
+            if(typeof i == 'object' && i !== null){
+            return i[map];
+            }else{
+            return undefined;
+            }
+        },obj)
     }
-  });
+});
 
 
 
@@ -3196,7 +3254,6 @@ gform.toJSON = function(name) {
         return field.get()
     }
     return gform.items.reduce.call(this,gform.patch,{},{parsable:true})
-
 }
 
 gform.toString = function(name,report){
@@ -3662,12 +3719,32 @@ gform.arrayManager = function(field){
         return manager;
     }, this)
     this.field = field;
-    this.name = this.field.name;
+    this.name = field.name;
     this.owner = field.owner;
     this.array = field.array;
     this.target = field.target;
+    this.parent = field.parent;
+    this.type = 'arrayManager'
+    // const {name, owner, array, target, parent} = field;
+
+
     this.array.min = (this.array.min == 0)? (this.field.required)?1:0 :this.array.min||1;
-    this.parsable= true;
+    this.parsable = true;
+    this.reportable = true;
+    this.editable = true;
+    // this.fillable = true;
+
+    _.reduce(['parse','show','edit'],(am,attr)=>{
+        let val = undefined;
+        if(typeof this.field.item.array == 'object'){
+            val = (attr in this.field.item.array)?this.field.item.array[attr]:undefined;
+        }
+        if(typeof val == 'undefined')val =(attr in this.field.item)?this.field.item[attr]:undefined;
+        if(typeof val !== 'undefined')am[attr]= val;
+        return am;
+        // this[attr] = this.field.item.array[attr]||this.field.item[attr]||true
+    },this)
+
     this.focus = function(){};
     // this.type = 'am';//field.type;
     this.satisfied = function(){
@@ -3709,6 +3786,7 @@ gform.arrayManager = function(field){
     });    
 
     // this.field.operator = this;
+    debugger;
     gform.addConditions.call(this.owner,this);
 
     Object.defineProperty(this, "map",{
