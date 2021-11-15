@@ -134,10 +134,14 @@ gform.types = {
         // var oldDiv = this.owner.el.querySelector('#'+this.id);
         this.destroy();
         this.el = gform.types[this.type].create.call(this);
-        oldDiv.parentNode.replaceChild(this.el,oldDiv);
-        gform.types[this.type].initialize.call(this);
-        gform.types[this.type].show.call(this,this.visible);
-        gform.types[this.type].edit.call(this,this.editable);
+        if(oldDiv.parentNode !== null)oldDiv.parentNode.replaceChild(this.el,oldDiv);
+        // gform.types[this.type].initialize.call(this);
+        // gform.types[this.type].show.call(this,this.visible);
+        // gform.types[this.type].edit.call(this,this.editable);
+
+        this.owner.call('initialize',this);
+        this.owner.call('show',this,this.visible);
+        this.owner.call('edit',this,this.editable);
 
         if(!silent) {
             this.parent.trigger(['change'], this);
@@ -263,7 +267,6 @@ gform.types = {
 
       },
       set: function(value) {
-          debugger;
         if('el' in this)this.el.querySelector('input[name="' + this.name + '"]').checked = (value == this.options[1].value);
       },edit: function(state) {
         this.editable = state;
@@ -648,11 +651,10 @@ gform.types = {
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
           oldDiv.parentNode.replaceChild(this.el, oldDiv);
-          gform.types[this.type].initialize.call(this);
-        //   this.el.style.display = this.visible ? "block" : "none";
-          gform.types[this.type].show.call(this,this.visible);
 
-          gform.types[this.type].edit.call(this,this.editable);
+          this.owner.call('initialize',this);
+          this.owner.call('show',this,this.visible);
+          this.owner.call('edit',this,this.editable);
 
           this.container =  this.el.querySelector('fieldset')|| this.el || null;
 
@@ -819,8 +821,9 @@ gform.types = {
           this.action = this.action || (this.label||'').toLowerCase().split(' ').join('_'), 
           this.onclickEvent = function(){
               if(this.editable) {
-                  this.parent.trigger(this.action, this);
-              }
+                this.parent.trigger('click', this, {action: this.action});
+                this.parent.trigger(this.action, this);
+            }
           }.bind(this)
           this.el.addEventListener('click',this.onclickEvent );	
           gform.types[this.type].setLabel.call(this);
@@ -843,14 +846,16 @@ gform.types = {
         //   var oldDiv = document.getElementById(this.id);
         //   var oldDiv = this.owner.el.querySelector('#'+this.id);
         var oldDiv = this.el;
-
           this.destroy();
           this.el = gform.types[this.type].create.call(this);
           oldDiv.parentNode.replaceChild(this.el, oldDiv);
-          gform.types[this.type].initialize.call(this);
-          gform.types[this.type].show.call(this,this.visible);
-          gform.types[this.type].edit.call(this,this.editable);
+        //   gform.types[this.type].initialize.call(this);
+        //   gform.types[this.type].show.call(this,this.visible);
+        //   gform.types[this.type].edit.call(this,this.editable);
 
+          this.owner.call('initialize',this);
+          this.owner.call('show',this,this.visible);
+          this.owner.call('edit',this,this.editable);
 
       },        
       destroy:function() {		
@@ -892,6 +897,9 @@ gform.types['hidden']   = _.extend({}, gform.types['input'], {defaults:{columns:
           }
 }});
 gform.types['output']   = _.extend({}, gform.types['input'], {
+    defaults:{
+        parse:false
+    },
     focus:function(){},
     toString: function(name, report){
 

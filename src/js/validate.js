@@ -10,6 +10,16 @@ gform.prototype.validate = function(force){
 	
 	return this.valid;
 };
+gform.prototype.clearValidation = function(){
+	this.valid = true;
+	_.each(this.filter({valid:false}),(field)=>{
+		field.valid = true;
+		field.errors = '';
+		gform.handleError(field);
+
+	})
+	return this.valid;
+};
 gform.handleError = gform.update;
 
 gform.validateItem = function(force,item){
@@ -18,6 +28,7 @@ gform.validateItem = function(force,item){
 		item.valid = true;
 		item.errors = '';
 		if(item.parsable && typeof item.validate === 'object'){
+			
 			var errors = [];
 			if(item.required){
 				var type = (item.satisfied(item.get()) ? false : '{{label}} is required')

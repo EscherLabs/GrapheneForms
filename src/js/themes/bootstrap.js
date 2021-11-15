@@ -30,6 +30,11 @@ gform.stencils = {
 	  fieldset fieldset {
 		margin-left: 10px !important;
 	  }
+	.form-control[disabled],.form-control[readonly],fieldset[disabled] .form-control,form[disabled] .form-control {
+		cursor: not-allowed;
+		background-color: #eee;
+		opacity: 1
+	}
 input + .falseLabel {
 	display: inline;
 }
@@ -53,10 +58,17 @@ input:checked + .falseLabel {
 .combobox-container:not(.combobox-selected) .fa-times {
 	display: none;
 }
-.typeahead-long {
+.combobox-list {
 	max-height: 300px;
 	overflow-y: auto;
 	width: 100%;
+}
+.combobox-container .form-control{
+	overflow: hidden;white-space: nowrap;position: absolute;width:auto;right:37px;left:0;
+}
+
+.combobox-container .dropdown-toggle{
+	height: 34px;position: relative;border-left: solid 1px #ccc;width: 38px;
 }
 @media (min-width: 992px) {
 	.row .col-md-Infinity:first-child{margin-left: 15px;}
@@ -73,6 +85,7 @@ input:checked + .falseLabel {
 	display: inline-block;
 	width: 4rem;
 	height: 2.2rem;
+	margin: .5em;
 }
 
 /* Hide default HTML checkbox */
@@ -220,10 +233,10 @@ input:disabled + .slider {
 
 
   
-  label.required:after,
+  	label.required:after,
 	legend.required:after {
-	content: "*";
-	color: #f00;
+		content: "*";
+		color: #f00;
 	}
 
 	html,body{
@@ -239,8 +252,8 @@ input:disabled + .slider {
 
 	.table>tbody.table-row+tbody.table-row{border-top:1px}
 `,
-	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
-_container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#options.horizontal}} form-horizontal{{/options.horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
+	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#horizontal}} smart-form-horizontal form-horizontal{{/horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
+_container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#horizontal}} form-horizontal{{/horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
 text: `<div class="row clearfix form-group {{modifiers}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
@@ -542,9 +555,7 @@ _info:`<div>
 	_label: `
 	{{^hideLabel}}
     {{#label}}
-	<label for="{{name}}" {{^horizontal}}style="text-align:left"{{/horizontal}} class="control-label {{^horizontal}}col-xs-12{{/horizontal}}{{#horizontal}}col-md-4{{/horizontal}}">
-  {{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}
-</label>{{/label}}
+	<label for="{{name}}" {{^horizontal}}style="text-align:left"{{/horizontal}} class="control-label {{^horizontal}}col-xs-12{{/horizontal}}{{#horizontal}}col-md-4{{/horizontal}}">{{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}</label>{{/label}}
 {{#info}}<b class="gform-info" data-id="{{id}}"></b>{{/info}}
 {{/hideLabel}}
     `,
@@ -607,7 +618,7 @@ scale:`
 </div>`,
 button:`<button class="btn btn-default hidden-print {{modifiers}}" type="button" style="margin:0 15px">{{{label}}}</button>`,
 tab_container: `
-<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{#options.horizontal}} smart-form-horizontal form-horizontal{{/options.horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
+<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{#horizontal}} smart-form-horizontal form-horizontal{{/horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
 	<ul class="nav nav-tabs" style="margin-bottom:15px">
 		{{#fields}}
 			{{#section}}
@@ -619,7 +630,7 @@ tab_container: `
 	</ul></form>
 	</form><div class="gform-footer"></div>`,
 tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
-modal_container:`<div class="modal fade gform {{modifiers}} {{#options.horizontal}} form-horizontal{{/options.horizontal}}" id="myModal" name="modal_{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form-horizontal{{/horizontal}}" id="myModal" name="modal_{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">
@@ -668,7 +679,7 @@ gform.offsetClasses = _.map(new Array(13),function(item, i){return 'col-xs-offse
 gform.prototype.options.inline = true;
 gform.prototype.options.columns = 12;
 
-gform.prototype.options.suffix = "";
+gform.prototype.options.default.suffix = "";
 
 gform.handleError = function(field){
 	var error_container = field.el.querySelector('.font-xs.text-danger')
@@ -920,9 +931,8 @@ gform.prototype.modal = function(data){
     if(!document.body.contains(el)){
         document.body.appendChild(el);
         el.querySelector('.close').addEventListener('click', function(){
-			// gform.prototype.modal.call(this,'hide');
-			this.action = 'closed';
-			(this.owner||this).trigger('close',this);
+
+			(this.owner||this).trigger('closed',this);
         }.bind(this));
     }
 
@@ -941,7 +951,7 @@ if(typeof this.modalManager ==  'undefined'){
 	this.modalManager = $(el).modal(data)
 	
 	$(el).on('hidden.bs.modal', function(e){
-		this.trigger("cancel",this);
+		if(this.active){this.trigger("cancel",this)};
 	}.bind(this))
 }else(
 	this.modalManager = $(el).modal(data)

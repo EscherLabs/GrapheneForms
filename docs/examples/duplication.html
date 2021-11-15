@@ -413,6 +413,38 @@ options.fields = [
                 ]}
             ],data:{"label":"Field Label","name":"label","type":"select","value":"","help":"","required":false,"options":[{"label":"Hello","value":"Stuff"}]}}
 options.clear = false;
+options_events = {
+  name:"editor",
+      data: form,
+      actions:[],
+      fields: [
+        // {name:"legend",label:"Label"},
+        // {name:"name",label:"Name"},
+
+        {type: 'fieldset',label:false,name:"events",array:{min:1,max:100},fields:[
+          {type: 'text', label: 'Event',name:'event',parse:[{type:"requires"}],target:"#collapseEvents .panel-body"},
+      
+          {type: 'select', label: 'Method', name: 'handler',target:"#collapseEvents .panel-body",options:[
+            "None",{type:'optgroup',min:0,max:4,show:false},{type:'optgroup',options:'methods',format:{label:"Method: {{label}}"}}]
+            ,parse:[{name:"event",value:"",type:"not_matches"}]}
+        ]}
+        // {type: 'switch', label: 'Custom Actions', name: 'actions',parse:false, show:[{name:"type",value:['output'],type:"not_matches"}]},
+        // {type: 'fieldset',columns:12,array:true, label:false,name:"actions",parse:'show', show:[{name:"actions",value:true,type:"matches"}],fields:[
+          
+        //   {name:"type",columns:6,label:"Type",type:"smallcombo",options:["cancel","save"]},
+        //   // {name:"name",columns:6,label:"Name"},
+        //   {name:"action",columns:6,label:"Action"},
+        //   {name:"label",columns:6,label:"Label"},
+        //   {name:"modifiers",columns:6,label:"Classes",type:"smallcombo",options:[
+        //     {label:"Danger",value:"btn btn-danger"},
+        //     {label:"Success",value:"btn btn-success"},
+        //     {label:"Info",value:"btn btn-info"}]}
+
+        // ]},
+
+      ],
+      legend: false,
+}
             $("#form").html(gform.renderString(accordion))
 
 </script>

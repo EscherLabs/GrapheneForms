@@ -1,5 +1,5 @@
 /* Templating  */
-gform.m = function (n,t,e,r){var i,o= gform.m,a="";function f(n,t){return n=null!=(n=n[(t=t.pop?t:t.split(".")).shift()])?n:"",0 in t?f(n,t):n}t=Array.isArray(t)?t:t?[t]:[],t=r?0 in t?[]:[1]:t;for(i=0;i<t.length;i++){var s,l="",p=0,g="object"==typeof t[i]?t[i]:{};(g=Object.assign({},e,g))[""]={"":t[i]},n.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(n,t,e,r,i,c,u){p?l+=p&&!i||1<p?n:t:(a+=t.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(n,t,e,r,i,c){return t?f(g,t):r?f(g,c):i?o(f(g,c),g):e?"":new Option(f(g,c)).innerHTML}),s=c),i?--p||(u=f(g,u),/^f/.test(typeof u)?a+=u.call(g,l,function(n){return o(n,g)}):a+=o(l,u,g,s),l=""):++p})}return a}
+gform.m = function (n,t,e,r){var i,o=gform.m,a="";function f(n,t){return n=null!=(n=n[(t=t.pop?t:t.split(".")).shift()])?n:"",0 in t?f(n,t):n}t=Array.isArray(t)?t:t?[t]:[],t=r?0 in t?[]:[1]:t;for(i=0;i<t.length;i++){var s,l="",p=0,g="object"==typeof t[i]?t[i]:{};(g=Object.assign({},e,g))[""]={"":t[i]},n.replace(/([\s\S]*?)({{((\/)|(\^)|#)(.*?)}}|$)/g,function(n,t,e,r,i,c,u){p?l+=p&&!i||1<p?n:t:(a+=t.replace(/{{{(.*?)}}}|{{(!?)(&?)(>?)(.*?)}}/g,function(n,t,e,r,i,c){return t?f(g,t):r?f(g,c):i?o(f(g,c),g):e?"":new Option(f(g,c)).innerHTML}),s=c),i?--p||(u=f(g,u),/^f/.test(typeof u)?a+=u.call(g,l,function(n){return o(n,g)}):a+=o(l,u,g,s),l=""):++p})}return a}
 
 gform.render = function(template, options) {
     return gform.renderString(gform.stencils[template || 'text'] || gform.stencils['text'], _.extend({}, gform.stencils, options))    
@@ -295,18 +295,49 @@ gform.collectionManager = function(refObject){
     this.eventBus = new gform.eventBus({owner:'manager',item:'collection',handlers:{}}, this)
     
 	return {
-		add: function(name, data){
-            collections[name] = data;
-            this.eventBus.dispatch('change',name);
+		add: function(options, data){
+            let name;
+            if(typeof options == 'object'){
+                ({name, path, method} = options);
+            }else{
+                name = options;
+                options = {name:options};
+            }
+            if(typeof method == 'function'){
+                collections[name].data = method.call()
+            }
+            collections[name] = {...options, data:data};
+
+            if(typeof path == 'string'){
+                collections[name].data = collections[name].method.call()
+                gform.ajax({path: path, success:function(name,data) {
+                    this.update(name,data)
+                }.bind(this, name)})
+            }else{
+                this.eventBus.dispatch(name, collections[name].data);
+                this.eventBus.dispatch('change', name);
+            }
+            
 		}.bind(this),
 		get: function(name){
-            return (typeof name == 'undefined')?collections:collections[name]
+            // debugger;
+            return (typeof name == 'undefined')?collections:(collections[name]||{data:[]}).data;
 		},
-		update: function(name, data){
-            if(typeof data !== 'undefined'){
-                collections[name] = data;
+		update: function(options, data){
+            let name;
+            if(typeof options == 'object'){
+                ({name, path, method} = options);
+            }else{
+                name = options;
+                options = {name:options};
             }
-            this.eventBus.dispatch(name,collections[name]);
+            if(typeof data !== 'undefined'){
+                collections[name] = {...collections[name], ...options, data:data};
+
+            }else{
+
+            }
+            this.eventBus.dispatch(name,collections[name].data);
             this.eventBus.dispatch('change',name);
 		}.bind(this),
 		on: this.eventBus.on

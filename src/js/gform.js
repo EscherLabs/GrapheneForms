@@ -9,7 +9,7 @@ var gform = function(optionsIn, el){
     this.call = (method, field, ...rest) => {
         field = field||this;
         let actor = field[method]||gform.types[field.type||'text'][method];
-        return (typeof actor == 'function')?actor.call(field,field,...rest):actor;
+        return (typeof actor == 'function')?actor.call(field,...rest):actor;
     };
     this.bind = (method, field, ...rest) => ( (field[method] == Object.prototype[method])?gform.types[field.type||'text'][method]:field.method).bind(field,...rest);
 
@@ -41,6 +41,7 @@ var gform = function(optionsIn, el){
     this.eventBus = new gform.eventBus({owner:'form',item:'field',handlers:data.events||{}}, this)
     this.on = this.eventBus.on;
     this.dispatch = this.eventBus.dispatch;
+	this.valid = true;
 
 	this.trigger = function(a,b,c){
         if(typeof a == 'string'){ 
@@ -56,7 +57,7 @@ var gform = function(optionsIn, el){
                     events.unshift(item+':'+b.relative)
 
                     var search = b;
-                    while('parent' in search && search.parent !== false){
+                    while('parent' in search && !(search.parent instanceof gform)  && typeof search.parent !== 'undefined' &&  search.parent !== false){
                         search = search.parent;
                         events.push(item+':'+search.name)
                         events.push(item+':'+search.path)
@@ -111,7 +112,7 @@ var gform = function(optionsIn, el){
     }
 
     //merge actions into fields 
-    this.options.fields = (this.options.fields||[]).concat(this.options.actions);
+    if('actions' in this.options && _.isArray(this.options.actions)) this.options.fields = (this.options.fields||[]).concat(this.options.actions);
 
     //attempt to retrieve initialization data from various sources hash, url, etc
     if (typeof this.options.data == 'string') {
@@ -143,12 +144,21 @@ var gform = function(optionsIn, el){
     }else{
         el = '';
     }
-
+    
+    this.add = (field)=>{
+        this.items.push(this.fieldMethods.cultivate({
+            data:this.options.data,
+        }, field));
+        this.reflow();
+    }
     
     this.trigger('initialize', this);
 
     // this.add = gform.createField.bind(this, this, this.options.data||{}, null, null);
 
+    // signature.fields.push(signature.add({type:'signaturePad',required:true,label:"Signature",hideLabel:true,help:_.find(_.find(flow,{name:mappedData.state}).actions,{name:e.field.name}).signature_text||"Please Sign Above",name:"signature"}))
+
+        
     var create = function(){
         if(typeof this.el == 'undefined'){
             this.options.renderer = 'modal';
@@ -158,7 +168,7 @@ var gform = function(optionsIn, el){
 
             this.on('close', function(e){
                 if(typeof e.field == 'undefined'){
-                    e.form.modal('hide')
+                    e.form.modal('hide');
                 }
             });
             // this.sub('cancel', function(e){
@@ -171,9 +181,9 @@ var gform = function(optionsIn, el){
             //     // console.log(e.form.toJSON())
             //     gform.removeClass(e.form.el, 'active')
             // });
-            this.el.querySelector('.close').addEventListener('click', function(e){
-                this.trigger('cancel', this)}.bind(this)
-            )
+            // this.el.querySelector('.close').addEventListener('click', function(e){
+            //     this.trigger('cancel', this)}.bind(this)
+            // )
             document.addEventListener('keyup',function(e) {
                 if (e.key === "Escape") { // escape key maps to keycode `27`
                     this.trigger('cancel', this)
@@ -313,7 +323,10 @@ var gform = function(optionsIn, el){
     }.bind(this),
 
     this.isActive = false;
-
+    Object.defineProperty(this, "active", {
+        get: ()=>(this.isActive),
+        enumerable: true
+    });
     this.destroy = function() {
         this.isActive = false;
 		this.trigger(['close','destroy']);
@@ -332,7 +345,7 @@ var gform = function(optionsIn, el){
 
         this.trigger('destroyed');
         delete this.eventBus;
-
+        return this
     };
 
     if(!this.options.private){
@@ -408,7 +421,6 @@ var gform = function(optionsIn, el){
                 //     newField.trigger(['change','input'],newField)
                 // }
             }
-            
             if(newField.owner.fieldAttr('base', newField) == "section" && "fields" in newField && newField.fields.length){
                 _.each(newField.fields,(field)=>field.trigger(['change','input'],field))
                 // newField.trigger(['change','input'],newField);
@@ -426,7 +438,7 @@ var gform = function(optionsIn, el){
             e.preventDefault();
 
             var newField = field.addField();
-
+            if(!newField)return;
             this.trigger('appended', newField);
 
             field.reflow();

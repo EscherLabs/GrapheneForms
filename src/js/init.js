@@ -87,8 +87,8 @@ gform.addConditions = function(field) {
     })
 
     gform.processConditions.call(field, field.edit, function(result){
-        this.editable = result;        
-        gform.types[this.type].edit.call(this,this.editable);
+        this.editable = result;
+        this.owner.call('edit',this,this.editable);
     })
 
     //should be able to reduce the number of times the process gets called using objectDefine
@@ -98,6 +98,7 @@ gform.addConditions = function(field) {
     gform.processConditions.call(field, field.parse, function(result){
         this.parsable = result
     })
+
     if(!('report' in field)){
         field.report = field.show;
     }
@@ -513,18 +514,18 @@ gform.arrayManager = function(field){
     this.parsable = true;
     this.reportable = true;
     this.editable = true;
+    this.visible = true;
     // this.fillable = true;
-
-    _.reduce(['parse','show','edit'],(am,attr)=>{
+    _.reduce(['show','parse','edit'],attr=>{
         let val = undefined;
         if(typeof this.field.item.array == 'object'){
             val = (attr in this.field.item.array)?this.field.item.array[attr]:undefined;
         }
-        if(typeof val == 'undefined')val =(attr in this.field.item)?this.field.item[attr]:undefined;
-        if(typeof val !== 'undefined')am[attr]= val;
-        return am;
+        if(typeof val == 'undefined')val =(attr in this.field.item)?this.field.item[attr]:(attr=="show")?true:undefined;
+        if(typeof val !== 'undefined')this[attr]= val;
+        // return am;
         // this[attr] = this.field.item.array[attr]||this.field.item[attr]||true
-    },this)
+    }, this)
 
     this.focus = function(){};
     // this.type = 'am';//field.type;
@@ -567,7 +568,6 @@ gform.arrayManager = function(field){
     });    
 
     // this.field.operator = this;
-    debugger;
     gform.addConditions.call(this.owner,this);
 
     Object.defineProperty(this, "map",{
@@ -633,7 +633,11 @@ gform.arrayManager = function(field){
             gform.types[item.type].setLabel.call(item)
         })
 
-        newField.parent.trigger(['change','input', 'create', 'inserted'],newField)
+        newField.parent.trigger(['change', 'input', 'create', 'inserted'], newField)
+        
+        gform.each.call(newField, function(field){
+            field.parent.trigger(['change'],field) 
+        })
         // newField.owner.updateActions(newField);
 
         return newField;
@@ -829,8 +833,8 @@ gform.field = {
                 // }
                 if(typeof field.derivedValue == 'function') {
                     field.value = field.owner.call('resetValue',field);
-                    field.value = field.derivedValue();
-                    field.owner.on('input', (e)=>{
+                    field.value = field.derivedValue({initial:field});
+                    field.owner.on('input, initialized', (e)=>{
                         e.initial = field;
                         var oldv = field.value;
                         var newv =  field.derivedValue(e);
@@ -848,6 +852,8 @@ gform.field = {
                 options.data = ('data' in options)?options.data:field.value;
                 
             }
+            if(field.multiple && field.value == null)field.value = []
+            
             field.internalValue = field.value;
 
             Object.defineProperty(field, "value", {
@@ -861,10 +867,30 @@ gform.field = {
                 enumerable: true
             });
 
+
+            // field._show = field.show;
+            // Object.defineProperty(field, "show", {
+            //     get:() => field._show,
+            //     set: val => {
+            //         if(typeof val == 'undefined')return;
+            //         if(typeof val == 'object'){
+            //             debugger;
+            //             gform.processConditions(val, e=>{field.show = e;})
+            //             return;
+            //         }
+            //         field._show = (typeof val == 'function')? val.call(null, {form: field.owner, field: field}): !!val;
+            //         field.visible = field._show;
+            //         gform.types[field.type].show.call(field, field._show)
+            //     },
+            //     enumerable: false
+            // });
+
+
+
             //Define properties
             /*------------------------------------------*/
             Object.defineProperty(field, "active", {
-                get: ()=>(field.isActive && field.parent.active && field.editable && field.parsable && field.visible),
+                get: ()=>(field.isActive && field.editable /*&& field.parsable*/ && field.visible && field.parent.active),
                 enumerable: true
             });
         
@@ -952,7 +978,6 @@ gform.field = {
             });
 
             /*------------------------------------------*/
-
 
 
 
@@ -1046,8 +1071,9 @@ gform.field = {
             var parent = options.parent || form;
 
             if(!('type' in field) || !(field.type in gform.types)){
-                console.warn('Field type "'+field.type+'" not supported - using '+(form.options.default.type || 'text')+' instead');
-                field.type = form.options.default.type;
+                let old = field.type||"Undefined";
+                field.type = ((field.columns == 0)?'hidden':(('options' in field)?'select':(form.options.default.type || 'text')));
+                console.warn('Field type "'+old+'" not supported - using '+field.type+" "+((field.columns == 0)?"(columns set to 0)":(('options' in field)?'(default collection)':'(default)'))+' instead');
             }
             field.item = _.clone(field);
 
@@ -1157,6 +1183,7 @@ gform.rowManager = (options) => {
     }
 
     const insert = field => {
+        if(!field.visible)return;
 
         if('target' in field && (!('am' in field) || typeof field.am === 'undefined')){
             field._target = (typeof field.target == 'function')?field.target.call(field):field.target;
@@ -1309,9 +1336,15 @@ gform.rowManager = (options) => {
 // }
 
 gform.reflow = function(options){
+
     if(typeof this.rowManager == 'object'){
+        let tempel = document.activeElement;
+        if(!(document.activeElement instanceof HTMLBodyElement)){
+            (this.owner||this).activeEl = document.activeElement;
+        }
+
         this.rowManager.clear(options);
-        return _.reduce(this.items||this.instances, (error, item) => {
+        let result = _.reduce(this.items||this.instances, (error, item) => {
 
 
             //come back to this
@@ -1370,7 +1403,13 @@ gform.reflow = function(options){
             error = gform.reflow.call(item)
             return error;
         }, false)
+
+        //restore focus to element if it is still shown
+        var temp = (this.owner||this).find({id:((this.owner||this).activeEl||{id:''}).id});
+        if(temp)temp.focus();
+        return result;
     }
+
 }
 // gform.reflowOld = function(){
 //     //capture focused element

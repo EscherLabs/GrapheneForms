@@ -260,3 +260,10 @@ option:disabled {
 	}
 
 }
+.combobox-container [type='smallcombo'].form-control{
+	overflow: hidden;white-space: nowrap;position: absolute;width:auto;right:37px;left:0;border-radius: 5px 0 0 5px;
+}
+
+.combobox-container .dropdown-toggle{
+	height: 34px;position: relative;border-left: solid 1px #ccc;width: 38px;border-radius: 0 5px 5px 0;
+}
