@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>    
+      <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Adam Smallcomb">
+    <link rel="icon" href="../assets/favicon.png">
+
+    <title>Example:Types - Graphene:Forms</title>
+    <!-- <link rel="stylesheet" href="../assets/css/normalize.css">     -->
+    <link rel="stylesheet" href="../assets/css/tailwind.css">
+    </head>
+    <body>
+      <div style="padding:20px">
+      <h4><a href="./">Examples</a> - Types</h4>
+      <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8 ">
+          <div class="md:grid md:grid-cols-4 md:gap-6">
+                <div class="mt-5 md:mt-0 md:col-span-1" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
+                <div class="mt-5 md:mt-0 md:col-span-2" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>
+                <div class="mt-5 md:mt-0 md:col-span-1" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
+              </div>
+          </div>
+      </div>
+      <script src="../assets/js/lodash.min.js"></script>    
+
+      <script src='../assets/js/gform.js'></script> 
+      <script src='../assets/js/tailwind.js'></script> 
+      <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+
+    <script>
+    options = {
+        fields:[
+        {label: 'Output', type: 'output',format:{value:"hello test"}},
+
+            {label: 'Text', type: 'text'},
+
+            // {label: 'Hidden', type: 'hidden', value:'hidden field'},
+            {label: 'Number', type: 'number'},
+            {label: 'Color', type: 'color'},
+            // {label: 'Email', type: 'email'},
+            {label: 'Password', type: 'password',map:false},
+            {label: 'Textarea', type: 'textarea',map:"stuff.password"},
+            {label: 'Checkbox', type: 'checkbox',text:"you must select this one"},
+            {label: 'Switch', type: 'switch'},
+            {label: 'Select', type: 'select', options:[1,2,3]},
+            // {label: 'Multi Select', multiple:true, size:3, type: 'select', options:[1,2,3]},
+            {label: 'Radio', type: 'radio', options:[1,2,3],defaultIndex:0},
+            // {label: 'Multi Radio', multiple:true, type: 'radio', options:[1,2,3]},
+            // {label: 'scale', type: 'scale', min:1,max:5,format:{low:"Worst",high:"Best"}},
+            // {label: 'Grid', type: 'grid',options:[1,2,3],
+            // fields:[
+            //     {label: 'Fieldset Text 1', name: 'text1'},
+            //     {label: 'Fieldset Text 2', name: 'text2'}
+            // ]},
+            {label: 'Range', type: 'range', min:20,max:60},
+            {label: 'Fieldset', type: 'fieldset', fields:[
+                {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
+                // {label: 'Fieldset Text 2', name: 'text2', type: 'text'}
+            ]}
+        ]
+    }
+    </script>
+    <script src="../assets/js/example.js"></script>   
+   </body>
+</html>

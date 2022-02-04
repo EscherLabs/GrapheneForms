@@ -34,21 +34,30 @@
       <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
 
     <script>
-    options = {
-        data:{color:"#00ff00",radio:['2'],switch:true,"grid": {
+      data = {stuff:"hello",color:"#00ff00",radio:['2'],switch:true,"grid": {
     "text1": "1",
     "text2": "2"
-  }},
+  },data:{stuff:"asfdasdf"}};
+
+    options = {
+      collections: new gform.collectionManager(data),
+        data:{stuff:"hello",color:"#00ff00",radio:['2'],switch:true,"grid": {
+    "text1": "1",
+    "text2": "2"
+  },data:{stuff:"asfdasdf"}},
         fields:[
             {label: 'Output', type: 'output',format:{value:"hello test"}},
-            {label: 'Text', type: 'text'},
+            {label: 'Text', type: 'text',value:"{{data.stuff}}"},
             {label: 'Hidden', type: 'hidden', value:'hidden field'},
             {label: 'Number', type: 'number'},
-            {label: 'Color', type: 'color'},
+            {label: 'Switch', type: 'switch',options:[{value:{color:"red",stuff:2}},{value:{color:"blue",stuff:"1"}}],map:"..."},
+
+            {label: 'Color', type: 'color',map:'color[]'},
+            {label: 'Colors', type: 'color',map:'color[]'},
             {label: 'Email', type: 'email'},
             {label: 'Textarea', type: 'textarea'},
             {label: 'Checkbox', type: 'checkbox',  "container": "span",
-},            {label: 'Switch', type: 'switch'},
+},           
 {label: 'Select Field (url string)', name: 'url', type:'select', options:[{type:'optgroup', path:'../data/months.json'},{type:'optgroup', path:'../data/states.json',format:{label:"{{name}}"}},{type:'optgroup', path:'../data/days.json'},{type:'optgroup', path:'https://www.binghamton.edu/maps/data/buildings.json',format:{label:"{{name}}",value:"{{code}}"}}]},
 
             {label: 'Select', type: 'select', options:[1,2,3]},
@@ -69,6 +78,27 @@
     </script>
     <script src="../assets/js/example.js"></script>   
     <script>
+      // myform.collections.on('change',(obj)=>{
+      //   // debugger;
+      //   // myform.find.set(data)
+      //   let target = myform.find(obj.collection);
+      //   if(target){
+      //     target.set(obj.manager.get(obj.collection))
+      //     target.trigger(['change', 'input'])
+      //     // target.dispatch('input')
+      //   }
+      // })
+      // myform.on('change',e=>{
+      //   // data = {...data, ...e.form.get()};
+      //   _.merge(data, e.form.get(true))
+      //   // data = e.form.get();
+      // })
+      // console.log(_.reduce({hello:{thing:"mine"}},(path,e,name)=>{
+      //   // debugger;
+
+      //   // e
+      //   return path += ((path.length)?'.':'')+name;
+      // },''))
       // myform.set({radio:['3','1']})
     </script>
    </body>

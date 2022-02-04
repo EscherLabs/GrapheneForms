@@ -1,247 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link rel="stylesheet" href="../assets/css/normalize.css">
-  	<!-- <link rel="stylesheet" href="../assets/css/skeleton.css"> -->
-  	<link rel="stylesheet" href="../assets/css/gform.css">
-  	 <!--<link rel="stylesheet" href="../assets/css/bulma.min.css"> -->
-	<!-- <link rel='stylesheet' type='text/css' href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>  -->
-	<!-- <link rel='stylesheet' type='text/css' href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>  -->
-		<!-- <script type='text/javascript' src='../assets/js/jquery.min.js'></script> -->
 
-		<!-- <script type='text/javascript' src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>   -->
-		</head>
-  <body>
-   <div style="max-width:800px;padding:0 20px;margin:50px auto" id="form">
-		<div name="f_n"></div>
-		Hello
-		<div name="last_name"></div>
-		<div name="candies"></div>
-	</div>
-   <pre style="max-width:800px;padding:0 20px;margin:50px auto" id="result"></pre>
-    <script src="../assets/js/lodash.min.js"></script>    
-    <script type='text/javascript' src='../assets/js/gform.js'></script>
-    <script type='text/javascript' src='../assets/js/default.theme.min.js'></script>
+<head>
+  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+  <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+  <link rel="stylesheet" type='text/css' href="../assets/vendor/css/combobox.css">
+  <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
+  <style>
 
-    <!--/*<script type='text/javascript' src='assets/js/bootstrap.full.gform.js'></script>    */-->
+  </style>
+</head>
+
+<body>
+  <div style="padding:20px">
+    <h4><a href="./">Examples</a> - Types</h4>
+    <div class="container ">
+      <div class="row ">
+        <div class="col-md-4" style="overflow: scroll;">
+          <pre id="code"><code class="prettyprint"></code></pre>
+        </div>
+        <div class="col-md-4" style="">
+          <pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre>
+          <hr>
+          <div id="form"></div>
+        </div>
+        <div class="col-md-4" style="overflow: scroll;">
+          <pre id="result"><code class="prettyprint"></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src='../assets/vendor/js/jquery.js'></script>
+
+  <script src="../assets/js/lodash.min.js"></script>
+  <!-- <script src='../assets/js/gform_bootstrap.min.js'></script>  -->
+  <!-- <script src='../assets/js/gform.js'></script> -->
+  <!-- <script src='../assets/js/bootstrap.js'></script> -->
+  <script src='../assets/js/gform_bootstrap.js'></script>
+
+  <script src='../assets/vendor/js/combobox.js'></script>
+  <script src='../assets/vendor/js/colorpicker.min.js'></script>
+
+  <!-- <script src='../assets/js/gform_bootstrap.js'></script> -->
+  <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
   <script>
-
-
-   options={
-        data:{
-        // "f_n": [
-        //   "Bob",
-        //   "steve"
-        // ],       
-         "f_n":
-          "Bob",
-        "checked":true,
-        // "number": 3,
-        "favorite_state": ["asfd"],
-        "candies": {
-          "candy": "skittles",
-          "brand": "mars",
-          "flavors": [
+    options = {
+      data: { "case_type": "faculty" },
+      "legend": "File Upload",
+      "name": "upload_file",
+      "autoFocus": true,
+      "default": {
+        "horizontal": false
+      },
+      "horizontal": true,
+      "actions": [
+        {
+          "type": "save",
+          "action": "save",
+          "label": "Upload",
+          "modifiers": "btn btn-info"
+        }
+      ],
+      "fields": [
+        {
+          "type": "hidden",
+          "label": "",
+          "name": "id",
+          "showColumn": true
+        },
+        {
+          "type": "hidden",
+          "label": "",
+          "name": "gdrive_file_id",
+          "showColumn": true
+        },
+        {
+          "type": "hidden",
+          "label": "",
+          "name": "case_type",
+          "showColumn": true
+        },
+        {
+          "type": "hidden",
+          "label": "",
+          "name": "gdrive_folder_id",
+          "showColumn": true
+        },
+        {
+          "type": "text",
+          "label": "Case ID",
+          "name": "case_id",
+          "columns": 4,
+          "edit": false,
+          "required": true,
+          "showColumn": true
+        },
+        {
+          "type": "select",
+          "label": "Section",
+          "name": "section",
+          "multiple": false,
+          "columns": 4,
+          "parse": true,
+          "required": true,
+          "showColumn": true,
+          "options": [
             {
-              "flavor": "Lemon",
-              "color": [
-                "#0000ff",
-                "#ff0000"
+              "label": "",
+              "type": "optgroup",
+              "path": "faculty_sections",
+              "show": [
+                {
+                  "op": "and",
+                  "conditions": [
+                    {
+                      "type": "matches",
+                      "name": "case_type",
+                      "value": [
+                        "faculty"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "",
+              "type": "optgroup",
+              "path": "library_sections",
+              "show": [
+                {
+                  "op": "and",
+                  "conditions": [
+                    {
+                      "type": "matches",
+                      "name": "case_type",
+                      "value": [
+                        "library"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "label": "Type",
+          "name": "type",
+          "multiple": false,
+          "columns": 4,
+          "required": true,
+          "showColumn": true,
+          "options": [
+            {
+              "label": "",
+              "type": "optgroup",
+              "path": "faculty_doc_types",
+              "show": [
+                {
+                  "op": "and",
+                  "conditions": [
+                    {
+                      "type": "matches",
+                      "name": "case_type",
+                      "value": [
+                        "faculty"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "",
+              "type": "optgroup",
+              "path": "library_doc_types",
+              "show": [
+                {
+                  "op": "and",
+                  "conditions": [
+                    {
+                      "type": "matches",
+                      "name": "case_type",
+                      "value": [
+                        "library"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "switch",
+          "label": "Is the file size greater than 48MB?",
+          "name": "bgt64",
+          "value": true,
+          "showColumn": true,
+          "options": [
+            {
+              "label": "No",
+              "value": "No"
+            },
+            {
+              "label": "Yes",
+              "value": "Yes"
+            }
+          ]
+        },
+        {
+          "type": "url",
+          "label": "File URL",
+          "name": "file_url",
+          "help": "Please upload your file to Google Drive, and paste the shareable link of the file in this field",
+          "columns": 6,
+          "show": [
+            {
+              "op": "and",
+              "conditions": [
+                {
+                  "type": "matches",
+                  "name": "bgt64",
+                  "value": [
+                    "Yes"
+                  ]
+                }
+              ]
+            }
+          ],
+          "required": "show",
+          "showColumn": true
+        },
+        {
+          "type": "text",
+          "label": "File Name",
+          "name": "file_name",
+          "help": "Please enter the you'd like to use for your file",
+          "columns": 6,
+          "show": [
+            {
+              "op": "and",
+              "conditions": [
+                {
+                  "type": "matches",
+                  "name": "bgt64",
+                  "value": [
+                    "Yes"
+                  ]
+                }
+              ]
+            }
+          ],
+          "required": "show",
+          "showColumn": true
+        },
+        {
+          "type": "base64_file",
+          "label": "Upload File",
+          "name": "file",
+          "showColumn": true,
+          "validate": [
+            {
+              "type": "custom",
+              "test": "validate_file_type",
+              "conditions": true
+            }
+          ],
+          "options": [
+            {
+              "label": "",
+              "type": "optgroup"
+            }
+          ],
+          "show": [
+            {
+              "op": "and",
+              "conditions": [
+                {
+                  "type": "matches",
+                  "name": "bgt64",
+                  "value": [
+                    "No"
+                  ]
+                }
               ]
             }
           ]
         }
-	  },
-	  suffix:'-',
-      legend:'My Form',
-        fields:[
-		// {type: 'fieldset', name:'basics', legend: 'General', hideLabel: true, inline: true, fields:[
-		{label:'First Name', name: 'f_n', array:false,type:'email',columns:6,"required":  [
-                    {type:"matches", "name": "checked","value": [true]}
-                ],satisfied:function(stuff,more){
-                  return stuff;
-                }},
-            {name: 'checked', label: 'Checked?',type: 'checkbox',required:true,columns:6,options:[false,true]},// , display: {matches:[{name:'number', value:['first','1']}]}},
-            {name: 'last_name', label: '0Last Name', validate: {required:false},columns:6,
+      ]
+    }
 
-            "display": [
-                    {type:"matches", "name": "f_n","value":["adam"]},
-                    {type:"matches", "name": "checked","value": [false]}
-                ],
-                "parse":"display"
-              },            
-              {name: 'last_name', label: '1Last Name', validate: {required:false},columns:6, 
-                "display": [
-                    {type:"matches", "name": "f_n","value":["adam"]},
-                    {type:"matches",  "name": "checked","value": [true]}
-                ],
-                "parse":"display"
-              },
-            {name: 'last_name', label: '2Last Name', validate: {required:false},columns:6, "display": [
-                    {type:"matches", "name": "f_n","value":["", "tim"]}
-            
-              ],
-                "parse":"display"
-              },
-              {name: 'number', type:'select', max: 5, default: {label:'ZERO', value: ''},format:{"label":'{{index}}: {{label}}'}, options:['first', 1,3,{value:'hello',label:'Other',selected:true},'mother']},
-			  {name: 'Another', type:'select', placeholder:'Please choose one', options:[
-				  {type:"optgroup",label:"stuff",format:{"label":'{{label}}'}, options:[3,4,5,9]},
-				  {type:"optgroup",format:{"label":'{{index}}: {{label}}'},min:2,max:10,"display": [
-                    {"matches": {"name": "checked","value": [true]}}
-                  ]
-              }
-			  ]
-			//   ,optgroups:[
-            //     // {label:"stuff",format:{"label":'{{label}}'}, options:[3,4,5,9]},
-            //     {format:{"label":'{{index}}: {{label}}'},min:2,max:10,"display": {
-            //         "matches": [
-            //             {"name": "checked","value": [true]},
+  </script>
+  <script src="../assets/js/example.js"></script>
 
-            //         ],
-            //     }}
-                
-            //   ]
-			},
-              {"label": "Favorite State",multiple:true, suffix:'',type:'radio', "options": "../data/states.json",format:{"label":'({{value}}) {{name}}'} },
-              {name: 'stated', label: 'Stated?',type: 'checkbox',required:true,display:[{type:'contains',name:'favorite_state',value:['NY','PA']}]},// , display: {matches:[{name:'number', value:['first','1']}]}},
+</body>
 
-              {label: 'Candies', type:'fieldset', fields: [
-                {label: 'Candy',required:true},
-                {label: 'Brand'},
-                {name: 'flavors', label: '', type: 'fieldset', array: true, fields: [{label: 'Flavor'},{ label: 'Color {{^index}}(0){{/index}} {{#index}}({{index}}){{/index}}', type:'text',columns:6, array: {min:2,max:3},"display": [
-                      {"not_matches":{"name": "flavor","value":""}}
-                ]
-                
-                }]}
-                
-              ]}
-
-		// ]}
-			,
-				{
-				"type":"cancel",
-			},
-			{
-				"type":"save",
-			}
-
-        ]
-   }
- 
-
-   optionss = {
-     legend:"Select Options",
-     data:		{
-			"label": "Field Label",
-			"name": "label",
-			"type": "select",
-			"value": "",
-			"max": "",
-			"min": "",
-			"step": "",
-			"help": "",
-			"required": false,
-      "choices_c":{
-			"options": [
-				{
-					"label": "Field Label",
-					"value": "1"
-				},
-				{
-					"label": "stuff",
-					"value": "2"
-				}
-      ]},
-			"enabled": true
-		},
-	   fields:[
-
-	   {type: 'fieldset', name:'basics', legend: 'General', hideLabel: true, inline: true, fields:[
-			{type: 'text', required: true, label: 'Field Label', name: 'label'},
-			{type: 'text', label: 'Name', name: 'name',display:{requires:{name:'label',path:'basics.label'}}},
-			{type: 'select', label: 'Display', name: 'type', value: 'dropdown', choices: [
-				{name: 'Dropdown', value: 'select'},
-				{name: 'Radio', value: 'radio'},
-				{name: 'Range', value: 'range'}
-			]},
-			{type: 'text', label: 'Default Value', name: 'value'},
-			{type: 'checkbox', label: 'Required', name: 'required'},
-			
-			{type: 'textarea', label: 'Instructions', name: 'help'},
-			
-			{type: 'text', label: 'External List', name: 'choices'},
-
-			{type: 'text', label: 'Label key', name: 'label_key',display:{'not_matches':{"name":"choices","value":""}}},
-			{type: 'text', label: 'Value key', name: 'value_key',display:{'not_matches':{"name":"choices","value":""}}},
-
-			{type: 'number', label: 'Max', name: 'max',display:{'matches':{"name":"choices","value":""}}},
-			{type: 'number', label: 'Min', name: 'min',placeholder:'1',display:{'not_matches':{"name":"max","value":0}}},
-			{type: 'number', label: 'Step', name: 'step',placeholder:'1',display:{'not_matches':{"name":"max","value":0}}},
-			{type: 'fieldset', name:'default', legend: 'default Option',flatten:false, fields:[
-				{type: 'fieldset', label: false, multiple: {duplicate: false},flatten:false, name: 'default', fields: [
-					{label: 'Label'},
-					{label: 'Value'}
-				]}
-			]}
-		]},
-		{type: 'fieldset', name:'choices_c', legend: '<i class="fa fa-th-list"></i> Options', hideLabel: true,  inline: true, fields:[
-			{type: 'fieldset', label: 'Options',  array: {}, name: 'options', fields: [
-				{label: 'Label'},
-				{label: 'Value'}
-			]}
-		]},
-      {
-				"type":"cancel",
-			},
-			{
-				"type":"save",
-			}
-			// {
-			// 	"label":"<i class=\"fa fa-times\"></i> Cancel",
-			// 	"action":"cancel",
-			// 	"modifiers": "btn-danger",
-			// 	"type":"cancel",
-			// 	// "target":'.modal-footer'
-			// },
-			// {
-			// 	"label":"<i class=\"fa fa-check\"></i> Save",
-			// 	"action":"save",
-			// 	"modifiers": "btn-success pull-right",
-			// 	"type":"button",
-			// 	// "target":'.modal-footer'
-			// }
-
-	   ]
-   }
-   options.sections = 'tab'
-  //  debugger;
-  //  options.clear = false;
-// options = {
-// 	   fields:[
-//        {}
-//      ]}
-	options.el = '#form';
-    var mygform = new gform(options).on('change',_.debounce(function(e){
-      // if(e.form.validate()){
-          document.querySelector('#result').innerHTML = 'myform.toJSON();<br> => '+JSON.stringify(e.form.toJSON(),null,2);
-      // }
-  },250)).on('save',_.debounce(function(form){
-    console.log(form.toJSON())
-  },250) )
-    // mygform.debounce('change', function(field){
-    //     field.owner.validate();
-    //     document.querySelector('#result').innerHTML = JSON.stringify(mygform.toJSON(), null, 2)
-    // })
-
-
-
-	// mygform
-  // mygform.trigger('change',null, {message:'initialize'})
-  // mygform.debounce('save',function(form){
-  //   console.log(form.toJSON())
-  // })
-
-    </script>
-   </body>
 </html>

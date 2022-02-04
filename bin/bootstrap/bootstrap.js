@@ -1,5 +1,5 @@
 gform.stencils = {
-	_style:`.array_container + button.create {
+	_style: `.array_container + button.create {
 		display: none;
 
 	  }
@@ -58,6 +58,67 @@ input:checked + .falseLabel {
 .combobox-container:not(.combobox-selected) .fa-times {
 	display: none;
 }
+
+
+.combobox-container:not(.loaded) .status-icon,
+.combobox-container:not(.loaded) .status-icon:after\ {
+  border-radius: 50%;
+  width: 10em;
+  height: 10em;
+	color:red;
+}
+.combobox-container:not(.loaded) .status-icon {
+  margin: 0px auto;
+	    position: absolute !important;
+    top: 7px;
+    right: 7px;
+  font-size: 2px;
+  position: relative;
+  text-indent: -9999em;
+  border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-left: 1.1em solid #333333;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: load8 1.1s infinite linear;
+  animation: load8 1.1s infinite linear;
+}
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.combobox-container.loaded .status-icon {
+ 		background: #eee url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'/></svg>") no-repeat center 1px;
+		background-size: 20px 20px;
+    width: 100%;
+    height: 100%;
+		display:inline-block;
+}
+
+.combobox-container.loaded:not(.combobox-selected) .status-icon {
+ background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/></svg>");
+}
+
+
 .combobox-list {
 	max-height: 300px;
 	overflow-y: auto;
@@ -66,7 +127,14 @@ input:checked + .falseLabel {
 .combobox-container .form-control{
 	overflow: hidden;white-space: nowrap;position: absolute;width:auto;right:37px;left:0;
 }
+.combobox-container .form-control:empty::before {
+	content: attr(placeholder);
+	color: #aaa; 
+}
 
+.combobox-container .form-control:empty:focus::before {
+	content: "";
+}
 .combobox-container .dropdown-toggle{
 	height: 34px;position: relative;border-left: solid 1px #ccc;width: 38px;
 }
@@ -253,8 +321,8 @@ input:disabled + .slider {
 	.table>tbody.table-row+tbody.table-row{border-top:1px}
 `,
 	// _form:`<form id="{{name}}" style="overflow:hidden" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{#horizontal}} smart-form-horizontal form-horizontal{{/horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form>`,
-_container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#horizontal}} form-horizontal{{/horizontal}} " {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
-text: `<div class="row clearfix form-group {{modifiers}}" data-type="{{type}}">
+	_container: `<form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform {{modifiers}}{{#horizontal}} form-horizontal{{/horizontal}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}</form><div class="gform-footer"></div>`,
+	text: `<div class="row clearfix form-group {{modifiers}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
@@ -274,7 +342,7 @@ text: `<div class="row clearfix form-group {{modifiers}}" data-type="{{type}}">
 		{{>_actions}}
 	</div>
 </div>`,
-output: `
+	output: `
 <div class="row">
 <div>
 		{{>_label}}
@@ -287,7 +355,7 @@ output: `
     </div>
     </div>
 `,
-grid: `<div class="row">
+	grid: `<div class="row">
 <fieldset id="{{id}}" name="{{name}}" class="row"  style="margin-bottom:20px">
     {{>_label}}
 	<div class="col-xs-12">
@@ -323,7 +391,7 @@ grid: `<div class="row">
 	</div>
 </fieldset>
 </div>`,
-switch:`<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
+	switch: `<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
@@ -344,22 +412,22 @@ switch:`<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{mu
 		{{>_actions}}
 	</div>
 </div>`,
-// switch: `
-// <div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
-// {{>_label}}
-// <div class="col-md-12" style="margin:0 0 5px">
-// <label class="switch">
-// <input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
-// <span class="slider round"></span>
-// </label>
-// </div>
-    
-//     {{>_error}}
-//     </div>
-//     {{>_actions}}
-// </div>`,
-hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
-    textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
+	// switch: `
+	// <div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+	// {{>_label}}
+	// <div class="col-md-12" style="margin:0 0 5px">
+	// <label class="switch">
+	// <input name="{{name}}" type="checkbox" {{#selected}} checked {{/selected}} value="{{value}}" id="{{name}}" />
+	// <span class="slider round"></span>
+	// </label>
+	// </div>
+
+	//     {{>_error}}
+	//     </div>
+	//     {{>_actions}}
+	// </div>`,
+	hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
+	textarea: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/horizontal}}
@@ -375,7 +443,7 @@ hidden: `<input type="hidden" name="{{name}}" value="{{value}}" />{{>_addons}}`,
 	</div>
 </div>`,
 
-contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
+	contenteditable: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" {{#advanced}}style="padding:0px 13px"{{/advanced}}>{{/horizontal}}
@@ -391,7 +459,7 @@ contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}is
 			{{>_actions}}
 	</div>
 </div>`,
-    select: `<div class="row clearfix form-group {{modifiers}} {{#size}}size={{size}}{{/size}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
+	select: `<div class="row clearfix form-group {{modifiers}} {{#size}}size={{size}}{{/size}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
@@ -429,7 +497,7 @@ contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}is
 		{{>_actions}}
 	</div>
 </div>`,
-    radio: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
+	radio: `<div class="row clearfix form-group {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12 {{#size}}row{{/size}}" {{#size}}style="padding-top: 5px;"{{/size}}>{{/horizontal}}
@@ -486,7 +554,7 @@ contenteditable :`<div class="row clearfix form-group {{modifiers}} {{#array}}is
 		{{>_actions}}
 	</div>
 </div>`,
-custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.duplicate}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/multiple.duplicate}}" name="{{name}}" data-type="{{type}}">
+	custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.duplicate}}dupable" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/multiple.duplicate}}" name="{{name}}" data-type="{{type}}">
 {{>_label}}
 {{#multiple.duplicate}}
 <div class="duplicate add btn btn-default"><i class="fa fa-plus"></i></div>
@@ -502,11 +570,30 @@ custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.dup
 	{{#pre}}<div class="input-group"><span class="input-group-addon">{{{pre}}}</span>{{/pre}}
 	{{^pre}}{{#post}}<div class="input-group">{{/post}}{{/pre}}
 		<div class="custom-group"  name="{{name}}" style="max-height:200px;overflow-y:scroll;">
+
 		{{#options}}
-			<a href="javascript:void(0);" class="{{^selected}} {{defaultClass}}{{/selected}}{{#selected}} {{selectedClass}}{{/selected}}" data-value="{{value}}">
-				{{{label}}}
-			</a>&nbsp;
-		{{/options}}
+		{{^optgroup}}
+
+		<button type="button" href="javascript:void(0);" data-id="{{optgroup.id}}" name="{{id}}" data-id="{{optgroup.id}}" class="{{^selected}} {{defaultClass}}{{/selected}}{{#selected}} {{selectedClass}}{{/selected}}"  value="{{i}}"  data-value="{{value}}">
+		{{{label}}}{{^label}}&nbsp;{{/label}}
+		</button>
+
+		{{/optgroup}}
+	{{#optgroup}}
+	{{#optgroup.label}}
+	<b class="text-muted" data-id="{{optgroup.id}} {{^editable}}disabled{{/editable}} {{^visible}}hidden{{/visible}}">{{label}}</b>
+	{{/optgroup.label}}
+			{{#options}}
+			
+			<button type="button" href="javascript:void(0);" data-id="{{optgroup.id}}" name="{{id}}" data-id="{{optgroup.id}}" class="{{^selected}} {{defaultClass}}{{/selected}}{{#selected}} {{selectedClass}}{{/selected}}"  value="{{i}}"  data-value="{{value}}">
+			{{{label}}}{{^label}}&nbsp;{{/label}}
+			</button>
+
+
+			{{/options}}
+
+	{{/optgroup}}
+	{{/options}}
 		</div>
 	{{#post}}<span class="input-group-addon">{{{post}}}</span></div>{{/post}}
 	{{^post}}{{#pre}}</div>{{/pre}}{{/post}}
@@ -514,9 +601,9 @@ custom_radio: `<div class="row clearfix form-group {{modifiers}} {{#multiple.dup
 	{{>_actions}}
 </div>
 </div>`,
-fieldset_array:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
+	fieldset_array: '<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{ref}}" data-parent="{{parent.id}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<legend>{{label}}</legend><div class="list-group gform-template_row"></div></div></div>',
 
-_fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
+	_fieldset: `<div class=""><fieldset data-type="fieldset" style="" name="{{name}}" id="{{id}}" class="{{modifiers}}" >
 {{#array}}
 <div data-name="{{name}}" data-ref="{{am.id}}" class="btn-group hidden-print actions">
 	{{#remove.enable}}
@@ -542,12 +629,12 @@ _fieldset: `<div class="row"><fieldset data-type="fieldset" style="" name="{{nam
 
 	</div>
 	{{/array}}`,
-	_tooltip:`<div id="tooltip" role="tooltip">
+	_tooltip: `<div id="tooltip" role="tooltip">
 <span class="info-close"></span>
 <div class="tooltip-body"></div>
 <div id="arrow" data-popper-arrow></div>
 </div>`,
-_info:`<div>
+	_info: `<div>
 <div class="title">More&nbsp;Information</div>
 <hr>
   <div>{{info}}</div>
@@ -555,13 +642,13 @@ _info:`<div>
 	_label: `
 	{{^hideLabel}}
     {{#label}}
-	<label for="{{name}}" {{^horizontal}}style="text-align:left"{{/horizontal}} class="control-label {{^horizontal}}col-xs-12{{/horizontal}}{{#horizontal}}col-md-4{{/horizontal}}">{{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}</label>{{/label}}
+	<label for="{{name}}" {{^horizontal}}style="text-align:left"{{/horizontal}} class="control-label {{^horizontal}}col-md-12{{/horizontal}}{{#horizontal}}col-md-4{{/horizontal}}">{{{label}}}{{#required}}{{{requiredText}}}{{/required}}{{suffix}}</label>{{/label}}
 {{#info}}<b class="gform-info" data-id="{{id}}"></b>{{/info}}
 {{/hideLabel}}
     `,
-    _addons:`<span class="help-inline"> {{{help}}}</span>
+	_addons: `<span class="help-inline"> {{{help}}}</span>
 <span class="font-xs text-danger" style="display:block;"></span>`,
-    checkbox:`<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
+	checkbox: `<div class="row clearfix {{modifiers}} {{#array}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12" style="margin:0 0 5px">{{/horizontal}}
@@ -580,7 +667,7 @@ _info:`<div>
 		{{>_actions}}
 	</div>
 </div>`,
-scale:`
+	scale: `
 <div class="row clearfix form-group {{modifiers}} {{#multiple.duplicate}}isArray" data-min="{{multiple.min}}" data-max="{{multiple.max}}{{/multiple.duplicate}}" name="{{name}}" data-type="{{type}}">
 	{{>_label}}
 	{{>_actions}}
@@ -616,8 +703,8 @@ scale:`
 		{{>_addons}}
 	</div>
 </div>`,
-button:`<button class="btn btn-default hidden-print {{modifiers}}" type="button" style="margin:0 15px">{{{label}}}</button>`,
-tab_container: `
+	button: `<button class="btn btn-default hidden-print {{modifiers}}" type="button" style="margin:0 15px">{{{label}}}</button>`,
+	tab_container: `
 <form id="{{name}}" {{^autocomplete}}autocomplete="false"{{/autocomplete}} name="{{name}}" class="gform tab-content {{#horizontal}} smart-form-horizontal form-horizontal{{/horizontal}} {{modifiers}}" {{#action}}action="{{action}}"{{/action}} onsubmit="return false;" {{#method}}method="{{method}}"{{/method}}>{{^legendTarget}}{{#legend}}<legend>{{{legend}}}</legend>{{/legend}}{{/legendTarget}}    
 	<ul class="nav nav-tabs" style="margin-bottom:15px">
 		{{#fields}}
@@ -629,8 +716,9 @@ tab_container: `
 		{{/fields}}
 	</ul></form>
 	</form><div class="gform-footer"></div>`,
-tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
-modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form-horizontal{{/horizontal}}" id="myModal" name="modal_{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	tab_fieldset: `{{#section}}<div class="tab-pane {{^index}}active{{/index}} " id="tabs{{id}}">{{/section}}{{>_fieldset}}{{#section}}</div>{{/section}}`,
+	modal_container: `<div class="hidden">
+	<div style="display:block;overflow-x: hidden;overflow-y: auto;" class=" modal gform {{modifiers}} {{#horizontal}} form-horizontal{{/horizontal}}" id="myModal" name="modal_{{name}}" data-update="{{update}}" data-append="{{append}}" {{#focus}}tabindex="-1"{{/focus}} role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header {{modal.header_class}}">
@@ -662,302 +750,347 @@ modal_container:`<div class="modal fade gform {{modifiers}} {{#horizontal}} form
 		</div>
 	</div>
 </div>
-`,
-modal_fieldset:`{{>_fieldset}}`,
-child_modal_footer:`<button type="button" class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
 
-template:'<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{am.id}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend>{{/array}}</div></div>',
-template_item:`<div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{display}}}{{/format.template}}</div>`,
-table:'<div><div class="col-xs-12" style="overflow:scroll">{{#array}}<legend>{{{label}}}</legend>{{#append.enable}}<button type="button" data-id="{{ref}}"  class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{{.}}}</th>{{/labels}}</thead></table></div></div>'
+	<div class="modal-backdrop in">
+</div>
+</div>
+`,
+	modal_fieldset: `{{>_fieldset}}`,
+	child_modal_footer: `<button type="button" class="btn btn-danger hidden-print pull-left gform-minus"><i class="fa fa-times"></i> Delete</button><button class="btn btn-default hidden-print done" style="margin:0 15px"><i class="fa fa-check"></i> Done</button>`,
+
+	template: '<div><div class="col-xs-12">{{#array}}{{#append.enable}}<button data-ref="{{am.id}}" class="gform-append btn btn-info btn-xs pull-right">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}<legend>{{label}}</legend>{{/array}}</div></div>',
+	template_item: `<div style="position:relative;top: -6px;">{{>_actions}}</div><div class="gform-template_container">{{{format.template}}}{{^format.template}}{{{display}}}{{/format.template}}</div>`,
+	table: '<div><div class="col-xs-12" style="overflow:scroll">{{#array}}<legend>{{{label}}}</legend>{{#append.enable}}<button type="button" data-id="{{ref}}"  class="gform-append btn btn-info btn-xs" style="top: -10px;position: relative;">{{{append.label}}}{{^append.label}}<i class="fa fa-plus"></i> Add {{{label}}}{{/append.label}}</button>{{/append.enable}}{{/array}}<table class="table table-bordered table-striped table-hover table-fixed {{#array.sortable.enable}}sortable{{/array.sortable.enable}}"><thead>{{#labels}}<th>{{{.}}}</th>{{/labels}}</thead></table></div></div>'
 };
 
 
 // gform.columns = 12;
 
-gform.columnClasses = _.map(new Array(13),function(item, i){return 'col-xs-12 col-sm-'+i})
-gform.offsetClasses = _.map(new Array(13),function(item, i){return 'col-xs-offset-0 col-sm-offset-'+i})
+gform.columnClasses = _.map(new Array(13), function (item, i) { return 'col-xs-12 col-sm-' + i })
+gform.offsetClasses = _.map(new Array(13), function (item, i) { return 'col-xs-offset-0 col-sm-offset-' + i })
 gform.prototype.options.inline = true;
 gform.prototype.options.columns = 12;
 
 gform.prototype.options.default.suffix = "";
 
-gform.handleError = function(field){
+gform.handleError = function (field) {
 	var error_container = field.el.querySelector('.font-xs.text-danger')
 
-	if(!field.valid){
+	if (!field.valid) {
 		field.el.classList.add('has-error');
-		if(!!error_container)error_container.innerHTML = field.errors;
-	}else{
+		if (!!error_container) error_container.innerHTML = field.errors;
+	} else {
 		field.el.classList.remove('has-error');
 		// field.el.classList.add('has-success')
 		// field.el.querySelector('.font-xs.text-danger').innerHTML = '';
-		if(!!error_container)error_container.innerHTML = '';
+		if (!!error_container) error_container.innerHTML = '';
 
 	}
 }
 
-gform.types['reset']   = _.defaultsDeep({toString: function(){return ''}},gform.types['button'], {defaults:{
-	"label":"<i class=\"fa fa-times\"></i> Reset",
-	"action":"reset",
-	"modifiers": "btn btn-default"}});
-gform.types['cancel']   = _.defaultsDeep({toString: function(){return ''}},gform.types['button'], {defaults:{
-	"label":"<i class=\"fa fa-times\"></i> Cancel",
-	"action":"cancel",
-	"modifiers": "btn btn-danger"}});
-gform.types['save']   = _.defaultsDeep({toString: function(){return ''}},gform.types['button'], {defaults:{
-	"label":"<i class=\"fa fa-check\"></i> Save",
-	"action":"save",
-	"modifiers": "btn btn-success"}});
-gform.types['clear']   = _.defaultsDeep({toString: function(){return ''}},gform.types['button'], {defaults:{
-	"label":"<i class=\"fa fa-times\"></i> Clear",
-	"action":"clear",
-	"modifiers": "btn btn-warning"}});
+gform.types['reset'] = _.defaultsDeep({ toString: function () { return '' } }, gform.types['button'], {
+	defaults: {
+		"label": "<i class=\"fa fa-times\"></i> Reset",
+		"action": "reset",
+		"modifiers": "btn btn-default"
+	}
+});
+gform.types['cancel'] = _.defaultsDeep({ toString: function () { return '' } }, gform.types['button'], {
+	defaults: {
+		"label": "<i class=\"fa fa-times\"></i> Cancel",
+		"action": "cancel",
+		"modifiers": "btn btn-danger"
+	}
+});
+gform.types['save'] = _.defaultsDeep({ toString: function () { return '' } }, gform.types['button'], {
+	defaults: {
+		"label": "<i class=\"fa fa-check\"></i> Save",
+		"action": "save",
+		"modifiers": "btn btn-success"
+	}
+});
+gform.types['clear'] = _.defaultsDeep({ toString: function () { return '' } }, gform.types['button'], {
+	defaults: {
+		"label": "<i class=\"fa fa-times\"></i> Clear",
+		"action": "clear",
+		"modifiers": "btn btn-warning"
+	}
+});
 
 gform.types['color'] = _.extend({}, gform.types['input'], {
 	defaults: {
-		pre: '<i style="display: block;width:20px;height:20px;margin: 0 -5px;background-color:{{value}}"></i>' ,
+		pre: '<i style="display: block;width:20px;height:20px;margin: 0 -5px;background-color:{{value}}"></i>',
 		elType: 'text',
-		value:"#000000"
+		value: "#000000"
 	},
-	toString: function(name,display){
+	toString: function (name, display) {
 		this.value = this.get();//shouldn't need this here - but we do for now
-		if(!display){
-			return '<dt>'+this.label+'</dt> <dd><div style="white-space:nowrap"><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:'+this.value+';"></span> '+(this.value||'<span class="text-muted">(empty)</span>')+'</div></dd><hr>'
-		}else{
-              return this.value
+		if (!display) {
+			return '<dt>' + this.label + '</dt> <dd><div style="white-space:nowrap"><span style="width:20px;height:20px;display: inline-block;top: 5px;position: relative;background:' + this.value + ';"></span> ' + (this.value || '<span class="text-muted">(empty)</span>') + '</div></dd><hr>'
+		} else {
+			return this.value
 		}
-		  
-},
-  initialize: function(){
-	// this.onchangeEvent = function(){
-	// 	this.value = this.get();
-	// 	this.parent.trigger(['change','input'], this,{input:this.value});
-	// }.bind(this)
+
+	},
+	set: function (value) {
+		if ('el' in this) {
+			this.el.querySelector('input[name="' + this.name + '"]').value = value;
+			this.el.querySelector('.input-group-addon i').style.backgroundColor = value;
+		}
+
+	},
+	initialize: function () {
+		// this.onchangeEvent = function(){
+		// 	this.value = this.get();
+		// 	this.parent.trigger(['change','input'], this,{input:this.value});
+		// }.bind(this)
 
 
-	this.onchangeEvent = function(input){
-		//   this.input = input;
-		  this.value = this.get();
-		  if(this.el.querySelector('.count') != null){
-			var text = this.value.length;
-			if(this.limit>1){text+='/'+this.limit;}
-			this.el.querySelector('.count').innerHTML = text;
-		  }
-		//   this.update({value:this.get()},true);
-		//   gform.types[this.type].focus.call(this)
+		this.onchangeEvent = function (input) {
+			//   this.input = input;
+			this.value = this.get();
+			if (this.el.querySelector('.count') != null) {
+				var text = this.value.length;
+				if (this.limit > 1) { text += '/' + this.limit; }
+				this.el.querySelector('.count').innerHTML = text;
+			}
+			//   this.update({value:this.get()},true);
+			//   gform.types[this.type].focus.call(this)
 			gform.types[this.type].setup.call(this);
-		  this.owner.trigger('change', this,{input:this.value});
+			this.owner.trigger('change', this, { input: this.value });
 
-		  if(input){
-			this.owner.trigger('input', this,{input:this.value});
-		  }
-	  }.bind(this)
+			if (input) {
+				this.owner.trigger('input', this, { input: this.value });
+			}
+		}.bind(this)
 
 
-	  this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
-	  this.el.querySelector('.input-group-addon i').addEventListener('click', function(){this.focus()}.bind(this));
+		this.el.addEventListener('input', this.onchangeEvent.bind(null, true));
+		this.el.querySelector('.input-group-addon i').addEventListener('click', function () { this.focus() }.bind(this));
 
-	$(this.el.querySelector('input[name="' + this.name + '"]')).attr('type','text');
+		$(this.el.querySelector('input[name="' + this.name + '"]')).attr('type', 'text');
 		this.el.querySelector('.input-group-addon i').style.backgroundColor = this.get()
-	$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({format: 'hex',container:$(this.el).find('.input-group')}).on('changeColor', function(ev){
-		this.el.querySelector('.input-group-addon i').style.backgroundColor = this.get()
-		this.parent.trigger('change',this);
-		this.parent.trigger('input',this);
-	}.bind(this));
-	gform.types[this.type].setLabel.call(this);
+		$(this.el.querySelector('input[name="' + this.name + '"]')).colorpicker({ format: 'hex', container: $(this.el).find('.input-group') }).on('changeColor', function (ev) {
+			this.el.querySelector('.input-group-addon i').style.backgroundColor = this.get()
+			this.parent.trigger('change', this);
+			this.parent.trigger('input', this);
+		}.bind(this));
+		gform.types[this.type].setLabel.call(this);
 
-  }
+	}
 });
 
 gform.types['contentEditable'] = gform.types['summernote'] = _.extend({}, gform.types['input'], {
-	render: function(){
-        //   return gform.render(this.type, this);
-          return gform.render('contenteditable', this).split('value=""').join('value="'+_.escape(this.value)+'"')
-      },
-      set: function(value) {
-        //   this.el.querySelector('textarea[name="' + this.name + '"]').value = value;
+	render: function () {
+		//   return gform.render(this.type, this);
+		return gform.render('contenteditable', this).split('value=""').join('value="' + _.escape(this.value) + '"')
+	},
+	set: function (value) {
+		//   this.el.querySelector('textarea[name="' + this.name + '"]').value = value;
 
 
-          	// if(typeof this.lastSaved === 'undefined'){
-			// 	this.lastSaved = value;
-			// }
-			// this.editor.setContent(value)
-			this.$el.summernote('code', value)
-			// this.value = value;
-			// this.$el.html(value)
+		// if(typeof this.lastSaved === 'undefined'){
+		// 	this.lastSaved = value;
+		// }
+		// this.editor.setContent(value)
+		this.$el.summernote('code', value)
+		// this.value = value;
+		// this.$el.html(value)
 
-			// return this.$el;
-      },
-      get: function() {
-        //   return this.el.querySelector('textarea[name="' + this.name + '"]').value;
-        return this.$el.summernote('code')
+		// return this.$el;
+	},
+	get: function () {
+		//   return this.el.querySelector('textarea[name="' + this.name + '"]').value;
+		return ('el' in this) ? this.$el.summernote('code') : this.internalValue;
 
-      },
-		initialize: function() {
-			this.$el = $(this.el).find('.formcontrol > div');
+	},
+	initialize: function () {
+		this.$el = $(this.el).find('.formcontrol > div');
+		this.$el.off();
+		if (this.onchange !== undefined) {
+			this.$el.on('input', this.onchange);
+		}
+		this.$el.summernote({
+			disableDragAndDrop: true,
+			dialogsInBody: true,
+			toolbar: this.item.toolbar || [
+				// [groupName, [list of button]]
+				['style', ['bold', 'italic', 'underline', 'clear']],
+				['link', ['linkDialogShow', 'unlink']],
+				['font', ['strikethrough', 'superscript', 'subscript']],
+				['fontsize', ['fontsize']],
+				['color', ['color']],
+				['para', ['ul', 'ol', 'paragraph']],
+				['height', ['height']],
+				['view', ['fullscreen']]
+			]
+		});
+		this.$el.on('summernote.change', function () {
+			this.owner.trigger('change', this);
+
+			this.owner.trigger('input', this);
+		}.bind(this)
+		);
+		gform.types[this.type].setLabel.call(this);
+
+	}, satisfied: function (value) {
+		this.value = this.get()
+		return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '' && this.value !== "<p><br></p>");
+	},
+	destroy: function () {
+		this.$el.summernote('destroy');
+		if (this.$el) {
 			this.$el.off();
-			if(this.onchange !== undefined) {
-				this.$el.on('input', this.onchange);
-			}
-			this.$el.summernote({
-				disableDragAndDrop: true,
-		    	dialogsInBody: true,
-				toolbar: this.item.toolbar||[
-					// [groupName, [list of button]]
-					['style', ['bold', 'italic', 'underline', 'clear']],
-			        ['link', ['linkDialogShow', 'unlink']],
-					['font', ['strikethrough', 'superscript', 'subscript']],
-					['fontsize', ['fontsize']],
-					['color', ['color']],
-					['para', ['ul', 'ol', 'paragraph']],
-					['height', ['height']],
-					['view', ['fullscreen']]
-				]
-			});
-			this.$el.on('summernote.change', function(){
-				this.owner.trigger('change',this);
+		}
+	}
 
-				this.owner.trigger('input',this);
-			}.bind(this)
-	  );
-	  gform.types[this.type].setLabel.call(this);
-
-		},satisfied: function(value){
-			this.value = this.get()
-			return (typeof this.value !== 'undefined' && this.value !== null && this.value !== '' && this.value !== "<p><br></p>");
-		},	
-        destroy: function() {
-            this.$el.summernote('destroy');
-            if(this.$el){
-                this.$el.off();
-            }
-        }
-
-  });
-
-
-  $(document).on('focusin', function(e) {
-    if ($(e.target).closest(".note-editable").length) {
-        e.stopImmediatePropagation();
-			
-    }
 });
-$(document).on('click', function(e) {
-    if ($(e.target).hasClass(".note-editor")) {
-        e.stopImmediatePropagation();
 
-			$(e.target).find('.open').removeClass('open')
-    }
+
+$(document).on('focusin', function (e) {
+	if ($(e.target).closest(".note-editable").length) {
+		e.stopImmediatePropagation();
+
+	}
+});
+$(document).on('click', function (e) {
+	if ($(e.target).hasClass(".note-editor")) {
+		e.stopImmediatePropagation();
+
+		$(e.target).find('.open').removeClass('open')
+	}
 });
 
 
 
-gform.types['email'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-envelope"></i>', validate: [{ type:'valid_email' }]}});
-gform.types['url'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-link"></i>', validate: [{ type:'valid_url' }]}});
-gform.types['tel'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-phone"></i>', placeholder: '+1'}});
-gform.types['password'] = _.extend({}, gform.types['input'], {defaults:{pre: '<i class="fa fa-lock"></i>'}});
+gform.types['email'] = _.extend({}, gform.types['input'], { defaults: { pre: '<i class="fa fa-envelope"></i>', validate: [{ type: 'valid_email' }] } });
+gform.types['url'] = _.extend({}, gform.types['input'], { defaults: { pre: '<i class="fa fa-link"></i>', validate: [{ type: 'valid_url' }] } });
+gform.types['tel'] = _.extend({}, gform.types['input'], { defaults: { pre: '<i class="fa fa-phone"></i>', placeholder: '+1' } });
+gform.types['password'] = _.extend({}, gform.types['input'], { defaults: { pre: '<i class="fa fa-lock"></i>' } });
 gform.types['address'] = _.extend({}, gform.types['input'], gform.types['section'], {
-    defaults:{fields:[
-        {type:"text",name:'street',label:"Street Address", validate:[{type:"length",max:"255"}]},
-        {type:"text",name:'line2',label:"Address line 2", validate:[{type:"length",max:"150"}]},
-        {type:"text",name:'city',label:"City", validate:[{type:"length",max:"255"}],columns:6},
-        {type:"text",name:'state',label:"State/Province/Region", validate:[{type:"length",max:"255"}],columns:6},//,display:[{type:"not_matches",name:"country",value:"US"}]},
-        // {type:"combo",name:'state',options:'../data/states.json',format:{label:'{{name}}'},label:"State/Province/Region",columns:6},
-        {type:"text",name:'zip',label:"Postal/Zip Code", validate:[{type:"length",max:"15"}],columns:6},
-        {type:"select",name:'country',options:'../data/countries.json',format:{label:'{{name}}',value:'{{code}}'},label:"Country", validate:[{type:"length",max:"15"}],columns:6}
-    ]
-}});
+	defaults: {
+		fields: [
+			{ type: "text", name: 'street', label: "Street Address", validate: [{ type: "length", max: "255" }] },
+			{ type: "text", name: 'line2', label: "Address line 2", validate: [{ type: "length", max: "150" }] },
+			{ type: "text", name: 'city', label: "City", validate: [{ type: "length", max: "255" }], columns: 6 },
+			{ type: "text", name: 'state', label: "State/Province/Region", validate: [{ type: "length", max: "255" }], columns: 6 },//,display:[{type:"not_matches",name:"country",value:"US"}]},
+			// {type:"combo",name:'state',options:'../data/states.json',format:{label:'{{name}}'},label:"State/Province/Region",columns:6},
+			{ type: "text", name: 'zip', label: "Postal/Zip Code", validate: [{ type: "length", max: "15" }], columns: 6 },
+			{ type: "select", name: 'country', options: '../data/countries.json', format: { label: '{{name}}', value: '{{code}}' }, label: "Country", validate: [{ type: "length", max: "15" }], columns: 6 }
+		]
+	}
+});
 
 
 
 
 
 
-gform.THEME = {'bootstrap':'0.0.4.2'}
+gform.THEME = { 'bootstrap': '0.0.4.2' }
 
 gform.types['datetime'] = _.extend({}, gform.types['input'], {
-  defaults:{
-	format:{input: "MM/DD/YYYY h:mm A"},
-	elType:'text'
-  },
-  initialize: function(){
-	this.onchangeEvent = function(){
-		this.value = this.get();
-		this.parent.trigger(['change','input'], this,{input:this.value});
-	}.bind(this)
-	
-	// this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
-	// this.el.addEventListener('change', this.onchangeEvent.bind(null));
-	var $el = $(this.el.querySelector('input[name="' + this.name + '"]'));
+	defaults: {
+		format: { input: "MM/DD/YYYY h:mm A" },
+		elType: 'text'
+	},
+	initialize: function () {
+		this.onchangeEvent = function () {
+			this.value = this.get();
+			this.parent.trigger(['change', 'input'], this, { input: this.value });
+		}.bind(this)
+
+		// this.el.addEventListener('input', this.onchangeEvent.bind(null,true));
+		// this.el.addEventListener('change', this.onchangeEvent.bind(null));
+		var $el = $(this.el.querySelector('input[name="' + this.name + '"]'));
 
 		// $el.attr('type','text');
-	  $el.datetimepicker({format: this.format.input})
-	//   $el.data("DateTimePicker").minDate(moment("1/1/1900"));
-	  $el.on("dp.change", this.onchangeEvent.bind(null,true));
-	  gform.types[this.type].setLabel.call(this);
+		$el.datetimepicker({ format: this.format.input })
+		//   $el.data("DateTimePicker").minDate(moment("1/1/1900"));
+		$el.on("dp.change", this.onchangeEvent.bind(null, true));
+		gform.types[this.type].setLabel.call(this);
 
-  }
+	}
 });
-gform.types['date'] = _.extend({},gform.types['datetime'], {
-	defaults:{
-	  format:{input: "MM/DD/YYYY"},
-		elType:'text'
+gform.types['date'] = _.extend({}, gform.types['datetime'], {
+	defaults: {
+		format: { input: "MM/DD/YYYY" },
+		elType: 'text'
 	},
 })
-gform.types['time']= _.extend({}, gform.types['datetime'], {
-	defaults:{
-		format:{input: "h:mm A"},
-		elType:'text'
+gform.types['time'] = _.extend({}, gform.types['datetime'], {
+	defaults: {
+		format: { input: "h:mm A" },
+		elType: 'text'
 	}
 })
-gform.prototype.modalDelay = 475;
-gform.prototype.modal = function(data){
-	// var el = this.modalEl||this.el;
+// gform.prototype.modalDelay = 475;
+// gform.prototype.modal = function(data){
+// 	// var el = this.modalEl||this.el;
 
-	// if(!document.body.contains(el)){
-    //     document.body.appendChild(el);
-    //     this.modalEl.querySelector('.close').addEventListener('click', function(){
-    //         this.modal('hide');
-    //         (this.owner||this).trigger("modal:close");
-    //     }.bind(this));
-    // }
-
-
-
-	// $(this.modalEl||this.el).modal(data)
-	// return this;
-
-	var el = this.modalEl||this.el;
-    if(!document.body.contains(el)){
-        document.body.appendChild(el);
-        el.querySelector('.close').addEventListener('click', function(){
-
-			(this.owner||this).trigger('closed',this);
-        }.bind(this));
-    }
+// 	// if(!document.body.contains(el)){
+//     //     document.body.appendChild(el);
+//     //     this.modalEl.querySelector('.close').addEventListener('click', function(){
+//     //         this.modal('hide');
+//     //         (this.owner||this).trigger("modal:close");
+//     //     }.bind(this));
+//     // }
 
 
-    // switch(data){
-    //     case "hide":
-    //         // if(typeof this.type !== 'undefined'){
-    //         //     this.owner.trigger("close_child",this);
-    //         // }else{
-    //         //     this.trigger("close",this);
-    //         // }
-    //     default:
-    //         $(el).modal(data)
-    // }
-if(typeof this.modalManager ==  'undefined'){
-	this.modalManager = $(el).modal(data)
-	
-	$(el).on('hidden.bs.modal', function(e){
-		if(this.active){this.trigger("cancel",this)};
-	}.bind(this))
-}else(
-	this.modalManager = $(el).modal(data)
-)
-	
 
+// 	// $(this.modalEl||this.el).modal(data)
+// 	// return this;
+
+// 	var el = this.modalEl||this.el;
+//     if(!document.body.contains(el)){
+//         document.body.appendChild(el);
+//         el.querySelector('.close').addEventListener('click', function(){
+
+// 			(this.owner||this).trigger('closed',this);
+//         }.bind(this));
+//     }
+
+
+//     // switch(data){
+//     //     case "hide":
+//     //         // if(typeof this.type !== 'undefined'){
+//     //         //     this.owner.trigger("close_child",this);
+//     //         // }else{
+//     //         //     this.trigger("close",this);
+//     //         // }
+//     //     default:
+//     //         $(el).modal(data)
+//     // }
+// if(typeof this.modalManager ==  'undefined'){
+// 	this.modalManager = $(el).modal(data)
+
+// 	$(el).on('hidden.bs.modal', function(e){
+// 		if(this.active){this.trigger("cancel",this)};
+// 	}.bind(this))
+// }else(
+// 	this.modalManager = $(el).modal(data)
+// )
+
+
+// 	return this;
+// }
+gform.prototype.modal = function (data) {
+	var el = this.modalEl || this.el;
+
+	if (!document.body.contains(el)) {
+		document.body.appendChild(el);
+		el.querySelector('.close').addEventListener('click', function () {
+			(this.owner || this).trigger('close');
+		}.bind(this));
+	}
+
+	switch (data) {
+		case "hide":
+			gform.addClass(el, 'hidden');
+			break;
+		default:
+			gform.removeClass(el, 'hidden');
+	}
+	// $(this.el).modal(data)
 	return this;
-}
-document.body.appendChild(gform.create('<style>'+gform.render('_style',{},'all')+'</style>'));
+};
+document.body.appendChild(gform.create('<style>' + gform.render('_style', {}, 'all') + '</style>'));

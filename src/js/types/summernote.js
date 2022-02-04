@@ -16,7 +16,8 @@ gform.types['textarea'] = _.extend({}, gform.types['input'], {
       },
       get: function() {
         //   return this.el.querySelector('textarea[name="' + this.name + '"]').value;
-        return this.$el.summernote('code')
+				return ('el' in this)?this.$el.summernote('code'):this.internalValue;
+
 
       },
 
