@@ -1,49 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="Adam Smallcomb">
-    <link rel="icon" href="../assets/favicon.png">
 
-    <title>Example:Duplication - Graphene:Forms</title>
-    <!-- <link rel="stylesheet" href="../assets/css/normalize.css">    
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="Adam Smallcomb">
+  <link rel="icon" href="../assets/favicon.png">
+
+  <title>Example:Duplication - Graphene:Forms</title>
+  <!-- <link rel="stylesheet" href="../assets/css/normalize.css">    
     <link rel="stylesheet" href="../assets/css/gform.css"> -->
 
-	  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
-    <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
-  </head>
-  <body>
-    <div style="padding:20px">
+  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+  <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+</head>
+
+<body>
+  <div style="padding:20px">
     <h4><a href="./">Examples</a> - Duplication</h4>
     <div class="container ">
       <div class="row ">
-            <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
-            <div class="col-md-4"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form">
-              <div id="other_form"></div></div></div>                
-            <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
-
+        <div class="col-md-4" style="overflow: scroll;">
+          <pre id="code"><code class="prettyprint"></code></pre>
+        </div>
+        <div class="col-md-4">
+          <pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre>
+          <hr>
+          <div id="form">
+            <div id="other_form"></div>
           </div>
+        </div>
+        <div class="col-md-4" style="overflow: scroll;">
+          <pre id="result"><code class="prettyprint"></code></pre>
+        </div>
+
       </div>
+    </div>
   </div>
 
-<script src='../assets/vendor/js/jquery.js'></script>
+  <script src='../assets/vendor/js/jquery.js'></script>
 
-<script src="../assets/js/lodash.min.js"></script>    
-<script src='../assets/vendor/js/colorpicker.min.js'></script> 
+  <script src="../assets/js/lodash.min.js"></script>
+  <script src='../assets/vendor/js/colorpicker.min.js'></script>
 
-<script src='../assets/js/bootstrap.min.js'></script>
-<script src='../assets/js/gform_bootstrap.js'></script>
+  <script src='../assets/js/bootstrap.min.js'></script>
+  <script src='../assets/js/gform_bootstrap.js'></script>
 
-<!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>             -->
+  <!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>             -->
 
 
-    <script src='../assets/js/math.min.js'></script> 
+  <script src='../assets/js/math.min.js'></script>
 
-    <script>
+  <script>
 
-var flowAccordion = `<form>
+    var flowAccordion = `<form>
 <div id="display" style="padding-bottom:15px"></div>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
@@ -141,421 +152,500 @@ Actions
 </div>
 </form>
 `
-options ={}
-options.clear = false;
+    options = {}
+    options.clear = false;
 
-            // $("#form").html(gform.renderString(accordion))
-
-
+    // $("#form").html(gform.renderString(accordion))
 
 
 
-            function drawForm(name){
-  if(typeof flowForm !== 'undefined'){flowForm.destroy();}  
-  // gform.collections.update('flowstates', _.pluck(flow_states, 'name'))
+
+
+    function drawForm(name) {
+      if (typeof flowForm !== 'undefined') { flowForm.destroy(); }
+      // gform.collections.update('flowstates', _.pluck(flow_states, 'name'))
 
 
 
-  formConfig = {
-    data:{logic:false},
-    actions:[{target:"#display",type:"button",name:"delete",action:"delete",modifiers:"btn btn-danger pull-left",label:'<i class="fa fa-times"></i> Delete'},{target:"#display",type:"button",modifiers:"btn btn-info pull-right",label:'<i class="fa fa-check"></i>',action:"done"}],
-    // legend:"State",
-    // sections:"tab",
-    clear: false,
-    // data: _.find(flow_states,{name:name})
-  }
-  myconditions = [
-    {label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
-    {label: 'Name',name:"name",show:[{type:'matches',name:"type",value:["matches","not_matches","contains","requires"]}]},
-    {label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1},show:[{type:'matches',name:"type",value:["matches","not_matches","contains"]}]},
-    {label: false, columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:'matches',name:"type",value:"conditions"}]},
-    {label:'Condition',name:'conditions',columns:10,offset:1,type:'fieldset',array:true,show:[{type:'matches',name:"type",value:"conditions"}],fields:[
-      {label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires']},
-      {label: 'Name',name:"name"},
-      { label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:1}}
-    ]}
-  ]
-
-  formConfig.fields=_.map(
-    _.map([        
-      {type: 'switch', label: 'Logic', name: 'hasLogic',format:{label:''},parse:false,show:false,value:function(e){
-        return (typeof e.initial.owner.options.data.logic !== 'undefined')&&e.initial.owner.options.data.logic;
-      }},
-      {type: 'select', label: false,other:true, name: 'logic',target:"#collapseEvents .panel-body",options:[
-          {label:"Conditions",value:'other'},
-          {type:'optgroup',min:0,max:4,show:false},
-          {type:'optgroup',options:'methods',format:{label:"Method: {{label}}"}}
-        ]
-        ,show:[{name:"hasLogic",value:true,type:"matches"}]}
-      ,{type: "fieldset", name: "logic", label: false, fields: myconditions,show:[{name:"hasLogic",value:true,type:"matches"},{name:"logic",value:['other'],type:"matches"}]}
-    ],function(item){
-      item.target = "#collapseLogic .panel-body";
-      return item;
-    }).concat(_.map([
-    {type: "fieldset", name: "assignment", label: false, fields: [
-      {name: "type",inline:false, label: "Type", type: "smallcombo", options: [
-        {value: "user", label: "User"},
-        {value: "group", label: "Group"}
-      ]},
-
-      // gform.types['user']= _.extend({}, gform.types['smallcombo'], {
-      //   defaults:{search:"/api/users/search/{{search}}{{value}}",format:{title:'User <span class="text-success pull-right">{{value}}</span>',label:"{{first_name}} {{last_name}}",value:"{{unique_id}}", display:"{{first_name}} {{last_name}}<div>{{email}}</div>"}}
-      // })
-
-      {type:"user",strict:false,label:"ID",show: [{type: "matches", name: "type", value: "user"}],options:[{first_name:"Owner", unique_id:"{{owner.unique_id}}",email:"User that initiated workflow"},{first_name:"Actor", unique_id:"{{actor.unique_id}}",email:"User that is taking an action"},  
-      {
-        "type": "optgroup",
-        "options": "map_users",
-        "format":{display:'{{name}}<div style="color:#aaa">Mapped value</div>',value:function(option){
-          return "{{datamap."+option.name+"}}"},label:"{{name}}"}
-      },       
-      {
-        "type": "optgroup",
-        "options": "form_users",
-        "format":{display:'{{name}}<div style="color:#aaa">Form value</div>',value:function(option){
-          var path = option.data.name
-          var search = option.data;
-          while(search.ischild){
-            path = search.parent.name+'.'+path;
-            search = search.parent;
-          }
-          // var temp = new gform(myform)
-          // temp.find(path).array
-          if(option.array){
-            return "{{#form."+path+"}}{{.}},{{/form."+path+"}}";
-          }else{
-            return "{{form."+path+"}}";
-          }
-        },label:"{{label}}{{^label}}{{name}}{{/label}}"}
-          
+      formConfig = {
+        data: { logic: false },
+        actions: [{ target: "#display", type: "button", name: "delete", action: "delete", modifiers: "btn btn-danger pull-left", label: '<i class="fa fa-times"></i> Delete' }, { target: "#display", type: "button", modifiers: "btn btn-info pull-right", label: '<i class="fa fa-check"></i>', action: "done" }],
+        // legend:"State",
+        // sections:"tab",
+        clear: false,
+        // data: _.find(flow_states,{name:name})
       }
-      ]},
-      {type:"group",label:"ID",show: [{type: "matches", name: "type", value: "group"}],options:[       
+      myconditions = [
+        { label: "Type", name: "type", type: "select", options: ['matches', 'not_matches', 'contains', 'requires', 'conditions'] },
+        { label: 'Name', name: "name", show: [{ type: 'matches', name: "type", value: ["matches", "not_matches", "contains", "requires"] }] },
+        { label: 'Value{{#index}}({{index}}){{/index}}', name: "value", array: { min: 1 }, show: [{ type: 'matches', name: "type", value: ["matches", "not_matches", "contains"] }] },
+        { label: false, columns: 12, name: 'op', type: "switch", format: { label: '{{label}}' }, options: [{ label: "or", value: 'or' }, { label: "and", value: 'and' }], value: 'and', show: [{ type: 'matches', name: "type", value: "conditions" }] },
         {
-          "type": "optgroup",
-          "options": "map_groups",
-          "format":{display:'{{name}}<div style="color:#aaa">Mapped value</div>',value:function(option){
-            return "{{datamap."+option.name+"}}"},label:"{{name}}"}
-        },       
-        {
-          "type": "optgroup",
-          "options": "form_groups",
-          "format":{display:'{{name}}<div style="color:#aaa">Form value</div>',value:function(option){
-            var path = option.data.name
-            var search = option.data;
-            while(search.ischild){
-              path = search.parent.name+'.'+path;
-              search = search.parent;
-            }
-            return "{{form."+path+"}}"},label:"{{label}}{{^label}}{{name}}{{/label}}"}
-        },
-        {
-          "type":"optgroup",
-          "options":'/api/groups?members=20',
-          "format":{label:"{{name}}",value:"{{id}}"}
+          label: 'Condition', name: 'conditions', columns: 10, offset: 1, type: 'fieldset', array: true, show: [{ type: 'matches', name: "type", value: "conditions" }], fields: [
+            { label: "Type", name: "type", type: "select", options: ['matches', 'not_matches', 'contains', 'requires'] },
+            { label: 'Name', name: "name" },
+            { label: 'Value{{#index}}({{index}}){{/index}}', name: "value", array: { min: 1 } }
+          ]
         }
-      ]},
-      // _.extend({name:"id",show: [{type: "matches", name: "type", value: "user"}], type: "smallcombo", search: "/api/users/search/{{search}}{{value}}", format: {label: "{{first_name}} {{last_name}}", value: "{{unique_id}}", display: "{{first_name}} {{last_name}}<div>{{email}}</div>"}}, valueField),
-      // _.extend({name:"id",show: [{type: "matches", name: "type", value: "group"}], type: "smallcombo", options: '/api/groups', format: {label: "{{name}}", value: "{{id}}"}}, valueField),
+      ]
 
-      {name: "id",inline:false, label: 'ID (template)', type: "text", show: [{type: "not_matches", name: "type", value: ["user","group"]}]},
-      {name: "resource", type: "select", label:"Resource", placeholder: "None", options:"resources"},
-
-      // {name: "endpoint",columns:4, label: "Endpoint", type: "select", options: "endpoints", format: {label: "{{name}}", value: "{{name}}"}, show: [{type: "not_matches", name: "type", value: ["user","group"]}]},
-      // {name: "url",columns:8,placeholder:"\\", type: "url", label: "Path", show: [{type: "not_matches", name: "type", value: ["user","group"]}]},
-    ]}
-      ],function(item){
-    item.target = "#collapseAssignment .panel-body";
-    return item;
-  })).concat([
-   // {type:"button",name:"delete",action:"delete",modifiers:"btn btn-danger pull-right",label:'<i class="fa fa-times"></i> Delete',target:false},
-   {target:"#collapseBasic .panel-body", name: "state_id",type:'hidden', label: false},
-   {target:"#collapseBasic .panel-body", name: "name",inline:false, label: "Name"},
-   {target:"#collapseBasic .panel-body", name: "status",inline:false, label: "Status",type:"select",options:["open","closed"]},
-    {target:"#collapseBasic .panel-body", name: "uploads",type:'checkbox',inline:false,help:"NOTE:Uploads must also be turned on in the form",label: "Allow File uploads/management in this state",show:[{name:"hasLogic",value:false,type:"matches"}]},
-    {target:"#collapseOnenter .panel-body", name: "onEnter",label:false, type: "fieldset", fields: taskForm, array: {min:0}},// show:[{type: "matches", name: "hasOnEnter", value: true}]},
-    {target:"#collapseOnleave .panel-body", name: "onLeave",label:false, type: "fieldset", fields: taskForm, array: true},// show: [{type: "matches", name: "hasOnLeave", value: true}]},
-    (!formConfig.data.logic ? {target:"#collapseActions .panel-body", 
-    name: "actions",show:[{name:"hasLogic",value:false,type:"matches"}], label: false, type: "fieldset", fields: [
-      {name: "label", label: "Label", columns: 6},
-      {name: "name", label: "Name", columns: 6, show: [{type: "not_matches", name: "label", value: ""}]},
-      {name: "type", label: "Type", type: "select", columns: 6, options:[
-        {value: "success", label: "Success"},
-        {value: "danger", label: "Danger"},
-        {value: "info", label: "Info"},
-        {value: "warning", label: "Warning"},
-        {value: "default", label: "Default"},
-        {value: "primary", label: "Primary"},
-        {value: "link", label: "Simple"}
-      ]/*, show: [{type: "not_matches", name: "label", value: ""}]*/},
-    {name: "to", label: "To", columns: 6, type: "select", options: 'flowstates'/*, show: [{type: "not_matches", name: "label", value: ""}]*/},
-    {name: "assignment",type:"fieldset",parse:[{type:"requires"}],label:false,fields:[
-
-      {name: "type",inline:false, label: "Actor(s)",parse:[{type:"requires"}], type: "smallcombo", options: [
-        {value: "internal", label: "Inactivity Based"},
-        {value: "", label: "Assignee"},
-        {value: "user", label: "User"},
-        {value: "group", label: "Group"}
-      ]},
-
-      // gform.types['user']= _.extend({}, gform.types['smallcombo'], {
-      //   defaults:{search:"/api/users/search/{{search}}{{value}}",format:{title:'User <span class="text-success pull-right">{{value}}</span>',label:"{{first_name}} {{last_name}}",value:"{{unique_id}}", display:"{{first_name}} {{last_name}}<div>{{email}}</div>"}}
-      // })
-      {type:"number",min:1, name:"delay",label:"Days of Inactivity",show: [{type: "matches", name: "type", value: "internal"}]},
-      {type:"user",label:"ID",show: [{type: "matches", name: "type", value: "user"}],options:[{first_name:"Owner", unique_id:"{{owner.unique_id}}",email:"User that initiated workflow"},{first_name:"Actor", unique_id:"{{actor.unique_id}}",email:"User that is taking an action"},  
-      {
-        "type": "optgroup",
-        "options": "map_users",
-        "format":{display:'{{name}}<div style="color:#aaa">Mapped value</div>',value:function(option){
-          return "{{datamap."+option.name+"}}"},label:"{{name}}"}
-      },       
-      {
-        "type": "optgroup",
-        "options": "form_users",
-        "format":{display:'{{name}}<div style="color:#aaa">Form value</div>',value:function(option){
-          var path = option.data.name
-          var search = option.data;
-          while(search.ischild){
-            path = search.parent.name+'.'+path;
-            search = search.parent;
+      formConfig.fields = _.map(
+        _.map([
+          {
+            type: 'switch', label: 'Logic', name: 'hasLogic', format: { label: '' }, parse: false, show: false, value: function (e) {
+              return (typeof e.initial.owner.options.data.logic !== 'undefined') && e.initial.owner.options.data.logic;
+            }
+          },
+          {
+            type: 'select', label: false, other: true, name: 'logic', target: "#collapseEvents .panel-body", options: [
+              { label: "Conditions", value: 'other' },
+              { type: 'optgroup', min: 0, max: 4, show: false },
+              { type: 'optgroup', options: 'methods', format: { label: "Method: {{label}}" } }
+            ]
+            , show: [{ name: "hasLogic", value: true, type: "matches" }]
           }
-          return "{{form."+path+"}}"},label:"{{label}}{{^label}}{{name}}{{/label}}"}
-      }
-      ]},
-      {type:"group",label:"ID",show: [{type: "matches", name: "type", value: "group"}],options:[       
-        {
-          "type": "optgroup",
-          "options": "map_groups",
-          "format":{display:'{{name}}<div style="color:#aaa">Mapped value</div>',value:function(option){
-            return "{{datamap."+option.name+"}}"},label:"{{name}}"}
-        },       
-        {
-          "type": "optgroup",
-          "options": "form_groups",
-          "format":{display:'{{name}}<div style="color:#aaa">Form value</div>',value:function(option){
-            var path = option.data.name
-            var search = option.data;
-            while(search.ischild){
-              path = search.parent.name+'.'+path;
-              search = search.parent;
-            }
-            return "{{form."+path+"}}"},label:"{{label}}{{^label}}{{name}}{{/label}}"}
-        },
-        {
-          "type":"optgroup",
-          "options":'/api/groups?members=20',
-          "format":{label:"{{name}}",value:"{{id}}"}
-        }
-      ]},
-      
+          , { type: "fieldset", name: "logic", label: false, fields: myconditions, show: [{ name: "hasLogic", value: true, type: "matches" }, { name: "logic", value: ['other'], type: "matches" }] }
+        ], function (item) {
+          item.target = "#collapseLogic .panel-body";
+          return item;
+        }).concat(_.map([
+          {
+            type: "fieldset", name: "assignment", label: false, fields: [
+              {
+                name: "type", inline: false, label: "Type", type: "combobox", options: [
+                  { value: "user", label: "User" },
+                  { value: "group", label: "Group" }
+                ]
+              },
+
+              // gform.types['user']= _.extend({}, gform.types['combobox'], {
+              //   defaults:{search:"/api/users/search/{{search}}{{value}}",format:{title:'User <span class="text-success pull-right">{{value}}</span>',label:"{{first_name}} {{last_name}}",value:"{{unique_id}}", display:"{{first_name}} {{last_name}}<div>{{email}}</div>"}}
+              // })
+
+              {
+                type: "user", strict: false, label: "ID", show: [{ type: "matches", name: "type", value: "user" }], options: [{ first_name: "Owner", unique_id: "{{owner.unique_id}}", email: "User that initiated workflow" }, { first_name: "Actor", unique_id: "{{actor.unique_id}}", email: "User that is taking an action" },
+                {
+                  "type": "optgroup",
+                  "options": "map_users",
+                  "format": {
+                    display: '{{name}}<div style="color:#aaa">Mapped value</div>', value: function (option) {
+                      return "{{datamap." + option.name + "}}"
+                    }, label: "{{name}}"
+                  }
+                },
+                {
+                  "type": "optgroup",
+                  "options": "form_users",
+                  "format": {
+                    display: '{{name}}<div style="color:#aaa">Form value</div>', value: function (option) {
+                      var path = option.data.name
+                      var search = option.data;
+                      while (search.ischild) {
+                        path = search.parent.name + '.' + path;
+                        search = search.parent;
+                      }
+                      // var temp = new gform(myform)
+                      // temp.find(path).array
+                      if (option.array) {
+                        return "{{#form." + path + "}}{{.}},{{/form." + path + "}}";
+                      } else {
+                        return "{{form." + path + "}}";
+                      }
+                    }, label: "{{label}}{{^label}}{{name}}{{/label}}"
+                  }
+
+                }
+                ]
+              },
+              {
+                type: "group", label: "ID", show: [{ type: "matches", name: "type", value: "group" }], options: [
+                  {
+                    "type": "optgroup",
+                    "options": "map_groups",
+                    "format": {
+                      display: '{{name}}<div style="color:#aaa">Mapped value</div>', value: function (option) {
+                        return "{{datamap." + option.name + "}}"
+                      }, label: "{{name}}"
+                    }
+                  },
+                  {
+                    "type": "optgroup",
+                    "options": "form_groups",
+                    "format": {
+                      display: '{{name}}<div style="color:#aaa">Form value</div>', value: function (option) {
+                        var path = option.data.name
+                        var search = option.data;
+                        while (search.ischild) {
+                          path = search.parent.name + '.' + path;
+                          search = search.parent;
+                        }
+                        return "{{form." + path + "}}"
+                      }, label: "{{label}}{{^label}}{{name}}{{/label}}"
+                    }
+                  },
+                  {
+                    "type": "optgroup",
+                    "options": '/api/groups?members=20',
+                    "format": { label: "{{name}}", value: "{{id}}" }
+                  }
+                ]
+              },
+              // _.extend({name:"id",show: [{type: "matches", name: "type", value: "user"}], type: "combobox", search: "/api/users/search/{{search}}{{value}}", format: {label: "{{first_name}} {{last_name}}", value: "{{unique_id}}", display: "{{first_name}} {{last_name}}<div>{{email}}</div>"}}, valueField),
+              // _.extend({name:"id",show: [{type: "matches", name: "type", value: "group"}], type: "combobox", options: '/api/groups', format: {label: "{{name}}", value: "{{id}}"}}, valueField),
+
+              { name: "id", inline: false, label: 'ID (template)', type: "text", show: [{ type: "not_matches", name: "type", value: ["user", "group"] }] },
+              { name: "resource", type: "select", label: "Resource", placeholder: "None", options: "resources" },
+
+              // {name: "endpoint",columns:4, label: "Endpoint", type: "select", options: "endpoints", format: {label: "{{name}}", value: "{{name}}"}, show: [{type: "not_matches", name: "type", value: ["user","group"]}]},
+              // {name: "url",columns:8,placeholder:"\\", type: "url", label: "Path", show: [{type: "not_matches", name: "type", value: ["user","group"]}]},
+            ]
+          }
+        ], function (item) {
+          item.target = "#collapseAssignment .panel-body";
+          return item;
+        })).concat([
+          // {type:"button",name:"delete",action:"delete",modifiers:"btn btn-danger pull-right",label:'<i class="fa fa-times"></i> Delete',target:false},
+          { target: "#collapseBasic .panel-body", name: "state_id", type: 'hidden', label: false },
+          { target: "#collapseBasic .panel-body", name: "name", inline: false, label: "Name" },
+          { target: "#collapseBasic .panel-body", name: "status", inline: false, label: "Status", type: "select", options: ["open", "closed"] },
+          { target: "#collapseBasic .panel-body", name: "uploads", type: 'checkbox', inline: false, help: "NOTE:Uploads must also be turned on in the form", label: "Allow File uploads/management in this state", show: [{ name: "hasLogic", value: false, type: "matches" }] },
+          { target: "#collapseOnenter .panel-body", name: "onEnter", label: false, type: "fieldset", fields: taskForm, array: { min: 0 } },// show:[{type: "matches", name: "hasOnEnter", value: true}]},
+          { target: "#collapseOnleave .panel-body", name: "onLeave", label: false, type: "fieldset", fields: taskForm, array: true },// show: [{type: "matches", name: "hasOnLeave", value: true}]},
+          (!formConfig.data.logic ? {
+            target: "#collapseActions .panel-body",
+            name: "actions", show: [{ name: "hasLogic", value: false, type: "matches" }], label: false, type: "fieldset", fields: [
+              { name: "label", label: "Label", columns: 6 },
+              { name: "name", label: "Name", columns: 6, show: [{ type: "not_matches", name: "label", value: "" }] },
+              {
+                name: "type", label: "Type", type: "select", columns: 6, options: [
+                  { value: "success", label: "Success" },
+                  { value: "danger", label: "Danger" },
+                  { value: "info", label: "Info" },
+                  { value: "warning", label: "Warning" },
+                  { value: "default", label: "Default" },
+                  { value: "primary", label: "Primary" },
+                  { value: "link", label: "Simple" }
+                ]/*, show: [{type: "not_matches", name: "label", value: ""}]*/
+              },
+              { name: "to", label: "To", columns: 6, type: "select", options: 'flowstates'/*, show: [{type: "not_matches", name: "label", value: ""}]*/ },
+              {
+                name: "assignment", type: "fieldset", parse: [{ type: "requires" }], label: false, fields: [
+
+                  {
+                    name: "type", inline: false, label: "Actor(s)", parse: [{ type: "requires" }], type: "combobox", options: [
+                      { value: "internal", label: "Inactivity Based" },
+                      { value: "", label: "Assignee" },
+                      { value: "user", label: "User" },
+                      { value: "group", label: "Group" }
+                    ]
+                  },
+
+                  // gform.types['user']= _.extend({}, gform.types['combobox'], {
+                  //   defaults:{search:"/api/users/search/{{search}}{{value}}",format:{title:'User <span class="text-success pull-right">{{value}}</span>',label:"{{first_name}} {{last_name}}",value:"{{unique_id}}", display:"{{first_name}} {{last_name}}<div>{{email}}</div>"}}
+                  // })
+                  { type: "number", min: 1, name: "delay", label: "Days of Inactivity", show: [{ type: "matches", name: "type", value: "internal" }] },
+                  {
+                    type: "user", label: "ID", show: [{ type: "matches", name: "type", value: "user" }], options: [{ first_name: "Owner", unique_id: "{{owner.unique_id}}", email: "User that initiated workflow" }, { first_name: "Actor", unique_id: "{{actor.unique_id}}", email: "User that is taking an action" },
+                    {
+                      "type": "optgroup",
+                      "options": "map_users",
+                      "format": {
+                        display: '{{name}}<div style="color:#aaa">Mapped value</div>', value: function (option) {
+                          return "{{datamap." + option.name + "}}"
+                        }, label: "{{name}}"
+                      }
+                    },
+                    {
+                      "type": "optgroup",
+                      "options": "form_users",
+                      "format": {
+                        display: '{{name}}<div style="color:#aaa">Form value</div>', value: function (option) {
+                          var path = option.data.name
+                          var search = option.data;
+                          while (search.ischild) {
+                            path = search.parent.name + '.' + path;
+                            search = search.parent;
+                          }
+                          return "{{form." + path + "}}"
+                        }, label: "{{label}}{{^label}}{{name}}{{/label}}"
+                      }
+                    }
+                    ]
+                  },
+                  {
+                    type: "group", label: "ID", show: [{ type: "matches", name: "type", value: "group" }], options: [
+                      {
+                        "type": "optgroup",
+                        "options": "map_groups",
+                        "format": {
+                          display: '{{name}}<div style="color:#aaa">Mapped value</div>', value: function (option) {
+                            return "{{datamap." + option.name + "}}"
+                          }, label: "{{name}}"
+                        }
+                      },
+                      {
+                        "type": "optgroup",
+                        "options": "form_groups",
+                        "format": {
+                          display: '{{name}}<div style="color:#aaa">Form value</div>', value: function (option) {
+                            var path = option.data.name
+                            var search = option.data;
+                            while (search.ischild) {
+                              path = search.parent.name + '.' + path;
+                              search = search.parent;
+                            }
+                            return "{{form." + path + "}}"
+                          }, label: "{{label}}{{^label}}{{name}}{{/label}}"
+                        }
+                      },
+                      {
+                        "type": "optgroup",
+                        "options": '/api/groups?members=20',
+                        "format": { label: "{{name}}", value: "{{id}}" }
+                      }
+                    ]
+                  },
 
 
 
-    ]},
-    {name: "form", label: "Show Form",type:"switch",format:{label:""}, columns: 6},
-    {name: "signature", label: "Require Signature",type:"switch",format:{label:""}, columns: 6},
-    {name: "signature_text", label: "Signature Text",placeholder:"Sign Above",help:"This text will show up below the signature box <br>(default text is 'Please Sign Above')",type:"text", columns: 12,show:[{name:"signature",value:true,type:"matches"}]},
-    {name: "validate", label: "Validate",value:true,type:"switch",format:{label:""}, columns: 6},
-    {name: "invalid_submission", label: "Allow Invalid Submission",value:false,type:"switch",format:{label:""}, columns: 6,show:[{name:"validate",value:true,type:"matches"}]},    
-    {type: 'select',other:true, columns:12, label:'Show Action', value: true, name:"show",parse:[{type:"not_matches",name:"show",value:true}],options:		
-    [{type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Enable"',value:'edit'}, {label:"Conditionally",value:"other"}]}]
-  },
-  {type: 'fieldset',columns:11,offset:'1', label:false,name:"show",fields:myconditions,array:{min:1,max:1},show:[{name:"show",value:['other'],type:"matches"}]},
 
-  {type: 'select',other:true, columns:12, label:'Enable Action', value:true,name:"edit",parse:[{type:"not_matches",name:"edit",value:true}],options:		
-    [{type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Show"',value:'show'}, {label:"Conditionally",value:"other"}]}]
-  },
-  {type: 'fieldset',columns:11,offset:'1', label:false,name:"edit",fields:myconditions,array:{min:1,max:1},show:[{name:"edit",value:['other'],type:"matches"}]},
+                ]
+              },
+              { name: "form", label: "Show Form", type: "switch", format: { label: "" }, columns: 6 },
+              { name: "signature", label: "Require Signature", type: "switch", format: { label: "" }, columns: 6 },
+              { name: "signature_text", label: "Signature Text", placeholder: "Sign Above", help: "This text will show up below the signature box <br>(default text is 'Please Sign Above')", type: "text", columns: 12, show: [{ name: "signature", value: true, type: "matches" }] },
+              { name: "validate", label: "Validate", value: true, type: "switch", format: { label: "" }, columns: 6 },
+              { name: "invalid_submission", label: "Allow Invalid Submission", value: false, type: "switch", format: { label: "" }, columns: 6, show: [{ name: "validate", value: true, type: "matches" }] },
+              {
+                type: 'select', other: true, columns: 12, label: 'Show Action', value: true, name: "show", parse: [{ type: "not_matches", name: "show", value: true }], options:
+                  [{ type: "optgroup", options: [{ label: 'Always', value: true }, { label: 'Never', value: false }, { label: 'Use same settings as "Enable"', value: 'edit' }, { label: "Conditionally", value: "other" }] }]
+              },
+              { type: 'fieldset', columns: 11, offset: '1', label: false, name: "show", fields: myconditions, array: { min: 1, max: 1 }, show: [{ name: "show", value: ['other'], type: "matches" }] },
 
-      {name: "task_label", label: "<h4>Tasks</h4>", type: "output",parse:false},
+              {
+                type: 'select', other: true, columns: 12, label: 'Enable Action', value: true, name: "edit", parse: [{ type: "not_matches", name: "edit", value: true }], options:
+                  [{ type: "optgroup", options: [{ label: 'Always', value: true }, { label: 'Never', value: false }, { label: 'Use same settings as "Show"', value: 'show' }, { label: "Conditionally", value: "other" }] }]
+              },
+              { type: 'fieldset', columns: 11, offset: '1', label: false, name: "edit", fields: myconditions, array: { min: 1, max: 1 }, show: [{ name: "edit", value: ['other'], type: "matches" }] },
 
-      {name: "tasks", label: false, type: "fieldset", fields: taskForm, array: {min:1,max:10}}
-    ], array: {max:100}
-  } : {target:"#collapseLogic .panel-body", 
-  name: "actions",show:[{name:"hasLogic",value:true,type:"matches"}], label: false, type: "fieldset", fields: [
-    {name: "name", label: false, type: 'output',format:{value:"<b>Logic Result: <i>{{value}}</i></b>"}},
-    {name: "label", label: "Label", columns: 6},
+              { name: "task_label", label: "<h4>Tasks</h4>", type: "output", parse: false },
 
-  {name: "to", label: "To", columns: 6, type: "select", options: 'flowstates'/*, show: [{type: "not_matches", name: "label", value: ""}]*/},
-    {name: "task_label", label: "<h4>Tasks</h4>", type: "output",parse:false},
+              { name: "tasks", label: false, type: "fieldset", fields: taskForm, array: { min: 1, max: 10 } }
+            ], array: { max: 100 }
+          } : {
+            target: "#collapseLogic .panel-body",
+            name: "actions", show: [{ name: "hasLogic", value: true, type: "matches" }], label: false, type: "fieldset", fields: [
+              { name: "name", label: false, type: 'output', format: { value: "<b>Logic Result: <i>{{value}}</i></b>" } },
+              { name: "label", label: "Label", columns: 6 },
 
-    {name: "tasks", label: false, type: "fieldset", fields: taskForm, array: {min:1,max:10}}
-  ], array: {min:3,max:3}
-})
+              { name: "to", label: "To", columns: 6, type: "select", options: 'flowstates'/*, show: [{type: "not_matches", name: "label", value: ""}]*/ },
+              { name: "task_label", label: "<h4>Tasks</h4>", type: "output", parse: false },
 
-  ])
-  
-  )
-  $('#form').html(gform.renderString(flowAccordion))
+              { name: "tasks", label: false, type: "fieldset", fields: taskForm, array: { min: 1, max: 10 } }
+            ], array: { min: 3, max: 3 }
+          })
 
-  // $('.panelOptions').toggle(!!_.find(formConfig.fields,{target:"#collapseOptions .panel-body"}));
-  $('.panelAssignment').toggle(!!_.find(formConfig.fields,{target:"#collapseAssignment .panel-body"}) && !formConfig.data.logic);
-  $('.panelBasic').toggle(!!_.find(formConfig.fields,{target:"#collapseBasic .panel-body"}));
-  $('.panelLogic').toggle(!!_.find(formConfig.fields,{target:"#collapseLogic .panel-body"}) && !!formConfig.data.logic);
-  $('.panelOnleave').toggle(!!_.find(formConfig.fields,{target:"#collapseOnleave .panel-body"}) && !formConfig.data.logic);
-  $('.panelActions').toggle(!!_.find(formConfig.fields,{target:"#collapseActions .panel-body"}) && !formConfig.data.logic);
+        ])
 
-  // $('.panelConditions').toggle(!!_.find(formConfig.fields,{target:"#collapseConditions .panel-body"}));
-  // $('.panelDisplay').toggle(!!_.find(formConfig.fields,{target:"#collapseDisplay .panel-body"}));
+      )
+      $('#form').html(gform.renderString(flowAccordion))
+
+      // $('.panelOptions').toggle(!!_.find(formConfig.fields,{target:"#collapseOptions .panel-body"}));
+      $('.panelAssignment').toggle(!!_.find(formConfig.fields, { target: "#collapseAssignment .panel-body" }) && !formConfig.data.logic);
+      $('.panelBasic').toggle(!!_.find(formConfig.fields, { target: "#collapseBasic .panel-body" }));
+      $('.panelLogic').toggle(!!_.find(formConfig.fields, { target: "#collapseLogic .panel-body" }) && !!formConfig.data.logic);
+      $('.panelOnleave').toggle(!!_.find(formConfig.fields, { target: "#collapseOnleave .panel-body" }) && !formConfig.data.logic);
+      $('.panelActions').toggle(!!_.find(formConfig.fields, { target: "#collapseActions .panel-body" }) && !formConfig.data.logic);
+
+      // $('.panelConditions').toggle(!!_.find(formConfig.fields,{target:"#collapseConditions .panel-body"}));
+      // $('.panelDisplay').toggle(!!_.find(formConfig.fields,{target:"#collapseDisplay .panel-body"}));
 
 
 
-  flowForm = new gform(formConfig,'#form').on('input', function(e){
-    var temp =  e.form.get();
-    temp.onEnter = _.compact(_.map(temp.onEnter,function(e){if(e.task){return e} }))
-    temp.onLeave = _.compact(_.map(temp.onLeave,function(e){if(e.task){return e} }))
-    temp.actions = _.compact(_.map(temp.actions,function(e){if(e.name && e.label){return e} }))
+      flowForm = new gform(formConfig, '#form').on('input', function (e) {
+        var temp = e.form.get();
+        temp.onEnter = _.compact(_.map(temp.onEnter, function (e) { if (e.task) { return e } }))
+        temp.onLeave = _.compact(_.map(temp.onLeave, function (e) { if (e.task) { return e } }))
+        temp.actions = _.compact(_.map(temp.actions, function (e) { if (e.name && e.label) { return e } }))
 
-    _.each(temp.actions,function(action){
-      action.tasks = _.compact(_.map(action.tasks,function(e){if(e.task){return e} }))
-    })
+        _.each(temp.actions, function (action) {
+          action.tasks = _.compact(_.map(action.tasks, function (e) { if (e.task) { return e } }))
+        })
 
-    // flow_states[_.findIndex(flow_states,{state_id:e.form.options.data.state_id||e.form.get('state_id')})] = temp;
+        // flow_states[_.findIndex(flow_states,{state_id:e.form.options.data.state_id||e.form.get('state_id')})] = temp;
 
-    // gform.collections.update('flowstates', _.pluck(flow_states, 'name'))
-    // var tempName = e.form.get('name')||temp.state_id;
+        // gform.collections.update('flowstates', _.pluck(flow_states, 'name'))
+        // var tempName = e.form.get('name')||temp.state_id;
 
-    // if(tempName != e.form.options.data.name){
-    //   _.each(flow_states,function(state){
-    //     _.each(state.actions,function(action,i){
-    //       // if(action.from == e.form.options.data.name){
-    //       //   action.from = e.form.toJSON().name
-    //       // }
-    //       if(action.to == e.form.options.data.name){
-    //         action.to = tempName;
-    //         if(tempName == state.name){
-    //           _.where(e.form.fields,{name:'actions'})[i].find('to').set(action.to)
-    //         }
-    //       }
-    //     })
-    //   })
+        // if(tempName != e.form.options.data.name){
+        //   _.each(flow_states,function(state){
+        //     _.each(state.actions,function(action,i){
+        //       // if(action.from == e.form.options.data.name){
+        //       //   action.from = e.form.toJSON().name
+        //       // }
+        //       if(action.to == e.form.options.data.name){
+        //         action.to = tempName;
+        //         if(tempName == state.name){
+        //           _.where(e.form.fields,{name:'actions'})[i].find('to').set(action.to)
+        //         }
+        //       }
+        //     })
+        //   })
 
-    // }
+        // }
 
-    // e.form.options.data.name = tempName;
-    
-    createFlow();
-  }).on('delete',function(e){
-        var removed = flow_states.splice(_.findIndex(flow_states,{state_id:e.form.options.data.state_id||e.form.get('state_id')}),1)
-        _.each(flow_states,function(state){
-          _.each(state.actions,function(action){
-            if(action.from == removed[0].name){
+        // e.form.options.data.name = tempName;
+
+        createFlow();
+      }).on('delete', function (e) {
+        var removed = flow_states.splice(_.findIndex(flow_states, { state_id: e.form.options.data.state_id || e.form.get('state_id') }), 1)
+        _.each(flow_states, function (state) {
+          _.each(state.actions, function (action) {
+            if (action.from == removed[0].name) {
               action.from = state.name
             }
-            if(action.to == removed[0].name){
+            if (action.to == removed[0].name) {
               action.to = state.name
             }
           })
         })
-        if(typeof flowForm !== 'undefined'){flowForm.destroy();}  
+        if (typeof flowForm !== 'undefined') { flowForm.destroy(); }
         // gform.collections.update('flowstates', _.pluck(flow_states, 'name'))
 
         createFlow();
-  }).on('done',function(e){
-    if(typeof flowForm !== 'undefined'){flowForm.destroy();}  
-    e.stopPropagation();
-    e.preventDefault();
-    // gform.collections.update('flowstates', _.pluck(flow_states, 'name'))
+      }).on('done', function (e) {
+        if (typeof flowForm !== 'undefined') { flowForm.destroy(); }
+        e.stopPropagation();
+        e.preventDefault();
+        // gform.collections.update('flowstates', _.pluck(flow_states, 'name'))
 
-    createFlow();
-  })
+        createFlow();
+      })
 
-}
-gform.collections.add('/api/groups?members=20', []);
-gform.collections.add('endpoints', []);//_.where(attributes.code.map, {type: "endpoint"}))
-gform.collections.add('map_users', []);// _.where(attributes.code.map, {type: "user"}))
-gform.collections.add('map_emails', []);// _.where(attributes.code.map, {type: "email"}))
-gform.collections.add('map_groups', []);// _.where(attributes.code.map, {type: "group"}))
-gform.collections.add('flowstates', []);// _.pluck(flow_states, 'name'))
-gform.collections.add('resources', []);// _.pluck(attributes.code.resources, 'name'))
-// var temp = new gform(attributes.code.form);
-gform.collections.add('form_users', []);// temp.filter({type:"user"},20));
-gform.collections.add('form_groups', []);// temp.filter({type:"group"},20));
-gform.collections.add('methods', []);/* _.map(_.pluck(attributes.code.methods,'name'),function(item,i,j){
+    }
+    gform.collections.add('/api/groups?members=20', []);
+    gform.collections.add('endpoints', []);//_.where(attributes.code.map, {type: "endpoint"}))
+    gform.collections.add('map_users', []);// _.where(attributes.code.map, {type: "user"}))
+    gform.collections.add('map_emails', []);// _.where(attributes.code.map, {type: "email"}))
+    gform.collections.add('map_groups', []);// _.where(attributes.code.map, {type: "group"}))
+    gform.collections.add('flowstates', []);// _.pluck(flow_states, 'name'))
+    gform.collections.add('resources', []);// _.pluck(attributes.code.resources, 'name'))
+    // var temp = new gform(attributes.code.form);
+    gform.collections.add('form_users', []);// temp.filter({type:"user"},20));
+    gform.collections.add('form_groups', []);// temp.filter({type:"group"},20));
+    gform.collections.add('methods', []);/* _.map(_.pluck(attributes.code.methods,'name'),function(item,i,j){
   return {value:"method_"+i,label:item}
 }));*/
-gform.collections.add('templates', []);/*, _.map(_.pluck(attributes.code.templates,'name'),function(item,i){
+    gform.collections.add('templates', []);/*, _.map(_.pluck(attributes.code.templates,'name'),function(item,i){
     return {value:"template_"+i,label:item}
 }));  */
-var valueField = {label:'Value <span class="text-success pull-right">{{value}}</span>'}
+    var valueField = { label: 'Value <span class="text-success pull-right">{{value}}</span>' }
 
-var taskForm = [
-  {name: "task", label: "Task", type: "select", options: [{value: "", label: "None"},{value: "email", label: "Email"},{value:"resource",label:"Resource"},{value: "purge_files", label: "Purge All Files"},{value: "purge_fields_by_name", label: "Purge Fields By Name"}]},
-  
-  
-    {name:"to",label:"To",show:[{type:"matches",name:"task",value:"email"}],array:true,type:"fieldset",fields:[
-        {name:"email_type",label:"Type",type:"select",options:[{label:"Email Address",value:"email"},{label:"User",value:"user"},{label:"Group",value:"group"}]},
-        /* Begin Email Address Field */
-        _.extend({label:'Email Address <span class="text-success pull-right">{{value}}</span>',name:"email_address",show:[{type:"matches",name:"email_type",value:"email"}],type:"user_email",options:[
-            {first_name:"Owner", email:"{{owner.email}}",display:"User that initiated workflow"},{first_name:"Actor", email:"{{actor.email}}",display:"User that is taking an action"},{type:"optgroup",options: "map_emails",format:{display:'{{name}}<div style="color:#aaa">Mapped value</div>',value:function(option){return "{{datamap."+option.name+"}}"},label:"{{name}}"}
-        }],strict:false,search:"/api/users/search/{{search}}{{value}}",format:{label:"{{first_name}} {{last_name}}",value:"{{email}}", display:"{{first_name}} {{last_name}}<div>{{display}}{{^display}}{{email}}{{/display}}</div>"}},valueField),
-        /* End Email Address Field */
-        /* Begin User Field */
-        {name:"user",type:"user",strict:false,label:"ID",show: [{type: "matches", name: "email_type", value: "user"}],options:[{first_name:"Owner", unique_id:"{{owner.unique_id}}",email:"User that initiated workflow"},{first_name:"Actor", unique_id:"{{actor.unique_id}}",email:"User that is taking an action"},  
-            {type: "optgroup",options: "map_users",format:{display:'{{name}}<div style="color:#aaa">Mapped value</div>',
-            value:function(option){return "{{datamap."+option.name+"}}"},label:"{{name}}"}},       
-            {type: "optgroup",options: "form_users",format:{display:'{{name}}<div style="color:#aaa">Form value</div>',
-            value:function(option){
-                var path = option.data.name
-                var search = option.data;
-                while(search.ischild){
-                    path = search.parent.name+'.'+path;
-                    search = search.parent;
-                }
-                return "{{form."+path+"}}"},label:"{{label}}{{^label}}{{name}}{{/label}}"}
-            }
-        ]},
-        /* End Email Field */
-        /* Begin Group Field */
-        {name:"group",type:"group",label:"ID",show: [{type: "matches", name: "email_type", value: "group"}],options:[       
-            {type: "optgroup",options: "map_groups",format:{display:'{{name}}<div style="color:#aaa">Mapped value</div>',
-            value:function(option){return "{{datamap."+option.name+"}}"},label:"{{name}}"}},       
-            {type: "optgroup",options: "form_groups",format:{display:'{{name}}<div style="color:#aaa">Form value</div>',
-            value:function(option){
-                var path = option.data.name
-                var search = option.data;
-                while(search.ischild){
-                    path = search.parent.name+'.'+path;
-                    search = search.parent;
-                }
-                return "{{form."+path+"}}"},label:"{{label}}{{^label}}{{name}}{{/label}}"}
+    var taskForm = [
+      { name: "task", label: "Task", type: "select", options: [{ value: "", label: "None" }, { value: "email", label: "Email" }, { value: "resource", label: "Resource" }, { value: "purge_files", label: "Purge All Files" }, { value: "purge_fields_by_name", label: "Purge Fields By Name" }] },
+
+
+      {
+        name: "to", label: "To", show: [{ type: "matches", name: "task", value: "email" }], array: true, type: "fieldset", fields: [
+          { name: "email_type", label: "Type", type: "select", options: [{ label: "Email Address", value: "email" }, { label: "User", value: "user" }, { label: "Group", value: "group" }] },
+          /* Begin Email Address Field */
+          _.extend({
+            label: 'Email Address <span class="text-success pull-right">{{value}}</span>', name: "email_address", show: [{ type: "matches", name: "email_type", value: "email" }], type: "user_email", options: [
+              { first_name: "Owner", email: "{{owner.email}}", display: "User that initiated workflow" }, { first_name: "Actor", email: "{{actor.email}}", display: "User that is taking an action" }, {
+                type: "optgroup", options: "map_emails", format: { display: '{{name}}<div style="color:#aaa">Mapped value</div>', value: function (option) { return "{{datamap." + option.name + "}}" }, label: "{{name}}" }
+              }], strict: false, search: "/api/users/search/{{search}}{{value}}", format: { label: "{{first_name}} {{last_name}}", value: "{{email}}", display: "{{first_name}} {{last_name}}<div>{{display}}{{^display}}{{email}}{{/display}}</div>" }
+          }, valueField),
+          /* End Email Address Field */
+          /* Begin User Field */
+          {
+            name: "user", type: "user", strict: false, label: "ID", show: [{ type: "matches", name: "email_type", value: "user" }], options: [{ first_name: "Owner", unique_id: "{{owner.unique_id}}", email: "User that initiated workflow" }, { first_name: "Actor", unique_id: "{{actor.unique_id}}", email: "User that is taking an action" },
+            {
+              type: "optgroup", options: "map_users", format: {
+                display: '{{name}}<div style="color:#aaa">Mapped value</div>',
+                value: function (option) { return "{{datamap." + option.name + "}}" }, label: "{{name}}"
+              }
             },
-            {type:"optgroup",options:'/api/groups?members=20',format:{label:"{{name}}",value:"{{id}}"}}
-        ]},
-        /* End Email Field */
-    ]},
+            {
+              type: "optgroup", options: "form_users", format: {
+                display: '{{name}}<div style="color:#aaa">Form value</div>',
+                value: function (option) {
+                  var path = option.data.name
+                  var search = option.data;
+                  while (search.ischild) {
+                    path = search.parent.name + '.' + path;
+                    search = search.parent;
+                  }
+                  return "{{form." + path + "}}"
+                }, label: "{{label}}{{^label}}{{name}}{{/label}}"
+              }
+            }
+            ]
+          },
+          /* End Email Field */
+          /* Begin Group Field */
+          {
+            name: "group", type: "group", label: "ID", show: [{ type: "matches", name: "email_type", value: "group" }], options: [
+              {
+                type: "optgroup", options: "map_groups", format: {
+                  display: '{{name}}<div style="color:#aaa">Mapped value</div>',
+                  value: function (option) { return "{{datamap." + option.name + "}}" }, label: "{{name}}"
+                }
+              },
+              {
+                type: "optgroup", options: "form_groups", format: {
+                  display: '{{name}}<div style="color:#aaa">Form value</div>',
+                  value: function (option) {
+                    var path = option.data.name
+                    var search = option.data;
+                    while (search.ischild) {
+                      path = search.parent.name + '.' + path;
+                      search = search.parent;
+                    }
+                    return "{{form." + path + "}}"
+                  }, label: "{{label}}{{^label}}{{name}}{{/label}}"
+                }
+              },
+              { type: "optgroup", options: '/api/groups?members=20', format: { label: "{{name}}", value: "{{id}}" } }
+            ]
+          },
+          /* End Email Field */
+        ]
+      },
 
-  {name: "subject", type: "text", label: "Subject", show: [{type: "matches", name: "task", value: 'email'}]},
-  {name: "content", type: "textarea", label: "Content",show: [{type: "matches", name: "task", value: 'email'}]},
-  {name: "resource",columns:8, type: "select", label:"Resource",placeholder: "None", options:"resources", show: [{type: "matches", name: "task", value: 'resource'}]},
-  {name: "verb",columns:4, label: "Verb", type: "select", options: ["GET","POST","PUT","DELETE"],show: [{type: "matches", name: "task", value: 'resource'}]},
-  {name: "resource", type: "select", label:"Resource",placeholder: "None", options:"resources", show: [{type: "matches", name: "task", value: 'api'}]},
-  {type:"output","value":"This task purges all values of a specified name from the form data, and throughout the workflow history",show: [{"type": "matches","name": "task","value": "purge_fields_by_name"}]},
-  {name:"dataset",label:"Data",type:"fieldset", array:{max:100},show: [{type: "matches", name: "task", value: 'resource'}],fields:[
-    {label:"Key"},
-    {label:"Value"}
-  ]},
-  {
-    "label": "Field Name","name": "field_names","type": "text",
-    "array": {"min": null,"max": null},
-    "show": [{"type": "matches","name": "task","value": "purge_fields_by_name"}],
-  }
-]
+      { name: "subject", type: "text", label: "Subject", show: [{ type: "matches", name: "task", value: 'email' }] },
+      { name: "content", type: "textarea", label: "Content", show: [{ type: "matches", name: "task", value: 'email' }] },
+      { name: "resource", columns: 8, type: "select", label: "Resource", placeholder: "None", options: "resources", show: [{ type: "matches", name: "task", value: 'resource' }] },
+      { name: "verb", columns: 4, label: "Verb", type: "select", options: ["GET", "POST", "PUT", "DELETE"], show: [{ type: "matches", name: "task", value: 'resource' }] },
+      { name: "resource", type: "select", label: "Resource", placeholder: "None", options: "resources", show: [{ type: "matches", name: "task", value: 'api' }] },
+      { type: "output", "value": "This task purges all values of a specified name from the form data, and throughout the workflow history", show: [{ "type": "matches", "name": "task", "value": "purge_fields_by_name" }] },
+      {
+        name: "dataset", label: "Data", type: "fieldset", array: { max: 100 }, show: [{ type: "matches", name: "task", value: 'resource' }], fields: [
+          { label: "Key" },
+          { label: "Value" }
+        ]
+      },
+      {
+        "label": "Field Name", "name": "field_names", "type": "text",
+        "array": { "min": null, "max": null },
+        "show": [{ "type": "matches", "name": "task", "value": "purge_fields_by_name" }],
+      }
+    ]
 
-function createFlow(){}
-drawForm();
+    function createFlow() { }
+    drawForm();
 
-document.querySelector('#code code').innerHTML = 'var config = '+JSON.stringify(flowForm.options,null,2);
-// $('#form').html(myform.toString())
-flowForm.on('input',function(e){
-    if(e.form.validate()){}
-        document.querySelector('#result code').classList = "prettyprint"
-        document.querySelector('#result code').innerHTML = 'myform.get();<br> => '+JSON.stringify(e.form,null,2);
-        if(typeof PR !== 'undefined')PR.prettyPrint();
-}).trigger('input')
-</script>
+    document.querySelector('#code code').innerHTML = 'var config = ' + JSON.stringify(flowForm.options, null, 2);
+    // $('#form').html(myform.toString())
+    flowForm.on('input', function (e) {
+      if (e.form.validate()) { }
+      document.querySelector('#result code').classList = "prettyprint"
+      document.querySelector('#result code').innerHTML = 'myform.get();<br> => ' + JSON.stringify(e.form, null, 2);
+      if (typeof PR !== 'undefined') PR.prettyPrint();
+    }).trigger('input')
+  </script>
 
-    <!-- <script src="../assets/js/example.js"></script>    -->
-        
-   </body>
+  <!-- <script src="../assets/js/example.js"></script>    -->
+
+</body>
+
 </html>

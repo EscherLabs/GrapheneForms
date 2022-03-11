@@ -2,10 +2,10 @@
 cat src/js/gform.js src/js/types.js src/js/utils.js src/js/iterations.js src/js/init.js src/js/conditions.js src/js/validate.js > bin/gform.js
 cat src/js/gform.js src/js/types.js src/js/utils.js src/js/iterations.js src/js/init.js src/js/conditions.js src/js/validate.js > bin/gform.engine.min.js 
 cat bin/gform.engine.min.js src/js/themes/default.js > bin/default/gform.min.js 
-cat bin/gform.engine.min.js src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/gform_bootstrap.min.js 
+cat bin/gform.engine.min.js src/js/themes/bootstrap.js src/js/types/combobox.js > bin/bootstrap/gform_bootstrap.min.js 
 cat src/js/themes/default.js > bin/default/default.theme.min.js
-cat bin/gform.js src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/gform_bootstrap.js 
-cat src/js/themes/bootstrap.js src/js/types/smallcombo.js > bin/bootstrap/bootstrap.theme.min.js
+cat bin/gform.js src/js/themes/bootstrap.js src/js/types/combobox.js > bin/bootstrap/gform_bootstrap.js 
+cat src/js/themes/bootstrap.js src/js/types/combobox.js > bin/bootstrap/bootstrap.theme.min.js
 cat bin/gform.js  src/js/themes/default.js > bin/default/gform_default.js
 cat bin/gform.engine.min.js src/js/themes/tailwind.js > bin/tailwind/gform_tailwind.min.js 
 # minify bin/gform.engine.min.js src/js/themes/bulma.js > bin/gform_bulma.min.js 
@@ -17,10 +17,12 @@ cat bin/gform.engine.min.js src/js/themes/tailwind.js > bin/tailwind/gform_tailw
 
 # cp src/js/themes/* bin/
 cp src/js/themes/bootstrap.js bin/bootstrap/
-cp src/js/types/smallcombo.js bin/bootstrap/
+cp src/js/types/combobox.js bin/bootstrap/
 cp src/js/themes/default.js bin/default/
 cp src/js/themes/tailwind.js bin/tailwind/
 cp bin/* docs/assets/js/
+cp src/js/types/combobox.js docs/assets/js/
+
 cp bin/default/* docs/assets/js/
 cp bin/bootstrap/* docs/assets/js/
 cp bin/tailwind/* docs/assets/js/

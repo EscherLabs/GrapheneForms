@@ -883,7 +883,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 gform.types['contentEditable'] = gform.types['summernote'] = _.extend({}, gform.types['input'], {
 	render: function () {
 		//   return gform.render(this.type, this);
-		return gform.render('contenteditable', this).split('value=""').join('value="' + _.escape(this.value) + '"')
+		return gform.render('contenteditable', this);
 	},
 	set: function (value) {
 		//   this.el.querySelector('textarea[name="' + this.name + '"]').value = value;
@@ -925,6 +925,8 @@ gform.types['contentEditable'] = gform.types['summernote'] = _.extend({}, gform.
 				['view', ['fullscreen']]
 			]
 		});
+		gform.types[this.type].set.call(this, this.value, true)
+
 		this.$el.on('summernote.change', function () {
 			this.owner.trigger('change', this);
 

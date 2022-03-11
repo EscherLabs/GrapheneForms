@@ -454,11 +454,9 @@ var gform = function (optionsIn, el) {
                 target = activeField.el.querySelector('.gform-add') || activeField.am.el.querySelector('.gform-append')
             } else {
 
-                let index = activeField.parent.fields.indexOf(activeField);
-                if (index >= 0 && typeof activeField.parent.fields[index + 1] !== 'undefined') activeField.parent.fields[index + 1].focus();
-                // e.stopPropagation();
-                // e.preventDefault();
-                // return false;
+                // let index = activeField.parent.fields.indexOf(activeField);
+                // if (index >= 0 && typeof activeField.parent.fields[index + 1] !== 'undefined') activeField.parent.fields[index + 1].focus();
+
             }
         }
         if (e.target.classList.value.indexOf('gform-') < 0 && e.target.parentElement && e.target.parentElement.classList.value.indexOf('gform-') >= 0) {
@@ -2878,7 +2876,7 @@ gform._lookup = (field, args, _lookup) => {
     var searchField = field;
 
     if (args.name.indexOf('/') == 0) {
-        looker = searchField.owner.filter({ path: args.name }, args.depth || 10);
+        looker = searchField.owner.find({ path: args.name }, args.depth || 10);
     } else {
         let searchObj = args.name.split('.')
         let searchString = searchObj.shift();
@@ -2955,8 +2953,8 @@ gform.patch = function (object, patch, action) {
             //     object[target] = task.value;
             // }
             let value = ('toJSON' in task) ? task.toJSON : task.value;
-            if (target)
-                object[target] = ('toJSON' in task) ? task.toJSON : task.value;
+            if (target && typeof value !== "undefined")
+                object[target] = value;
 
             // if(object[target] == null)delete object[target];
             // let val = ('toJSON' in task)?task.toJSON:task.value;
@@ -3888,7 +3886,11 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
     var format = this.optgroup.format;
 
     function pArray(opts) {
-        return _.map(opts, function (item) {
+        if (typeof opts == "string") {
+            if (opts == 'waiting') return [];
+        }
+        return _.compact(_.map(opts, function (item) {
+            if (item == null || typeof item == 'undefined') return;
             if (typeof item === 'object' && item.type == 'optgroup') {
                 item.map = new gform.mapOptions(_.extend({ format: format, owner: this.owner }, item), value, count, this.collections, waitlist);
                 item.map.on('*', function (e) {
@@ -3944,6 +3946,8 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
                                     format[prop].call(this, option)
                                     : option[prop]
                         }
+                        option.processed = true;
+
                         return option;
                     }.bind(this), option)
                     /*
@@ -3963,7 +3967,7 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
 
                 return option;
             } ''
-        }.bind(this))
+        }.bind(this)))
     }
 
     this.optgroup.options = this.optgroup.options || [];
@@ -3999,13 +4003,6 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
 
     if (_.isString(this.optgroup.path) && this.optgroup.path) {
 
-        this.collections.on(this.optgroup.path, function (e) {
-            this.optgroup.options = pArray.call(this.optgroup.map, e.collection);
-            if (waitlist.indexOf(e.event) >= 0) {
-                delete waitlist[waitlist.indexOf(e.event)];
-            }
-            this.eventBus.dispatch('change')
-        }.bind(this))
 
         if (!this.collections.get(this.optgroup.path) || this.collections.get(this.optgroup.path) == 'waiting') {
 
@@ -4019,6 +4016,7 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
                 gform.ajax({
                     path: (this.owner.options.rootpath || '') + this.optgroup.path, success: function (data) {
                         this.collections.update(this.optgroup.path, data)
+                        this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
                         if (waitlist.indexOf(this.optgroup.path) >= 0) {
                             delete waitlist[waitlist.indexOf(this.optgroup.path)];
                         }
@@ -4032,24 +4030,34 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
         } else {
             this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
         }
+
+        this.collections.on(this.optgroup.path, function (e) {
+            this.optgroup.options = pArray.call(this.optgroup.map, e.collection);
+            if (waitlist.indexOf(e.event) >= 0) {
+                delete waitlist[waitlist.indexOf(e.event)];
+            }
+            this.eventBus.dispatch('change')
+        }.bind(this))
     }
 
 
 
     var response = {
         getobject: function () {
-            var temp = {};
-            temp = _.map(this.optgroup.options, function (item) {
-
+            return _.reduce(this.optgroup.options, function (result, i) {
+                let item = { ...i };
                 item.visible = ('visible' in item) ? item.visible : true
                 item.editable = ('editable' in item) ? item.editable : true
                 if ('map' in item) {
                     item.options = item.map.getoptions();
-                    return { optgroup: { ...item, label: item.label || '',/* visible: item.visible, editable: item.editable,*/ options: item.map.getoptions() } }
-                } else { return item; }
-            })
-            return temp;
-        }.bind(this), getoptions: function (search) {
+                    result.push({ optgroup: { ...item, label: item.label || '',/* visible: item.visible, editable: item.editable,*/ options: item.map.getoptions() } })
+                } else {
+                    result.push(item);
+                }
+                return result
+            }, [])
+        }.bind(this),
+        getoptions: function (search) {
             var temp = [];
             _.each(this.optgroup.options, function (item) {
 
@@ -4200,14 +4208,18 @@ gform.arrayManager = function (field) {
     if (typeof gform.types[field.type].row == "function") {
     }
     this.get = function () {
-        let temp = _.map(_.reduce(this.instances, function (temp, instance) {
-            if (_.isMatch(instance, { parsable: true })) {
-                temp.push(instance);
-            }
-            return temp;
+        // let temp = _.map(_.reduce(this.instances, function (temp, instance) {
+        //     if (_.isMatch(instance, { parsable: true })) {
+        //         temp.push(instance);
+        //     }
+        //     return temp;
 
-        }, []), instance => instance.get())
-
+        // }, []), instance => instance.get())
+        let temp = gform.reduce.call(this.parent, (i, e) => {
+            let val = e.get();
+            if (typeof val !== 'undefined') i.push(val);
+            return i;
+        }, [], { parsable: true, am: this })
         //check length as well - validation stuff
         if (typeof this.array.filter !== 'undefined' && this.array.filter != false) {
             if (typeof this.array.filter == 'function') {
@@ -6376,7 +6388,7 @@ gform.types['color'] = _.extend({}, gform.types['input'], {
 gform.types['contentEditable'] = gform.types['summernote'] = _.extend({}, gform.types['input'], {
 	render: function () {
 		//   return gform.render(this.type, this);
-		return gform.render('contenteditable', this).split('value=""').join('value="' + _.escape(this.value) + '"')
+		return gform.render('contenteditable', this);
 	},
 	set: function (value) {
 		//   this.el.querySelector('textarea[name="' + this.name + '"]').value = value;
@@ -6418,6 +6430,8 @@ gform.types['contentEditable'] = gform.types['summernote'] = _.extend({}, gform.
 				['view', ['fullscreen']]
 			]
 		});
+		gform.types[this.type].set.call(this, this.value, true)
+
 		this.$el.on('summernote.change', function () {
 			this.owner.trigger('change', this);
 
@@ -6587,7 +6601,7 @@ gform.prototype.modal = function (data) {
 	return this;
 };
 document.body.appendChild(gform.create('<style>' + gform.render('_style', {}, 'all') + '</style>'));
-gform.stencils.smallcombo = `
+gform.stencils.combobox = `
 <div class="row clearfix form-group {{modifiers}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
@@ -6600,7 +6614,7 @@ gform.stencils.smallcombo = `
 	<div class="combobox-container">
 		<div class="input-group" style="width:100%" contentEditable="false"> 
 		{{#pre}}<span class="input-group-addon">{{{pre}}}</span>{{/pre}}
-        <div style="" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control {{^editable}}readonly disabled{{/editable}}" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" {{#editable}}contentEditable{{/editable}} type="smallcombo" data-type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
+        <div style="" {{^autocomplete}}autocomplete="off"{{/autocomplete}} class="form-control {{^editable}}readonly disabled{{/editable}}" {{^editable}}readonly disabled{{/editable}} {{#limit}}maxlength="{{limit}}"{{/limit}}{{#min}} min="{{min}}"{{/min}}{{#max}} max="{{max}}"{{/max}} {{#step}} step="{{step}}"{{/step}} placeholder="{{placeholder}}" {{#editable}}contentEditable{{/editable}} type="combobox" data-type="{{elType}}{{^elType}}{{type}}{{/elType}}" name="{{name}}" id="{{name}}" value="{{value}}" ></div>
         <ul class="combobox-list dropdown-menu "></ul>
         <span class="input-group-addon dropdown-toggle" style="" data-dropdown="dropdown"> <span class=" status-icon" data-dropdown="dropdown"></span>  </span> 
 		</div>
@@ -6610,7 +6624,7 @@ gform.stencils.smallcombo = `
 	</div>
 </div>`;
 
-gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
+gform.types['combobox'] = _.extend({}, gform.types['input'], {
     base: "collection",
     destroy: function () {
         this.el.removeEventListener('change', this.onchangeEvent);
@@ -6636,7 +6650,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
     },
     focus: function () {
         if (!this.active) return;
-        var node = this.el.querySelector('[type=smallcombo]');
+        var node = this.el.querySelector('[type=combobox]');
         if (node !== null) {
             node.focus();
             if (node.textContent == '') return;
@@ -6668,7 +6682,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         }
         this.options = this.mapOptions.getoptions();
         this.internalValue = this.value || "";
-        return gform.render('smallcombo', this);
+        return gform.render('combobox', this);
     },
     get: function () {
         return ((this.strict) ? (_.find(this.options, { value: this.value }) || { value: "" }) : this).value;
@@ -6680,31 +6694,30 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         value = (typeof value == "string") ? value.replace((/  |\r\n|\n|\r/gm), "") : value
         var item = _.find(this.options, { value: value }) || _.find(this.options, { label: value })
         if (typeof item !== 'undefined') {
-            if (!input || (input == 'nosearch' && (this.el.querySelector('[type=smallcombo]') !== document.activeElement || this.combo.innerText !== item.label))) {
+            if (!input || (input == 'nosearch' && (this.el.querySelector('[type=combobox]') !== document.activeElement || this.combo.innerText !== item.label))) {
                 this.combo.innerText = item.label;
                 gform.addClass(this.el.querySelector('.combobox-container'), 'combobox-selected');
             }
             this.internalValue = item.value;
         } else {
-            if (typeof this.search == 'string' && input !== 'nosearch') {
+            if (typeof this.search == 'string' && typeof this.owner.methods[this.search] !== 'function' && input !== 'nosearch') {
                 gform.removeClass(this.el.querySelector('.combobox-container'), 'loaded');
-
                 gform.ajax({
-                    sourceID: this.id,
+                    sourceID: 'set' + this.id,
                     path: gform.renderString(this.search, { value: value }), success: this.searchData.bind(this, value)
                 })
-            } else if (typeof this.search == "function" && input !== 'nosearch') {
+            } else if ((typeof this.search == "function" || typeof this.owner.methods[this.search] == 'function') && input !== 'nosearch') {
                 gform.removeClass(this.el.querySelector('.combobox-container'), 'loaded');
 
                 async function asyncCall() {
-                    const result = await new Promise(function (resolve) {
+                    return await new Promise(function (resolve) {
 
-                        let response = this.search.call(this, { value: value }, resolve)
+                        let response = (this.owner.methods[this.search] || this.search).call(this, { value: value }, resolve)
                         if (typeof response == 'object') {
                             resolve(response);
                         }
                     }.bind(this));
-                    this.searchData.call(this, value, result);
+
                 }
 
                 ;
@@ -6713,13 +6726,10 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                 // });
 
                 const promise2 = new Promise((resolve, reject) => {
-                    setTimeout(resolve, 100, 'two');
+                    setTimeout(resolve, 2000, []);
                 });
 
-                Promise.race([asyncCall.call(this), promise2]).then((value) => {
-                    console.log(value);
-                    // Both resolve, but promise2 is faster
-                });
+                Promise.race([asyncCall.call(this), promise2]).then(this.searchData.bind(this, value));
 
             }
             this.internalValue = value || "";
@@ -6727,7 +6737,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
             if ('el' in this) {
                 if (this.combo.innerHTML !== value) {
                     this.combo.innerHTML = value;
-                    gform.types.smallcombo.focus.call(this);
+                    gform.types.combobox.focus.call(this);
                 }
 
                 if (typeof value == 'undefined' || (typeof value !== 'undefined' && this.combo.innerText !== value)) {
@@ -6771,6 +6781,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
             }
         }
         this.createLI = function (force, option) {
+
             if (typeof option !== 'undefined' && typeof option !== 'object') {
                 option = { label: option, value: option }
             }
@@ -6788,22 +6799,26 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
             //         option.value = this.format.value.call(this, option)
             //     }
             // }
-            option = _.reduce(['label', 'display', 'value'/*,'cleanlabel'*/], function (format, option, prop) {
-                if (prop in format) {
-                    if (prop in option) {
-                        option.original = option.original || {};
-                        option.original[prop] = option[prop]
+            if (!('processed' in option)) {
+
+                option = _.reduce(['label', 'display', 'value'/*,'cleanlabel'*/], function (format, option, prop) {
+                    if (prop in format) {
+                        if (prop in option) {
+                            option.original = option.original || {};
+                            option.original[prop] = option[prop]
+                        }
+                        option[prop] = (typeof format[prop] == 'string') ?
+
+                            (format[prop] in option) ? option[format[prop]] : gform.renderString(format[prop], option)
+
+                            : (typeof format[prop] == 'function') ?
+                                format[prop].call(this, option)
+                                : option[prop]
                     }
-                    option[prop] = (typeof format[prop] == 'string') ?
-
-                        (format[prop] in option) ? option[format[prop]] : gform.renderString(format[prop], option)
-
-                        : (typeof format[prop] == 'function') ?
-                            format[prop].call(this, option)
-                            : option[prop]
-                }
-                return option;
-            }.bind(this, this.format), option)
+                    option.processed = true;
+                    return option;
+                }.bind(this, this.format), option)
+            }
             option.visible = ('visible' in option) ? option.visible : true
             option.editable = ('editable' in option) ? option.editable : true
             if (this.filter !== false && (force || this.combo.innerText == "" || _.score(option.label.toLowerCase(), this.combo.innerText.toLowerCase()) > .6)) {
@@ -6847,8 +6862,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                     this.internalValue = null;
                 }
                 var item = _.find(this.options, { value: value }) || _.find(this.options, { label: value })
-
-                this.shown = (typeof item == 'undefined' && data.length > 0);
+                this.shown = (typeof item == 'undefined' && data.length > 0) && this.el.contains(document.activeElement);
                 this.menu.style.display = (this.shown) ? 'block' : 'none';
 
                 this.set((item || { value: value }).value, true, 'nosearch')
@@ -6899,7 +6913,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
 
                 this.menu.style.display = 'none';
                 this.shown = false;
-                gform.types.smallcombo.focus.call(this);
+                gform.types.combobox.focus.call(this);
             } else {
                 if (typeof this.custom == 'object' && this.custom.name == index) {
                     if (typeof this.custom.action == 'function') {
@@ -6932,7 +6946,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
                         this.renderMenu();
                     }
                 }
-                gform.types.smallcombo.focus.call(this);
+                gform.types.combobox.focus.call(this);
             }
             this.mousedropdown = false;
         }.bind(this))
@@ -7094,7 +7108,7 @@ gform.types['smallcombo'] = _.extend({}, gform.types['input'], {
         if (typeof this.search == 'string' && typeof this.value !== 'undefined' && this.value !== "") {
             gform.removeClass(this.el.querySelector('.combobox-container'), 'loaded');
             gform.ajax({
-                sourceID: this.id,
+                sourceID: 'init' + this.id,
                 path: gform.renderString(this.search, { value: this.value }), success: function (data) {
                     index = this.options.length;
                     this.options = this.options.concat(_.map(data, this.createLI.bind(null, false)))

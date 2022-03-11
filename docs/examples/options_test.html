@@ -1,225 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-		<link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
-        <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
-        <link rel="stylesheet" type='text/css' href="../assets/vendor/css/combobox.css">
-        <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
 
-    </head>
-    <body>
-      <div style="padding:20px">
-      <h4><a href="./">Examples</a> - Types</h4>
-      <div class="container ">
-          <div class="row ">
-                <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
-                <div class="col-md-4" style=""><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"><div data-inline="url"></div></div></div>                
-                <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
-              </div>
-          </div>
-      </div>
-      <script src='../assets/vendor/js/jquery.js'></script>
+<head>
+    <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+    <link rel="stylesheet" type='text/css' href="../assets/vendor/css/combobox.css">
+    <link rel='stylesheet' type='text/css' href='../assets/vendor/css/colorpicker.min.css'>
 
-      <script src="../assets/js/lodash.min.js"></script>    
-      <script src='../assets/js/gform_bootstrap.js'></script>
-      <script src='../assets/vendor/js/combobox.js'></script>
-  
-      <script src='../assets/js/bootstrap.min.js'></script>
+</head>
 
-      <!-- <script src='../assets/js/gform.bootstrap.js'></script> -->
-      <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+<body>
+    <div style="padding:20px">
+        <h4><a href="./">Examples</a> - Types</h4>
+        <div class="container ">
+            <div class="row ">
+                <div class="col-md-4" style="overflow: scroll;">
+                    <pre id="code"><code class="prettyprint"></code></pre>
+                </div>
+                <div class="col-md-4" style="">
+                    <pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre>
+                    <hr>
+                    <div id="form">
+                        <div data-inline="url"></div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="overflow: scroll;">
+                    <pre id="result"><code class="prettyprint"></code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src='../assets/vendor/js/jquery.js'></script>
+
+    <script src="../assets/js/lodash.min.js"></script>
+    <script src='../assets/js/gform_bootstrap.js'></script>
+    <script src='../assets/vendor/js/combobox.js'></script>
+
+    <script src='../assets/js/bootstrap.min.js'></script>
+
+    <!-- <script src='../assets/js/gform.bootstrap.js'></script> -->
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
     <script>
-    options = {
-        // default:{hideLabel:true,type:'text',format:{label: '{{label}}', value: '{{value}}'}},
-        // clear:false,
-        legend: 'Options Array',
-        fields:[
-        {label: 'Select Field Array', name: 'array', type:'select', options:[
-            {"label":"First","value":1},
-            {"label":"Second","value":2},
-            {"label":"Third","value":3}
-        ]},       
-        {label: 'Select Field Simple Array', name: 'simple', type:'select', options:[
-            {type:"optgroup",options:['0','1','2']}
-        ]},
-        {label: 'Checkbox Simple Array', name: 'checkbox', type:'checkbox', options:[
-            'no','yes'
-        ]},
-        {label: '<span style="color:{{value}}">Select Field function</span>',placeholder:'Choose a color', name: 'function', type:'select', options: function(){
-            return["Red","Green","Blue"];
-        }},
-        {label: 'Select Field (url string)', name: 'url', type:'select', options:[{type:'optgroup', path:'../data/days.json',format:{label:'first{{label}}'}}]},
-        {label: 'Select Field (url string)', name: 'urls', type:'select', options: [{type:'optgroup',options:[{label:'No Filter',value:null}],format:{label:"{{label}}"}},{type:'optgroup',options:'../data/days.json'}]  }
-        ]
-    }
-
-
-
-// TJC -- gform patch to enable conditional options
-gform.mapOptions = function(optgroup, value, count,collections,waitlist){
-    waitlist = waitlist||[];
-    if(optgroup.owner instanceof gform){
-        this.field = optgroup;
-    }
-    this.collections = collections;
-    this.eventBus = new gform.eventBus({owner:'field',item:'option'}, this)
-    this.optgroup = _.extend({},optgroup);
-    count = count||0;
-    var format = this.optgroup.format;
-    function pArray(opts){
-        return _.map(opts,function(item){
-            if(typeof item === 'object' && item.type == 'optgroup'){
-                item.map = new gform.mapOptions(_.extend({format:format},item),value,count,this.collections,waitlist);
-                item.map.on('*',function(e){
-                    this.eventBus.dispatch(e.event);
-                }.bind(this))
-                item.id = gform.getUID();
-                gform.processConditions.call(this.field, item.edit, function(item,id, result,e){
-                    if(item.id == id){
-                      item.editable = result
-                      item.map.optgroup.editable = result
-                    }else{
-                      _.find(item.map.optgroup.options,{id:id}).editable = result
+        options = {
+            // default:{hideLabel:true,type:'text',format:{label: '{{label}}', value: '{{value}}'}},
+            // clear:false,
+            legend: 'Options Array',
+            fields: [
+                {
+                    label: 'Select Field Array', name: 'array', type: 'select', options: [
+                        { "label": "First", "value": 1 },
+                        { "label": "Second", "value": 2 },
+                        { "label": "Third", "value": 3 }
+                    ]
+                },
+                {
+                    label: 'Select Field Simple Array', name: 'simple', type: 'select', options: [
+                        { type: "optgroup", options: ['0', '1', '2'] }
+                    ]
+                },
+                {
+                    label: 'Checkbox Simple Array', name: 'checkbox', type: 'checkbox', options: [
+                        'no', 'yes'
+                    ]
+                },
+                {
+                    label: '<span style="color:{{value}}">Select Field function</span>', placeholder: 'Choose a color', name: 'function', type: 'select', options: function () {
+                        return ["Red", "Green", "Blue"];
                     }
-                    this.eventBus.dispatch('change')
-                }.bind(this,item,item.id))
-                gform.processConditions.call(this.field, item.show, function(item,id, result,e,){
-                    if(item.id == id){
-                      item.visible = result
-                      item.isVisible = result
-                      item.map.optgroup.visible = result
-                      item.map.optgroup.isVisible = result
-                    }else{
-                      _.find(item.map.optgroup.options,{id:id}).visible = result
-                      _.find(item.map.optgroup.options,{id:id}).isVisible = result
-                    }
-                    this.eventBus.dispatch('change')
-                }.bind(this,item,item.id))
-                count += item.map.getoptions().length;
-                return item;
-            }else{
-                var option = _.extend({},item)
-                option.data = item;
-                if(typeof item === 'string' || typeof item === 'number' || typeof item == 'boolean') {
-                    option.label = option.value = item;
-                }
-                option.index = item.index || ""+count;
+                },
+                { label: 'Select Field (url string)', name: 'url', type: 'select', options: [{ type: 'optgroup', path: '../data/days.json', format: { label: 'first{{label}}' } }] },
+                { label: 'Select Field (url string)', name: 'urls', type: 'select', options: [{ type: 'optgroup', options: [{ label: 'No Filter', value: null }], format: { label: "{{label}}" } }, { type: 'optgroup', options: '../data/days.json' }] }
+            ]
+        }
 
-                if(typeof format !== 'undefined'){
-                    option = _.reduce(['label','display','value'/*,'cleanlabel'*/],function(option,prop){
-                        if(prop in format){
-                            option[prop] = (typeof format[prop] == 'string')? 
-                                    gform.renderString(format[prop],option) 
-                                : (typeof format[prop] == 'function')? 
-                                    format[prop].call(this,option)
-                                    : option[prop]
+
+
+        // TJC -- gform patch to enable conditional options
+        gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
+            waitlist = waitlist || [];
+            if (optgroup.owner instanceof gform) {
+                this.field = optgroup;
+            }
+            this.collections = collections;
+            this.eventBus = new gform.eventBus({ owner: 'field', item: 'option' }, this)
+            this.optgroup = _.extend({}, optgroup);
+            count = count || 0;
+            var format = this.optgroup.format;
+            function pArray(opts) {
+                return _.map(opts, function (item) {
+                    if (typeof item === 'object' && item.type == 'optgroup') {
+                        item.map = new gform.mapOptions(_.extend({ format: format }, item), value, count, this.collections, waitlist);
+                        item.map.on('*', function (e) {
+                            this.eventBus.dispatch(e.event);
+                        }.bind(this))
+                        item.id = gform.getUID();
+                        gform.processConditions.call(this.field, item.edit, function (item, id, result, e) {
+                            if (item.id == id) {
+                                item.editable = result
+                                item.map.optgroup.editable = result
+                            } else {
+                                _.find(item.map.optgroup.options, { id: id }).editable = result
+                            }
+                            this.eventBus.dispatch('change')
+                        }.bind(this, item, item.id))
+                        gform.processConditions.call(this.field, item.show, function (item, id, result, e,) {
+                            if (item.id == id) {
+                                item.visible = result
+                                item.isVisible = result
+                                item.map.optgroup.visible = result
+                                item.map.optgroup.isVisible = result
+                            } else {
+                                _.find(item.map.optgroup.options, { id: id }).visible = result
+                                _.find(item.map.optgroup.options, { id: id }).isVisible = result
+                            }
+                            this.eventBus.dispatch('change')
+                        }.bind(this, item, item.id))
+                        count += item.map.getoptions().length;
+                        return item;
+                    } else {
+                        var option = _.extend({}, item)
+                        option.data = item;
+                        if (typeof item === 'string' || typeof item === 'number' || typeof item == 'boolean') {
+                            option.label = option.value = item;
                         }
+                        option.index = item.index || "" + count;
+
+                        if (typeof format !== 'undefined') {
+                            option = _.reduce(['label', 'display', 'value'/*,'cleanlabel'*/], function (option, prop) {
+                                if (prop in format) {
+                                    option[prop] = (typeof format[prop] == 'string') ?
+                                        gform.renderString(format[prop], option)
+                                        : (typeof format[prop] == 'function') ?
+                                            format[prop].call(this, option)
+                                            : option[prop]
+                                }
+                                return option;
+                            }.bind(this), option)
+                        }
+                        if (option.value == value || (/*this.multiple && */typeof value !== 'undefined' && value !== null && value.length && (value.indexOf(option.value) >= 0))) { option.selected = true; }
+
+                        count += 1;
+                        option.i = count;
                         return option;
-                    }.bind(this), option)
-                }
-                if(option.value == value || (/*this.multiple && */typeof value !=='undefined' && value !== null && value.length && (value.indexOf(option.value)>=0) )) { option.selected = true;}
-
-                count+=1;
-                option.i = count;
-                return option;
-            }
-        }.bind(this))
-    }
-    this.optgroup.options = this.optgroup.options || [];
-    switch(typeof this.optgroup.options){
-        case 'string':
-            this.optgroup.path = this.optgroup.path || this.optgroup.options;
-            this.optgroup.options = []
-        break;
-        case 'function':
-            this.optgroup.action = this.optgroup.options;
-            this.optgroup.options = []
-        break;
-    }
-	if('max' in this.optgroup && this.optgroup.max !== '') {
-        for(var i = (this.optgroup.min || 0);i<=this.optgroup.max;i=i+(this.optgroup.step || 1)){
-            this.optgroup.options.push(""+i);
-        }
-    }
-    if(typeof this.optgroup.action == 'function'){
-        this.optgroup.options = this.optgroup.options.concat(pArray.call(this,this.optgroup.action.call(this)));
-    }
-    if(_.isArray(this.optgroup.options)){
-        this.optgroup.options = pArray.call(this,this.optgroup.options);
-    }
-    if(_.isString(this.optgroup.path) && this.optgroup.path){
-        this.collections.on(this.optgroup.path,function(e){
-            this.optgroup.options = pArray.call(this.optgroup.map, e.collection);
-            if( waitlist.indexOf(e.event) >= 0){
-                delete  waitlist[ waitlist.indexOf(e.event)];
-            }
-            this.eventBus.dispatch('change')
-        }.bind(this))
-        if(!this.collections.get(this.optgroup.path) || this.collections.get(this.optgroup.path) == 'waiting'){
-            if( waitlist.indexOf(this.optgroup.path) == -1){
-                waitlist.push(this.optgroup.path);
-            }
-            if(this.collections.get(this.optgroup.path)!== 'waiting'){
-                this.collections.add(this.optgroup.path,'waiting')
-                gform.ajax({path: (gform.options.rootpath||'')+this.optgroup.path, success:function(data) {
-                    this.collections.update(this.optgroup.path,data)
-                    if( waitlist.indexOf(this.optgroup.path) >= 0){
-                        delete  waitlist[ waitlist.indexOf(this.optgroup.path)];
                     }
-
-                    this.eventBus.dispatch('collection');
-                    this.eventBus.dispatch('change');
-
-                }.bind(this)})
+                }.bind(this))
             }
-        }else{
-            this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
-        }
-    }
-    var response = {getobject:function(){
-        var temp = {};
-            this.optgroup.isVisible = ('isVisible' in this.optgroup)?this.optgroup.isVisible:true
-            this.optgroup.editable = ('editable' in this.optgroup)?this.optgroup.editable:true
-        temp = _.map(this.optgroup.options,function(og, item){
-            item.isVisible = ('isVisible' in item)?og.visible&&item.isVisible:og.visible
-            item.editable = ('editable' in item)?og.editable&&item.editable:og.editable
-            if('map' in item){
-                item.options = item.map.getoptions();
-                return {optgroup:{label:item.label||'',visible:item.isVisible,editable:item.editable,options:item.options}}
-            }else{
-              return {label:item.label||'',visible:item.isVisible,editable:item.editable};
+            this.optgroup.options = this.optgroup.options || [];
+            switch (typeof this.optgroup.options) {
+                case 'string':
+                    this.optgroup.path = this.optgroup.path || this.optgroup.options;
+                    this.optgroup.options = []
+                    break;
+                case 'function':
+                    this.optgroup.action = this.optgroup.options;
+                    this.optgroup.options = []
+                    break;
             }
-        }.bind(null,this.optgroup))
-        return temp;
-    }.bind(this),
-    getoptions:function(search){
-        var temp = [];
-            this.optgroup.isVisible = ('isVisible' in this.optgroup)?this.optgroup.isVisible:true
-            this.optgroup.editable = ('editable' in this.optgroup)?this.optgroup.editable:true
-        _.each(this.optgroup.options,function(og,item){
-            item.isVisible = ('isVisible' in item)?og.isVisible&&item.isVisible:og.isVisible
-            item.editable = ('editable' in item)?og.editable&&item.editable:og.editable
-            if('map' in item){
-                temp = temp.concat(item.map.getoptions())
-            }else{temp.push(item)}
-        }.bind(null,this.optgroup))
-        if(typeof search !== 'undefined'){
-            return _.find(temp,search)
+            if ('max' in this.optgroup && this.optgroup.max !== '') {
+                for (var i = (this.optgroup.min || 0); i <= this.optgroup.max; i = i + (this.optgroup.step || 1)) {
+                    this.optgroup.options.push("" + i);
+                }
+            }
+            if (typeof this.optgroup.action == 'function') {
+                this.optgroup.options = this.optgroup.options.concat(pArray.call(this, this.optgroup.action.call(this)));
+            }
+            if (_.isArray(this.optgroup.options)) {
+                this.optgroup.options = pArray.call(this, this.optgroup.options);
+            }
+            if (_.isString(this.optgroup.path) && this.optgroup.path) {
+                this.collections.on(this.optgroup.path, function (e) {
+                    this.optgroup.options = pArray.call(this.optgroup.map, e.collection);
+                    if (waitlist.indexOf(e.event) >= 0) {
+                        delete waitlist[waitlist.indexOf(e.event)];
+                    }
+                    this.eventBus.dispatch('change')
+                }.bind(this))
+                if (!this.collections.get(this.optgroup.path) || this.collections.get(this.optgroup.path) == 'waiting') {
+                    if (waitlist.indexOf(this.optgroup.path) == -1) {
+                        waitlist.push(this.optgroup.path);
+                    }
+                    if (this.collections.get(this.optgroup.path) !== 'waiting') {
+                        this.collections.add(this.optgroup.path, 'waiting')
+                        gform.ajax({
+                            path: (gform.options.rootpath || '') + this.optgroup.path, success: function (data) {
+                                this.collections.update(this.optgroup.path, data)
+                                if (waitlist.indexOf(this.optgroup.path) >= 0) {
+                                    delete waitlist[waitlist.indexOf(this.optgroup.path)];
+                                }
+
+                                this.eventBus.dispatch('collection');
+                                this.eventBus.dispatch('change');
+
+                            }.bind(this)
+                        })
+                    }
+                } else {
+                    this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
+                }
+            }
+            var response = {
+                getobject: function () {
+                    var temp = {};
+                    this.optgroup.isVisible = ('isVisible' in this.optgroup) ? this.optgroup.isVisible : true
+                    this.optgroup.editable = ('editable' in this.optgroup) ? this.optgroup.editable : true
+                    temp = _.map(this.optgroup.options, function (og, item) {
+                        item.isVisible = ('isVisible' in item) ? og.visible && item.isVisible : og.visible
+                        item.editable = ('editable' in item) ? og.editable && item.editable : og.editable
+                        if ('map' in item) {
+                            item.options = item.map.getoptions();
+                            return { optgroup: { label: item.label || '', visible: item.isVisible, editable: item.editable, options: item.options } }
+                        } else {
+                            return { label: item.label || '', visible: item.isVisible, editable: item.editable };
+                        }
+                    }.bind(null, this.optgroup))
+                    return temp;
+                }.bind(this),
+                getoptions: function (search) {
+                    var temp = [];
+                    this.optgroup.isVisible = ('isVisible' in this.optgroup) ? this.optgroup.isVisible : true
+                    this.optgroup.editable = ('editable' in this.optgroup) ? this.optgroup.editable : true
+                    _.each(this.optgroup.options, function (og, item) {
+                        item.isVisible = ('isVisible' in item) ? og.isVisible && item.isVisible : og.isVisible
+                        item.editable = ('editable' in item) ? og.editable && item.editable : og.editable
+                        if ('map' in item) {
+                            temp = temp.concat(item.map.getoptions())
+                        } else { temp.push(item) }
+                    }.bind(null, this.optgroup))
+                    if (typeof search !== 'undefined') {
+                        return _.find(temp, search)
+                    }
+                    return temp;
+                }.bind(this),
+                on: this.eventBus.on, handlers: this.handlers, optgroup: this.optgroup
+            }
+            Object.defineProperty(response, "waiting", {
+                get: function () {
+                    return _.compact(waitlist).length > 0;
+                }
+            });
+            return response;
         }
-        return temp;
-    }.bind(this),
-    on:this.eventBus.on,handlers:this.handlers,optgroup:this.optgroup}
-    Object.defineProperty(response, "waiting",{
-        get: function(){
-            return _.compact(waitlist).length>0;
-        }
-    });
-    return response;
-}
 
 
-gform.stencils.select = `<div class="row clearfix form-group {{modifiers}} {{#size}}size={{size}}{{/size}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
+        gform.stencils.select = `<div class="row clearfix form-group {{modifiers}} {{#size}}size={{size}}{{/size}} {{#array}}isArray" data-min="{{array.min}}" data-max="{{array.max}}{{/array}}" data-type="{{type}}">
 	{{>_label}}
 	{{#label}}
 	{{^horizontal}}<div class="col-md-12">{{/horizontal}}
@@ -257,330 +281,331 @@ gform.stencils.select = `<div class="row clearfix form-group {{modifiers}} {{#si
 		{{>_actions}}
 	</div>
 </div>`
-    options = {
-        "legend": "",
-        "name": "create_token",
-        "autoFocus": true,
-        "default": {
-            "horizontal": false
-        },
-        "horizontal": true,
-        "actions": [
-            {
-                "type": "cancel",
-                "action": "cancel",
-                "label": "<i class=\"fa fa-times\"></i> Cancel",
-                "modifiers": "btn btn-danger"
+        options = {
+            "legend": "",
+            "name": "create_token",
+            "autoFocus": true,
+            "default": {
+                "horizontal": false
             },
-            {
-                "type": "save",
-                "action": "save",
-                "label": "Submit",
-                "modifiers": "btn btn-info"
-            }
-        ],
-        "fields": [
-            {
-                "type": "checkbox",
-                "name": "has_multiple_tokens",
-                "value": false,
-                "parse": true,
-                "show": false,
-            },
-            {
-                "type": "checkbox",
-                "label": null,
-                "name": "nodevice",
-                "value": false,
-                "parse": true,
-                "showColumn": true,
-                "options": [
-                    {
-                        "value": "false",
-                        "label": "I am an Applicant / Incoming Student or a member of CSEA-OSU"
-                    },
-                    {
-                        "value": "true",
-                        "label": "I am an Applicant / Incoming Student or a member of CSEA-OSU"
-                    }
-                ],
-                "show": [
-                    {
-                        "op": "and",
-                        "conditions": [
-                            {
-                                "type": "not_matches",
-                                "name": "has_multiple_tokens",
-                                "value": [true]
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "type": "select",
-                "label": "Two-Factor-Authentication (2FA) Token Type",
-                "name": "type",
-                "value": "totp",
-                "multiple": false,
-                "required": true,
-                "showColumn": true,
-                "help":"Note: Unless instructed otherwise, this should always be 'Default'",
-                "options": [
-                    {
-                        "label": "",
-                        "type": "optgroup",
-                        "options": [
-                            {
-                                "label": "Default (Authenticator App)",
-                                "value": "totp"
-                            }                
-                        ]
-                    },
-                    {
-                        "label": "",
-                        "type": "optgroup",
-                        "options": [
-                            {
-                                "label": "Email",
-                                "value": "email"
-                            },
-                            {
-                                "label": "Printable One-Time-Passwords",
-                                "value": "paper"
-                            }                
-                        ],
-                        "show": [
-                            {
-                                "op": "or",
-                                "conditions": [
-                                    {
-                                        "type": "matches",
-                                        "name": "nodevice",
-                                        "value": ["true"]
-                                    },
-                                    {
-                                        "type": "matches",
-                                        "name": "has_multiple_tokens",
-                                        "value": [true]
-                                    }
-                                ]
-                            }
-                        ],
-                        "edit": "show"
-                    }
-                ]
-            },
-            {
-                "type": "smallcombo",
-                "label": "Device / Description",
-                "name": "description",
-                "help": "This is the device description where you will be installing this token.  You may select one of the built-in options, or enter your own text in the field provided.",
-                "show": [
-                    {
-                        "op": "and",
-                        "conditions": [
-                            {
-                                "type": "matches",
-                                "name": "type",
-                                "value": [
-                                    "totp"
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "required": true,
-                "showColumn": true,
-                "options": [
-                    {
-                        "label": "",
-                        "type": "optgroup",
-                        "options": [
-                            {
-                                "label": "iPhone",
-                                "value": "iPhone"
-                            },
-                            {
-                                "label": "Android Phone",
-                                "value": "Android Phone"
-                            },
-                            {
-                                "label": "Laptop Computer",
-                                "value": "Laptop Computer"
-                            },
-                            {
-                                "label": "Desktop Computer",
-                                "value": "Desktop Computer"
-                            }
-                        ],
-                        "format": {
-                            "display": ""
-                        }
-                    }
-                ]
-            },
-            {
-                "type": "email",
-                "label": "Email Address",
-                "name": "email",
-                "show": [
-                    {
-                        "op": "and",
-                        "conditions": [
-                            {
-                                "type": "matches",
-                                "name": "type",
-                                "value": [
-                                    "email"
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "parse": "show",
-                "required": "show",
-                "showColumn": true
-            },
-            {
-                "type": "number",
-                "label": "Phone Number",
-                "name": "phone",
-                "pre": "<i class=\"fa fa-phone\"></i>",
-                "min": 1111111111,
-                "max": 9999999999999,
-                "show": [
-                    {
-                        "op": "and",
-                        "conditions": [
-                            {
-                                "type": "matches",
-                                "name": "type",
-                                "value": [
-                                    "sms"
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "required": "show",
-                "showColumn": true
-            },
-            {
-                "label": "Serial Number",
-                "name": "serial",
-                "help": "This is the serial number printed on the back on the hardware token",
-                "required": true,
-                "showColumn": true,
-                "type": "text",
-                "show": [
-                    {
-                        "op": "and",
-                        "conditions": [
-                            {
-                                "type": "matches",
-                                "name": "type",
-                                "value": [
-                                    "binghamton_hardware"
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "required": "show"
-            },
-            {
-                "label": "Date of Birth",
-                "name": "dob",
-                "placeholder": "MM/DD/YYYY",
-                "help": "Your date of birth, formatted as month/day/year.  Example: 07/04/1776",
-                "required": true,
-                "showColumn": true,
-                "type": "text"
-            },
-            {
-                "type": "checkbox",
-                "label": "Advanced",
-                "name": "advanced",
-                "value": false,
-                "columns": 2,
-                "parse": false,
-                "showColumn": true,
-                "options": [
-                    {
-                        "value": "false"
-                    },
-                    {
-                        "value": "true"
-                    }
-                ],
-                "show": [
-                    {
-                        "op": "and",
-                        "conditions": [
-                            {
-                                "type": "matches",
-                                "name": "type",
-                                "value": [
-                                    "totp"
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "label": "Private Key",
-                "name": "otpkey",
-                "placeholder": "abcdef0123456789abcdef0123456789abcdef01",
-                "help": "If you would like to specify your own 32 or 40 character hash as a Private Key, you may enter it here.  Note: If you have a base32 encoded hash, you will need to <a href='https://cryptii.com/pipes/base32-to-hex' target='_blank'>decode it</a> before entering it here.",
-                "columns": 10,
-                "show": [
-                    {
-                        "op": "and",
-                        "conditions": [
-                            {
-                                "type": "matches",
-                                "name": "advanced",
-                                "value": [
-                                    "true"
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "required": "show",
-                "showColumn": true,
-                "type": "text"
-            },
-            {
-                "type": "output",
-                "label": "",
-                "name": "help_text",
-                "edit": false,
-                "parse": false,
-                "showColumn": true,
-                "format": {
-                    "value": "<div class=\"alert alert-warning\"  style=\"margin-bottom:0px;\">\nBefore clicking \"submit\", make sure you have your Authenticator App open and ready to scan the QR code provided in the next step.\n  For more information about different Authentictor Apps, please <a href='https://www.binghamton.edu/its/two-fa/' target='_blank'>view this documentation</a>.</div>"
+            "horizontal": true,
+            "actions": [
+                {
+                    "type": "cancel",
+                    "action": "cancel",
+                    "label": "<i class=\"fa fa-times\"></i> Cancel",
+                    "modifiers": "btn btn-danger"
                 },
-                "show": [
-                    {
-                        "op": "and",
-                        "conditions": [
-                            {
-                                "type": "matches",
-                                "name": "type",
-                                "value": [
-                                    "totp"
-                                ]
+                {
+                    "type": "save",
+                    "action": "save",
+                    "label": "Submit",
+                    "modifiers": "btn btn-info"
+                }
+            ],
+            "fields": [
+                {
+                    "type": "checkbox",
+                    "name": "has_multiple_tokens",
+                    "value": false,
+                    "parse": true,
+                    "show": false,
+                },
+                {
+                    "type": "checkbox",
+                    "label": null,
+                    "name": "nodevice",
+                    "value": false,
+                    "parse": true,
+                    "showColumn": true,
+                    "options": [
+                        {
+                            "value": "false",
+                            "label": "I am an Applicant / Incoming Student or a member of CSEA-OSU"
+                        },
+                        {
+                            "value": "true",
+                            "label": "I am an Applicant / Incoming Student or a member of CSEA-OSU"
+                        }
+                    ],
+                    "show": [
+                        {
+                            "op": "and",
+                            "conditions": [
+                                {
+                                    "type": "not_matches",
+                                    "name": "has_multiple_tokens",
+                                    "value": [true]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "select",
+                    "label": "Two-Factor-Authentication (2FA) Token Type",
+                    "name": "type",
+                    "value": "totp",
+                    "multiple": false,
+                    "required": true,
+                    "showColumn": true,
+                    "help": "Note: Unless instructed otherwise, this should always be 'Default'",
+                    "options": [
+                        {
+                            "label": "",
+                            "type": "optgroup",
+                            "options": [
+                                {
+                                    "label": "Default (Authenticator App)",
+                                    "value": "totp"
+                                }
+                            ]
+                        },
+                        {
+                            "label": "",
+                            "type": "optgroup",
+                            "options": [
+                                {
+                                    "label": "Email",
+                                    "value": "email"
+                                },
+                                {
+                                    "label": "Printable One-Time-Passwords",
+                                    "value": "paper"
+                                }
+                            ],
+                            "show": [
+                                {
+                                    "op": "or",
+                                    "conditions": [
+                                        {
+                                            "type": "matches",
+                                            "name": "nodevice",
+                                            "value": ["true"]
+                                        },
+                                        {
+                                            "type": "matches",
+                                            "name": "has_multiple_tokens",
+                                            "value": [true]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "edit": "show"
+                        }
+                    ]
+                },
+                {
+                    "type": "combobox",
+                    "label": "Device / Description",
+                    "name": "description",
+                    "help": "This is the device description where you will be installing this token.  You may select one of the built-in options, or enter your own text in the field provided.",
+                    "show": [
+                        {
+                            "op": "and",
+                            "conditions": [
+                                {
+                                    "type": "matches",
+                                    "name": "type",
+                                    "value": [
+                                        "totp"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "required": true,
+                    "showColumn": true,
+                    "options": [
+                        {
+                            "label": "",
+                            "type": "optgroup",
+                            "options": [
+                                {
+                                    "label": "iPhone",
+                                    "value": "iPhone"
+                                },
+                                {
+                                    "label": "Android Phone",
+                                    "value": "Android Phone"
+                                },
+                                {
+                                    "label": "Laptop Computer",
+                                    "value": "Laptop Computer"
+                                },
+                                {
+                                    "label": "Desktop Computer",
+                                    "value": "Desktop Computer"
+                                }
+                            ],
+                            "format": {
+                                "display": ""
                             }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
+                        }
+                    ]
+                },
+                {
+                    "type": "email",
+                    "label": "Email Address",
+                    "name": "email",
+                    "show": [
+                        {
+                            "op": "and",
+                            "conditions": [
+                                {
+                                    "type": "matches",
+                                    "name": "type",
+                                    "value": [
+                                        "email"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "parse": "show",
+                    "required": "show",
+                    "showColumn": true
+                },
+                {
+                    "type": "number",
+                    "label": "Phone Number",
+                    "name": "phone",
+                    "pre": "<i class=\"fa fa-phone\"></i>",
+                    "min": 1111111111,
+                    "max": 9999999999999,
+                    "show": [
+                        {
+                            "op": "and",
+                            "conditions": [
+                                {
+                                    "type": "matches",
+                                    "name": "type",
+                                    "value": [
+                                        "sms"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "required": "show",
+                    "showColumn": true
+                },
+                {
+                    "label": "Serial Number",
+                    "name": "serial",
+                    "help": "This is the serial number printed on the back on the hardware token",
+                    "required": true,
+                    "showColumn": true,
+                    "type": "text",
+                    "show": [
+                        {
+                            "op": "and",
+                            "conditions": [
+                                {
+                                    "type": "matches",
+                                    "name": "type",
+                                    "value": [
+                                        "binghamton_hardware"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "required": "show"
+                },
+                {
+                    "label": "Date of Birth",
+                    "name": "dob",
+                    "placeholder": "MM/DD/YYYY",
+                    "help": "Your date of birth, formatted as month/day/year.  Example: 07/04/1776",
+                    "required": true,
+                    "showColumn": true,
+                    "type": "text"
+                },
+                {
+                    "type": "checkbox",
+                    "label": "Advanced",
+                    "name": "advanced",
+                    "value": false,
+                    "columns": 2,
+                    "parse": false,
+                    "showColumn": true,
+                    "options": [
+                        {
+                            "value": "false"
+                        },
+                        {
+                            "value": "true"
+                        }
+                    ],
+                    "show": [
+                        {
+                            "op": "and",
+                            "conditions": [
+                                {
+                                    "type": "matches",
+                                    "name": "type",
+                                    "value": [
+                                        "totp"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "Private Key",
+                    "name": "otpkey",
+                    "placeholder": "abcdef0123456789abcdef0123456789abcdef01",
+                    "help": "If you would like to specify your own 32 or 40 character hash as a Private Key, you may enter it here.  Note: If you have a base32 encoded hash, you will need to <a href='https://cryptii.com/pipes/base32-to-hex' target='_blank'>decode it</a> before entering it here.",
+                    "columns": 10,
+                    "show": [
+                        {
+                            "op": "and",
+                            "conditions": [
+                                {
+                                    "type": "matches",
+                                    "name": "advanced",
+                                    "value": [
+                                        "true"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "required": "show",
+                    "showColumn": true,
+                    "type": "text"
+                },
+                {
+                    "type": "output",
+                    "label": "",
+                    "name": "help_text",
+                    "edit": false,
+                    "parse": false,
+                    "showColumn": true,
+                    "format": {
+                        "value": "<div class=\"alert alert-warning\"  style=\"margin-bottom:0px;\">\nBefore clicking \"submit\", make sure you have your Authenticator App open and ready to scan the QR code provided in the next step.\n  For more information about different Authentictor Apps, please <a href='https://www.binghamton.edu/its/two-fa/' target='_blank'>view this documentation</a>.</div>"
+                    },
+                    "show": [
+                        {
+                            "op": "and",
+                            "conditions": [
+                                {
+                                    "type": "matches",
+                                    "name": "type",
+                                    "value": [
+                                        "totp"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
     </script>
-    <script src="../assets/js/example.js"></script>   
-   </body>
+    <script src="../assets/js/example.js"></script>
+</body>
+
 </html>

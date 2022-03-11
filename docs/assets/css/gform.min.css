@@ -482,7 +482,7 @@ option:disabled {
   box-shadow: 0 0 0 0.125em rgba(216, 68, 85, 0.25) !important;
 }
 
-.combobox-container [type=smallcombo].form-control {
+.combobox-container [type=combobox].form-control {
   overflow: hidden;
   white-space: nowrap;
   position: absolute;

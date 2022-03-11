@@ -454,11 +454,9 @@ var gform = function (optionsIn, el) {
                 target = activeField.el.querySelector('.gform-add') || activeField.am.el.querySelector('.gform-append')
             } else {
 
-                let index = activeField.parent.fields.indexOf(activeField);
-                if (index >= 0 && typeof activeField.parent.fields[index + 1] !== 'undefined') activeField.parent.fields[index + 1].focus();
-                // e.stopPropagation();
-                // e.preventDefault();
-                // return false;
+                // let index = activeField.parent.fields.indexOf(activeField);
+                // if (index >= 0 && typeof activeField.parent.fields[index + 1] !== 'undefined') activeField.parent.fields[index + 1].focus();
+
             }
         }
         if (e.target.classList.value.indexOf('gform-') < 0 && e.target.parentElement && e.target.parentElement.classList.value.indexOf('gform-') >= 0) {

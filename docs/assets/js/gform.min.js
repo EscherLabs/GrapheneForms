@@ -454,11 +454,9 @@ var gform = function (optionsIn, el) {
                 target = activeField.el.querySelector('.gform-add') || activeField.am.el.querySelector('.gform-append')
             } else {
 
-                let index = activeField.parent.fields.indexOf(activeField);
-                if (index >= 0 && typeof activeField.parent.fields[index + 1] !== 'undefined') activeField.parent.fields[index + 1].focus();
-                // e.stopPropagation();
-                // e.preventDefault();
-                // return false;
+                // let index = activeField.parent.fields.indexOf(activeField);
+                // if (index >= 0 && typeof activeField.parent.fields[index + 1] !== 'undefined') activeField.parent.fields[index + 1].focus();
+
             }
         }
         if (e.target.classList.value.indexOf('gform-') < 0 && e.target.parentElement && e.target.parentElement.classList.value.indexOf('gform-') >= 0) {
@@ -2878,7 +2876,7 @@ gform._lookup = (field, args, _lookup) => {
     var searchField = field;
 
     if (args.name.indexOf('/') == 0) {
-        looker = searchField.owner.filter({ path: args.name }, args.depth || 10);
+        looker = searchField.owner.find({ path: args.name }, args.depth || 10);
     } else {
         let searchObj = args.name.split('.')
         let searchString = searchObj.shift();
@@ -2955,8 +2953,8 @@ gform.patch = function (object, patch, action) {
             //     object[target] = task.value;
             // }
             let value = ('toJSON' in task) ? task.toJSON : task.value;
-            if (target)
-                object[target] = ('toJSON' in task) ? task.toJSON : task.value;
+            if (target && typeof value !== "undefined")
+                object[target] = value;
 
             // if(object[target] == null)delete object[target];
             // let val = ('toJSON' in task)?task.toJSON:task.value;
@@ -3888,7 +3886,11 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
     var format = this.optgroup.format;
 
     function pArray(opts) {
-        return _.map(opts, function (item) {
+        if (typeof opts == "string") {
+            if (opts == 'waiting') return [];
+        }
+        return _.compact(_.map(opts, function (item) {
+            if (item == null || typeof item == 'undefined') return;
             if (typeof item === 'object' && item.type == 'optgroup') {
                 item.map = new gform.mapOptions(_.extend({ format: format, owner: this.owner }, item), value, count, this.collections, waitlist);
                 item.map.on('*', function (e) {
@@ -3944,6 +3946,8 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
                                     format[prop].call(this, option)
                                     : option[prop]
                         }
+                        option.processed = true;
+
                         return option;
                     }.bind(this), option)
                     /*
@@ -3963,7 +3967,7 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
 
                 return option;
             } ''
-        }.bind(this))
+        }.bind(this)))
     }
 
     this.optgroup.options = this.optgroup.options || [];
@@ -3999,13 +4003,6 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
 
     if (_.isString(this.optgroup.path) && this.optgroup.path) {
 
-        this.collections.on(this.optgroup.path, function (e) {
-            this.optgroup.options = pArray.call(this.optgroup.map, e.collection);
-            if (waitlist.indexOf(e.event) >= 0) {
-                delete waitlist[waitlist.indexOf(e.event)];
-            }
-            this.eventBus.dispatch('change')
-        }.bind(this))
 
         if (!this.collections.get(this.optgroup.path) || this.collections.get(this.optgroup.path) == 'waiting') {
 
@@ -4019,6 +4016,7 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
                 gform.ajax({
                     path: (this.owner.options.rootpath || '') + this.optgroup.path, success: function (data) {
                         this.collections.update(this.optgroup.path, data)
+                        this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
                         if (waitlist.indexOf(this.optgroup.path) >= 0) {
                             delete waitlist[waitlist.indexOf(this.optgroup.path)];
                         }
@@ -4032,24 +4030,34 @@ gform.mapOptions = function (optgroup, value, count, collections, waitlist) {
         } else {
             this.optgroup.options = pArray.call(this.optgroup.map, this.collections.get(this.optgroup.path));
         }
+
+        this.collections.on(this.optgroup.path, function (e) {
+            this.optgroup.options = pArray.call(this.optgroup.map, e.collection);
+            if (waitlist.indexOf(e.event) >= 0) {
+                delete waitlist[waitlist.indexOf(e.event)];
+            }
+            this.eventBus.dispatch('change')
+        }.bind(this))
     }
 
 
 
     var response = {
         getobject: function () {
-            var temp = {};
-            temp = _.map(this.optgroup.options, function (item) {
-
+            return _.reduce(this.optgroup.options, function (result, i) {
+                let item = { ...i };
                 item.visible = ('visible' in item) ? item.visible : true
                 item.editable = ('editable' in item) ? item.editable : true
                 if ('map' in item) {
                     item.options = item.map.getoptions();
-                    return { optgroup: { ...item, label: item.label || '',/* visible: item.visible, editable: item.editable,*/ options: item.map.getoptions() } }
-                } else { return item; }
-            })
-            return temp;
-        }.bind(this), getoptions: function (search) {
+                    result.push({ optgroup: { ...item, label: item.label || '',/* visible: item.visible, editable: item.editable,*/ options: item.map.getoptions() } })
+                } else {
+                    result.push(item);
+                }
+                return result
+            }, [])
+        }.bind(this),
+        getoptions: function (search) {
             var temp = [];
             _.each(this.optgroup.options, function (item) {
 
@@ -4200,14 +4208,18 @@ gform.arrayManager = function (field) {
     if (typeof gform.types[field.type].row == "function") {
     }
     this.get = function () {
-        let temp = _.map(_.reduce(this.instances, function (temp, instance) {
-            if (_.isMatch(instance, { parsable: true })) {
-                temp.push(instance);
-            }
-            return temp;
+        // let temp = _.map(_.reduce(this.instances, function (temp, instance) {
+        //     if (_.isMatch(instance, { parsable: true })) {
+        //         temp.push(instance);
+        //     }
+        //     return temp;
 
-        }, []), instance => instance.get())
-
+        // }, []), instance => instance.get())
+        let temp = gform.reduce.call(this.parent, (i, e) => {
+            let val = e.get();
+            if (typeof val !== 'undefined') i.push(val);
+            return i;
+        }, [], { parsable: true, am: this })
         //check length as well - validation stuff
         if (typeof this.array.filter !== 'undefined' && this.array.filter != false) {
             if (typeof this.array.filter == 'function') {

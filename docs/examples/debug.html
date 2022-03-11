@@ -3,901 +3,914 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="Adam Smallcomb">
-    <link rel="icon" href="../assets/favicon.png">
 
-    <title>Example:Dialog - Graphene:Forms</title>
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">    
-    <!-- <link rel="stylesheet" href="../assets/css/normalize.css">     -->
-    <!-- <link rel="stylesheet" href="../assets/css/gform.css"> -->
-    <link rel="stylesheet" type='text/css' href="../assets/vendor/css/bootstrap-datepicker.min.css">
-  </head>
-  <body>
-    <div style="padding:20px">
-    <h4><a href="./">Examples</a> - Dialog Form</h4>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="Adam Smallcomb">
+	<link rel="icon" href="../assets/favicon.png">
 
-    <div class="container ">
-        <div class="row ">
-                <div class="column noprint" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
-                <div class="column column-40" style="overflow: scroll;"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form"></div></div>
-                <div class="column noprint" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
-            </div>
-        </div>
-    </div>
-		    <script src='../assets/js/jquery.min.js'></script>
-		    <script src='../assets/js/bootstrap.min.js'></script>
+	<title>Example:Dialog - Graphene:Forms</title>
+	<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+	<!-- <link rel="stylesheet" href="../assets/css/normalize.css">     -->
+	<!-- <link rel="stylesheet" href="../assets/css/gform.css"> -->
+	<link rel="stylesheet" type='text/css' href="../assets/vendor/css/bootstrap-datepicker.min.css">
+</head>
 
-    <script src="../assets/js/lodash.min.js"></script>    
-    <script src='../assets/js/gform.js'></script>
-    <script src='../assets/js/bootstrap.js'></script>
+<body>
+	<div style="padding:20px">
+		<h4><a href="./">Examples</a> - Dialog Form</h4>
 
-    <script src='../assets/vendor/js/moment.js'></script>
+		<div class="container ">
+			<div class="row ">
+				<div class="column noprint" style="overflow: scroll;">
+					<pre id="code"><code class="prettyprint"></code></pre>
+				</div>
+				<div class="column column-40" style="overflow: scroll;">
+					<pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre>
+					<hr>
+					<div id="form"></div>
+				</div>
+				<div class="column noprint" style="overflow: scroll;">
+					<pre id="result"><code class="prettyprint"></code></pre>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src='../assets/js/jquery.min.js'></script>
+	<script src='../assets/js/bootstrap.min.js'></script>
 
-    <script src='../assets/vendor/js/bootstrap-datepicker.js'></script>
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>            
+	<script src="../assets/js/lodash.min.js"></script>
+	<script src='../assets/js/gform.js'></script>
+	<script src='../assets/js/bootstrap.js'></script>
 
-<p>    
-<p>    <script>
-      options = {
-    data:
-        {"expense":[{"expense_type":"non_travel","non_travel_expense":{"date":"03/19/2021","purpose":"Research","receipt":["37212","37213"],"charged_to":[{"task":"0","award":"86069","amount":"139.99","project":"1156895","responsible_party":"B00768969"},{"task":"0","award":"86069","amount":"2799.99","project":"1156895","responsible_party":"B00505893"}],"vendor_name":"Amazon","expenditure_type":""}}],"statement":"37211","cardholder":"B00768969","statement_date":"03/2021"}
-    ,
-	"name": "modal",
-	"files": true,
-	"fields": [
-		{
-			"edit": false,
-			"name": "julian_text",
-			"type": "output",
-			"label": "",
-			"parse": false,
-			"format": {
-				"value": "<div>For assistance, contact <b>607-777-6752</b>.</div><br>"
-			},
-			"report": false
-		},
-		{
-			"name": "f17893",
-			"type": "output",
-			"label": false,
-			"parse": false,
-			"format": {
-				"value": "<style>.help-inline{font-size: smaller;}.control-label{color:#005a43}.col-md-Infinity{display:inline-block;padding:0 20px 0 0}form fieldset[name=_state]>div  >div>fieldset{padding: 1em;background-color: #eee;border: 1px solid #ddd;margin: 1em 0}form fieldset fieldset> legend {border: 1px solid #ccc;padding: .3em 1em;font-size:16px;background-color: #efe;color:#3C4C4C;width: auto;}</style>"
-			}
-		},
-		{
-			"name": "approval_person",
-			"show": [
-				{
-					"name": "_flowstate",
-					"type": "matches",
-					"value": [
-						"get_eSignatures"
-					]
-				}
-			],
-			"type": "user",
-			"label": "Approval Person",
-			"limit": null,
-			"fillable": false,
-			"required": "show"
-		},
-		{
-			"name": "cardholder",
-			"show": [
-				{
-					"name": "_flowstate",
-					"type": "not_matches",
-					"value": [
-						"get_eSignatures"
-					]
-				}
-			],
-			"type": "user",
-			"label": "Cardholder Name",
-			"limit": null,
-			"required": true
-		},
-		{
-			"name": "statement",
-			"show": [
-				{
-					"conditions": [
-						{
-							"name": "_flowstate",
-							"type": "not_matches",
-							"value": [
-								"get_eSignatures"
-							]
+	<script src='../assets/vendor/js/moment.js'></script>
+
+	<script src='../assets/vendor/js/bootstrap-datepicker.js'></script>
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+	<p>
+	<p>
+		<script>
+			options = {
+				data:
+					{ "expense": [{ "expense_type": "non_travel", "non_travel_expense": { "date": "03/19/2021", "purpose": "Research", "receipt": ["37212", "37213"], "charged_to": [{ "task": "0", "award": "86069", "amount": "139.99", "project": "1156895", "responsible_party": "B00768969" }, { "task": "0", "award": "86069", "amount": "2799.99", "project": "1156895", "responsible_party": "B00505893" }], "vendor_name": "Amazon", "expenditure_type": "" } }], "statement": "37211", "cardholder": "B00768969", "statement_date": "03/2021" }
+				,
+				"name": "modal",
+				"files": true,
+				"fields": [
+					{
+						"edit": false,
+						"name": "julian_text",
+						"type": "output",
+						"label": "",
+						"parse": false,
+						"format": {
+							"value": "<div>For assistance, contact <b>607-777-6752</b>.</div><br>"
+						},
+						"report": false
+					},
+					{
+						"name": "f17893",
+						"type": "output",
+						"label": false,
+						"parse": false,
+						"format": {
+							"value": "<style>.help-inline{font-size: smaller;}.control-label{color:#005a43}.col-md-Infinity{display:inline-block;padding:0 20px 0 0}form fieldset[name=_state]>div  >div>fieldset{padding: 1em;background-color: #eee;border: 1px solid #ddd;margin: 1em 0}form fieldset fieldset> legend {border: 1px solid #ccc;padding: .3em 1em;font-size:16px;background-color: #efe;color:#3C4C4C;width: auto;}</style>"
 						}
-					]
-				}
-			],
-			"type": "files",
-			"label": "Attach Statement",
-			"limit": null,
-			"required": true
-		},
-		{
-			"name": "statement_date",
-			"show": [
-				{
-					"op": "and",
-					"conditions": [
-						{
-							"name": "_flowstate",
-							"type": "not_matches",
-							"value": [
-								"get_eSignatures"
-							]
-						}
-					]
-				}
-			],
-			"type": "date",
-			"label": "Statement Date",
-			"format": {
-				"input": "MM/YYYY"
-			},
-			"required": true
-		},
-		{
-			"edit": false,
-			"name": "expense_info_text",
-			"type": "output",
-			"label": "",
-			"parse": false,
-			"format": {
-				"value": "<div \nstyle=\"border:solid;\nborder-width:thin;\">\n<div style=\"margin:10px;\">\nEach purchase from the monthly statement must be entered separately. <br><br>\n*Please do not combine expenses.\n</div>\n</div><br>"
-			},
-			"report": false
-		},
-		{
-			"name": "expense",
-			"show": [
-				{
-					"op": "and",
-					"conditions": [
-						{
-							"name": "_flowstate",
-							"type": "not_matches",
-							"value": [
-								"get_eSignatures"
-							]
-						}
-					]
-				}
-			],
-			"type": "fieldset",
-			"array": {
-				"max": 75,
-				"min": null,
-				"remove": {
-					"label": "",
-					"enable": "auto"
-				},
-				"duplicate": {
-					"clone": false,
-					"label": "",
-					"enable": "auto"
-				}
-			},
-			"label": "Expense",
-			"fields": [
-				{
-					"name": "expense_type",
-					"type": "smallcombo",
-					"label": "Expense Type",
-					"value": "pick_one",
-					"options": [
-						{
-							"type": "optgroup",
-							"label": "",
-							"options": [
-								{
-									"label": "Pick One",
-									"value": "pick_one"
-								},
-								{
-									"label": "Travel",
-									"value": "travel"
-								},
-								{
-									"label": "Non-Travel",
-									"value": "non_travel"
-								}
-							]
-						}
-					],
-					"multiple": false,
-					"required": true
-				},
-				{
-					"name": "travel_expense",
-					"show": [
-						{
-							"op": "and",
-							"conditions": [
-								{
-									"name": "expense_type",
-									"type": "matches",
-									"value": [
-										"travel"
-									]
-								}
-							]
-						}
-					],
-					"type": "fieldset",
-					"label": "Travel",
-					"fields": [
-						{
-							"help": "Please enter the conference announcement/agenda or further explanation regarding your travel.",
-							"name": "purpose",
-							"type": "textarea",
-							"label": "Purpose",
-							"required": true
-						},
-						{
-							"name": "relationship_to_project",
-							"type": "text",
-							"label": "Relationship To Project",
-							"required": true
-						},
-						{
-							"name": "traveler_name",
-							"type": "user",
-							"label": "Traveler Name",
-							"required": true
-						},
-						{
-							"name": "departure_date_and_time",
-							"type": "date",
-							"label": "Departure Date and Time",
-							"format": {
-								"input": "MM/DD/YYYY h:mm A"
-							},
-							"offset": "0",
-							"columns": "6",
-							"forceRow": false,
-							"required": true
-						},
-						{
-							"name": "arrival_date_and_time",
-							"type": "date",
-							"label": "Return Date and Time",
-							"limit": null,
-							"format": {
-								"input": "MM/DD/YYYY h:mm A"
-							},
-							"offset": "0",
-							"columns": "6",
-							"forceRow": false,
-							"required": true
-						},
-						{
-							"name": "destination",
-							"type": "smallcombo",
-							"label": "Destination",
-							"value": "pick_one",
-							"options": [
-								{
-									"type": "optgroup",
-									"label": "Pick One",
-									"options": [
-										{
-											"label": "Pick One",
-											"value": "pick_one"
-										},
-										{
-											"label": "International",
-											"value": "international"
-										},
-										{
-											"label": "Domestic",
-											"value": "domestic"
-										}
-									]
-								}
-							],
-							"multiple": false,
-							"required": true
-						},
-						{
-							"name": "city",
-							"show": [
-								{
-									"name": "destination",
-									"type": "matches",
-									"value": [
-										"domestic"
-									]
-								}
-							],
-							"type": "text",
-							"label": "City",
-							"offset": "0",
-							"columns": "6",
-							"forceRow": false,
-							"required": "show"
-						},
-						{
-							"name": "state",
-							"show": [
-								{
-									"name": "destination",
-									"type": "matches",
-									"value": [
-										"domestic"
-									]
-								}
-							],
-							"type": "text",
-							"label": "State",
-							"offset": "0",
-							"columns": "6",
-							"forceRow": false,
-							"required": "show"
-						},
-						{
-							"name": "country",
-							"show": [
-								{
-									"name": "destination",
-									"type": "matches",
-									"value": [
-										"international"
-									]
-								}
-							],
-							"type": "text",
-							"label": "Country",
-							"required": "show"
-						},
-						{
-							"name": "expenditure",
-							"show": [
-								{
-									"op": "and",
-									"conditions": [
-										{
-											"name": "_flowstate",
-											"type": "not_matches",
-											"value": [
-												"get_eSignatures"
-											]
-										}
-									]
-								}
-							],
-							"type": "fieldset",
-							"array": {
-								"max": null,
-								"min": null,
-								"remove": {
-									"label": "",
-									"enable": "auto"
-								},
-								"duplicate": {
-									"label": "",
-									"enable": "auto"
-								}
-							},
-							"label": "Expenditure",
-							"fields": [
-								{
-									"name": "travel_expense_type",
-									"type": "select",
-									"label": "Travel Expense Type",
-									"value": "pick_one",
-									"columns": 4,
-									"options": [
-										{
-											"type": "optgroup",
-											"label": "",
-											"options": [
-												{
-													"label": "Pick One",
-													"value": "pick_one"
-												},
-												{
-													"label": "Registration",
-													"value": "registration"
-												},
-												{
-													"label": "Lodging",
-													"value": "lodging"
-												},
-												{
-													"label": "Airfare",
-													"value": "airfare"
-												},
-												{
-													"label": "Car Rental",
-													"value": "car_rental"
-												},
-												{
-													"label": "Parking",
-													"value": "parking"
-												},
-												{
-													"label": "Meals",
-													"value": "meals"
-												},
-												{
-													"label": "Taxi",
-													"value": "taxi"
-												},
-												{
-													"label": "Other",
-													"value": "other"
-												}
-											]
-										}
-									],
-									"multiple": false
-								},
-								{
-									"name": "vendor_name",
-									"type": "text",
-									"label": "Supplier / Vendor Name",
-									"columns": 4,
-									"required": true
-								},
-								{
-									"name": "date",
-									"type": "date",
-									"label": "Date on Receipt",
-									"limit": null,
-									"format": {
-										"input": "MM/DD/YYYY"
-									},
-									"offset": "0",
-									"columns": "4",
-									"forceRow": false,
-									"required": true
-								},
-								{
-									"name": "other",
-									"show": [
-										{
-											"name": "travel_expense_type",
-											"type": "matches",
-											"value": [
-												"other"
-											]
-										}
-									],
-									"type": "text",
-									"label": "Other",
-									"required": "show"
-								},
-								{
-									"name": "receipt",
-									"type": "files",
-									"array": {
-										"max": null,
-										"min": null,
-										"remove": {
-											"label": "",
-											"enable": "auto"
-										},
-										"duplicate": {
-											"label": "",
-											"enable": "auto"
-										}
-									},
-									"label": "Receipt",
-									"columns": 4,
-									"required": true
-								},
-								{
-									"name": "expenditure_type",
-									"show": [
-										{
-											"op": "and",
-											"conditions": [
-												{
-													"name": "_flowstate",
-													"type": "contains",
-													"value": [
-														"account_payable_director"
-													]
-												}
-											]
-										}
-									],
-									"type": "smallcombo",
-									"label": "Expenditure Type",
-									"parse": true,
-									"report": true,
-									"options": [
-										{
-											"path": "exp_types",
-											"type": "optgroup",
-											"label": "",
-											"format": {
-												"display": ""
-											}
-										}
-									],
-									"required": false
-								},
-								{
-									"edit": false,
-									"name": "amount_total",
-									"type": "output",
-									"label": "",
-									"parse": false,
-									"method": "method_1"
-								},
-								{
-									"name": "charged_to",
-									"type": "fieldset",
-									"array": {
-										"max": null,
-										"min": null,
-										"remove": {
-											"label": "",
-											"enable": "auto"
-										},
-										"duplicate": {
-											"label": "",
-											"enable": "auto"
-										}
-									},
-									"label": "Charged To",
-									"fields": [
-										{
-											"name": "responsible_party",
-											"type": "user",
-											"label": "Principal Investigator / PI Delegate",
-											"offset": "0",
-											"columns": "4",
-											"forceRow": false,
-											"required": true
-										},
-										{
-											"name": "project",
-											"type": "text",
-											"label": "Project",
-											"limit": 7,
-											"offset": "0",
-											"columns": "2",
-											"forceRow": false,
-											"required": true,
-											"validate": [
-												{
-													"max": 7,
-													"min": 7,
-													"type": "length",
-													"conditions": true
-												},
-												{
-													"op": "and",
-													"max": null,
-													"min": 1,
-													"type": "numeric",
-													"conditions": true
-												}
-											]
-										},
-										{
-											"name": "task",
-											"type": "text",
-											"label": "Task",
-											"limit": null,
-											"offset": "0",
-											"columns": "2",
-											"forceRow": false,
-											"required": true
-										},
-										{
-											"name": "award",
-											"type": "text",
-											"label": "Award",
-											"limit": 5,
-											"offset": "0",
-											"columns": "2",
-											"forceRow": false,
-											"validate": [
-												{
-													"max": 5,
-													"min": 5,
-													"type": "length",
-													"conditions": true
-												},
-												{
-													"op": "and",
-													"max": null,
-													"min": 1,
-													"type": "numeric",
-													"conditions": true
-												}
-											]
-										},
-										{
-											"pre": "$",
-											"info": "Negative values indicate a credit",
-											"name": "amount",
-											"type": "text",
-											"label": "Amount",
-											"columns": 2,
-											"required": true
-										}
-									]
-								}
-							],
-							"required": "show"
-						}
-					]
-				},
-				{
-					"name": "non_travel_expense",
-					"show": [
-						{
-							"op": "and",
-							"conditions": [
-								{
-									"name": "expense_type",
-									"type": "matches",
-									"value": [
-										"non_travel"
-									]
-								}
-							]
-						}
-					],
-					"type": "fieldset",
-					"label": "Non-Travel",
-					"fields": [
-						{
-							"name": "vendor_name",
-							"type": "text",
-							"label": "Supplier / Vendor Name",
-							"columns": 4,
-							"required": true
-						},
-						{
-							"name": "purpose",
-							"type": "text",
-							"label": "Purpose",
-							"columns": 4,
-							"required": true
-						},
-						{
-							"name": "date",
-							"type": "date",
-							"label": "Date of Purchase",
-							"format": {
-								"input": "MM/DD/YYYY"
-							},
-							"columns": 4,
-							"required": true
-						},
-						{
-							"name": "receipt",
-							"type": "files",
-							"array": {
-								"max": null,
-								"min": null,
-								"remove": {
-									"label": "",
-									"enable": "auto"
-								},
-								"duplicate": {
-									"label": "",
-									"enable": "auto"
-								}
-							},
-							"label": "Receipt",
-							"columns": 4,
-							"required": true
-						},
-						{
-							"name": "expenditure_type",
-							"show": [
-								{
-									"op": "and",
-									"conditions": [
-										{
-											"name": "_flowstate",
-											"type": "contains",
-											"value": [
-												"account_payable_director"
-											]
-										}
-									]
-								}
-							],
-							"type": "smallcombo",
-							"label": "Expenditure Type",
-							"parse": true,
-							"report": true,
-							"options": [
-								{
-									"path": "exp_types",
-									"type": "optgroup",
-									"label": "",
-									"format": {
-										"display": ""
+					},
+					{
+						"name": "approval_person",
+						"show": [
+							{
+								"name": "_flowstate",
+								"type": "matches",
+								"value": [
+									"get_eSignatures"
+								]
+							}
+						],
+						"type": "user",
+						"label": "Approval Person",
+						"limit": null,
+						"fillable": false,
+						"required": "show"
+					},
+					{
+						"name": "cardholder",
+						"show": [
+							{
+								"name": "_flowstate",
+								"type": "not_matches",
+								"value": [
+									"get_eSignatures"
+								]
+							}
+						],
+						"type": "user",
+						"label": "Cardholder Name",
+						"limit": null,
+						"required": true
+					},
+					{
+						"name": "statement",
+						"show": [
+							{
+								"conditions": [
+									{
+										"name": "_flowstate",
+										"type": "not_matches",
+										"value": [
+											"get_eSignatures"
+										]
 									}
-								}
-							],
-							"required": false
+								]
+							}
+						],
+						"type": "files",
+						"label": "Attach Statement",
+						"limit": null,
+						"required": true
+					},
+					{
+						"name": "statement_date",
+						"show": [
+							{
+								"op": "and",
+								"conditions": [
+									{
+										"name": "_flowstate",
+										"type": "not_matches",
+										"value": [
+											"get_eSignatures"
+										]
+									}
+								]
+							}
+						],
+						"type": "date",
+						"label": "Statement Date",
+						"format": {
+							"input": "MM/YYYY"
 						},
-						{
-							"edit": false,
-							"name": "amount_total",
-							"type": "output",
-							"label": "",
-							"parse": false,
-							"method": "method_1"
+						"required": true
+					},
+					{
+						"edit": false,
+						"name": "expense_info_text",
+						"type": "output",
+						"label": "",
+						"parse": false,
+						"format": {
+							"value": "<div \nstyle=\"border:solid;\nborder-width:thin;\">\n<div style=\"margin:10px;\">\nEach purchase from the monthly statement must be entered separately. <br><br>\n*Please do not combine expenses.\n</div>\n</div><br>"
 						},
-						{
-							"name": "charged_to",
-							"type": "fieldset",
-							"array": {
-								"max": null,
-								"min": null,
-								"remove": {
-									"label": "",
-									"enable": "auto"
-								},
-								"duplicate": {
-									"label": "",
-									"enable": "auto"
-								}
+						"report": false
+					},
+					{
+						"name": "expense",
+						"show": [
+							{
+								"op": "and",
+								"conditions": [
+									{
+										"name": "_flowstate",
+										"type": "not_matches",
+										"value": [
+											"get_eSignatures"
+										]
+									}
+								]
+							}
+						],
+						"type": "fieldset",
+						"array": {
+							"max": 75,
+							"min": null,
+							"remove": {
+								"label": "",
+								"enable": "auto"
 							},
-							"label": "Charged To",
-							"fields": [
-								{
-									"name": "responsible_party",
-									"type": "user",
-									"label": "Principal Investigator / PI Delegate",
-									"offset": "0",
-									"columns": "4",
-									"forceRow": false,
-									"required": true
-								},
-								{
-									"name": "project",
-									"type": "text",
-									"label": "Project",
-									"limit": 7,
-									"offset": "0",
-									"columns": "2",
-									"forceRow": false,
-									"required": true,
-									"validate": [
-										{
-											"max": 7,
-											"min": 7,
-											"type": "length",
-											"conditions": true
+							"duplicate": {
+								"clone": false,
+								"label": "",
+								"enable": "auto"
+							}
+						},
+						"label": "Expense",
+						"fields": [
+							{
+								"name": "expense_type",
+								"type": "combobox",
+								"label": "Expense Type",
+								"value": "pick_one",
+								"options": [
+									{
+										"type": "optgroup",
+										"label": "",
+										"options": [
+											{
+												"label": "Pick One",
+												"value": "pick_one"
+											},
+											{
+												"label": "Travel",
+												"value": "travel"
+											},
+											{
+												"label": "Non-Travel",
+												"value": "non_travel"
+											}
+										]
+									}
+								],
+								"multiple": false,
+								"required": true
+							},
+							{
+								"name": "travel_expense",
+								"show": [
+									{
+										"op": "and",
+										"conditions": [
+											{
+												"name": "expense_type",
+												"type": "matches",
+												"value": [
+													"travel"
+												]
+											}
+										]
+									}
+								],
+								"type": "fieldset",
+								"label": "Travel",
+								"fields": [
+									{
+										"help": "Please enter the conference announcement/agenda or further explanation regarding your travel.",
+										"name": "purpose",
+										"type": "textarea",
+										"label": "Purpose",
+										"required": true
+									},
+									{
+										"name": "relationship_to_project",
+										"type": "text",
+										"label": "Relationship To Project",
+										"required": true
+									},
+									{
+										"name": "traveler_name",
+										"type": "user",
+										"label": "Traveler Name",
+										"required": true
+									},
+									{
+										"name": "departure_date_and_time",
+										"type": "date",
+										"label": "Departure Date and Time",
+										"format": {
+											"input": "MM/DD/YYYY h:mm A"
 										},
-										{
-											"op": "and",
-											"max": null,
-											"min": 1,
-											"type": "numeric",
-											"conditions": true
-										}
-									]
-								},
-								{
-									"name": "task",
-									"type": "text",
-									"label": "Task",
-									"limit": null,
-									"offset": "0",
-									"columns": "2",
-									"forceRow": false,
-									"required": true
-								},
-								{
-									"name": "award",
-									"type": "text",
-									"label": "Award",
-									"limit": 5,
-									"offset": "0",
-									"columns": "2",
-									"forceRow": false,
-									"required": true,
-									"validate": [
-										{
-											"max": 5,
-											"min": 5,
-											"type": "length",
-											"conditions": true
+										"offset": "0",
+										"columns": "6",
+										"forceRow": false,
+										"required": true
+									},
+									{
+										"name": "arrival_date_and_time",
+										"type": "date",
+										"label": "Return Date and Time",
+										"limit": null,
+										"format": {
+											"input": "MM/DD/YYYY h:mm A"
 										},
-										{
-											"op": "and",
+										"offset": "0",
+										"columns": "6",
+										"forceRow": false,
+										"required": true
+									},
+									{
+										"name": "destination",
+										"type": "combobox",
+										"label": "Destination",
+										"value": "pick_one",
+										"options": [
+											{
+												"type": "optgroup",
+												"label": "Pick One",
+												"options": [
+													{
+														"label": "Pick One",
+														"value": "pick_one"
+													},
+													{
+														"label": "International",
+														"value": "international"
+													},
+													{
+														"label": "Domestic",
+														"value": "domestic"
+													}
+												]
+											}
+										],
+										"multiple": false,
+										"required": true
+									},
+									{
+										"name": "city",
+										"show": [
+											{
+												"name": "destination",
+												"type": "matches",
+												"value": [
+													"domestic"
+												]
+											}
+										],
+										"type": "text",
+										"label": "City",
+										"offset": "0",
+										"columns": "6",
+										"forceRow": false,
+										"required": "show"
+									},
+									{
+										"name": "state",
+										"show": [
+											{
+												"name": "destination",
+												"type": "matches",
+												"value": [
+													"domestic"
+												]
+											}
+										],
+										"type": "text",
+										"label": "State",
+										"offset": "0",
+										"columns": "6",
+										"forceRow": false,
+										"required": "show"
+									},
+									{
+										"name": "country",
+										"show": [
+											{
+												"name": "destination",
+												"type": "matches",
+												"value": [
+													"international"
+												]
+											}
+										],
+										"type": "text",
+										"label": "Country",
+										"required": "show"
+									},
+									{
+										"name": "expenditure",
+										"show": [
+											{
+												"op": "and",
+												"conditions": [
+													{
+														"name": "_flowstate",
+														"type": "not_matches",
+														"value": [
+															"get_eSignatures"
+														]
+													}
+												]
+											}
+										],
+										"type": "fieldset",
+										"array": {
 											"max": null,
-											"min": 1,
-											"type": "numeric",
-											"conditions": true
-										}
-									]
-								},
-								{
-									"pre": "$",
-									"info": "Negative values indicate a credit",
-									"name": "amount",
-									"type": "text",
-									"label": "Amount",
-									"columns": 2,
-									"required": true
-								}
-							]
-						}
-					]
-				}
-			],
-			"required": "show"
+											"min": null,
+											"remove": {
+												"label": "",
+												"enable": "auto"
+											},
+											"duplicate": {
+												"label": "",
+												"enable": "auto"
+											}
+										},
+										"label": "Expenditure",
+										"fields": [
+											{
+												"name": "travel_expense_type",
+												"type": "select",
+												"label": "Travel Expense Type",
+												"value": "pick_one",
+												"columns": 4,
+												"options": [
+													{
+														"type": "optgroup",
+														"label": "",
+														"options": [
+															{
+																"label": "Pick One",
+																"value": "pick_one"
+															},
+															{
+																"label": "Registration",
+																"value": "registration"
+															},
+															{
+																"label": "Lodging",
+																"value": "lodging"
+															},
+															{
+																"label": "Airfare",
+																"value": "airfare"
+															},
+															{
+																"label": "Car Rental",
+																"value": "car_rental"
+															},
+															{
+																"label": "Parking",
+																"value": "parking"
+															},
+															{
+																"label": "Meals",
+																"value": "meals"
+															},
+															{
+																"label": "Taxi",
+																"value": "taxi"
+															},
+															{
+																"label": "Other",
+																"value": "other"
+															}
+														]
+													}
+												],
+												"multiple": false
+											},
+											{
+												"name": "vendor_name",
+												"type": "text",
+												"label": "Supplier / Vendor Name",
+												"columns": 4,
+												"required": true
+											},
+											{
+												"name": "date",
+												"type": "date",
+												"label": "Date on Receipt",
+												"limit": null,
+												"format": {
+													"input": "MM/DD/YYYY"
+												},
+												"offset": "0",
+												"columns": "4",
+												"forceRow": false,
+												"required": true
+											},
+											{
+												"name": "other",
+												"show": [
+													{
+														"name": "travel_expense_type",
+														"type": "matches",
+														"value": [
+															"other"
+														]
+													}
+												],
+												"type": "text",
+												"label": "Other",
+												"required": "show"
+											},
+											{
+												"name": "receipt",
+												"type": "files",
+												"array": {
+													"max": null,
+													"min": null,
+													"remove": {
+														"label": "",
+														"enable": "auto"
+													},
+													"duplicate": {
+														"label": "",
+														"enable": "auto"
+													}
+												},
+												"label": "Receipt",
+												"columns": 4,
+												"required": true
+											},
+											{
+												"name": "expenditure_type",
+												"show": [
+													{
+														"op": "and",
+														"conditions": [
+															{
+																"name": "_flowstate",
+																"type": "contains",
+																"value": [
+																	"account_payable_director"
+																]
+															}
+														]
+													}
+												],
+												"type": "combobox",
+												"label": "Expenditure Type",
+												"parse": true,
+												"report": true,
+												"options": [
+													{
+														"path": "exp_types",
+														"type": "optgroup",
+														"label": "",
+														"format": {
+															"display": ""
+														}
+													}
+												],
+												"required": false
+											},
+											{
+												"edit": false,
+												"name": "amount_total",
+												"type": "output",
+												"label": "",
+												"parse": false,
+												"method": "method_1"
+											},
+											{
+												"name": "charged_to",
+												"type": "fieldset",
+												"array": {
+													"max": null,
+													"min": null,
+													"remove": {
+														"label": "",
+														"enable": "auto"
+													},
+													"duplicate": {
+														"label": "",
+														"enable": "auto"
+													}
+												},
+												"label": "Charged To",
+												"fields": [
+													{
+														"name": "responsible_party",
+														"type": "user",
+														"label": "Principal Investigator / PI Delegate",
+														"offset": "0",
+														"columns": "4",
+														"forceRow": false,
+														"required": true
+													},
+													{
+														"name": "project",
+														"type": "text",
+														"label": "Project",
+														"limit": 7,
+														"offset": "0",
+														"columns": "2",
+														"forceRow": false,
+														"required": true,
+														"validate": [
+															{
+																"max": 7,
+																"min": 7,
+																"type": "length",
+																"conditions": true
+															},
+															{
+																"op": "and",
+																"max": null,
+																"min": 1,
+																"type": "numeric",
+																"conditions": true
+															}
+														]
+													},
+													{
+														"name": "task",
+														"type": "text",
+														"label": "Task",
+														"limit": null,
+														"offset": "0",
+														"columns": "2",
+														"forceRow": false,
+														"required": true
+													},
+													{
+														"name": "award",
+														"type": "text",
+														"label": "Award",
+														"limit": 5,
+														"offset": "0",
+														"columns": "2",
+														"forceRow": false,
+														"validate": [
+															{
+																"max": 5,
+																"min": 5,
+																"type": "length",
+																"conditions": true
+															},
+															{
+																"op": "and",
+																"max": null,
+																"min": 1,
+																"type": "numeric",
+																"conditions": true
+															}
+														]
+													},
+													{
+														"pre": "$",
+														"info": "Negative values indicate a credit",
+														"name": "amount",
+														"type": "text",
+														"label": "Amount",
+														"columns": 2,
+														"required": true
+													}
+												]
+											}
+										],
+										"required": "show"
+									}
+								]
+							},
+							{
+								"name": "non_travel_expense",
+								"show": [
+									{
+										"op": "and",
+										"conditions": [
+											{
+												"name": "expense_type",
+												"type": "matches",
+												"value": [
+													"non_travel"
+												]
+											}
+										]
+									}
+								],
+								"type": "fieldset",
+								"label": "Non-Travel",
+								"fields": [
+									{
+										"name": "vendor_name",
+										"type": "text",
+										"label": "Supplier / Vendor Name",
+										"columns": 4,
+										"required": true
+									},
+									{
+										"name": "purpose",
+										"type": "text",
+										"label": "Purpose",
+										"columns": 4,
+										"required": true
+									},
+									{
+										"name": "date",
+										"type": "date",
+										"label": "Date of Purchase",
+										"format": {
+											"input": "MM/DD/YYYY"
+										},
+										"columns": 4,
+										"required": true
+									},
+									{
+										"name": "receipt",
+										"type": "files",
+										"array": {
+											"max": null,
+											"min": null,
+											"remove": {
+												"label": "",
+												"enable": "auto"
+											},
+											"duplicate": {
+												"label": "",
+												"enable": "auto"
+											}
+										},
+										"label": "Receipt",
+										"columns": 4,
+										"required": true
+									},
+									{
+										"name": "expenditure_type",
+										"show": [
+											{
+												"op": "and",
+												"conditions": [
+													{
+														"name": "_flowstate",
+														"type": "contains",
+														"value": [
+															"account_payable_director"
+														]
+													}
+												]
+											}
+										],
+										"type": "combobox",
+										"label": "Expenditure Type",
+										"parse": true,
+										"report": true,
+										"options": [
+											{
+												"path": "exp_types",
+												"type": "optgroup",
+												"label": "",
+												"format": {
+													"display": ""
+												}
+											}
+										],
+										"required": false
+									},
+									{
+										"edit": false,
+										"name": "amount_total",
+										"type": "output",
+										"label": "",
+										"parse": false,
+										"method": "method_1"
+									},
+									{
+										"name": "charged_to",
+										"type": "fieldset",
+										"array": {
+											"max": null,
+											"min": null,
+											"remove": {
+												"label": "",
+												"enable": "auto"
+											},
+											"duplicate": {
+												"label": "",
+												"enable": "auto"
+											}
+										},
+										"label": "Charged To",
+										"fields": [
+											{
+												"name": "responsible_party",
+												"type": "user",
+												"label": "Principal Investigator / PI Delegate",
+												"offset": "0",
+												"columns": "4",
+												"forceRow": false,
+												"required": true
+											},
+											{
+												"name": "project",
+												"type": "text",
+												"label": "Project",
+												"limit": 7,
+												"offset": "0",
+												"columns": "2",
+												"forceRow": false,
+												"required": true,
+												"validate": [
+													{
+														"max": 7,
+														"min": 7,
+														"type": "length",
+														"conditions": true
+													},
+													{
+														"op": "and",
+														"max": null,
+														"min": 1,
+														"type": "numeric",
+														"conditions": true
+													}
+												]
+											},
+											{
+												"name": "task",
+												"type": "text",
+												"label": "Task",
+												"limit": null,
+												"offset": "0",
+												"columns": "2",
+												"forceRow": false,
+												"required": true
+											},
+											{
+												"name": "award",
+												"type": "text",
+												"label": "Award",
+												"limit": 5,
+												"offset": "0",
+												"columns": "2",
+												"forceRow": false,
+												"required": true,
+												"validate": [
+													{
+														"max": 5,
+														"min": 5,
+														"type": "length",
+														"conditions": true
+													},
+													{
+														"op": "and",
+														"max": null,
+														"min": 1,
+														"type": "numeric",
+														"conditions": true
+													}
+												]
+											},
+											{
+												"pre": "$",
+												"info": "Negative values indicate a credit",
+												"name": "amount",
+												"type": "text",
+												"label": "Amount",
+												"columns": 2,
+												"required": true
+											}
+										]
+									}
+								]
+							}
+						],
+						"required": "show"
+					}
+				],
+				"default": {
+					"horizontal": false
+				},
+				"horizontal": true
+			}
+		</script>
+	</p>
+	<script>
+
+		// async function f(options) {
+
+		//     let promise = new Promise((resolve, reject) => {
+
+		//         new gform(options).modal().on('save', e => {
+		//             e.form.trigger('close');
+		//             resolve (e.form.get());
+		//         })
+		//     });
+
+		//     let result = await promise; // wait until the promise resolves (*)
+
+		//     return result;// "done!"
+		// }
+
+		gform.eb = new gform.eventBus({});
+		gform.eb.on('dialog', function (e) {
+			console.log('dialog:' + e.result.label)
+		})
+		let dialog = (options) => {
+			return new Promise((resolve, reject) => {
+				options.actions = [{ type: 'cancel', action: "reject" }, { type: 'save' }]
+				new gform(options).modal().on('save', e => {
+					e.form.trigger('close');
+					resolve(e.form.get());
+				}).on('reject', e => {
+					e.form.trigger('close');
+					reject(e.form.get());
+				})
+			}).then(e => {
+				gform.eb.dispatch('dialog', this, { result: e, status: 'resolved' });
+				return e;
+			}).catch(e => {
+				gform.eb.dispatch('dialog', this, { result: e, status: 'rejected' });
+				return e;
+			})
 		}
-	],
-	"default": {
-		"horizontal": false
-	},
-	"horizontal": true
-}
-    </script></p>
-      <script>
 
-        // async function f(options) {
+		dialog(options)
+			.then(e => {
+				console.log('Resolved:' + e);
+			}).catch(e => {
+				console.log('Rejected:' + e);
+			});
 
-        //     let promise = new Promise((resolve, reject) => {
+	</script>
 
-        //         new gform(options).modal().on('save', e => {
-        //             e.form.trigger('close');
-        //             resolve (e.form.get());
-        //         })
-        //     });
+	</p>
+	<!-- <script src="../assets/js/example.js"></script>    -->
 
-        //     let result = await promise; // wait until the promise resolves (*)
+</body>
 
-        //     return result;// "done!"
-        // }
-
-    gform.eb = new gform.eventBus({});
-    gform.eb.on('dialog',function(e){
-        console.log('dialog:'+e.result.label)
-    })
-    let dialog = (options) =>{
-        return new Promise((resolve, reject) => {
-            options.actions = [{type:'cancel',action:"reject"},{type:'save'}]
-            new gform(options).modal().on('save', e => {
-                e.form.trigger('close');
-                resolve (e.form.get());
-            }).on('reject', e => {
-                e.form.trigger('close');
-                reject (e.form.get());
-            })
-        }).then(e=>{
-            gform.eb.dispatch('dialog',this,{result:e,status:'resolved'});
-            return e;
-        }).catch(e=>{
-            gform.eb.dispatch('dialog',this,{result:e,status:'rejected'});
-            return e;
-        })
-    }
-
-    dialog(options)
-    .then(e => {
-        console.log('Resolved:'+e);
-    }).catch(e=>{
-        console.log('Rejected:'+e);
-    });
-
-      </script>
-
-</p>
-    <!-- <script src="../assets/js/example.js"></script>    -->
-        
-   </body>
 </html>

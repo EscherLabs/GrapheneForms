@@ -467,7 +467,7 @@
   <script src='../assets/js/gform.js'></script>
   <script src='../assets/js/bootstrap.js'></script>
   <script src='../assets/js/bootstrap.min.js'></script>
-  <script src='../assets/js/smallcombo.js'></script>
+  <script src='../assets/js/combobox.js'></script>
 
   <script src='../assets/vendor/js/moment.js'></script>
   <!-- <script src='../assets/vendor/js/colorpicker.min.js'></script>  -->
@@ -496,15 +496,16 @@
   </script>
   <script>
 
-    gform.types['states'] = _.extend({}, gform.types['smallcombo'], {
+    gform.types['states'] = _.extend({}, gform.types['combobox'], {
       defaults: {
         strict: false, options: [{ name: "Originator", value: "{{user.originator}}" }, { name: "Second", value: 1, editable: false }], search: ({ value }, mainresolve) => {
           // console.log("../data/states.json" + value);
           function resolveAfter2Seconds() {
             return new Promise(resolve => {
               setTimeout(() => {
+                debugger;
                 resolve(['resolved', 'other']);
-              }, 2000);
+              }, 20);
             });
           }
 
@@ -529,11 +530,52 @@
     //             debugger;
     //             console.log(e);
     //         }
+    gform.collections.add('map_groups',
+
+
+
+      [{ "name": "reviewers", "type": "group" }, { "name": "hr_processor", "type": "group" }, { "name": "rf_hr_processor", "type": "group" }]
+    )
+
+
+    gform.types['states'] = _.extend({}, gform.types['combobox'], {
+      toString: function (name, display) {
+        if (!display) {
+          if (typeof this.combo !== 'undefined') {
+            return '<dt>' + this.label + '</dt> <dd>' + (this.combo.innerText || '(empty)') + '</dd><hr>'
+          } else {
+            return '<dt>' + this.label + '</dt> <dd>' + (this.get() || '(empty)') + '</dd><hr>'
+          }
+        } else {
+          if (typeof this.options !== 'undefined' && this.options.length) {
+            return _.find(this.options, { value: this.value }) || this.value;
+          } else {
+            return this.value;
+          }
+        }
+      },
+      defaults: { strict: true, search: '../data/states.json', format: { title: '{{{label}}}{{^label}}States{{/label}}<span class="text-success pull-right">({{value}})</span>', label: "{{name}}", value: "{{value}}", display: '{{name}}<div style="color:#aaa">({{value}})</div>' } }
+    })
+
+
+
     options = {
       // events:{'input:text':'myEvent'},
       // data:{text:"08/20/2019"},
       fields: [
-        { title: 'Text', name: "text", strict: true, type: 'states', edit: true },
+        { title: 'Text', name: "text" },
+
+        {
+          type: "combobox", strict: true, label: "ID", format: { label: "name", value: "id" },
+          search: (e, resolve) => {
+            //  setTimeout(resolve, 2000, []);
+            setTimeout(function (resolve) {
+              resolve([{ name: "he", id: 0 }, { name: "hello", id: 1 }, { name: "heth", id: 2 }]);
+
+            }.bind(null, resolve), 1000)
+            // return [{ name: "he", id: 0 }, { name: "hello", id: 1 }, { name: "heth", id: 2 }];
+          }
+        },
         // {title: 'Text', name: "text", type: 'date'},
         //             {label: 'Hidden', type: 'hidden', value:'hidden field'},
         //             {label: 'Number', type: 'number'},
@@ -544,8 +586,8 @@
         // },
         //             {label: 'Select', type: 'select', options:[1,2,3]},
         //             {label: 'Radio', type: 'radio', options:[1,2,3]},
-        // {label: 'Combobox', type: 'smallcombo', options:[{type:'optgroup', path:'../data/states.json',format:{value:"{{index}}",label:"{{name}}",display:'{{name}}<span style="float:right">{{index}}</span>'}}]},
-        // {label: 'Combobox', type: 'smallcombo', search:'../data/states.json',format:{value:"{{index}}",label:"{{name}}",display:'{{name}}<span style="float:right">{{index}}</span>'}},
+        // {label: 'Combobox', type: 'combobox', options:[{type:'optgroup', path:'../data/states.json',format:{value:"{{index}}",label:"{{name}}",display:'{{name}}<span style="float:right">{{index}}</span>'}}]},
+        // {label: 'Combobox', type: 'combobox', search:'../data/states.json',format:{value:"{{index}}",label:"{{name}}",display:'{{name}}<span style="float:right">{{index}}</span>'}},
         // {label: 'Fieldset', type: 'fieldset', fields:[
         //     {label: 'Fieldset Text 1', name: 'text1', type: 'text'},
         //     {label: 'Fieldset Text 2', name: 'text2', type: 'text'}

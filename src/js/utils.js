@@ -89,7 +89,7 @@ gform._lookup = (field, args, _lookup) => {
     var searchField = field;
 
     if (args.name.indexOf('/') == 0) {
-        looker = searchField.owner.filter({ path: args.name }, args.depth || 10);
+        looker = searchField.owner.find({ path: args.name }, args.depth || 10);
     } else {
         let searchObj = args.name.split('.')
         let searchString = searchObj.shift();
@@ -166,8 +166,8 @@ gform.patch = function (object, patch, action) {
             //     object[target] = task.value;
             // }
             let value = ('toJSON' in task) ? task.toJSON : task.value;
-            if (target)
-                object[target] = ('toJSON' in task) ? task.toJSON : task.value;
+            if (target && typeof value !== "undefined")
+                object[target] = value;
 
             // if(object[target] == null)delete object[target];
             // let val = ('toJSON' in task)?task.toJSON:task.value;

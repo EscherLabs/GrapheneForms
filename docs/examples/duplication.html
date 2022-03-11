@@ -1,49 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="Adam Smallcomb">
-    <link rel="icon" href="../assets/favicon.png">
 
-    <title>Example:Duplication - Graphene:Forms</title>
-    <!-- <link rel="stylesheet" href="../assets/css/normalize.css">    
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="Adam Smallcomb">
+  <link rel="icon" href="../assets/favicon.png">
+
+  <title>Example:Duplication - Graphene:Forms</title>
+  <!-- <link rel="stylesheet" href="../assets/css/normalize.css">    
     <link rel="stylesheet" href="../assets/css/gform.css"> -->
 
-	  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
-    <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
-  </head>
-  <body>
-    <div style="padding:20px">
+  <link rel='stylesheet' type='text/css' href='../assets/css/font-awesome.min.css'>
+  <link rel='stylesheet' type='text/css' href='../assets/css/bootstrap.min.css'>
+</head>
+
+<body>
+  <div style="padding:20px">
     <h4><a href="./">Examples</a> - Duplication</h4>
     <div class="container ">
       <div class="row ">
-            <div class="col-md-4" style="overflow: scroll;"><pre id="code"><code class="prettyprint"></code></pre></div>
-            <div class="col-md-4"><pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre><hr><div id="form">
-              <div id="other_form"></div></div></div>                
-            <div class="col-md-4" style="overflow: scroll;"><pre id="result"><code class="prettyprint"></code></pre></div>
-
+        <div class="col-md-4" style="overflow: scroll;">
+          <pre id="code"><code class="prettyprint"></code></pre>
+        </div>
+        <div class="col-md-4">
+          <pre id="code"><code class="prettyprint">var myForm = new gform(config, '#form');</code></pre>
+          <hr>
+          <div id="form">
+            <div id="other_form"></div>
           </div>
+        </div>
+        <div class="col-md-4" style="overflow: scroll;">
+          <pre id="result"><code class="prettyprint"></code></pre>
+        </div>
+
       </div>
+    </div>
   </div>
 
-<script src='../assets/vendor/js/jquery.js'></script>
+  <script src='../assets/vendor/js/jquery.js'></script>
 
-<script src="../assets/js/lodash.min.js"></script>    
-<script src='../assets/vendor/js/colorpicker.min.js'></script> 
+  <script src="../assets/js/lodash.min.js"></script>
+  <script src='../assets/vendor/js/colorpicker.min.js'></script>
 
-<script src='../assets/js/bootstrap.min.js'></script>
-<script src='../assets/js/gform_bootstrap.js'></script>
+  <script src='../assets/js/bootstrap.min.js'></script>
+  <script src='../assets/js/gform_bootstrap.js'></script>
 
-<!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>             -->
+  <!-- <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>             -->
 
 
-    <script src='../assets/js/math.min.js'></script> 
+  <script src='../assets/js/math.min.js'></script>
 
-    <script>
+  <script>
 
-var accordion = `
+    var accordion = `
 <form>
 <div id="display"></div>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -155,56 +166,56 @@ Other
 </div>
 </form>
 `
-      options = {
-        // data:{candy:[{flavor:"First",color:["#001","#002"]},{flavor:"Second",color:["#011","#012"]}]},
-          legend: 'Duplication Form',
-          fields:[
-    //       {
-    //   "label": "Name",
-    //   "name": "name"
-    // },
-    // {
-    //   "label": "Email",
-    //   "name": "email",
-    //   "show":[
-    //     {name:"name",type:"matches",value:"adam"}
-    //   ]
-    // },
-    // {
-    //   "label": "Email",
-    //   "name": "email",
-    //   "show":[
-    //     {name:"name",type:"not_matches",value:"adam"}
-    //   ]
-    // },
-    // {label: 'Flavor'},
-    // {
-    //   "label": "Phone",
-    //   "name": "phone"
-    // },
-    // {
-    //   "label": "Supervisor",
-    //   "name": "supervisor"
-    // },
-    // {
-    //   "label": "Campus Department",
-    //   "name": "department"
-    // },
-    // {
-    //   "type": "radio",
-    //   "label": "I hereby authorize the Research Foundation HR/Payroll Office to",
-    //   "name": "action",
-    //   "options": [
-    //     {
-    //       "label": "Start Direct Deposit",
-    //       "value": "start"
-    //     },
-    //     {
-    //       "label": "Change my Direct Deposit",
-    //       "value": "change"
-    //     }
-    //   ]
-    // },
+    options = {
+      // data:{candy:[{flavor:"First",color:["#001","#002"]},{flavor:"Second",color:["#011","#012"]}]},
+      legend: 'Duplication Form',
+      fields: [
+        //       {
+        //   "label": "Name",
+        //   "name": "name"
+        // },
+        // {
+        //   "label": "Email",
+        //   "name": "email",
+        //   "show":[
+        //     {name:"name",type:"matches",value:"adam"}
+        //   ]
+        // },
+        // {
+        //   "label": "Email",
+        //   "name": "email",
+        //   "show":[
+        //     {name:"name",type:"not_matches",value:"adam"}
+        //   ]
+        // },
+        // {label: 'Flavor'},
+        // {
+        //   "label": "Phone",
+        //   "name": "phone"
+        // },
+        // {
+        //   "label": "Supervisor",
+        //   "name": "supervisor"
+        // },
+        // {
+        //   "label": "Campus Department",
+        //   "name": "department"
+        // },
+        // {
+        //   "type": "radio",
+        //   "label": "I hereby authorize the Research Foundation HR/Payroll Office to",
+        //   "name": "action",
+        //   "options": [
+        //     {
+        //       "label": "Start Direct Deposit",
+        //       "value": "start"
+        //     },
+        //     {
+        //       "label": "Change my Direct Deposit",
+        //       "value": "change"
+        //     }
+        //   ]
+        // },
         //   {
         // "label": "Bank{{#index}} ({{index}}){{/index}}",
         // "name":"bank",
@@ -213,156 +224,184 @@ Other
         //     "min": 1,
         //     "max": 4
         // },
-    //     "fields": [
-    //         {
-    //             "label": "Bank Name",
-    //             "name":"bank_name"
-    //         },
-    //         {
-    //             "label": "Routing Number",
-    //             "name":"routing_number"
-    //         },
-    //         {
-    //             "label": "Account Number",
-    //             "name":"account_number"
-    //         },
-    //         {
-    //           "type": "radio",
-    //           "label": "Account Type",
-    //           "name": "type",
-    //           "options": [
-    //             {
-    //               "label": "Checking",
-    //               "value": "checking"
-    //             },
-    //             {
-    //               "label": "Savings",
-    //               "value": "savings"
-    //             }
-    //           ]
-    //         },
-    //         {
-    //             "label": "Amount",
-    //             "name":"amount"
-    //         }
-    //     ]
-    // },
-              {label:'Candy{{#index}} ({{index}}){{/index}}', type: 'template',columns:12,target:"#other_form", value:{flavor:"oranges",color:['#200','#201']}, array: {label:"Candies",duplicate:{copy:true},min:0}, parse:[{type:"not_matches",name:"candy",value:[]}], fields: [
-                {label: 'Flavor',value:"pb&j"},
-                // { label: 'Color ({{^index}}0{{/index}}{{index}})', type:'text',columns:6, array: {min:2,max:3}}
-                { label: 'Color{{#index}} ({{#math}}index+1{{/math}}){{/index}}',columns:6, array: {label:"Colors",min:2,max:7,duplicate:{copy:true}},"show":[
-        {name:"flavor",type:"not_matches",value:"orange"}
-      ]}
-              ]},{legend: 'Gradient',array:{min:0,max:20}, type: 'table',fields:[
-          {label:"Time (min)",name:'time',type:"number",value:0,min:0,max:12,validate:[{type:'numeric'}]},
-          {label:"Solvent A (%)",name:"a",type:"number",min:0,max:100,step:1,edit:false,value:function(e){
-              if(e.initial.parent.index == e.field.parent.index && e.field.name == "solvent_b"){
-                  return 100 - parseInt(e.field.get());
-              }else{
-                  return e.initial.value || 0  
-              }
-          }},
-          {label:"Solvent B (%)",name:"solvent_b",type:"number",value:0,min:0,max:100,step:1},
-        ]}
-    // {
-    //   "label": "Campus Department",
-    //   "name": "department"
-    // },{ label: 'Color{{#index}} ({{#math}}index+1{{/}}){{/index}}',columns:6, array: {min:0,max:7,duplicate:{copy:true}}}
+        //     "fields": [
+        //         {
+        //             "label": "Bank Name",
+        //             "name":"bank_name"
+        //         },
+        //         {
+        //             "label": "Routing Number",
+        //             "name":"routing_number"
+        //         },
+        //         {
+        //             "label": "Account Number",
+        //             "name":"account_number"
+        //         },
+        //         {
+        //           "type": "radio",
+        //           "label": "Account Type",
+        //           "name": "type",
+        //           "options": [
+        //             {
+        //               "label": "Checking",
+        //               "value": "checking"
+        //             },
+        //             {
+        //               "label": "Savings",
+        //               "value": "savings"
+        //             }
+        //           ]
+        //         },
+        //         {
+        //             "label": "Amount",
+        //             "name":"amount"
+        //         }
+        //     ]
+        // },
+        {
+          label: 'Candy{{#index}} ({{index}}){{/index}}', type: 'template', columns: 12, target: "#other_form", value: { flavor: "oranges", color: ['#200', '#201'] }, array: { label: "Candies", duplicate: { copy: true }, min: 0 }, parse: [{ type: "not_matches", name: "candy", value: [] }], fields: [
+            { label: 'Flavor', value: "pb&j" },
+            // { label: 'Color ({{^index}}0{{/index}}{{index}})', type:'text',columns:6, array: {min:2,max:3}}
+            {
+              label: 'Color{{#index}} ({{#math}}index+1{{/math}}){{/index}}', columns: 6, array: { label: "Colors", min: 2, max: 7, duplicate: { copy: true } }, "show": [
+                { name: "flavor", type: "not_matches", value: "orange" }
+              ]
+            }
           ]
-      }
-
-
-      myconditions=[
-	{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:"test",name:"op",test:function(field,args){
-		return true;
-	}}]},
-	{type: 'fieldset',label:false,name:"conditions",columns:12,fields:
-	[
-		{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires','conditions']},
-		{label: 'Name',name:"name",show:[{type:'matches',name:"type",value:["matches","not_matches","contains","requires"]}]},
-		{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:0,default:[],filter:true},show:[{type:'matches',name:"type",value:["matches","not_matches","contains"]}]},
-		{label: false,columns:12,name:'op',type:"switch",format:{label:'{{label}}'},options:[{label:"or",value:'or'},{label:"and",value:'and'}],value:'and',show:[{type:'matches',name:"type",value:"conditions"}]},
-		{label:'Condition',name:'conditions',columns:10,offset:1,type:'fieldset',array:true,show:[{type:'matches',name:"type",value:"conditions"}],fields:[
-			{label:"Type",name:"type",type:"select",options:['matches','not_matches','contains','requires']},
-			{label: 'Name',name:"name"},
-			{ label: 'Value{{#index}}({{index}}){{/index}}',name:"value", array: {min:0}}
-		]}
-	]
-	,array:true},
-
-	
-]
-options.default ={columns:6}
-options.clear= false;
-options.actions=[{type:"button",name:"deativate",action:"deactivate",label:'<i class="fa fa-check"></i>',target:"#display",modifiers:"btn btn-info pull-right visible-lg"}],
-
-options.fields = [
-{target:"#display", type: 'smallcombo',columns:9, label: false, name: 'type', value: 'text', parse: [{type:"not_matches",value:"text"},{type:"requires"}], 'options': [
-		{label: 'Single Line', value: 'text'},
-		{label: 'Multi-line', value: 'textarea'},
-		{label: 'Phone', value: 'tel'},
-		{label: 'Url', value: 'url'},
-		{label: 'Email', value: 'email'},
-		{label: 'Date', value: 'date'},
-		{label: 'Number', value: 'number'},
-		{label: 'Currency', value: 'currency'},
-		{label: 'Password', value: 'password'},
-		{label: 'Color', value: 'color'},
-		{label: 'Output', value: 'output'},
-		{label: 'File', value: 'base64'},
-		{label: 'Signature', value: 'signature'},
-		{label: 'Hidden', value: 'hidden'}
-	]},
-  // {target: "#collapseGrid .panel-body",type: 'table', label: 'Meta Data', array: {min:0,max:100},columns:12,parse:[{type:"requires"}],format:{template:"{{value.key}}:{{value.value}}"}, name: 'data', 
-	// 	fields: [
-	// 		{label: 'Key', name:"key",parse:[{type:"requires"},{type:"requires",name:"value"}]},
-	// 		{label: 'Value', name:"value",parse:[{type:"requires"},{type:"requires",name:"key"}]}
-	// 	]
-	// },
-// {target:"#collapseOptions .panel-body",type: 'select',other:true, columns:12, label:'Show the field <span class="pull-right text-muted">"show"</span>', value: true, name:"show",parse:[{type:"not_matches",name:"show",value:true}],options:		
-// 		[
-//       {type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Edit"',value:'edit'}, {label:"Conditionally",value:"other"}]},{type:'optgroup',label:"Methods",options:'methods',format:{value:"method:{{value}}",label:"Method: {{label}}"}}
-//   ]
-// 	},
-	// {target:"#collapseOptions .panel-body",type: 'fieldset',columns:11,offset:'1', label:false,name:"show",fields:myconditions,array:{min:1,max:1},show:[{name:"show",value:['other'],type:"matches"}]},
-  {type: 'select',other:true, columns:12, label:'Allow the field to be Edited <span class="pull-right text-muted">"edit"</span>', value:true,name:"edit",parse:[{type:"not_matches",name:"/edit",value:true}],options:		
-		[{type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Show"',value:'show'}, {label:"Conditionally",value:"other"}]}]
-	},
-	{type: 'fieldset',columns:11,offset:'1', label:false,name:"edit",fields:myconditions,array:{min:1,max:1},show:[{name:"/edit",value:['other'],type:"matches"}]},
-
-]
-
-      optionss =     {
-      legend:'Gas Chromatograph',
-      sections:'tab',
-      name:'GC',
-      fields:[
-
-        {legend: 'Column Oven', type: 'fieldset',fields:[
-          {legend: 'Isothermal', type: 'fieldset',fields:[
-            {name:"Temperature (°C)",type:"number",value:100,min:100,max:200,step:5},
-            {name:"Run time (min)",type:"number",value:0,min:0,max:10,step:.5},
-          ]},
-          {legend: 'Temperature Program',array:{min:1}, type: 'table',fields:[
-            {label:"Time (min)",edit:false,name:"time",type:"number",template:"{{value}}{{^value}}(origin){{/value}}",value:function(e){
-                if(e.initial.parent.index == e.field.parent.index && e.field.name == "time"){
-                    var old = e.field.parent.parent.find({name:"temperature_program",index:e.initial.parent.index-1});
-                    if(old){
-                        old = old.get();
-                        return old.time+old.hold_time;
-                    }
-                    return 0;
-                }else{
-                    return e.initial.value   
+        }, {
+          legend: 'Gradient', array: { min: 0, max: 20 }, type: 'table', fields: [
+            { label: "Time (min)", name: 'time', type: "number", value: 0, min: 0, max: 12, validate: [{ type: 'numeric' }] },
+            {
+              label: "Solvent A (%)", name: "a", type: "number", min: 0, max: 100, step: 1, edit: false, value: function (e) {
+                if (e.initial.parent.index == e.field.parent.index && e.field.name == "solvent_b") {
+                  return 100 - parseInt(e.field.get());
+                } else {
+                  return e.initial.value || 0
                 }
-            }},
-            {label:"Temperature (°C)",type:"number",value:100,min:100,max:250,step:5},
-            {label:"Ramp (°C/min)",type:"number",value:10,min:10,max:20,step:1},
-            {label:"Hold time (min)",name:"hold_time",type:"number",value:0,min:0,max:5,step:1}
-          ]},
-          
-        ]}
-      ]}
+              }
+            },
+            { label: "Solvent B (%)", name: "solvent_b", type: "number", value: 0, min: 0, max: 100, step: 1 },
+          ]
+        }
+        // {
+        //   "label": "Campus Department",
+        //   "name": "department"
+        // },{ label: 'Color{{#index}} ({{#math}}index+1{{/}}){{/index}}',columns:6, array: {min:0,max:7,duplicate:{copy:true}}}
+      ]
+    }
+
+
+    myconditions = [
+      {
+        label: false, columns: 12, name: 'op', type: "switch", format: { label: '{{label}}' }, options: [{ label: "or", value: 'or' }, { label: "and", value: 'and' }], value: 'and', show: [{
+          type: "test", name: "op", test: function (field, args) {
+            return true;
+          }
+        }]
+      },
+      {
+        type: 'fieldset', label: false, name: "conditions", columns: 12, fields:
+          [
+            { label: "Type", name: "type", type: "select", options: ['matches', 'not_matches', 'contains', 'requires', 'conditions'] },
+            { label: 'Name', name: "name", show: [{ type: 'matches', name: "type", value: ["matches", "not_matches", "contains", "requires"] }] },
+            { label: 'Value{{#index}}({{index}}){{/index}}', name: "value", array: { min: 0, default: [], filter: true }, show: [{ type: 'matches', name: "type", value: ["matches", "not_matches", "contains"] }] },
+            { label: false, columns: 12, name: 'op', type: "switch", format: { label: '{{label}}' }, options: [{ label: "or", value: 'or' }, { label: "and", value: 'and' }], value: 'and', show: [{ type: 'matches', name: "type", value: "conditions" }] },
+            {
+              label: 'Condition', name: 'conditions', columns: 10, offset: 1, type: 'fieldset', array: true, show: [{ type: 'matches', name: "type", value: "conditions" }], fields: [
+                { label: "Type", name: "type", type: "select", options: ['matches', 'not_matches', 'contains', 'requires'] },
+                { label: 'Name', name: "name" },
+                { label: 'Value{{#index}}({{index}}){{/index}}', name: "value", array: { min: 0 } }
+              ]
+            }
+          ]
+        , array: true
+      },
+
+
+    ]
+    options.default = { columns: 6 }
+    options.clear = false;
+    options.actions = [{ type: "button", name: "deativate", action: "deactivate", label: '<i class="fa fa-check"></i>', target: "#display", modifiers: "btn btn-info pull-right visible-lg" }],
+
+      options.fields = [
+        {
+          target: "#display", type: 'combobox', columns: 9, label: false, name: 'type', value: 'text', parse: [{ type: "not_matches", value: "text" }, { type: "requires" }], 'options': [
+            { label: 'Single Line', value: 'text' },
+            { label: 'Multi-line', value: 'textarea' },
+            { label: 'Phone', value: 'tel' },
+            { label: 'Url', value: 'url' },
+            { label: 'Email', value: 'email' },
+            { label: 'Date', value: 'date' },
+            { label: 'Number', value: 'number' },
+            { label: 'Currency', value: 'currency' },
+            { label: 'Password', value: 'password' },
+            { label: 'Color', value: 'color' },
+            { label: 'Output', value: 'output' },
+            { label: 'File', value: 'base64' },
+            { label: 'Signature', value: 'signature' },
+            { label: 'Hidden', value: 'hidden' }
+          ]
+        },
+        // {target: "#collapseGrid .panel-body",type: 'table', label: 'Meta Data', array: {min:0,max:100},columns:12,parse:[{type:"requires"}],format:{template:"{{value.key}}:{{value.value}}"}, name: 'data', 
+        // 	fields: [
+        // 		{label: 'Key', name:"key",parse:[{type:"requires"},{type:"requires",name:"value"}]},
+        // 		{label: 'Value', name:"value",parse:[{type:"requires"},{type:"requires",name:"key"}]}
+        // 	]
+        // },
+        // {target:"#collapseOptions .panel-body",type: 'select',other:true, columns:12, label:'Show the field <span class="pull-right text-muted">"show"</span>', value: true, name:"show",parse:[{type:"not_matches",name:"show",value:true}],options:		
+        // 		[
+        //       {type:"optgroup",options:[{label:'Always',value:true},{label:'Never',value:false},{label:'Use same settings as "Parse"',value:'parse'},{label:'Use same settings as "Edit"',value:'edit'}, {label:"Conditionally",value:"other"}]},{type:'optgroup',label:"Methods",options:'methods',format:{value:"method:{{value}}",label:"Method: {{label}}"}}
+        //   ]
+        // 	},
+        // {target:"#collapseOptions .panel-body",type: 'fieldset',columns:11,offset:'1', label:false,name:"show",fields:myconditions,array:{min:1,max:1},show:[{name:"show",value:['other'],type:"matches"}]},
+        {
+          type: 'select', other: true, columns: 12, label: 'Allow the field to be Edited <span class="pull-right text-muted">"edit"</span>', value: true, name: "edit", parse: [{ type: "not_matches", name: "/edit", value: true }], options:
+            [{ type: "optgroup", options: [{ label: 'Always', value: true }, { label: 'Never', value: false }, { label: 'Use same settings as "Parse"', value: 'parse' }, { label: 'Use same settings as "Show"', value: 'show' }, { label: "Conditionally", value: "other" }] }]
+        },
+        { type: 'fieldset', columns: 11, offset: '1', label: false, name: "edit", fields: myconditions, array: { min: 1, max: 1 }, show: [{ name: "/edit", value: ['other'], type: "matches" }] },
+
+      ]
+
+    optionss = {
+      legend: 'Gas Chromatograph',
+      sections: 'tab',
+      name: 'GC',
+      fields: [
+
+        {
+          legend: 'Column Oven', type: 'fieldset', fields: [
+            {
+              legend: 'Isothermal', type: 'fieldset', fields: [
+                { name: "Temperature (°C)", type: "number", value: 100, min: 100, max: 200, step: 5 },
+                { name: "Run time (min)", type: "number", value: 0, min: 0, max: 10, step: .5 },
+              ]
+            },
+            {
+              legend: 'Temperature Program', array: { min: 1 }, type: 'table', fields: [
+                {
+                  label: "Time (min)", edit: false, name: "time", type: "number", template: "{{value}}{{^value}}(origin){{/value}}", value: function (e) {
+                    if (e.initial.parent.index == e.field.parent.index && e.field.name == "time") {
+                      var old = e.field.parent.parent.find({ name: "temperature_program", index: e.initial.parent.index - 1 });
+                      if (old) {
+                        old = old.get();
+                        return old.time + old.hold_time;
+                      }
+                      return 0;
+                    } else {
+                      return e.initial.value
+                    }
+                  }
+                },
+                { label: "Temperature (°C)", type: "number", value: 100, min: 100, max: 250, step: 5 },
+                { label: "Ramp (°C/min)", type: "number", value: 10, min: 10, max: 20, step: 1 },
+                { label: "Hold time (min)", name: "hold_time", type: "number", value: 0, min: 0, max: 5, step: 1 }
+              ]
+            },
+
+          ]
+        }
+      ]
+    }
     //   options = {
     //     data:{
     //       text:""
@@ -384,58 +423,72 @@ options.fields = [
     //         {label: 'Radio', type: 'radio', options:[1,2,3],value:2}
     //     ]
     // }
-    optionors = {strict:true,fields:[
-                {type: 'fieldset', name:'basics', legend: '<i class="fa fa-th"></i> Basics', hideLabel: true, inline: true, fields:[
-                    {type: 'text', required: true, label: 'Field Label', name: 'label'},
-                    {type: 'text', label: 'Name', name: 'name'},
-                    {type: 'select', label: 'Display', name: 'type', value: 'select', options: [
-                        {label: 'Dropdown', value: 'select'},
-                        {label: 'Radio', value: 'radio'},
-                        // {label: 'Range', value: 'range'}
-                    ]},
-                    // {type: 'text', label: 'External List', name: 'options'},
+    optionors = {
+      strict: true, fields: [
+        {
+          type: 'fieldset', name: 'basics', legend: '<i class="fa fa-th"></i> Basics', hideLabel: true, inline: true, fields: [
+            { type: 'text', required: true, label: 'Field Label', name: 'label' },
+            { type: 'text', label: 'Name', name: 'name' },
+            {
+              type: 'select', label: 'Display', name: 'type', value: 'select', options: [
+                { label: 'Dropdown', value: 'select' },
+                { label: 'Radio', value: 'radio' },
+                // {label: 'Range', value: 'range'}
+              ]
+            },
+            // {type: 'text', label: 'External List', name: 'options'},
 
-                    // {type: 'text', label: 'Label-key', name: 'label_key'},
-                    // {type: 'text', label: 'Value-key', name: 'value_key'},
+            // {type: 'text', label: 'Label-key', name: 'label_key'},
+            // {type: 'text', label: 'Value-key', name: 'value_key'},
 
-                    {type: 'text', label: 'Default Value', name: 'value'},
-                    // {type: 'number', label: 'Max', name: 'max'},
-                    // {type: 'number', label: 'Min', name: 'min'},
-                    // {type: 'number', label: 'Step', name: 'step'},
-                    {type: 'textarea', label: 'Instructions', name: 'help'},
-                    {type: 'checkbox', label: 'Required', name: 'required'},
-                ]},
-                {type: 'fieldset', name:'options_c', legend: '<i class="fa fa-th-list"></i> options', hideLabel: true,  inline: true, fields:[
-                    {type: 'fieldset', label: false, array: true, name: 'options', fields: [
-                        {label: 'Label'},
-                        {label: 'Value'}
-                    ]}
-                ]}
-            ],data:{"label":"Field Label","name":"label","type":"select","value":"","help":"","required":false,"options":[{"label":"Hello","value":"Stuff"}]}}
-options.clear = false;
-options_events = {
-  name:"editor",
+            { type: 'text', label: 'Default Value', name: 'value' },
+            // {type: 'number', label: 'Max', name: 'max'},
+            // {type: 'number', label: 'Min', name: 'min'},
+            // {type: 'number', label: 'Step', name: 'step'},
+            { type: 'textarea', label: 'Instructions', name: 'help' },
+            { type: 'checkbox', label: 'Required', name: 'required' },
+          ]
+        },
+        {
+          type: 'fieldset', name: 'options_c', legend: '<i class="fa fa-th-list"></i> options', hideLabel: true, inline: true, fields: [
+            {
+              type: 'fieldset', label: false, array: true, name: 'options', fields: [
+                { label: 'Label' },
+                { label: 'Value' }
+              ]
+            }
+          ]
+        }
+      ], data: { "label": "Field Label", "name": "label", "type": "select", "value": "", "help": "", "required": false, "options": [{ "label": "Hello", "value": "Stuff" }] }
+    }
+    options.clear = false;
+    options_events = {
+      name: "editor",
       data: form,
-      actions:[],
+      actions: [],
       fields: [
         // {name:"legend",label:"Label"},
         // {name:"name",label:"Name"},
 
-        {type: 'fieldset',label:false,name:"events",array:{min:1,max:100},fields:[
-          {type: 'text', label: 'Event',name:'event',parse:[{type:"requires"}],target:"#collapseEvents .panel-body"},
-      
-          {type: 'select', label: 'Method', name: 'handler',target:"#collapseEvents .panel-body",options:[
-            "None",{type:'optgroup',min:0,max:4,show:false},{type:'optgroup',options:'methods',format:{label:"Method: {{label}}"}}]
-            ,parse:[{name:"event",value:"",type:"not_matches"}]}
-        ]}
+        {
+          type: 'fieldset', label: false, name: "events", array: { min: 1, max: 100 }, fields: [
+            { type: 'text', label: 'Event', name: 'event', parse: [{ type: "requires" }], target: "#collapseEvents .panel-body" },
+
+            {
+              type: 'select', label: 'Method', name: 'handler', target: "#collapseEvents .panel-body", options: [
+                "None", { type: 'optgroup', min: 0, max: 4, show: false }, { type: 'optgroup', options: 'methods', format: { label: "Method: {{label}}" } }]
+              , parse: [{ name: "event", value: "", type: "not_matches" }]
+            }
+          ]
+        }
         // {type: 'switch', label: 'Custom Actions', name: 'actions',parse:false, show:[{name:"type",value:['output'],type:"not_matches"}]},
         // {type: 'fieldset',columns:12,array:true, label:false,name:"actions",parse:'show', show:[{name:"actions",value:true,type:"matches"}],fields:[
-          
-        //   {name:"type",columns:6,label:"Type",type:"smallcombo",options:["cancel","save"]},
+
+        //   {name:"type",columns:6,label:"Type",type:"combobox",options:["cancel","save"]},
         //   // {name:"name",columns:6,label:"Name"},
         //   {name:"action",columns:6,label:"Action"},
         //   {name:"label",columns:6,label:"Label"},
-        //   {name:"modifiers",columns:6,label:"Classes",type:"smallcombo",options:[
+        //   {name:"modifiers",columns:6,label:"Classes",type:"combobox",options:[
         //     {label:"Danger",value:"btn btn-danger"},
         //     {label:"Success",value:"btn btn-success"},
         //     {label:"Info",value:"btn btn-info"}]}
@@ -444,11 +497,12 @@ options_events = {
 
       ],
       legend: false,
-}
-            $("#form").html(gform.renderString(accordion))
+    }
+    $("#form").html(gform.renderString(accordion))
 
-</script>
-    <script src="../assets/js/example.js"></script>   
-        
-   </body>
+  </script>
+  <script src="../assets/js/example.js"></script>
+
+</body>
+
 </html>
